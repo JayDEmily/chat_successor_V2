@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "run_id": "succession-20261117-001",
+  "step": 1,
+  "role": "worker",
+  "task_id": "toy-calculate",
+  "predecessor_result_commit": null,
+  "terminal": false,
+  "allowed_paths": [
+    "runs/succession-20261117-001/steps/001/toy.json",
+    "runs/succession-20261117-001/steps/001/result.json"
+  ],
+  "required_output_paths": [
+    "runs/succession-20261117-001/steps/001/toy.json",
+    "runs/succession-20261117-001/steps/001/result.json"
+  ]
+}
