@@ -93,6 +93,8 @@ def validate_packet(
             raise PacketError("not the selected worker-launch approach")
         if run.get("stop_state") not in ("prepared", "active"):
             raise PacketError("run is held, stopped or complete")
+        if step > 1 and run.get("stop_state") != "active":
+            raise PacketError("successor launch requires an admitted active run")
         if not isinstance(run.get("project_config_ref"), str) or not run["project_config_ref"].startswith("local:"):
             raise PacketError("missing private Project config reference")
 
@@ -187,6 +189,11 @@ def validate_packet(
         ):
             raise PacketError("predecessor result changed paths violate assigned scope")
 
+        expected_assignment_changes = {
+            f"{prev_base}/handover.json", assignment_path
+        }
+        if _file_changes(root, assignment_sha) != expected_assignment_changes:
+            raise PacketError("next-assignment commit changes files outside handover and assignment")
         handover = _read_json(root, assignment_sha, f"{prev_base}/handover.json")
         _require_ident(handover, run_id, prev_step, "handover")
         if (
@@ -205,3 +212,21 @@ def validate_packet(
         return ValidationResult(True, (), assignment_sha)
     except (PacketError, OSError, TypeError, ValueError) as exc:
         return ValidationResult(False, (str(exc),), assignment_sha)
+
+if __name__ == "__main__":
+    import argparse
+    import json
+    import sys
+
+    parser = argparse.ArgumentParser(description="Validate a pinned Chat Succession assignment")
+    parser.add_argument("--repo-dir", required=True)
+    parser.add_argument("--run-id", required=True)
+    parser.add_argument("--step", required=True, type=int)
+    parser.add_argument("--assignment-sha", required=True)
+    args = parser.parse_args()
+    outcome = validate_packet(
+        args.repo_dir, args.run_id, args.step, args.assignment_sha
+    )
+    print(json.dumps({"ok": outcome.ok, "errors": outcome.errors,
+                      "assignment_sha": outcome.assignment_sha}))
+    sys.exit(0 if outcome.ok else 4)

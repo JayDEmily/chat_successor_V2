@@ -52,7 +52,7 @@ class PacketTests(unittest.TestCase):
         self.write_json(f"{self.base}/run.json", {
             "schema_version": 1, "run_id": self.run_id, "branch": self.branch,
             "max_steps": 3, "launch_mode": "worker", "project_config_ref": "local:project",
-            "stop_state": "prepared"
+            "stop_state": "active"
         })
         self.write_json(f"{self.base}/steps/001/assignment.json", self.assign1)
         self.a1 = self.commit("create first assignment")
@@ -192,6 +192,45 @@ class PacketTests(unittest.TestCase):
     def test_conflicting_local_run_branch(self):
         self.git("commit", "--allow-empty", "-m", "simulate conflicting head")
         self.assertFalse(self.validate(3, self.a3).ok)
+
+    def test_prepared_run_cannot_launch_second_chat(self):
+        self.git("reset", "--hard", self.a1)
+        self.write_json(f"{self.base}/run.json", {
+            "schema_version": 1, "run_id": self.run_id, "branch": self.branch,
+            "max_steps": 3, "launch_mode": "worker",
+            "project_config_ref": "local:project", "stop_state": "prepared"
+        })
+        changed_a1 = self.commit("test set prepared run")
+        self.write_json(f"{self.base}/steps/001/toy.json",
+                        {"expression": "17 * 23 + 19", "value": 410})
+        self.write_json(f"{self.base}/steps/001/result.json",
+                        {**self.result1, "assignment_commit": changed_a1})
+        new_r1 = self.commit("test prepared predecessor result")
+        self.write_json(f"{self.base}/steps/001/handover.json",
+                        {**self.h1, "result_commit": new_r1})
+        self.write_json(f"{self.base}/steps/002/assignment.json",
+                        {**self.assign2, "predecessor_result_commit": new_r1})
+        new_a2 = self.commit("test prepared successor packet")
+        self.assertFalse(self.validate(2, new_a2).ok)
+
+    def test_next_assignment_commit_cannot_smuggle_other_files(self):
+        self.git("reset", "--hard", self.r2)
+        self.write_json(f"{self.base}/steps/002/handover.json", self.h2)
+        self.write_json(f"{self.base}/steps/003/assignment.json", self.assign3)
+        (self.root / "UNAUTHORISED.txt").write_text("unexpected file\n")
+        bad_sha = self.commit("test out of scope handover commit")
+        self.assertFalse(self.validate(3, bad_sha).ok)
+
+    def test_validator_cli_readback(self):
+        import sys
+        source = Path(__file__).resolve().parents[1] / "tools" / "validate_packet.py"
+        process = subprocess.run(
+            [sys.executable, str(source), "--repo-dir", str(self.root),
+             "--run-id", self.run_id, "--step", "3", "--assignment-sha", self.a3],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(process.returncode, 0, process.stderr)
+        self.assertTrue(json.loads(process.stdout)["ok"])
 
     def test_no_fourth_step(self):
         self.assertFalse(self.validate(4, self.a3).ok)

@@ -1,13 +1,13 @@
 # Progress
 
-## Current handoff — Task 1, 17 November 2026
+## Current handoff — Task 1 and Task 2 offline, 17 November 2026
 
-**Branch:** `work/task1-contract-preflight-20261117`. **Scope:** Task 1 only; no launcher or successor chats. **Chosen approach:** owner selected **worker-launch first** for this bounded exploration, retaining the existing independent OCR/NVIDIA work untouched.
+**Branch:** `work/task1-contract-preflight-20261117`. **Scope:** Task 1 preparation plus Task 2 offline implementation and verification; no live launcher invocation or successor chats. **Chosen approach:** owner selected **worker-launch first** for this bounded exploration, retaining the existing independent OCR/NVIDIA work untouched.
 
 | Task | Status | Evidence / next boundary |
 | --- | --- | --- |
-| 1: contract and prerequisites | **IN PROGRESS — engineering verified, live prerequisites open** | Protocol and examples, 16 passing Ubuntu offline tests, read-only pinned Git validator, Windows SQLite probe and a specific three-chat trial proposal. Exact Project URL/Chrome profile and fresh successor tool availability remain unverified. See `docs/TASK1_SETUP_RECEIPT.md`. |
-| 2: bounded launcher/journal | **NOT STARTED** | Requires Task 1 live setup and a separately scoped execution. Explicit journal initialisation, duplicate/unknown-effect holds, UIA and actual browser receipt not implemented. |
+| 1: contract and prerequisites | **PARTIALLY COMPLETE — live prerequisites open** | Protocol and examples, pinned Git validator, Windows interpreter/SQLite probe and three-chat proposal published; exact Project URL/Chrome profile and fresh successor tool availability remain unverified. See `docs/TASK1_SETUP_RECEIPT.md`. |
+| 2: bounded launcher/journal | **OFFLINE IMPLEMENTED / LIVE UNVERIFIED** | Windows UIA source and local SQLite journal exist. 37 Ubuntu tests pass; Windows parser, non-sending preflight and SQLite journal smoke checks pass. No browser launch, real journal admission or actual Send. See `docs/TASK2_OFFLINE_RECEIPT.md`. |
 | 3: three-chat chain | **NOT RUN** | Proposed run ID `succession-20261117-001` is not admitted; **zero chats launched** by this repository. No trial branch created. |
 | 4: orchestration assessment | **NOT STARTED** | Compare watcher only after the worker-launch experiment produces evidence; do not build a watcher now. |
 
@@ -20,11 +20,19 @@
 - Windows explicit `C:\Program Files\Python313\python.exe` (Python 3.13.15) invoked the offline script at `\\wsl.localhost\Ubuntu\home\jds\chat_successor\tools\windows_sqlite_preflight.py`. A first run demonstrated readback but failed temp cleanup; corrected the open SQLite handle, cleaned the temporary artefact and reran successfully with duplicate-key refusal. **This is not a finished Task 2 journal.**
 - Created `docs/TASK1_SETUP_RECEIPT.md` and `docs/BOUNDED_THREE_CHAT_TRIAL.md`. Current Chrome main window is unrelated NVIDIA review; no tab manipulation or Send.
 
+### Task 2 additional verified offline work
+
+- Added `launcher/journal.py`: unique durable reservations for steps 2/3, `effect_unknown` and other terminal records, explicit local initialisation, refusal after any prior reservation, no automatic retry or reset.
+- Added `launcher/launch.ps1` with a **non-sending default** and explicit `-ExecuteSend` gate. Its designed live path validates the pinned Git packet, reserves a launch before browser effects, discovers a new Chrome Project window/editor, preserves occupied drafts, requires exact prompt readback and records positive message/URL evidence or an uncertain held state. **No live UIA execution has been attempted.**
+- Wrote failing-first journal tests and two additional validator negative tests that caught real scope/admission gaps. Final Ubuntu suite `python3 -m unittest discover -s tests -q`: **37 tests passed**.
+- Windows PowerShell `RemoteSigned` blocked direct execution of the UNC script; local Windows staging at `%LOCALAPPDATA%\ChatSuccession\Task2Offline` permitted `PARSE_OK`, `STATIC_PREFLIGHT_PASS`/`NO_SEND`, wrong-host rejection and `WINDOWS_JOURNAL_SMOKE_PASS`. Windows policy was unchanged.
+- Scoped, read-only Chrome History lookup did not identify the Chat Succession Project URL or profile. No Project chat was created, Chrome navigation performed or Send attempted. Full evidence: `docs/TASK2_OFFLINE_RECEIPT.md`.
+
 ### Specific unresolved prerequisite / next authorised action
 
-The actual Chat Succession Project browser URL, the applicable signed-in Windows Chrome profile and the availability of Git/Remote Desktop tools **inside a new Project conversation** have not been verified. The owner already confirmed the Project exists; that alone does not prove these launch inputs. Since this assignment expressly prohibits creating successor chats, no live tool/Project test was attempted. Keep the experiment on hold for these checks and Task 2 implementation; request distinct live trial authorisation before any Send.
+The actual Chat Succession Project browser URL, the applicable signed-in Windows Chrome profile and the availability of Git/Remote Desktop tools **inside a new Project conversation** have not been verified. The owner already confirmed the Project exists; that alone does not prove these launch inputs. Since this assignment expressly prohibits creating successor chats, no live tool/Project test was attempted. Keep the experiment on hold for those checks and Task 2's **live UIA verification**, which has not occurred. A separately authorised bounded live trial is needed before any Send.
 
-All historical planning claims remain scoped to the original proposal; current evidence is in the new Task 1 files, not an assertion that an automatic chain has worked. No production code, browser session, draft, NVIDIA or Second Chat OCR repository was changed.
+All historical planning claims remain scoped to the original proposal; current evidence is in the new Task 1 files, not an assertion that an automatic chain has worked. No browser session, draft, NVIDIA or Second Chat OCR repository was changed; the only code changes are isolated to this exploration branch and private offline staging.
 
 ## Planning baseline — 17 November 2026 (preserved context)
 
