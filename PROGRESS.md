@@ -22,6 +22,7 @@
 
 ### Task 2 additional verified offline work
 
+- **Task 2 source/evidence commit:** `44b54a09933fbc2a9f9e1e93ccd9c071fe11a6b6` on `work/task1-contract-preflight-20261117`. Push returned success; `git ls-remote` and a fresh Ubuntu fetch returned this exact SHA. `git diff --exit-code HEAD origin/work/task1-contract-preflight-20261117` returned no differences, and remote pinned reads of `launcher/journal.py`, `launcher/launch.ps1` and `docs/TASK2_OFFLINE_RECEIPT.md` all succeeded. Windows staged source-copy SHA-256 comparisons for both launcher and journal matched the Ubuntu source. No browser Send occurred.
 - Added `launcher/journal.py`: unique durable reservations for steps 2/3, `effect_unknown` and other terminal records, explicit local initialisation, refusal after any prior reservation, no automatic retry or reset.
 - Added `launcher/launch.ps1` with a **non-sending default** and explicit `-ExecuteSend` gate. Its designed live path validates the pinned Git packet, reserves a launch before browser effects, discovers a new Chrome Project window/editor, preserves occupied drafts, requires exact prompt readback and records positive message/URL evidence or an uncertain held state. **No live UIA execution has been attempted.**
 - Wrote failing-first journal tests and two additional validator negative tests that caught real scope/admission gaps. Final Ubuntu suite `python3 -m unittest discover -s tests -q`: **37 tests passed**.
