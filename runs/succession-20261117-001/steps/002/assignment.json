@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "run_id": "succession-20261117-001",
+  "step": 2,
+  "role": "reviewer",
+  "task_id": "toy-independent-review",
+  "predecessor_result_commit": "73eec3791fd5ae984db95bf7aeb9f8077ed6e18c",
+  "terminal": false,
+  "allowed_paths": [
+    "runs/succession-20261117-001/steps/002/review.json",
+    "runs/succession-20261117-001/steps/002/result.json"
+  ],
+  "required_output_paths": [
+    "runs/succession-20261117-001/steps/002/review.json",
+    "runs/succession-20261117-001/steps/002/result.json"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "run_id": "succession-20261117-001",
+  "step": 1,
+  "result_commit": "73eec3791fd5ae984db95bf7aeb9f8077ed6e18c",
+  "next_step": 2,
+  "next_assignment_path": "runs/succession-20261117-001/steps/002/assignment.json",
+  "terminal": false
+}
