@@ -9,7 +9,8 @@ param(
  [ValidateSet('CONTINUE_CURRENT','LAUNCH_SUCCESSOR')][string]$Kind = 'CONTINUE_CURRENT',
  [long]$WindowHandle = 0,
  [string]$Message = '',
- [string]$ChromeExe = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+ [string]$ChromeExe = 'C:\Program Files\Google\Chrome\Application\chrome.exe',
+ [switch]$AlreadyTyped
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -132,7 +133,7 @@ function Safe-ClipboardEditorRead($window,$editor) {
   if(-not [AstraFocus]::SetForegroundWindow($hwnd)){throw 'Could not focus nominated window'}
   $editor.SetFocus()
   Start-Sleep -Milliseconds 150
-  if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Foreground focus changed before clipboard probe'}
+  if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw ('Foreground focus changed before clipboard probe; target=' + $hwnd + ', actual=' + [AstraFocus]::GetForegroundWindow())}
   [System.Windows.Forms.SendKeys]::SendWait('^a')
   [System.Windows.Forms.SendKeys]::SendWait('^c')
   Start-Sleep -Milliseconds 150
@@ -274,14 +275,34 @@ if($Mode -eq 'Send') {
  $editorName=if($Kind -eq 'CONTINUE_CURRENT'){'Ask ChatGPT'}else{'New chat in ' + $ProjectName}
  $editor=Find-Composer $target.window $editorName
  if(-not (Check-NoAttachments $target.window)){throw 'Attachment exists; hold before typing'}
- if((Safe-ClipboardEditorRead $target.window $editor) -cne ''){throw 'Draft exists; hold before typing'}
+ $actual=Safe-ClipboardEditorRead $target.window $editor
+ if($AlreadyTyped){
+  # Explicit manual recovery only after positive evidence of no prior click.
+  # This mode is NEVER used by the automatic Windows backend.
+  if($actual -cne $Message){throw 'Pretyped draft does not exactly match expected message'}
+ }elseif($actual -cne ''){
+  throw 'Draft exists; hold before typing'
+ }
  $hwnd=[IntPtr]$target.window.Current.NativeWindowHandle
  if(-not [AstraFocus]::SetForegroundWindow($hwnd)){throw 'Focus failed before typing'}
  $editor.SetFocus()
  if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Incorrect foreground before typing'}
- [System.Windows.Forms.SendKeys]::SendWait($Message)
- $typed=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
- if($typed.TrimEnd([char]13,[char]10) -cne $Message){throw 'Exact typed prompt readback failed; do not Send'}
+ if($AlreadyTyped){
+  # Selection/copy leaves the existing draft selected; collapse selection
+  # without editing the authorised pretyped message.
+  [System.Windows.Forms.SendKeys]::SendWait('{END}')
+ }else{
+  [System.Windows.Forms.SendKeys]::SendWait($Message)
+ }
+ $typed=''
+ for($i=0;$i -lt 25;$i++){
+  Start-Sleep -Milliseconds 100
+  $typed=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+  if($typed.TrimEnd([char]13,[char]10) -ceq $Message){break}
+ }
+ if($typed.TrimEnd([char]13,[char]10) -cne $Message){
+  throw ('Exact typed prompt readback failed; observed_len=' + $typed.Length + ', expected_len=' + $Message.Length + '; do not Send')
+ }
  $sendButtons=@()
  foreach($el in (Desc $target.window)){
   try{if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
