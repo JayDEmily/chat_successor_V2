@@ -1,6 +1,6 @@
 # Progress
 
-## Astra L01 disposable live fixture ? Worker slice 1 (18 November 2026)
+## Astra L01 disposable live fixture - Worker slice 1 (18 November 2026)
 
 - **Scope:** succession-tests/astra-l01-20261118 on trial/astra-l01-20261118. Separate from the implementation Worker and historical three-chat experiment.
 - **Observed saved Project conversation:** 6afce548-81d4-83ec-8f96-ac1cbca99b31, read from Chrome's active Chat succession folder conversation address bar and matching page link via Windows UI Automation; not inferred from a prior chat.
