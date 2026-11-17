@@ -13,6 +13,13 @@
 - **L01 fixture setup:** generated and locally verified `succession-tests/astra-l01-20261118-a` on `work/astra-succession-implementation-20261118`. This is the active two-slice **test-only** workload; its `INSTRUCTIONS.md`, `RUN.json`, `STATE.json` and `RESULTS.json` are the worker's next task. Do not use `simulate-slice` as evidence of live worker work. Cap for L01: 3 distinct saved chats.
 - **Next action:** Verify the published fixture from the remote branch, then initialise the controller only after observing a fresh first worker ID in the nominated Project. Validate the completed-turn and Send readback seam before treating L01 as live. Keep the six Astra deliverables unchanged; preserve uncertain outcomes.
 
+## L01 first live fixture worker - 18 November 2026
+
+- **Assigned scope:** fixture slice 1 only, on `work/astra-succession-implementation-20261118`, initial remote revision `96fc3927b70fe765f545b21937e076e9225f062b`. Existing working copies and controller remain untouched.
+- **Worker provenance:** Chat Succession browser tab titled `Complete Fixture Slice 1`; saved conversation URL ID `6afce427-98c4-83ec-b3e7-a05c19f0806f` observed in permitted tab metadata. Page-content observation was not available and is not claimed.
+- **Result:** category trimming/lowercasing gives alpha count=2 total=34, beta count=2 total=31, gamma count=2 total=11. Updated `RESULTS.json` and `STATE.json`; no mock slice executed.
+- **Next action:** Process fixture slice 2 of 2 from fresh published repository state. `programme_complete=false`; the external controller alone handles any successor launch.
+
 ## Astra execution handoff — 18 November 2026
 
 - Source branch `evidence/astra-source-import-20261118`, import commit `44c0d5948318e305c42fb0ac4f463e77f90531bc`. The [execution plan](docs/astra-succession/README.md) organizes Astra's existing cases and integration work into seven leaves with gates G0–G5.
