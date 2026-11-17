@@ -13,6 +13,7 @@
 
 ### Verified Task 1 steps
 
+- **Published engineering/evidence source commit:** `3e3cb219660d53a1abceae927085471baea89f24` on `work/task1-contract-preflight-20261117`. GitHub push returned success; `git ls-remote` returned the identical full SHA; a fresh Ubuntu `git fetch`, `git diff --exit-code HEAD origin/work/task1-contract-preflight-20261117` and pinned remote `git show` reads of `protocol/README.md` and `docs/TASK1_SETUP_RECEIPT.md` all succeeded. This proves publication/readback, **not** live chat delivery.
 - Reviewed `AGENTS.md`, `README.md`, `PROGRESS.md`, linked design/plan, `docs/PROVENANCE.md` and draft Project instructions. Kept this repository separate from other programmes.
 - Remote Desktop Commander device `DESKTOP-I188O30` online; Ubuntu WSL is running as `jds`. Cloned `JayDEmily/chat_successor` into `/home/jds/chat_successor`; main source HEAD at clone `26b33e8991119f9886b23f0c01651c3f49435706`. Private Git read access through Ubuntu verified.
 - Set up isolated Task 1 branch. Wrote contract/illustrative packets in `protocol/`, validator `tools/validate_packet.py` and disposable Git fixture tests in `tests/test_protocol.py`. Failing-first run reported missing validator; subsequent `python3 -m unittest discover -s tests -v` passed **16/16**.
