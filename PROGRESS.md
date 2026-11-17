@@ -1,6 +1,13 @@
 # Progress
 
-## Current handoff — 17 November 2026
+## Astra execution handoff — 18 November 2026
+
+- Source branch `evidence/astra-source-import-20261118`, import commit `44c0d5948318e305c42fb0ac4f463e77f90531bc`. The [execution plan](docs/superpowers/plans/2026-11-18-astra-succession-execution.md) defines seven implementation and test leaves with gates G0–G5.
+- G0 reference baseline: Astra recorded 119/119 offline passes. The [independent Ubuntu rerun](https://github.com/JayDEmily/chat_successor/blob/14478119c9b4cc9288bb66b846975bd71b43d06c/AGENTS.md#local-checks) also recorded 119/119. A fresh run on Windows Python 3.13 using `python -X utf8 run_offline.py --out <temporary-report-dir>` from the kit root passed 119/119 with zero skips, failures or errors. Without UTF-8 mode the default Windows-1252 decoder failed loading the parser fixture.
+- G1–G5 await execution. Astra live cases L01–L15 remain `NOT_RUN`. The [older trial](https://github.com/JayDEmily/chat_successor/blob/3b2c95b954eb90b1e6c9b82403dd1956c6f34b39/evidence/succession-20261117-001/CHAT2_LAUNCH_BLOCKED.md) is separate historical evidence and remains held.
+- Next action for the implementation chat is [Leaf 01 — Adopt the offline controller](docs/superpowers/plans/astra-succession/01-controller.md) on the assigned implementation branch.
+
+## Original exploration handoff — 17 November 2026
 
 - Repository: owner-created private `JayDEmily/chat_successor`; original initial commit retained. Planning publication prepared; remote verification is reported after pushing.
 - User-created ChatGPT Project: confirmed by owner statement and screenshot; exact URL/profile/tools not yet checked.

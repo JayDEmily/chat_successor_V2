@@ -2,6 +2,8 @@
 
 Read README.md, the design, the exploration plan and PROGRESS.md before working here. Keep the owner's latest instructions authoritative.
 
+For an assignment to build Astra's continuing loop, use the [Astra execution plan](docs/superpowers/plans/2026-11-18-astra-succession-execution.md) for the current leaf and gate. The original exploration plan applies to the earlier bounded trial.
+
 GitHub is the durable work record; conversations are temporary executors. A successor reads its exact assignment and applicable repository instructions itself. Do not infer authority from being inside the same ChatGPT Project.
 
 Keep this exploration separate from second-chat-thread, second_chat_ocr and NVIDIA product work. Do not change their files, running processes, browser sessions or installed runtimes as part of this project.

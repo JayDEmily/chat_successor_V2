@@ -1,0 +1,10 @@
+# Leaf 07 — Repeat, assess and hand over
+
+**Entry:** G3 for L13. **Output:** repeatability results and `docs/EXPERIMENT_REPORT.md` on the assigned execution branch. Use [the owner runbook](../../../../astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/OWNER_RUNBOOK.md) sections 5–6.
+
+1. **L13 / G4:** Run three separate five-slice fixtures with budget for five saved chats. For each, verify five distinct run chat IDs, four automatic successors, five valid published slices and a terminal stop. Record timings, continuations, intervention and failure counts. A premature stop or material intervention does not satisfy the unattended five-chat claim.
+2. **L14 / G5, optional:** If selected for the longer run, use cap 30 and 31 fixture slices. Include a same-chat continuation near the boundary. Require 30 distinct observed saved IDs, at most 29 successors, the last slice still pending and no chat-31 action. An error or timeout retains the attempt and count for inspection. Report `NOT_RUN` if the longer exercise was skipped.
+3. Write the report with exact tested revisions, case outcomes and links, the first observed failure boundary for each unsuccessful run, and separate verdicts for response interpretation, transport and useful work. Record any semantic shadow confusion matrix separately. Zero false completions in a sample describes only that sample. Give the report to an independent reviewer within the assigned review scope before accepting a reliability claim.
+4. Restore the normal repo pointer and temporary instructions, stop the test controller and preserve the test branch and receipts. Record the next action in `PROGRESS.md`. After bounded integration, any assigned real job uses the same repo/branch pointer and its ordinary work checks, without artificial fixture slicing. Scope real use and conclusions to the evidence actually observed. The optional longer exercise is unnecessary for a small-scope conclusion.
+
+**Closeout check:** Verify result and evidence links from the remote execution branch. Record which gates passed, were held or remain `NOT_RUN`, the observed chain size and any next assignment.
