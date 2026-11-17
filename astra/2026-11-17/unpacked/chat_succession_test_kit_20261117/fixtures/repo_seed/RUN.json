@@ -1,0 +1,127 @@
+{
+  "fixture_version": 1,
+  "purpose": "Synthetic repo-only continuity workload, not a production work-slice limit",
+  "run_id": "offline-seed-example",
+  "steps": [
+    {
+      "probe_nonce": "fixture-625909923fb81d27",
+      "rows": [
+        {
+          "category": "BETA",
+          "value": 17
+        },
+        {
+          "category": " beta ",
+          "value": 14
+        },
+        {
+          "category": " Alpha ",
+          "value": 24
+        },
+        {
+          "category": "alpha",
+          "value": 10
+        },
+        {
+          "category": "Gamma",
+          "value": 9
+        },
+        {
+          "category": " gamma ",
+          "value": 2
+        }
+      ],
+      "step": 1
+    },
+    {
+      "probe_nonce": "fixture-b4a02517e1ff83ab",
+      "rows": [
+        {
+          "category": " beta ",
+          "value": 11
+        },
+        {
+          "category": "alpha",
+          "value": 23
+        },
+        {
+          "category": " gamma ",
+          "value": -1
+        },
+        {
+          "category": "BETA",
+          "value": 7
+        },
+        {
+          "category": " Alpha ",
+          "value": 17
+        },
+        {
+          "category": "Gamma",
+          "value": 16
+        }
+      ],
+      "step": 2
+    },
+    {
+      "probe_nonce": "fixture-f09529af81dda9da",
+      "rows": [
+        {
+          "category": " beta ",
+          "value": 12
+        },
+        {
+          "category": "Gamma",
+          "value": 25
+        },
+        {
+          "category": "BETA",
+          "value": 26
+        },
+        {
+          "category": "alpha",
+          "value": 4
+        },
+        {
+          "category": " Alpha ",
+          "value": 25
+        },
+        {
+          "category": " gamma ",
+          "value": -2
+        }
+      ],
+      "step": 3
+    },
+    {
+      "probe_nonce": "fixture-c0855ac9e599e358",
+      "rows": [
+        {
+          "category": "BETA",
+          "value": 29
+        },
+        {
+          "category": " gamma ",
+          "value": 12
+        },
+        {
+          "category": "Gamma",
+          "value": 23
+        },
+        {
+          "category": "alpha",
+          "value": 0
+        },
+        {
+          "category": " beta ",
+          "value": 17
+        },
+        {
+          "category": " Alpha ",
+          "value": 21
+        }
+      ],
+      "step": 4
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+test_id,title,planned_runs,environment,outcome,run_id,observed_at_utc,actual_unique_chats,actual_successor_launches,actual_continuations,work_verified,evidence_path,notes
+L01,Single successor integration and finish,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L02,Two same-chat continuations then handover,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L03,ERROR and owner recovery,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L04,Early overall programme completion,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L05,Small cap boundary with work remaining,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L06,Repository-only new probe and cold pickup,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L07,Placeholder and real draft regression,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L08,Active Project routing and nonempty Project,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L09,Uncertain Send and restart reconciliation,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L10,Streaming ambiguous and semantic-shadow statuses,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L11,Publication or tool-access failure,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L12,Silence session loss and owner pause,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L13,Repeated five-chat unattended runs,3,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L14,Optional 30-chat cap with 31 work slices,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job
+L15,Incorrect work or stale/corrupt repo state,1,OWNER_AUTHENTICATED_ENVIRONMENT_REQUIRED,NOT_RUN,,,,,,,,Not executed in this API job

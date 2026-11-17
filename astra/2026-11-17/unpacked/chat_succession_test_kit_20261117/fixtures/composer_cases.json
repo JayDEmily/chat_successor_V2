@@ -1,0 +1,83 @@
+[
+  {
+    "id": "D01",
+    "observation": {
+      "editable_text": "",
+      "uia_value": "New chat in Chat succession folder\n",
+      "placeholder": "New chat in Chat succession folder",
+      "placeholder_visible": true
+    },
+    "expected": "EMPTY"
+  },
+  {
+    "id": "D02",
+    "observation": {
+      "editable_text": "Preserve my draft",
+      "uia_value": "Preserve my draft"
+    },
+    "expected": "DRAFT"
+  },
+  {
+    "id": "D03",
+    "observation": {
+      "editable_text": "New chat in Chat succession folder",
+      "uia_value": "New chat in Chat succession folder",
+      "placeholder": "New chat in Chat succession folder"
+    },
+    "expected": "DRAFT"
+  },
+  {
+    "id": "D04",
+    "observation": {
+      "uia_value": "New chat in Chat succession folder\n",
+      "placeholder": "New chat in Chat succession folder"
+    },
+    "expected": "UNKNOWN"
+  },
+  {
+    "id": "D05",
+    "observation": {
+      "editable_text": "",
+      "attachments_present": true
+    },
+    "expected": "DRAFT"
+  },
+  {
+    "id": "D06",
+    "observation": {
+      "editable_text": null,
+      "uia_value": ""
+    },
+    "expected": "UNKNOWN"
+  },
+  {
+    "id": "D07",
+    "observation": {
+      "editable_text": " "
+    },
+    "expected": "DRAFT"
+  },
+  {
+    "id": "D08",
+    "observation": {
+      "editable_text": "\n"
+    },
+    "expected": "DRAFT"
+  },
+  {
+    "id": "D09",
+    "observation": {
+      "editable_text": "",
+      "uia_value": ""
+    },
+    "expected": "EMPTY"
+  },
+  {
+    "id": "D10",
+    "observation": {
+      "editable_text": "",
+      "attachments_present": null
+    },
+    "expected": "UNKNOWN"
+  }
+]

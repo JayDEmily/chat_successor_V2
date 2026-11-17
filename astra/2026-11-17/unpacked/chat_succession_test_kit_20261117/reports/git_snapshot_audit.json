@@ -1,0 +1,92 @@
+{
+  "mode": "READ_ONLY_LOCAL_GIT_AUDIT",
+  "commands": {
+    "fsck": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "log": {
+      "returncode": 0,
+      "stdout": "commit 47d30baadb32be96996da537400fdd3cc0a78430\nAuthor:     Chat Succession Archive <archive@localhost>\nAuthorDate: Tue Nov 17 12:24:48 2026 +0000\nCommit:     Chat Succession Archive <archive@localhost>\nCommitDate: Tue Nov 17 12:24:48 2026 +0000\n\n    Archive original vision technology explanation and selected conversation\n\n README.md                                  |  26 +++++\n docs/ARCHIVE_README.md                     |  13 +++\n docs/CONVERSATION_RECORD.md                |  28 +++++\n docs/LIGHTWEIGHT_PROTOCOL.md               |  88 ++++++++++++++++\n docs/ORIGINAL_VISION.md                    |  43 ++++++++\n docs/PREVIOUS_AGGREGATED_STATEMENT.md      | 110 ++++++++++++++++++++\n docs/SOURCE_INVENTORY.md                   |  25 +++++\n docs/TECHNOLOGY_AND_ORIGINAL_EXPERIMENT.md | 157 +++++++++++++++++++++++++++++\n evidence/UNKNOWN_AND_NOT_FOUND.md          |  28 +++++\n evidence/VERIFIED_FINDINGS.md              |  27 +++++\n 10 files changed, 545 insertions(+)\n",
+      "stderr": ""
+    },
+    "refs": {
+      "returncode": 0,
+      "stdout": "47d30baadb32be96996da537400fdd3cc0a78430 refs/heads/master\n",
+      "stderr": ""
+    },
+    "status": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "tracked": {
+      "returncode": 0,
+      "stdout": "100644 fb392f941894374a4bb7a24bf7b9cd66c54a5efa 0\tREADME.md\n100644 4ebd97705a5bccddfd6696ce783bae43918e1de3 0\tdocs/ARCHIVE_README.md\n100644 665bc0ebe1d1e845fe4bd6cad4223374e4ea6e74 0\tdocs/CONVERSATION_RECORD.md\n100644 1e604b21308435df7f1fd5159530be76638758ac 0\tdocs/LIGHTWEIGHT_PROTOCOL.md\n100644 92a1dd22a8e278c871b643b1473588a0e812c163 0\tdocs/ORIGINAL_VISION.md\n100644 95f4302d90f92a413bf524581698d70a4e60cd99 0\tdocs/PREVIOUS_AGGREGATED_STATEMENT.md\n100644 bf1dce29b55d4189bd91fca88fb79b364adc2bfb 0\tdocs/SOURCE_INVENTORY.md\n100644 628d6bb7bde0c5e84c8f274ad812cf416d5d04db 0\tdocs/TECHNOLOGY_AND_ORIGINAL_EXPERIMENT.md\n100644 3b7b2e6e5fe5d93b118e479ce2adfb1f4fa6db3d 0\tevidence/UNKNOWN_AND_NOT_FOUND.md\n100644 799a06ac507a1b30adf38da0f20054308df3bb58 0\tevidence/VERIFIED_FINDINGS.md\n",
+      "stderr": ""
+    }
+  },
+  "sample_hooks_vs_installed_templates": [
+    {
+      "path": ".git/hooks/applypatch-msg.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/commit-msg.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/fsmonitor-watchman.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/post-update.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/pre-applypatch.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/pre-commit.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/pre-merge-commit.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/pre-push.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/pre-rebase.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/pre-receive.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/prepare-commit-msg.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/push-to-checkout.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/sendemail-validate.sample",
+      "matches_installed_git_sample": true
+    },
+    {
+      "path": ".git/hooks/update.sample",
+      "matches_installed_git_sample": true
+    }
+  ],
+  "notes": [
+    "No archived hook was executed.",
+    "No remote fetch or authentication was attempted."
+  ]
+}

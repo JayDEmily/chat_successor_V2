@@ -1,0 +1,747 @@
+{
+  "mode": "OFFLINE_ARCHIVE_INSPECTION",
+  "archive_sha256": "8f137bdba31465f149b29df39f0e97cd1f764a2746ecdff8bf39c9f976e2100a",
+  "compressed_bytes": 50415,
+  "member_count": 78,
+  "file_count": 47,
+  "directory_count": 31,
+  "uncompressed_file_bytes": 88322,
+  "worktree_documents": [
+    {
+      "path": "chat_succession_vision_and_conversation/README.md",
+      "bytes": 2183,
+      "lines": 26,
+      "sha256": "862cbc0a572d565e63bf071c374f06da62bc6f9ded9ff02ccc23dc19ac452d35"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/ARCHIVE_README.md",
+      "bytes": 1070,
+      "lines": 13,
+      "sha256": "3c83562543fc88d734a835e383e35eddfed1ac9c70c4944b05ea6d81c9a92dea"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/CONVERSATION_RECORD.md",
+      "bytes": 4034,
+      "lines": 28,
+      "sha256": "1a033f817d78e2d5fb8d9596a5c430902999a2fa53f97e6ac2b2cc23b56fa38d"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/LIGHTWEIGHT_PROTOCOL.md",
+      "bytes": 4998,
+      "lines": 88,
+      "sha256": "8fe3cabb9b4b6076673336c3e2a9ebbd91d8ef935836b5b9d844366dc1f7611e"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/ORIGINAL_VISION.md",
+      "bytes": 6058,
+      "lines": 43,
+      "sha256": "1b583b3fa6e1fa5010fa8d58fce77e500301fa4bbf454a13df55088e1fdb16af"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/PREVIOUS_AGGREGATED_STATEMENT.md",
+      "bytes": 5315,
+      "lines": 110,
+      "sha256": "9b4ea3cecc79f81578b7b775d778ff2f9f4799e945b275d7c43428cc4449cd0a"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/SOURCE_INVENTORY.md",
+      "bytes": 1774,
+      "lines": 25,
+      "sha256": "43387b49c6ad097c8a5f001311098dda61accaf6ee21b98953df6fb699f5b179"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/TECHNOLOGY_AND_ORIGINAL_EXPERIMENT.md",
+      "bytes": 7753,
+      "lines": 157,
+      "sha256": "6195cc0a04b670f3bfb14f13db90ade6f77729005dad3ce946e5cd289f1ccf8e"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/evidence/UNKNOWN_AND_NOT_FOUND.md",
+      "bytes": 3524,
+      "lines": 28,
+      "sha256": "d37e961b1cc6e9d83885a7792fa397061872609ca1e0f5ee483b4052c14c79d7"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/evidence/VERIFIED_FINDINGS.md",
+      "bytes": 3429,
+      "lines": 27,
+      "sha256": "c5d108e68e3016751b549063fdc43c3b6dd43c7004400e823b77558471288132"
+    }
+  ],
+  "git_objects": [
+    {
+      "oid": "1e604b21308435df7f1fd5159530be76638758ac",
+      "kind": "blob",
+      "size": 4998,
+      "object_verified": true,
+      "matches_worktree": [
+        "chat_succession_vision_and_conversation/docs/LIGHTWEIGHT_PROTOCOL.md"
+      ]
+    },
+    {
+      "oid": "2a716e88af12659e70a555190b8fefdf00f20072",
+      "kind": "tree",
+      "size": 364,
+      "object_verified": true,
+      "entries": [
+        {
+          "mode": "100644",
+          "name": "ARCHIVE_README.md",
+          "oid": "4ebd97705a5bccddfd6696ce783bae43918e1de3"
+        },
+        {
+          "mode": "100644",
+          "name": "CONVERSATION_RECORD.md",
+          "oid": "665bc0ebe1d1e845fe4bd6cad4223374e4ea6e74"
+        },
+        {
+          "mode": "100644",
+          "name": "LIGHTWEIGHT_PROTOCOL.md",
+          "oid": "1e604b21308435df7f1fd5159530be76638758ac"
+        },
+        {
+          "mode": "100644",
+          "name": "ORIGINAL_VISION.md",
+          "oid": "92a1dd22a8e278c871b643b1473588a0e812c163"
+        },
+        {
+          "mode": "100644",
+          "name": "PREVIOUS_AGGREGATED_STATEMENT.md",
+          "oid": "95f4302d90f92a413bf524581698d70a4e60cd99"
+        },
+        {
+          "mode": "100644",
+          "name": "SOURCE_INVENTORY.md",
+          "oid": "bf1dce29b55d4189bd91fca88fb79b364adc2bfb"
+        },
+        {
+          "mode": "100644",
+          "name": "TECHNOLOGY_AND_ORIGINAL_EXPERIMENT.md",
+          "oid": "628d6bb7bde0c5e84c8f274ad812cf416d5d04db"
+        }
+      ]
+    },
+    {
+      "oid": "3b7b2e6e5fe5d93b118e479ce2adfb1f4fa6db3d",
+      "kind": "blob",
+      "size": 3524,
+      "object_verified": true,
+      "matches_worktree": [
+        "chat_succession_vision_and_conversation/evidence/UNKNOWN_AND_NOT_FOUND.md"
+      ]
+    },
+    {
+      "oid": "47d30baadb32be96996da537400fdd3cc0a78430",
+      "kind": "commit",
+      "size": 259,
+      "object_verified": true,
+      "text": "tree d17414a06791d2184d2eeb1d3df2ecf5612fea05\nauthor Chat Succession Archive <archive@localhost> 1794918288 +0000\ncommitter Chat Succession Archive <archive@localhost> 1794918288 +0000\n\nArchive original vision technology explanation and selected conversation\n"
+    },
+    {
+      "oid": "4ebd97705a5bccddfd6696ce783bae43918e1de3",
+      "kind": "blob",
+      "size": 1070,
+      "object_verified": true,
+      "matches_worktree": [
+        "chat_succession_vision_and_conversation/docs/ARCHIVE_README.md"
+      ]
+    },
+    {
+      "oid": "628d6bb7bde0c5e84c8f274ad812cf416d5d04db",
+      "kind": "blob",
+      "size": 7753,
+      "object_verified": true,
+      "matches_worktree": [
+        "chat_succession_vision_and_conversation/docs/TECHNOLOGY_AND_ORIGINAL_EXPERIMENT.md"
+      ]
+    },
+    {
+      "oid": "665bc0ebe1d1e845fe4bd6cad4223374e4ea6e74",
+      "kind": "blob",
+      "size": 4034,
+      "object_verified": true,
+      "matches_worktree": [
+        "chat_succession_vision_and_conversation/docs/CONVERSATION_RECORD.md"
+      ]
+    },
+    {
+      "oid": "799a06ac507a1b30adf38da0f20054308df3bb58",
+      "kind": "blob",
+      "size": 3429,
+      "object_verified": true,
+      "matches_worktree": [
+        "chat_succession_vision_and_conversation/evidence/VERIFIED_FINDINGS.md"
+      ]
+    },
+    {
+      "oid": "92a1dd22a8e278c871b643b1473588a0e812c163",
+      "kind": "blob",
+      "size": 6058,
+      "object_verified": true,
+      "matches_worktree": [
+        "chat_succession_vision_and_conversation/docs/ORIGINAL_VISION.md"
+      ]
+    },
+    {
+      "oid": "95f4302d90f92a413bf524581698d70a4e60cd99",
+      "kind": "blob",
+      "size": 5315,
+      "object_verified": true,
+      "matches_worktree": [
+        "chat_succession_vision_and_conversation/docs/PREVIOUS_AGGREGATED_STATEMENT.md"
+      ]
+    },
+    {
+      "oid": "a74d84d6b7811a181e8cabc761a5bea151f63f17",
+      "kind": "tree",
+      "size": 100,
+      "object_verified": true,
+      "entries": [
+        {
+          "mode": "100644",
+          "name": "UNKNOWN_AND_NOT_FOUND.md",
+          "oid": "3b7b2e6e5fe5d93b118e479ce2adfb1f4fa6db3d"
+        },
+        {
+          "mode": "100644",
+          "name": "VERIFIED_FINDINGS.md",
+          "oid": "799a06ac507a1b30adf38da0f20054308df3bb58"
+        }
+      ]
+    },
+    {
+      "oid": "bf1dce29b55d4189bd91fca88fb79b364adc2bfb",
+      "kind": "blob",
+      "size": 1774,
+      "object_verified": true,
+      "matches_worktree": [
+        "chat_succession_vision_and_conversation/docs/SOURCE_INVENTORY.md"
+      ]
+    },
+    {
+      "oid": "d17414a06791d2184d2eeb1d3df2ecf5612fea05",
+      "kind": "tree",
+      "size": 103,
+      "object_verified": true,
+      "entries": [
+        {
+          "mode": "100644",
+          "name": "README.md",
+          "oid": "fb392f941894374a4bb7a24bf7b9cd66c54a5efa"
+        },
+        {
+          "mode": "40000",
+          "name": "docs",
+          "oid": "2a716e88af12659e70a555190b8fefdf00f20072"
+        },
+        {
+          "mode": "40000",
+          "name": "evidence",
+          "oid": "a74d84d6b7811a181e8cabc761a5bea151f63f17"
+        }
+      ]
+    },
+    {
+      "oid": "fb392f941894374a4bb7a24bf7b9cd66c54a5efa",
+      "kind": "blob",
+      "size": 2183,
+      "object_verified": true,
+      "matches_worktree": [
+        "chat_succession_vision_and_conversation/README.md"
+      ]
+    }
+  ],
+  "git_metadata": {
+    "COMMIT_EDITMSG": "Archive original vision technology explanation and selected conversation\n",
+    "HEAD": "ref: refs/heads/master\n",
+    "config": "[core]\n\trepositoryformatversion = 0\n\tfilemode = true\n\tbare = false\n\tlogallrefupdates = true\n[user]\n\tname = Chat Succession Archive\n\temail = archive@localhost\n",
+    "description": "Unnamed repository; edit this file 'description' to name the repository.\n",
+    "index": {
+      "signature": "DIRC",
+      "version": 2,
+      "entries": 10,
+      "checksum_valid": true
+    },
+    "info/exclude": "# git ls-files --others --exclude-from=.git/info/exclude\n# Lines that start with '#' are comments.\n# For a project mostly in C, the following would be a good set of\n# exclude patterns (uncomment them if you want to use them):\n# *.[oa]\n# *~\n",
+    "logs/HEAD": "0000000000000000000000000000000000000000 47d30baadb32be96996da537400fdd3cc0a78430 Chat Succession Archive <archive@localhost> 1794918288 +0000\tcommit (initial): Archive original vision technology explanation and selected conversation\n",
+    "logs/refs/heads/master": "0000000000000000000000000000000000000000 47d30baadb32be96996da537400fdd3cc0a78430 Chat Succession Archive <archive@localhost> 1794918288 +0000\tcommit (initial): Archive original vision technology explanation and selected conversation\n",
+    "refs/heads/master": "47d30baadb32be96996da537400fdd3cc0a78430\n"
+  },
+  "sample_hook_count": 14,
+  "source_snapshots_file_count": 0,
+  "inventory": [
+    {
+      "path": "chat_succession_vision_and_conversation",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/COMMIT_EDITMSG",
+      "type": "file",
+      "size": 73,
+      "sha256": "1181cd97baa3bdeaee621328cbf16ea0d5543292a4d6d3a789b3e620cee96a5d"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/HEAD",
+      "type": "file",
+      "size": 23,
+      "sha256": "f6f2b945f6c411b02ba3da9c7ace88dcf71b6af65ba2e0d89aa82900042b5a10"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/branches",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/config",
+      "type": "file",
+      "size": 158,
+      "sha256": "dce44fe20068082c11baa839084683777e79a2c3ab7c43ddb6e946556951801c"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/description",
+      "type": "file",
+      "size": 73,
+      "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/applypatch-msg.sample",
+      "type": "file",
+      "size": 478,
+      "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/commit-msg.sample",
+      "type": "file",
+      "size": 896,
+      "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/fsmonitor-watchman.sample",
+      "type": "file",
+      "size": 4726,
+      "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/post-update.sample",
+      "type": "file",
+      "size": 189,
+      "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/pre-applypatch.sample",
+      "type": "file",
+      "size": 424,
+      "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/pre-commit.sample",
+      "type": "file",
+      "size": 1649,
+      "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/pre-merge-commit.sample",
+      "type": "file",
+      "size": 416,
+      "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/pre-push.sample",
+      "type": "file",
+      "size": 1374,
+      "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/pre-rebase.sample",
+      "type": "file",
+      "size": 4898,
+      "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/pre-receive.sample",
+      "type": "file",
+      "size": 544,
+      "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/prepare-commit-msg.sample",
+      "type": "file",
+      "size": 1492,
+      "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/push-to-checkout.sample",
+      "type": "file",
+      "size": 2783,
+      "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/sendemail-validate.sample",
+      "type": "file",
+      "size": 2308,
+      "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/hooks/update.sample",
+      "type": "file",
+      "size": 3650,
+      "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/index",
+      "type": "file",
+      "size": 1064,
+      "sha256": "bbc17ce83788116946e42d7c86ee0f610a2ffa66b359d86a6cbdec22d59b8d51"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/info",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/info/exclude",
+      "type": "file",
+      "size": 240,
+      "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/logs",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/logs/HEAD",
+      "type": "file",
+      "size": 234,
+      "sha256": "81c087f9296b98ec2caa69a00c9d9154d6c93d3d09df7f5f485983b13a5ddfa3"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/logs/refs",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/logs/refs/heads",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/logs/refs/heads/master",
+      "type": "file",
+      "size": 234,
+      "sha256": "81c087f9296b98ec2caa69a00c9d9154d6c93d3d09df7f5f485983b13a5ddfa3"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/1e",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/1e/604b21308435df7f1fd5159530be76638758ac",
+      "type": "file",
+      "size": 2455,
+      "sha256": "bb12d3a50cff709a9fda003db1522defbbc71ef2e88956e64df70610d63858d0"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/2a",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/2a/716e88af12659e70a555190b8fefdf00f20072",
+      "type": "file",
+      "size": 330,
+      "sha256": "8efc3e2268b7f86f211bffdf3aee6f94154dace181c2353e19c9c0c62d9a567a"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/3b",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/3b/7b2e6e5fe5d93b118e479ce2adfb1f4fa6db3d",
+      "type": "file",
+      "size": 1881,
+      "sha256": "026e7646192400c2d70434daba126fe335fe5493833fdf02da4e82009db23a4d"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/47",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/47/d30baadb32be96996da537400fdd3cc0a78430",
+      "type": "file",
+      "size": 170,
+      "sha256": "0ffc172a3d42e9640c42fa256e82f626ba62acf47b42426b6ec9e328d026ee3b"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/4e",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/4e/bd97705a5bccddfd6696ce783bae43918e1de3",
+      "type": "file",
+      "size": 651,
+      "sha256": "62c85019048dcb6897925493d494ef2d9eb63e67f0f8107d86d1b0ac213a882d"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/62",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/62/8d6bb7bde0c5e84c8f274ad812cf416d5d04db",
+      "type": "file",
+      "size": 3308,
+      "sha256": "2a981164fc44fcd56b923a6d67b34db23211b04e68675fe7b0a2128ca2d3bbb0"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/66",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/66/5bc0ebe1d1e845fe4bd6cad4223374e4ea6e74",
+      "type": "file",
+      "size": 1932,
+      "sha256": "9e7cb707d7a865b9e06488a12a89f3aed05a9add5c1feccab99c5877af78e994"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/79",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/79/9a06ac507a1b30adf38da0f20054308df3bb58",
+      "type": "file",
+      "size": 1748,
+      "sha256": "b8a6e73a7229349a09e2bdad295467cbd798acc7dcb754ba260bff2dbe874d95"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/92",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/92/a1dd22a8e278c871b643b1473588a0e812c163",
+      "type": "file",
+      "size": 2914,
+      "sha256": "862aba8077d1b7aa85df87802c203043742b29c36b3f87168749b5b7a716ca3b"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/95",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/95/f4302d90f92a413bf524581698d70a4e60cd99",
+      "type": "file",
+      "size": 2341,
+      "sha256": "ac6846d7c1ff8e6bd4b67088994f28508d1f5f039a86f417db05595eebf2de78"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/a7",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/a7/4d84d6b7811a181e8cabc761a5bea151f63f17",
+      "type": "file",
+      "size": 110,
+      "sha256": "42215b02bfba26d9f85afd02053b4a0bddf170ccc1814f72b681581f4e1a5750"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/bf",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/bf/1dce29b55d4189bd91fca88fb79b364adc2bfb",
+      "type": "file",
+      "size": 1056,
+      "sha256": "39f53da7f8ba0319dc94299d32e1518be8c421e8645e66aca4ddaf0d31ed096a"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/d1",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/d1/7414a06791d2184d2eeb1d3df2ecf5612fea05",
+      "type": "file",
+      "size": 117,
+      "sha256": "4a1fb35608c90a340bfea1601087dc8370b6c679117f1a830b1110fb13b8c3c3"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/fb",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/fb/392f941894374a4bb7a24bf7b9cd66c54a5efa",
+      "type": "file",
+      "size": 1204,
+      "sha256": "80811dddadcd23f18941cf077b7aaa9e2808cb0b06f3fb9e6b2618cac83371e0"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/info",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/objects/pack",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/refs",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/refs/heads",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/refs/heads/master",
+      "type": "file",
+      "size": 41,
+      "sha256": "fdeb2a651f31ef7a4563fe975866a639d6ae89137783dc80efb94087937a5fe1"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/.git/refs/tags",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/README.md",
+      "type": "file",
+      "size": 2183,
+      "sha256": "862cbc0a572d565e63bf071c374f06da62bc6f9ded9ff02ccc23dc19ac452d35"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/ARCHIVE_README.md",
+      "type": "file",
+      "size": 1070,
+      "sha256": "3c83562543fc88d734a835e383e35eddfed1ac9c70c4944b05ea6d81c9a92dea"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/CONVERSATION_RECORD.md",
+      "type": "file",
+      "size": 4034,
+      "sha256": "1a033f817d78e2d5fb8d9596a5c430902999a2fa53f97e6ac2b2cc23b56fa38d"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/LIGHTWEIGHT_PROTOCOL.md",
+      "type": "file",
+      "size": 4998,
+      "sha256": "8fe3cabb9b4b6076673336c3e2a9ebbd91d8ef935836b5b9d844366dc1f7611e"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/ORIGINAL_VISION.md",
+      "type": "file",
+      "size": 6058,
+      "sha256": "1b583b3fa6e1fa5010fa8d58fce77e500301fa4bbf454a13df55088e1fdb16af"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/PREVIOUS_AGGREGATED_STATEMENT.md",
+      "type": "file",
+      "size": 5315,
+      "sha256": "9b4ea3cecc79f81578b7b775d778ff2f9f4799e945b275d7c43428cc4449cd0a"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/SOURCE_INVENTORY.md",
+      "type": "file",
+      "size": 1774,
+      "sha256": "43387b49c6ad097c8a5f001311098dda61accaf6ee21b98953df6fb699f5b179"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/docs/TECHNOLOGY_AND_ORIGINAL_EXPERIMENT.md",
+      "type": "file",
+      "size": 7753,
+      "sha256": "6195cc0a04b670f3bfb14f13db90ade6f77729005dad3ce946e5cd289f1ccf8e"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/evidence",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/evidence/UNKNOWN_AND_NOT_FOUND.md",
+      "type": "file",
+      "size": 3524,
+      "sha256": "d37e961b1cc6e9d83885a7792fa397061872609ca1e0f5ee483b4052c14c79d7"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/evidence/VERIFIED_FINDINGS.md",
+      "type": "file",
+      "size": 3429,
+      "sha256": "c5d108e68e3016751b549063fdc43c3b6dd43c7004400e823b77558471288132"
+    },
+    {
+      "path": "chat_succession_vision_and_conversation/source_snapshots",
+      "type": "directory",
+      "size": 0,
+      "sha256": null
+    }
+  ],
+  "limits": [
+    "Content hashes are delivery/audit evidence, not successor-launch requirements.",
+    "Remote branch references in documents are not verified remote objects.",
+    "No archived hook/script was executed; no network call was made."
+  ]
+}

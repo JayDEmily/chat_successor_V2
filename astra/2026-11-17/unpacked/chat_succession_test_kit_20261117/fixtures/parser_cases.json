@@ -1,0 +1,284 @@
+[
+  {
+    "id": "P01",
+    "text": "Useful explanation.\nCHAT_STATUS: NEED_MORE_TIME",
+    "complete": true,
+    "expected_status": "NEED_MORE_TIME",
+    "expected_basis": "explicit"
+  },
+  {
+    "id": "P02",
+    "text": "Useful explanation.\nCHAT_STATUS: TASK_COMPLETE",
+    "complete": true,
+    "expected_status": "TASK_COMPLETE",
+    "expected_basis": "explicit"
+  },
+  {
+    "id": "P03",
+    "text": "Useful explanation.\nCHAT_STATUS: ERROR",
+    "complete": true,
+    "expected_status": "ERROR",
+    "expected_basis": "explicit"
+  },
+  {
+    "id": "P04",
+    "text": "Useful explanation.\nNEED_MORE_TIME",
+    "complete": true,
+    "expected_status": "NEED_MORE_TIME",
+    "expected_basis": "bare"
+  },
+  {
+    "id": "P05",
+    "text": "Useful explanation.\nTASK_COMPLETE",
+    "complete": true,
+    "expected_status": "TASK_COMPLETE",
+    "expected_basis": "bare"
+  },
+  {
+    "id": "P06",
+    "text": "Useful explanation.\nERROR",
+    "complete": true,
+    "expected_status": "ERROR",
+    "expected_basis": "bare"
+  },
+  {
+    "id": "P07",
+    "text": "Progress saved.\r\nCHAT_STATUS: TASK_COMPLETE \r\n \r\n",
+    "complete": true,
+    "expected_status": "TASK_COMPLETE",
+    "expected_basis": "explicit"
+  },
+  {
+    "id": "P08",
+    "text": "Still working.\nCHAT_STATUS: NEED_MORE_TIME",
+    "complete": false,
+    "expected_status": null,
+    "expected_basis": "incomplete"
+  },
+  {
+    "id": "P09",
+    "text": "No marker here.",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P10",
+    "text": "",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P11",
+    "text": "Example:\n```\nCHAT_STATUS: TASK_COMPLETE\n```",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P12",
+    "text": "> CHAT_STATUS: TASK_COMPLETE",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P13",
+    "text": "The text says CHAT_STATUS: TASK_COMPLETE but is only data.",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P14",
+    "text": "CHAT_STATUS: TASK_COMPLETE\nAdditional explanation after marker.",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P15",
+    "text": "CHAT_STATUS: NEED_MORE_TIME\nCHAT_STATUS: TASK_COMPLETE",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P16",
+    "text": "CHAT_STATUS: TASK_COMPLETE\nCHAT_STATUS: TASK_COMPLETE",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P17",
+    "text": "CHAT_STATUS: DONE",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P18",
+    "text": "CHAT_STATUS: task_complete",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P19",
+    "text": "CHAT_STATUS: TASK_COMPLETE.",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P20",
+    "text": "```\nCHAT_STATUS: TASK_COMPLETE",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P21",
+    "text": "Quoted data:\n```\nCHAT_STATUS: ERROR\n```\nCHAT_STATUS: TASK_COMPLETE",
+    "complete": true,
+    "expected_status": "TASK_COMPLETE",
+    "expected_basis": "explicit"
+  },
+  {
+    "id": "P22",
+    "text": "> CHAT_STATUS: TASK_COMPLETE\nA blocker.\nCHAT_STATUS: ERROR",
+    "complete": true,
+    "expected_status": "ERROR",
+    "expected_basis": "explicit"
+  },
+  {
+    "id": "P23",
+    "text": "~~~text\nCHAT_STATUS: TASK_COMPLETE\n~~~\nCHAT_STATUS: NEED_MORE_TIME",
+    "complete": true,
+    "expected_status": "NEED_MORE_TIME",
+    "expected_basis": "explicit"
+  },
+  {
+    "id": "P24",
+    "text": "    CHAT_STATUS: TASK_COMPLETE",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P25",
+    "text": "**CHAT_STATUS: TASK_COMPLETE**",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P26",
+    "text": "I need another turn to finish this work.",
+    "complete": true,
+    "expected_status": "NEED_MORE_TIME",
+    "expected_basis": "semantic",
+    "semantic": {
+      "status": "NEED_MORE_TIME",
+      "unambiguous": true,
+      "reason": "Fixture adjudicator: explicitly requests work in this thread."
+    }
+  },
+  {
+    "id": "P27",
+    "text": "Published this slice; the next worker can proceed.",
+    "complete": true,
+    "expected_status": "TASK_COMPLETE",
+    "expected_basis": "semantic",
+    "semantic": {
+      "status": "TASK_COMPLETE",
+      "unambiguous": true,
+      "reason": "Fixture adjudicator: completed slice, ready for successor."
+    }
+  },
+  {
+    "id": "P28",
+    "text": "The tool cannot write to the repo; owner action needed.",
+    "complete": true,
+    "expected_status": "ERROR",
+    "expected_basis": "semantic",
+    "semantic": {
+      "status": "ERROR",
+      "unambiguous": true,
+      "reason": "Fixture adjudicator: actual blocker."
+    }
+  },
+  {
+    "id": "P29",
+    "text": "Done for now, perhaps more remains.",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous",
+    "semantic": {
+      "status": "TASK_COMPLETE",
+      "unambiguous": false,
+      "reason": "Meaning is uncertain."
+    }
+  },
+  {
+    "id": "P30",
+    "text": "Published progress; ready for handover.",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous",
+    "semantic": {
+      "status": "TASK_COMPLETE",
+      "unambiguous": true,
+      "reason": ""
+    }
+  },
+  {
+    "id": "P31",
+    "text": "CHAT_STATUS: ERROR\nCHAT_STATUS: TASK_COMPLETE",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous",
+    "semantic": {
+      "status": "TASK_COMPLETE",
+      "unambiguous": true,
+      "reason": "Semantic override must not win."
+    }
+  },
+  {
+    "id": "P32",
+    "text": "CHAT_STATUS: TASK_COMP",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P33",
+    "text": "CHAT_STATUS: TАSK_COMPLETE",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  },
+  {
+    "id": "P34",
+    "text": "    CHAT_STATUS: ERROR\nCHAT_STATUS: NEED_MORE_TIME",
+    "complete": true,
+    "expected_status": "NEED_MORE_TIME",
+    "expected_basis": "explicit"
+  },
+  {
+    "id": "P35",
+    "text": "CHAT_STATUS: TASK_COMPLETE\n",
+    "complete": false,
+    "expected_status": null,
+    "expected_basis": "incomplete"
+  },
+  {
+    "id": "P36",
+    "text": "Need_more_time",
+    "complete": true,
+    "expected_status": null,
+    "expected_basis": "ambiguous"
+  }
+]

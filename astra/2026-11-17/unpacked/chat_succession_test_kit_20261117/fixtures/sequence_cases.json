@@ -1,0 +1,639 @@
+[
+  {
+    "id": "S01",
+    "title": "Same-chat continuation, one successor, programme finish",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: NEED_MORE_TIME",
+        "expect": {
+          "action": "CONTINUE_CURRENT"
+        }
+      },
+      {
+        "kind": "dispatch",
+        "expect": {
+          "count": 1,
+          "sends": 1,
+          "opens": 0,
+          "current_chat": "c1"
+        }
+      },
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: NEED_MORE_TIME",
+        "expect": {
+          "action": "IGNORE"
+        }
+      },
+      {
+        "kind": "response",
+        "response_id": "r2",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "LAUNCH_SUCCESSOR"
+        },
+        "repo": {}
+      },
+      {
+        "kind": "dispatch",
+        "expect": {
+          "count": 2,
+          "sends": 2,
+          "opens": 1
+        }
+      },
+      {
+        "kind": "response",
+        "response_id": "r3",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "STOP_FINISHED",
+          "count": 2,
+          "sends": 2
+        },
+        "repo": {
+          "programme_complete": true,
+          "next_task": null
+        }
+      }
+    ]
+  },
+  {
+    "id": "S02",
+    "title": "ERROR stops automatic posting",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: ERROR",
+        "expect": {
+          "action": "HOLD",
+          "count": 1,
+          "sends": 0
+        }
+      },
+      {
+        "kind": "response",
+        "response_id": "r2",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "HOLD"
+        },
+        "repo": {}
+      }
+    ]
+  },
+  {
+    "id": "S03",
+    "title": "Streaming marker is not a completed response",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "WAIT"
+        },
+        "complete": false,
+        "repo": {}
+      },
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "LAUNCH_SUCCESSOR"
+        },
+        "repo": {}
+      },
+      {
+        "kind": "dispatch",
+        "expect": {
+          "count": 2,
+          "sends": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "S04",
+    "title": "Lost successor acknowledgement; restart adopts observed ID without retry",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "LAUNCH_SUCCESSOR"
+        },
+        "repo": {}
+      },
+      {
+        "kind": "dispatch",
+        "fault": "after_click",
+        "expect": {
+          "count": 1,
+          "sends": 1,
+          "pending_phase": "uncertain",
+          "halted": true
+        }
+      },
+      {
+        "kind": "restart",
+        "expect": {
+          "count": 1,
+          "sends": 1,
+          "halted": true
+        }
+      },
+      {
+        "kind": "reconcile",
+        "expect": {
+          "count": 2,
+          "sends": 1,
+          "action": "WAIT",
+          "halted": false
+        }
+      },
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "IGNORE",
+          "sends": 1
+        },
+        "chat_id": "c1",
+        "repo": {}
+      }
+    ]
+  },
+  {
+    "id": "S05",
+    "title": "Uncertain continuation cannot become a duplicate prompt",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: NEED_MORE_TIME",
+        "expect": {
+          "action": "CONTINUE_CURRENT"
+        }
+      },
+      {
+        "kind": "dispatch",
+        "fault": "after_click",
+        "expect": {
+          "count": 1,
+          "sends": 1,
+          "halted": true
+        }
+      },
+      {
+        "kind": "restart"
+      },
+      {
+        "kind": "reconcile",
+        "expect": {
+          "count": 1,
+          "sends": 1,
+          "action": "WAIT",
+          "halted": false
+        }
+      },
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: NEED_MORE_TIME",
+        "expect": {
+          "action": "IGNORE",
+          "sends": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "S06",
+    "title": "Initial chat counts toward cap",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 1
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "STOP_CAP",
+          "count": 1,
+          "sends": 0
+        },
+        "repo": {}
+      }
+    ]
+  },
+  {
+    "id": "S07",
+    "title": "Continue at cap, but never create next chat",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 2
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "LAUNCH_SUCCESSOR"
+        },
+        "repo": {}
+      },
+      {
+        "kind": "dispatch",
+        "expect": {
+          "count": 2
+        }
+      },
+      {
+        "kind": "response",
+        "response_id": "r2",
+        "text": "Work update.\nCHAT_STATUS: NEED_MORE_TIME",
+        "expect": {
+          "action": "CONTINUE_CURRENT"
+        }
+      },
+      {
+        "kind": "dispatch",
+        "expect": {
+          "count": 2,
+          "sends": 2
+        }
+      },
+      {
+        "kind": "response",
+        "response_id": "r3",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "STOP_CAP",
+          "count": 2,
+          "sends": 2
+        },
+        "repo": {}
+      }
+    ]
+  },
+  {
+    "id": "S08",
+    "title": "Missing marker with no clear fallback holds",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "No terminal marker.",
+        "expect": {
+          "action": "HOLD",
+          "sends": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "S09",
+    "title": "Local/unpublished progress is not a successful handover",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "HOLD",
+          "sends": 0
+        },
+        "repo": {
+          "published": false
+        }
+      }
+    ]
+  },
+  {
+    "id": "S10",
+    "title": "Stale repo state cannot trigger successor",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "HOLD",
+          "sends": 0
+        },
+        "repo": {
+          "last_chat_id": "older-chat"
+        }
+      }
+    ]
+  },
+  {
+    "id": "S11",
+    "title": "Wrong active Project blocks typing; owner repairs route",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "LAUNCH_SUCCESSOR"
+        },
+        "repo": {}
+      },
+      {
+        "kind": "dispatch",
+        "project": "other-project",
+        "expect": {
+          "sends": 0,
+          "count": 1,
+          "halted": true,
+          "pending_phase": "prepared"
+        }
+      },
+      {
+        "kind": "resume"
+      },
+      {
+        "kind": "dispatch",
+        "expect": {
+          "sends": 1,
+          "count": 2,
+          "halted": false
+        }
+      }
+    ]
+  },
+  {
+    "id": "S12",
+    "title": "Definitively not sent can be explicitly rearmed",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "LAUNCH_SUCCESSOR"
+        },
+        "repo": {}
+      },
+      {
+        "kind": "dispatch",
+        "fault": "before_click",
+        "expect": {
+          "sends": 0,
+          "count": 1,
+          "halted": true
+        }
+      },
+      {
+        "kind": "restart"
+      },
+      {
+        "kind": "not_sent",
+        "reason": "Injected adapter trace proves no click happened",
+        "expect": {
+          "pending_phase": "prepared",
+          "halted": false
+        }
+      },
+      {
+        "kind": "dispatch",
+        "expect": {
+          "sends": 1,
+          "count": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "S13",
+    "title": "Injected semantic adjudication follows the same routing",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Slice committed; handover ready.",
+        "expect": {
+          "action": "LAUNCH_SUCCESSOR"
+        },
+        "repo": {},
+        "semantic": {
+          "status": "TASK_COMPLETE",
+          "unambiguous": true,
+          "reason": "Synthetic adjudicator confirmed the intended meaning."
+        }
+      },
+      {
+        "kind": "dispatch",
+        "expect": {
+          "count": 2,
+          "sends": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "S14",
+    "title": "Real user draft equal to placeholder is preserved",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "LAUNCH_SUCCESSOR"
+        },
+        "repo": {}
+      },
+      {
+        "kind": "dispatch",
+        "editable_text": "New chat in Chat succession folder",
+        "expect": {
+          "sends": 0,
+          "halted": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "S15",
+    "title": "Crash after observation but before durable adoption",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "LAUNCH_SUCCESSOR"
+        },
+        "repo": {}
+      },
+      {
+        "kind": "dispatch",
+        "fault": "after_observation",
+        "expect": {
+          "sends": 1,
+          "count": 1,
+          "pending_phase": "sending"
+        }
+      },
+      {
+        "kind": "restart",
+        "expect": {
+          "halted": true,
+          "sends": 1,
+          "count": 1
+        }
+      },
+      {
+        "kind": "reconcile",
+        "expect": {
+          "count": 2,
+          "sends": 1,
+          "halted": false
+        }
+      }
+    ]
+  },
+  {
+    "id": "S16",
+    "title": "Owner pause is separate from the three worker statuses",
+    "config": {
+      "project": "project-nominated",
+      "repo": "JayDEmily/chat_successor",
+      "branch": "test/succession",
+      "max_unique_chats": 30
+    },
+    "events": [
+      {
+        "kind": "pause",
+        "reason": "Owner stop",
+        "expect": {
+          "action": "HOLD"
+        }
+      },
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "HOLD",
+          "sends": 0
+        },
+        "repo": {}
+      },
+      {
+        "kind": "resume"
+      },
+      {
+        "kind": "response",
+        "response_id": "r1",
+        "text": "Work update.\nCHAT_STATUS: TASK_COMPLETE",
+        "expect": {
+          "action": "LAUNCH_SUCCESSOR"
+        },
+        "repo": {}
+      },
+      {
+        "kind": "dispatch",
+        "expect": {
+          "count": 2,
+          "sends": 1
+        }
+      }
+    ]
+  }
+]

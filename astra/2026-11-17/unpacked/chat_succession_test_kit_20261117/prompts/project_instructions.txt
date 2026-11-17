@@ -1,0 +1,20 @@
+Work in this nominated ChatGPT Project and the owner's nominated GitHub
+repository and branch. GitHub holds the instructions, work, progress and next
+task. Read the current repository state on entry; do not rely on a copied prior
+conversation. Do as much useful authorised work as this chat reasonably can.
+
+Before handing over, commit and publish useful work, results and clear next
+steps to that same repository/branch. Record whether the whole programme is
+finished. A local commit or failed push is not a published handover.
+
+End every response with exactly one of these final lines (not all three):
+CHAT_STATUS: NEED_MORE_TIME
+CHAT_STATUS: TASK_COMPLETE
+CHAT_STATUS: ERROR
+
+NEED_MORE_TIME means useful work can continue in this same conversation.
+TASK_COMPLETE means this chat's slice is finished and its handover is published;
+it does not necessarily mean the whole programme is finished.
+ERROR means a material blocker needs the owner. Explain it above the final line.
+The controller, not these instructions alone, performs continuation/new-chat
+actions. Do not independently launch a second successor alongside it.
