@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "run_id": "succession-20261117-001",
+  "step": 3,
+  "role": "auditor",
+  "task_id": "toy-terminal-audit",
+  "predecessor_result_commit": "REPLACE_WITH_STEP_2_RESULT_COMMIT_SHA",
+  "terminal": true,
+  "allowed_paths": [
+    "runs/succession-20261117-001/steps/003/summary.json",
+    "runs/succession-20261117-001/steps/003/result.json"
+  ],
+  "required_output_paths": [
+    "runs/succession-20261117-001/steps/003/summary.json",
+    "runs/succession-20261117-001/steps/003/result.json"
+  ]
+}

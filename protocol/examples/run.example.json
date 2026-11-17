@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "run_id": "succession-20261117-001",
+  "branch": "trial/succession-20261117-001",
+  "max_steps": 3,
+  "launch_mode": "worker",
+  "project_config_ref": "local:chat-succession-project",
+  "stop_state": "prepared"
+}
