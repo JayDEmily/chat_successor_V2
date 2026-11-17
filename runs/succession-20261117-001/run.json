@@ -5,5 +5,5 @@
   "max_steps": 3,
   "launch_mode": "worker",
   "project_config_ref": "local:chat-succession-project",
-  "stop_state": "active"
+  "stop_state": "held"
 }

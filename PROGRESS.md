@@ -1,5 +1,15 @@
 # Progress
 
+## Task 3 live trial — HELD, 17 November 2026
+
+**Run:** `succession-20261117-001`, **branch:** `trial/succession-20261117-001`, **source:** `f8c002690c0a1a9ff4f298bd9a8d68b21f5ba1f8`.
+Chat 1 completed the toy calculation `17 * 23 + 19 = 410` (A1 `846bd4ff12a558eefe5dbb6df65535d521d08ff9`; result R1 `73eec3791fd5ae984db95bf7aeb9f8077ed6e18c`). The pinned Chat 2 independent-review handover A2 `898cd68740b2b46d75da1b9e195fe9e01bb9a685` was pushed and read back; packet validation passed.
+
+**Live launch result: BLOCKED before typing or Send.** Exactly one launcher invocation reserved the second-step key, opened a new Chrome window and stopped with `Existing draft detected; preserve it`. Private journal status: `blocked`. Do not retry that key. No Chat 2 reviewer message was delivered by this launcher; Chat 3 did not run. The run's `stop_state` is now `held`.
+
+**Full redacted evidence:** `evidence/succession-20261117-001/CHAT2_LAUNCH_BLOCKED.md`. This is a failed launch trial, not a successful three-chat chain. No modification to unrelated projects and no fourth chat.
+
+
 ## Current handoff — Task 1 and Task 2 offline, 17 November 2026
 
 **Branch:** `work/task1-contract-preflight-20261117`. **Scope:** Task 1 preparation plus Task 2 offline implementation and verification; no live launcher invocation or successor chats. **Chosen approach:** owner selected **worker-launch first** for this bounded exploration, retaining the existing independent OCR/NVIDIA work untouched.
