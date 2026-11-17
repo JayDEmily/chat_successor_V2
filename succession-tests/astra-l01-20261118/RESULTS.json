@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "chat_id": "6afce548-81d4-83ec-8f96-ac1cbca99b31",
+    "probe_nonce": "fixture-625909923fb81d27",
+    "run_id": "astra-l01-20261118",
+    "step": 1,
+    "summary": {
+      "alpha": {
+        "count": 2,
+        "total": 34
+      },
+      "beta": {
+        "count": 2,
+        "total": 31
+      },
+      "gamma": {
+        "count": 2,
+        "total": 11
+      }
+    }
+  }
+]

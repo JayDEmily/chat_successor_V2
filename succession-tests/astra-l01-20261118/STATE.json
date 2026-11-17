@@ -1,8 +1,8 @@
 {
-  "completed_steps": 0,
-  "last_chat_id": null,
-  "next_task": "Process fixture slice 1 of 2; read RUN.json and verify RESULTS.json.",
+  "completed_steps": 1,
+  "last_chat_id": "6afce548-81d4-83ec-8f96-ac1cbca99b31",
+  "next_task": "Process fixture slice 2 of 2; read RUN.json and verify RESULTS.json.",
   "programme_complete": false,
-  "progress_summary": "Fixture seeded; no worker has performed a slice.",
+  "progress_summary": "Slice 1 of 2 completed by the saved Chat Succession Project conversation; slice 2 awaits controller-directed successor.",
   "run_id": "astra-l01-20261118"
 }
