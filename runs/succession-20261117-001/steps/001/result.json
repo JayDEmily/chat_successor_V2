@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "run_id": "succession-20261117-001",
+  "step": 1,
+  "assignment_commit": "846bd4ff12a558eefe5dbb6df65535d521d08ff9",
+  "status": "completed",
+  "changed_paths": [
+    "runs/succession-20261117-001/steps/001/toy.json",
+    "runs/succession-20261117-001/steps/001/result.json"
+  ],
+  "checks": [
+    "Independent integer arithmetic: 17 * 23 = 391; 391 + 19 = 410.",
+    "Toy result matches the exact required expression and value."
+  ],
+  "unresolved_issues": []
+}
