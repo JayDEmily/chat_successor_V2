@@ -1,5 +1,14 @@
 # Progress
 
+## Astra L01 disposable live fixture ? Worker slice 1 (18 November 2026)
+
+- **Scope:** succession-tests/astra-l01-20261118 on trial/astra-l01-20261118. Separate from the implementation Worker and historical three-chat experiment.
+- **Observed saved Project conversation:** 6afce548-81d4-83ec-8f96-ac1cbca99b31, read from Chrome's active Chat succession folder conversation address bar and matching page link via Windows UI Automation; not inferred from a prior chat.
+- **Fixture slice 1:** six synthetic input rows grouped after trimming and lowercasing: alpha count 2 total 34; beta count 2 total 31; gamma count 2 total 11. Actual worker-authored RESULTS.json and STATE.json recorded in commit 7415fa3890cb2c5f8c8035513729ca759bf83b56.
+- **Validation:** python3 fixture_tools.py verify --root . returned fixture_valid=true, completed_steps=1, total_steps=2; git diff --cached --check passed. simulate-slice was not used.
+- **Next action:** Controller alone may launch the single successor to process fixture slice 2 of 2. Current state: programme_complete=false; next_task=Process fixture slice 2 of 2; read RUN.json and verify RESULTS.json. No successor was launched by this worker. Astra L01 end-to-end live case is not yet established by this slice alone.
+
+
 ## Astra implementation Worker — 18 November 2026 (work in progress)
 
 - **Owner scope correction:** no drift or new orchestration system. Use Astra's existing reference controller, the nominated implementation leaves, and the already demonstrated Windows/Chrome method. Keep only necessary integration code; disposable investigative scripts have been deleted. Do not expand scope by importing assumptions or architecture from other projects.
