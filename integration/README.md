@@ -17,11 +17,11 @@ UI Automation method and Git/WSL publication route, **not another controller**.
 
 **Current validation:** the reference 119 offline tests and 16 separate
 local integration tests pass. A controlled, unsent live editor probe
-distinguished the placeholder from an identical real draft. The live
-Project-new-chat preparation then stopped because the sidebar button
-remained offscreen after the existing UIA ScrollIntoView action.
-No live ChatGPT Send, genuine successor, or end-to-end Git worker
-handover has passed. Live scenarios remain NOT_RUN.
+distinguished the placeholder from an identical real draft. The initial live Project-new-chat preparation stopped because the sidebar
+button remained offscreen. A subsequent preparation used the already observed
+Project URL and established a fresh, empty Project composer without sending.
+No live ChatGPT Send, genuine successor, or end-to-end Git worker handover
+has passed. Live scenarios remain NOT_RUN.
 
 Do not invoke `Send` against the authenticated environment before
 the Leaf 03 desktop observation/navigation boundary is confirmed.
