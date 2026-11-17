@@ -1,5 +1,17 @@
 # Progress
 
+## Astra implementation Worker — 18 November 2026 (work in progress)
+
+- **Owner scope correction:** no drift or new orchestration system. Use Astra's existing reference controller, the nominated implementation leaves, and the already demonstrated Windows/Chrome method. Keep only necessary integration code; disposable investigative scripts have been deleted. Do not expand scope by importing assumptions or architecture from other projects.
+
+- **Source verified:** remote evidence/astra-source-import-20261118 at f2f0a3de9f6ed55f2315c8389eeddd4486b34209; implementation work isolated on work/astra-succession-implementation-20261118. Existing unrelated WSL checkout with uncommitted work left untouched.
+- **G0:** imported Astra reference suite rerun in Ubuntu, 119/119 PASS, zero skips/failures/errors. This is offline model evidence only.
+- **G1 / Leaves 01–04:** new integration/ code imports Astra's unchanged Config/Controller/Response/RepoView/parser/composer and connects a scoped published-branch RepoView reader, Windows UIA/Chrome observation/prepare/Send/reconcile seam, persistent pre-Send dispatch and recovery, and single-writer CLI. New tests 16/16 PASS locally, simulated/mock; also 11/11 checked on Windows Python 3.13 before expanding the suite. Browser Send is not yet claimed live-tested.
+- **Desktop diagnostics:** read-only Chrome UIA verified an actual Project page and saved Project chat, distinct URL identity, UIA assistant fragments and a Project-specific composer. UIA Value and TextPattern both included placeholder text. A controlled L07 subprobe found empty editor (selection/copy leaves clipboard sentinel unchanged), and a genuine draft literally equal to the placeholder (copy returns actual text); test draft was cleared and placeholder restored on reinspection. Clipboard restored. This covers only part of L07 and is **not** an L07 PASS.
+- **Navigation regression:** UIA ScrollIntoView did not expose the Project-specific sidebar button in a new Chrome window. Reused the *already observed* exact Project /project URL in a new Chrome window; verified correct fresh editor, actual editable content empty, zero attachments and no saved chat ID. No message sent.
+- **Gate status:** G1 local wiring implemented and locally checked; G2 in progress. G3 L01–L12 and L15 still NOT_RUN as complete live cases; G4 L13 not eligible. G5 L14 excluded by assignment. No autonomous successor, useful live fixture publication or Send yet.
+- **Next action:** Finish G2 by seeding the disposable same-repo L01 fixture and publishing its active pointer on the test branch. Observe an initial saved worker ID in the nominated Project and validate the runtime completed-turn and Send readback seam, then run L01. Keep the imported six Astra deliverables unchanged. Preserve uncertain outcomes; do not assert live success from a model test.
+
 ## Astra execution handoff — 18 November 2026
 
 - Source branch `evidence/astra-source-import-20261118`, import commit `44c0d5948318e305c42fb0ac4f463e77f90531bc`. The [execution plan](docs/astra-succession/README.md) organizes Astra's existing cases and integration work into seven leaves with gates G0–G5.

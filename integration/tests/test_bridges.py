@@ -1,0 +1,110 @@
+"""New Git published-view and Windows bridge unit tests; no network or Send."""
+from __future__ import annotations
+
+from pathlib import Path
+import json
+import sys
+import tempfile
+import unittest
+from unittest.mock import Mock
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from repo_reader import GitPublishedReader, PublishedStateError
+from runner import Destination, initialise
+from windows_backend import WindowsUIA, BrowserObservationError
+from succession.core import Config, Controller, Response
+from succession.composer import ComposerObservation
+
+
+class RepoReaderTests(unittest.TestCase):
+    def reader(self):
+        return GitPublishedReader(Path("/tmp/checkout"),
+                                  "JayDEmily/chat_successor", "trial/l01",
+                                  "succession-tests/l01")
+
+    def test_exact_remote_commit_not_working_tree(self):
+        r = self.reader()
+        transcript = []
+        state = {"run_id": "l01", "programme_complete": False,
+                 "next_task": "slice 2", "last_chat_id": "chat-first"}
+        def git(*args):
+            transcript.append(args)
+            if args[:2] == ("remote", "get-url"):
+                return "https://github.com/JayDEmily/chat_successor.git"
+            if args[0] == "fetch":
+                return ""
+            if args[0] == "rev-parse":
+                return "a" * 40
+            if args[0] == "show":
+                return json.dumps(state)
+            raise AssertionError(args)
+        r._git = git
+        o = r.read("l01")
+        self.assertTrue(o.view.published)
+        self.assertEqual(o.view.last_chat_id, "chat-first")
+        self.assertEqual(o.commit, "a" * 40)
+        self.assertIn(("show", f"{'a'*40}:succession-tests/l01/STATE.json"), transcript)
+        self.assertTrue(any(row[0] == "fetch" for row in transcript))
+        self.assertFalse(any(row[0] == "status" for row in transcript))
+
+    def test_reject_mismatched_run_and_stale_attribution(self):
+        r = self.reader()
+        r._git = lambda *a: {
+            "remote": "https://github.com/JayDEmily/chat_successor.git",
+            "fetch": "", "rev-parse": "b"*40,
+            "show": json.dumps({"run_id": "other", "programme_complete": False,
+                                "next_task": "x", "last_chat_id": "chat-first"}),
+        }[a[0]]
+        with self.assertRaises(PublishedStateError):
+            r.read("l01")
+
+    def test_reject_nonboolean_completion(self):
+        r = self.reader()
+        r._git = lambda *a: {
+            "remote": "https://github.com/JayDEmily/chat_successor.git",
+            "fetch": "", "rev-parse": "b"*40,
+            "show": json.dumps({"run_id": "l01", "programme_complete": "false",
+                                "next_task": "x", "last_chat_id": "chat-first"}),
+        }[a[0]]
+        with self.assertRaises(PublishedStateError):
+            r.read("l01")
+
+    def test_scoped_path_and_ref(self):
+        with self.assertRaises(ValueError):
+            GitPublishedReader(Path("/tmp"), "JayDEmily/chat_successor",
+                               "../main", "succession-tests/l01")
+        with self.assertRaises(ValueError):
+            GitPublishedReader(Path("/tmp"), "JayDEmily/chat_successor",
+                               "trial/l01", "../private/STATE.json")
+
+
+class WindowsBridgeTests(unittest.TestCase):
+    def test_send_only_after_disk_recorded_sending(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            state = Path(tmp) / "controller.json"
+            cfg = Config("g-p-TEST", "JayDEmily/chat_successor", "trial/l01", 3)
+            c = initialise(state, cfg, "chat-first")
+            w = WindowsUIA(cfg.project, "Chat succession folder",
+                           Path(tmp) / "uia_adapter.ps1", state)
+            response = Response("chat-first", "turn1", "CHAT_STATUS: NEED_MORE_TIME",
+                                project=cfg.project)
+            d = c.consume(response)
+            c.save(state)
+            t = Destination(cfg.project, "chat-first", ComposerObservation(editable_text=""), 1234)
+            w._atomic_target_write({"kind": "CONTINUE_CURRENT",
+                                    "source": "chat-first", "handle": 1234})
+            w._invoke = Mock(return_value={"project": cfg.project, "chat_id": "chat-first",
+                                           "submitted_text": d.message,
+                                           "posted_message_observed": True})
+            with self.assertRaises(BrowserObservationError):
+                w.send_once(t, d.message)
+            self.assertEqual(w._invoke.call_count, 0)
+            c.begin_send(d.action_id)
+            c.save(state)
+            receipt = w.send_once(t, d.message)
+            self.assertTrue(receipt.posted_message_observed)
+            self.assertEqual(w._invoke.call_count, 1)
+
+
+if __name__ == "__main__":
+    unittest.main()
