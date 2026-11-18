@@ -1,5 +1,11 @@
 # Progress
 
+## L03 controlled ERROR/recovery setup — 18 November 2026 (in progress)
+
+- **Case:** Leaf 06 L03 on `work/astra-succession-implementation-20261118`. Test-only run `astra-l03-20261118-a` seeds one normal Astra fixture slice. Its `INSTRUCTIONS.md` requires a `RECOVERY_INPUT.json` file deliberately absent at seed, so first worker must report a concrete `ERROR` and not modify results.
+- **Planned recovery:** observe controller HOLD with zero automatic posts, publish only the missing test input, explicitly resume the *same saved controller and chat*, send an assisted operator recovery instruction, and verify that a new completed event is consumed without resetting history/count. First worker then completes 1/1 and controller terminates with no successor. All observations are to be recorded, not assumed.
+- **Preservation:** L01 and L02 are finished and not reused/reset; original imported Astra artefacts unchanged. No unrelated project or additional browser automation layer. L03 not yet PASSED; L04–L15 not run.
+
 ## L02 live integration result — 18 November 2026 (current)
 
 - **L02 verdict: PASS.** Run `astra-l02-20261118-a` with configured cap 3 used one assisted initial worker and one automatic successor. The external reference controller alone sent both exact same-chat continuations and the one successor pointer. No new UI automation or isolation layer.
