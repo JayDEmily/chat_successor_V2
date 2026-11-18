@@ -1,0 +1,69 @@
+{
+  "test_id": "L09",
+  "run_id": "astra-l09-20261118-a",
+  "phase": "AFTER_CLICK_SUCCESSOR_ADOPTED_FIRST_RESPONSE_PENDING",
+  "overall": "IN_PROGRESS_NOT_PASS",
+  "observed_at_utc": "2026-11-18T05:07:24.351Z",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "source_worker": {
+    "chat_id": "6afd2e8f-606c-83ec-a47b-4d6783bd711c",
+    "completion_response_id": "uia-turn-2-ef188239d7b0fd3a39bc",
+    "final_status": "TASK_COMPLETE",
+    "fixture_slice": 1,
+    "published_source_commit": "20200223d4a384aa00cd10ed33b20e557dea4bae",
+    "pinned_remote_fixture_validation": {
+      "valid": true,
+      "completed_steps": 1,
+      "total_steps": 2
+    }
+  },
+  "successor": {
+    "chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+    "launch_message": "Standard short repo/branch pointer",
+    "actually_posted_user_message": true,
+    "project_id": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+    "unique_chat_count_after_readonly_adoption": 2,
+    "controller_pending_after_readonly_adoption": null,
+    "initial_worker_response": "IN_PROGRESS_NOT_YET_A_CANONICAL_STATUS",
+    "first_turn_required": "Inspect fixture only; do not modify results or operate controller; finish NEED_MORE_TIME."
+  },
+  "first_after_click_attempt": {
+    "phase_after": "uncertain",
+    "exact_error": "Incorrect foreground before typing",
+    "no_message_sent": true,
+    "read_only_reconciliation": "unresolved_no_resend",
+    "explicit_no_send_rearm": "evidence/astra-l09-20261118-a/rearm_successor_preclick.py",
+    "before_backup_sha256": "5d909e5a2deef326090c4f5a1528ce13bb7e47e8e63723c03b59179294f4e00e",
+    "after_rearm_sha256": "d85fa1d9f4d3e514e8cc5b99a07df0ebaad388f6dcc90651b0dc248243461702",
+    "correction_commit": "737d09fba672765773c560411b4bc11ec5aaf8be",
+    "correction": "The existing target editor is updated using UIA ValuePattern without requiring foreground focus."
+  },
+  "verified_after_click_attempt": {
+    "fault_parameter": "ASTRA_L09_FAULT=after_click",
+    "persisted_state_after": "uncertain",
+    "persisted_detail_contains": "L09 injected after single click before acknowledgement",
+    "UIA_Send_actually_invoked_once": true,
+    "read_only_reconciliation": {
+      "action": "WAIT",
+      "observed_saved_chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+      "exact_message_observed": true,
+      "same_nominated_project": true,
+      "unique_chat_count": 2,
+      "pending": null,
+      "halted": null
+    },
+    "blind_retry_performed": false,
+    "duplicate_successor_send": false
+  },
+  "next_actions": [
+    "Do not permit the successor worker to operate the controller. Observe its first final NEED_MORE_TIME response without modifying fixture slice 2.",
+    "After that response, use the same private L09 controller to inject after_click on one same-chat CONTINUE_CURRENT action.",
+    "Reconcile the actual posted continuation read-only, count unchanged at two, then let second worker publish fixture slice 2 and stop."
+  ],
+  "limitations": [
+    "No after-click same-chat continuation case yet; L09 is not PASS.",
+    "Source worker's successful slice 1 is independently verified from the exact published Git revision.",
+    "No private raw controller state, credentials or full ChatGPT transcript was published."
+  ]
+}
