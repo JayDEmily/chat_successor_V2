@@ -1,0 +1,66 @@
+{
+  "test_id": "L09",
+  "run_id": "astra-l09-20261118-a",
+  "outcome": "BLOCKED",
+  "observed_at_utc": "2026-11-18T05:10:32.861Z",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "first_worker": {
+    "chat_id": "6afd2e8f-606c-83ec-a47b-4d6783bd711c",
+    "published_slice1_commit": "20200223d4a384aa00cd10ed33b20e557dea4bae",
+    "fixture_valid": true,
+    "completed_steps": 1,
+    "total_steps": 2
+  },
+  "verified_fault_cases": {
+    "before_click_lost_ack": {
+      "confirmed_no_UIA_Send": true,
+      "explicit_rearm": true,
+      "subsequently_submitted_same_chat_once": true,
+      "first_worker_chat_count": 1,
+      "evidence": "evidence/astra-l09-20261118-a/before_click_observation.json"
+    },
+    "after_click_successor": {
+      "injected_after_single_UIA_Send": true,
+      "read_only_reconciliation": true,
+      "new_saved_successor_chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+      "count_after": 2,
+      "duplicate_launches": 0,
+      "evidence": "evidence/astra-l09-20261118-a/after_click_successor_observation.json"
+    },
+    "after_click_same_chat_continuation": "NOT_EXECUTED"
+  },
+  "current_successor": {
+    "chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+    "first_response_id": "uia-turn-1-775697475c9fbc793a56",
+    "response_complete": true,
+    "declared_final_marker": "CHAT_STATUS: NEED_MORE_TIME",
+    "ui_accessibility_text_has_prior_standalone_status_leaf": "NEED_MORE_TIME",
+    "controller_interpretation": "Repeated, conflicting or nonterminal status",
+    "controller_action": "HOLD",
+    "note": "The UIA-flattened Text elements include a bare NEED_MORE_TIME earlier in the response, plus one final canonical marker. Whether the earlier leaf corresponds to an independent visual paragraph was not authenticated. No automatic reinterpretation of the ambiguous text was made."
+  },
+  "saved_private_controller_status": {
+    "current_chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+    "unique_chat_count": 2,
+    "pending": null,
+    "halted": "Repeated, conflicting or nonterminal status",
+    "consumed_response_events": 3,
+    "last_status": "TASK_COMPLETE",
+    "private_config_or_raw_state_published": false
+  },
+  "no_effects": {
+    "successor_same_chat_continuation_sent": false,
+    "duplicate_send": false,
+    "extra_successor_launched": false,
+    "results_slice2_modified_by_controller": false,
+    "controller_reset": false,
+    "concurrent_controller_launched": false
+  },
+  "recovery_boundary": "Owner/operator must obtain a fresh unambiguous assistant status in the same saved successor conversation without independently launching another successor. After a new assistant response, resume the same private controller, which has consumed and held the ambiguous earlier response; only then run its single L09 after-click continuation case. Do not manually override the status parser or submit a blind continuation.",
+  "limitations": [
+    "L09 live acceptance incomplete; the after-click same-chat continuation has not been exercised.",
+    "The earlier NEED_MORE_TIME candidate appears as a standalone leaf in UI Automation accessibility text; raw displayed paragraph boundaries were not independently authenticated.",
+    "L01-L08 outcomes and L09 slice-1 published work remain untouched."
+  ]
+}
