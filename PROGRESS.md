@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run B second saved worker — slice 2 of 5, 18 November 2026
+
+- **Actual saved worker:** `6afd5e97-dc08-83ec-9725-1d5ce61b3183`, observed by read-only connected browser tab inventory at the exact nominated Chat Succession Project conversation URL. This observation establishes the saved chat and Project identity, not response completion or controller transport.
+- **Published fixture checkpoint:** `39a65a626b872ab882b3802578bbfee18aa7e182`, pushed on `work/astra-succession-implementation-20261118` from starting revision `e3c7d166cc42b91fdd7e089c01836be814df5297`. Independent pinned GitHub readback confirmed `STATE.json`, `RESULTS.json`, and `evidence/astra-l13-20261118-b/run_b_worker_slice2.md` with matching worker ID and step 2 probe.
+- **Useful work:** normalised six step-2 rows: alpha count 2/total 40, beta 2/18, gamma 2/15, combined total 73. Only Run B slice 2 was processed; completed steps now `2/5`, next task slice 3, `programme_complete=false`. Run A and Run C were not modified.
+- **Checks:** original fixture validator returned `fixture_valid=true, completed_steps=2, total_steps=5`; unstaged and staged Git whitespace checks passed. Git push returned success and remote pinned contents matched. This is a worker publication, not Run B or three-run L13 PASS.
+- **Next action:** only the existing external controller consumes this worker's final completion marker, verifies this published handover and launches the third distinct saved Run B worker for exactly slice 3. This worker must not send, launch or operate the controller. External-controller launch and terminal evidence remain unobserved here.
+
 ## L13 Run B first saved worker — slice 1 of 5, 18 November 2026
 
 - **Actual saved worker:** `6afd5cc9-f314-83ec-a31d-7b08037957d3`, independently identified in the nominated Chat Succession Project through the connected browser tab inventory and existing Windows UIA read-only Observe mode. The adapter reported streaming at observation; it was not a completed-turn test.
