@@ -1,5 +1,11 @@
 # Progress
 
+## L04 early-completion setup — 18 November 2026 (in progress)
+
+- **Case:** Leaf 06 L04, one-slice fixture `astra-l04-20261118-a` in the nominated repo/branch. The initial worker should read the fixture, compute and publish slice 1 of 1, verify `programme_complete=true` and `next_task=null`, and finish with one canonical final `CHAT_STATUS: TASK_COMPLETE`.
+- **Controller:** fresh private state; planned cap **30 distinct saved chats**. Observe initial saved chat as count 1, current published worker identity and final marked response. **Pass only if `STOP_FINISHED` occurs with one saved chat and zero successor Send.**
+- **Boundary:** L01–L03 are already completed and recorded, not reset. L04 untested until live result. No independent successor launcher or new browser automation mechanism.
+
 ## L03 live ERROR/recovery result — 18 November 2026 (current)
 
 - **L03 verdict: PASS with explicit operator interventions.** Case `astra-l03-20261118-a` used only initial saved chat `6afcf279-ed74-83ec-b39b-dacaf73af948` and the same Astra reference controller. The worker observed deliberately missing `RECOVERY_INPUT.json`, returned final `CHAT_STATUS: ERROR` (`uia-turn-1-674db1c40e5e6095ceba`), and the controller returned `HOLD` with `last_status=ERROR`, `pending=null`, `unique_chat_count=1`, zero automatic posts.

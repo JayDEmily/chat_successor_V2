@@ -1,0 +1,37 @@
+{
+  "fixture_version": 1,
+  "purpose": "Synthetic repo-only continuity workload, not a production work-slice limit",
+  "run_id": "astra-l04-20261118-a",
+  "steps": [
+    {
+      "probe_nonce": "fixture-625909923fb81d27",
+      "rows": [
+        {
+          "category": "BETA",
+          "value": 17
+        },
+        {
+          "category": " beta ",
+          "value": 14
+        },
+        {
+          "category": " Alpha ",
+          "value": 24
+        },
+        {
+          "category": "alpha",
+          "value": 10
+        },
+        {
+          "category": "Gamma",
+          "value": 9
+        },
+        {
+          "category": " gamma ",
+          "value": 2
+        }
+      ],
+      "step": 1
+    }
+  ]
+}
