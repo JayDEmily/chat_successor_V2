@@ -1,5 +1,11 @@
 # Progress
 
+## L09 successor fixture slice 2 — worker publication, 18 November 2026
+
+- **Worker output:** the same saved successor `6afd3221-f970-83ec-9889-1d09b1762a5f` has received the exact continuation after the externally controlled after-click recovery. It processed only the second `astra-l09-20261118-a` fixture slice from published RUN.json, independently aggregating alpha 2/40, beta 2/18, gamma 2/15 (six rows, total 73). Appended RESULTS.json and made STATE.json terminal with `completed_steps=2/2`, `programme_complete=true`, `next_task=null`. See `evidence/astra-l09-20261118-a/successor_worker_slice2.md`.
+- **Separate external controller evidence:** existing private controller recorded an injected after-click same-chat `CONTINUE_CURRENT` as uncertain; subsequent read-only reconciliation returned `WAIT`, with the same saved ID, unique-chat count 2, no pending Send and no hold. Worker did not invoke a Send or launch a successor. That controller's final terminal STOP_FINISHED readback and L09 PASS adjudication remain separate operator tasks, not worker claims.
+- **Next action:** the sole external controller consumes this worker's final unambiguous TASK_COMPLETE response, independently validates the newly published remote terminal fixture, verifies STOP_FINISHED with exactly two saved chats and no third launch, then records full L09 verdict and next L10 work.
+
 ## L09 live test held — ambiguous successor first-turn status, 18 November 2026
 
 - **L09 BLOCKED, not PASS.** Its first-worker continuation and positive-no-click recovery were observed, and the successor after-click acknowledgement-loss case was observed and reconciled once. The first worker published slice 1/2 at `20200223d4a384aa00cd10ed33b20e557dea4bae`. The sole external controller adopted successor saved chat `6afd3221-f970-83ec-9889-1d09b1762a5f` once, unique-chat count **2**, pending null, no duplicate launch. L01–L08 remain PASS and the live fixture remains 1/2.

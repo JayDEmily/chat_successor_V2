@@ -1,8 +1,8 @@
 {
-  "completed_steps": 1,
-  "last_chat_id": "6afd2e8f-606c-83ec-a47b-4d6783bd711c",
-  "next_task": "Process fixture slice 2 of 2; read RUN.json and verify RESULTS.json.",
-  "programme_complete": false,
-  "progress_summary": "Slice 1/2 complete: alpha 2/34, beta 2/31, gamma 2/11; 6 rows, total 76. Slice 2 remains.",
+  "completed_steps": 2,
+  "last_chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+  "next_task": null,
+  "programme_complete": true,
+  "progress_summary": "Slice 2/2 complete: alpha 2/40, beta 2/18, gamma 2/15; 6 rows, total 73. Programme complete.",
   "run_id": "astra-l09-20261118-a"
 }
