@@ -1,5 +1,11 @@
 # Progress
 
+## L05 two-chat cap setup — 18 November 2026 (in progress)
+
+- **Case:** Astra Leaf 06 L05, fresh test-only `succession-tests/astra-l05-20261118-a` with **three slices** and controller cap **two saved chats**. Seeded using the unchanged Astra fixture tool; validated initially at 0/3. The fixture's `INSTRUCTIONS.md` stages worker 1 publication of slice 1; successor worker 2's `NEED_MORE_TIME` followed by a controller same-chat continuation at cap; worker 2's publication of slice 2 while leaving slice 3 outstanding.
+- **Pass boundary:** exactly two observed saved Project chats; one automatic successor, exactly one `Okay, continue working.` in chat 2 without changing count; published results validated at 2/3, `programme_complete=false`; controller terminal **`STOP_CAP`** with no attempted chat 3. L05 remains NOT_RUN until actual live observations. L01–L04 are finished and preserved.
+- **Next action:** publish seed, start initial worker in nominated Project as assisted bootstrap, initialise fresh private controller cap 2 using its actual saved chat ID, then run the existing controller. Do not install another launcher, fork an extra controller or alter unrelated projects.
+
 ## L04 live early-completion result — 18 November 2026 (current)
 
 - **L04 verdict: PASS.** Test `astra-l04-20261118-a`, cap **30**, first and only saved Chat Succession worker `6afcf52d-bed4-83ec-ad68-98479eb0caf9`, assisted bootstrap. Worker committed/pushed the one-slice fixture terminal result in remote `9476d451fb12896317765529972583c1b6081f51`.
