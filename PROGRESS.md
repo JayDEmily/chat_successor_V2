@@ -1,5 +1,15 @@
 # Progress
 
+## L06 live repository-only handover verdict - 18 November 2026
+
+- L06 verdict: PASS. Original first worker 6afd0a50-bb5c-83ec-8769-aad757de38c9 published slice 1 at b56f9fe5684828ad07005655b669da2705014aac; live Chrome UIA observed completed marked turn uia-turn-1-ab855a5d43e4a16a7064. The fresh single L06 reference controller began with one observed saved chat (cap 3).
+- Controller --prepare-only persisted one unsent LAUNCH_SUCCESSOR action after first worker. Only then Astra's unchanged rotate-probe changed the NEXT uncompleted slice's probe (not rows or earlier slice). Operator published the repo-only rotation in 7b2eca1305a5bfe92734cc8a56155b9e55f1721d and verified remote Git before any successor Send; no probe was pasted to chat.
+- The same existing controller dispatched the ordinary repo/branch pointer once and positively observed distinct saved successor 6afd0f07-e17c-83ec-ae22-a257184d7db4. The successor emitted NEED_MORE_TIME (uia-turn-1-b6b5d3e4293f5a3937d4); the controller sent an exact same-chat continuation without adding a chat.
+- The second worker published terminal slice 2 at 06429f2c78e5fb55e8bfa43e8d0a3abfdfe29d8b with actual current post-rotation probe. Independent fresh Git clone pinned to exact remote SHA validated fixture_valid=true, completed_steps=2, total_steps=2, both saved IDs and both matching probes; programme_complete=true and next_task=null. A separate deliberately stale local Git checkout successfully refreshed the current remote branch using the existing RepoView reader (supporting Git test, not a naturally stale ChatGPT response).
+- Terminal controller consumed uia-turn-2-45c7d04bc273c7e09bd6 and returned action STOP_FINISHED; persisted halted=programme_finished, pending=null, last_status=TASK_COMPLETE, unique_chat_count=2, with no third Send. The process exited.
+- Evidence: evidence/astra-l06-20261118-a/operator_sequence.json, evidence/astra-l06-20261118-a/live_record.json and cumulative evidence/live_test_results_20261118.csv. Assisted initial bootstrap and limited stale-view scope recorded explicitly; L01-L05 preserved.
+- Next action: Leaf 06 L07 read-only editor/composer regression: independently observe empty placeholder, real draft, real draft equal to placeholder and attachment-only states in nominated Project; distinguish editable content from UIA placeholder without Send or clearing drafts. Record actual observations in new L07 evidence, then proceed L08 as authorised. Do not modify unrelated projects or launch a new succession controller for L07.
+
 ## L06 second saved Project worker — terminal slice 2, 18 November 2026
 
 - Second saved Project chat `6afd0f07-e17c-83ec-ae22-a257184d7db4` positively observed in live Chrome UIA while its current assistant response was produced. The external reference controller had already delivered the ordinary short successor pointer and its same-chat continuation. Worker made no Send or controller call.

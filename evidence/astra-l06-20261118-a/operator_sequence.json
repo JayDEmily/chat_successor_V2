@@ -1,0 +1,50 @@
+{
+  "run_id": "astra-l06-20261118-a",
+  "test_id": "L06",
+  "outcome": "PASS",
+  "project": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "initial_chat_id": "6afd0a50-bb5c-83ec-8769-aad757de38c9",
+  "successor_chat_id": "6afd0f07-e17c-83ec-ae22-a257184d7db4",
+  "first_worker_commit": "b56f9fe5684828ad07005655b669da2705014aac",
+  "probe_rotation_commit": "7b2eca1305a5bfe92734cc8a56155b9e55f1721d",
+  "first_worker_response_id": "uia-turn-1-ab855a5d43e4a16a7064",
+  "prepared_action_id": "6afd0a50-bb5c-83ec-8769-aad757de38c9:uia-turn-1-ab855a5d43e4a16a7064:LAUNCH_SUCCESSOR",
+  "controller_observations": [
+    "New private L06 state initialised with observed first-chat ID; cap 3 and unique-chat count 1",
+    "CLI cycle --prepare-only consumed first worker marker and persisted exactly one unsent prepared LAUNCH_SUCCESSOR; unique-chat count remained 1 and no browser Send occurred",
+    "Astra repo_fixture.py rotate-probe changed only slice-2 nonce and disclosed no nonce to the chat or operator prompt; source RUN.json slice 1 and next slice rows verified identical",
+    "Fixture verify remained true at 1/2; probe change committed separately and remote HEAD verified before dispatch",
+    "Existing same L06 controller dispatched prepared action; positively observed distinct new Project chat ID, unique-chat count 2, pending null, and action WAIT",
+    "Stale-view verification in a disposable clone with local HEAD b56f9fe: unchanged GitPublishedReader.read fetched current remote commit 7b2eca1; next-slice probe differed while rows were unchanged, and the repository-only source was used. This is a real remote Git test, not a ChatGPT worker or artificial live browser Send.",
+    "The second saved worker emitted a completed NEED_MORE_TIME response. The same controller consumed turn uia-turn-1-b6b5d3e4293f5a3937d4 and positively posted the standard same-chat continuation, keeping unique-chat count=2 and pending=null.",
+    "Controller consumed second worker final response uia-turn-2-45c7d04bc273c7e09bd6; saved state halted=programme_finished, pending=null, last_status=TASK_COMPLETE, two distinct chat IDs, and CLI emitted STOP_FINISHED. Controller exited.",
+    "Independent temporary fresh clone pinned to exact remote SHA 06429f2c78e5fb55e8bfa43e8d0a3abfdfe29d8b validated fixture 2/2, both worker IDs and all result probes against RUN.json; observed second probe was different to original first-worker checkout and exactly matched rotated source revision."
+  ],
+  "second_worker_commit": "06429f2c78e5fb55e8bfa43e8d0a3abfdfe29d8b",
+  "second_worker_response_id": "uia-turn-2-45c7d04bc273c7e09bd6",
+  "terminal_action": "STOP_FINISHED",
+  "terminal_halted": "programme_finished",
+  "observed_record_created_utc": "2026-11-18T02:37:05.027445+00:00",
+  "limitations": [
+    "Initial worker manually bootstrapped; successor sent automatically by sole existing controller.",
+    "Stale Git checkout refresh scenario tested independently against real remote Git; not a natural stale-view fault within successor chat.",
+    "The operator did not record exact UTC start time for each browser/UIA event.",
+    "No real semantic fallback was used or claimed."
+  ],
+  "second_worker_first_status": "NEED_MORE_TIME",
+  "second_worker_first_response_id": "uia-turn-1-b6b5d3e4293f5a3937d4",
+  "validated_remote_revision": "06429f2c78e5fb55e8bfa43e8d0a3abfdfe29d8b",
+  "independent_fixture_validation": {
+    "fixture_valid": true,
+    "completed_steps": 2,
+    "total_steps": 2,
+    "worker_attribution_matches": true,
+    "step2_probe_matches_rotated_published_RUN": true,
+    "step1_rows_unchanged": true,
+    "programme_complete": true,
+    "next_task": null
+  },
+  "observed_final_evidence_utc": "2026-11-18T02:44:22.882Z"
+}

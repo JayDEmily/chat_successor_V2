@@ -1,0 +1,165 @@
+{
+  "template_only": false,
+  "outcome": "PASS",
+  "test_id": "L06",
+  "run_id": "astra-l06-20261118-a",
+  "scenario_type": "NATURAL_LIVE",
+  "environment": "OWNER_AUTHENTICATED_WINDOWS_11_CHROME_UBUNTU_WSL_GIT",
+  "observed_start_utc": null,
+  "observed_end_utc": "2026-11-18T02:44:22.882Z",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "project_name": "Chat succession folder",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "max_unique_chats": 3,
+  "initial_chat_id": "6afd0a50-bb5c-83ec-8769-aad757de38c9",
+  "observed_run_chat_ids": [
+    "6afd0a50-bb5c-83ec-8769-aad757de38c9",
+    "6afd0f07-e17c-83ec-ae22-a257184d7db4"
+  ],
+  "controller_or_launcher_version": "Unchanged Astra core controller with L06 prepare-only seam and existing Windows Chrome UIA adapter at seed commit 353373b206eae8131c63431b2fec69a5a2edad77",
+  "write_tool_used": "Real first and successor worker Git pushes; external operator Astra rotate-probe commit; independent fresh remote Git clone/validator",
+  "fixture_path": "succession-tests/astra-l06-20261118-a",
+  "events": [
+    {
+      "event": "assisted_first_worker",
+      "destination_chat_id": "6afd0a50-bb5c-83ec-8769-aad757de38c9",
+      "count_before": 0,
+      "count_after": 1,
+      "send_outcome": "Owner started first worker in nominated Project; URL and assignment observed"
+    },
+    {
+      "event": "first_worker_publication_and_status",
+      "source_chat_id": "6afd0a50-bb5c-83ec-8769-aad757de38c9",
+      "response_id": "uia-turn-1-ab855a5d43e4a16a7064",
+      "response_complete": true,
+      "status": "TASK_COMPLETE",
+      "interpretation_basis": "One canonical final status line",
+      "publication_outcome": "published remote",
+      "normal_commit_reference": "b56f9fe5684828ad07005655b669da2705014aac",
+      "programme_complete": false,
+      "next_task": "Process fixture slice 2 of 2; read RUN.json and verify RESULTS.json.",
+      "count_before": 1,
+      "count_after": 1
+    },
+    {
+      "event": "prepared_unsent_handover",
+      "source_chat_id": "6afd0a50-bb5c-83ec-8769-aad757de38c9",
+      "response_id": "uia-turn-1-ab855a5d43e4a16a7064",
+      "planned_action": "LAUNCH_SUCCESSOR",
+      "count_before": 1,
+      "count_after": 1,
+      "send_outcome": "CLI cycle --prepare-only persisted exactly one prepared pending action; no browser prepare or Send"
+    },
+    {
+      "event": "repository_only_probe_rotation",
+      "source_chat_id": "6afd0a50-bb5c-83ec-8769-aad757de38c9",
+      "planned_action": "LAUNCH_SUCCESSOR",
+      "normal_commit_reference": "7b2eca1305a5bfe92734cc8a56155b9e55f1721d",
+      "publication_outcome": "published remote before Send",
+      "send_outcome": "No browser Send; rotated next-slice probe not pasted into successor message",
+      "workload_verification": "Only slice-2 probe changed; slice-1 source, next rows and fixture state preserved; fixture validator 1/2",
+      "count_before": 1,
+      "count_after": 1
+    },
+    {
+      "event": "automatic_successor_dispatch",
+      "source_chat_id": "6afd0a50-bb5c-83ec-8769-aad757de38c9",
+      "destination_chat_id": "6afd0f07-e17c-83ec-ae22-a257184d7db4",
+      "planned_action": "LAUNCH_SUCCESSOR",
+      "send_outcome": "Existing controller positively read back ordinary short branch pointer in newly saved correct-Project chat",
+      "count_before": 1,
+      "count_after": 2
+    },
+    {
+      "event": "second_worker_need_more_time",
+      "source_chat_id": "6afd0f07-e17c-83ec-ae22-a257184d7db4",
+      "response_id": "uia-turn-1-b6b5d3e4293f5a3937d4",
+      "response_complete": true,
+      "status": "NEED_MORE_TIME",
+      "interpretation_basis": "Canonical final status",
+      "planned_action": "CONTINUE_CURRENT",
+      "count_before": 2,
+      "count_after": 2
+    },
+    {
+      "event": "same_chat_continuation",
+      "source_chat_id": "6afd0f07-e17c-83ec-ae22-a257184d7db4",
+      "destination_chat_id": "6afd0f07-e17c-83ec-ae22-a257184d7db4",
+      "planned_action": "CONTINUE_CURRENT",
+      "send_outcome": "Controller positively confirmed exact standard continuation in same saved chat",
+      "count_before": 2,
+      "count_after": 2
+    },
+    {
+      "event": "second_worker_terminal_publication",
+      "source_chat_id": "6afd0f07-e17c-83ec-ae22-a257184d7db4",
+      "response_id": "uia-turn-2-45c7d04bc273c7e09bd6",
+      "response_complete": true,
+      "status": "TASK_COMPLETE",
+      "interpretation_basis": "Canonical final status",
+      "normal_commit_reference": "06429f2c78e5fb55e8bfa43e8d0a3abfdfe29d8b",
+      "publication_outcome": "published remote",
+      "programme_complete": true,
+      "next_task": null,
+      "planned_action": "STOP_FINISHED",
+      "workload_verification": "Independent fresh remote checkout at exact published commit: fixture_valid true 2/2, rotated next probe matched result and first probe preserved",
+      "count_before": 2,
+      "count_after": 2
+    },
+    {
+      "event": "controller_terminal_observation",
+      "source_chat_id": "6afd0f07-e17c-83ec-ae22-a257184d7db4",
+      "response_id": "uia-turn-2-45c7d04bc273c7e09bd6",
+      "planned_action": "STOP_FINISHED",
+      "send_outcome": "No third-chat Send",
+      "reconciliation_evidence": "CLI action STOP_FINISHED, state halted=programme_finished, pending=null, last_status=TASK_COMPLETE, consumed all three distinct response identities",
+      "count_after": 2
+    }
+  ],
+  "expected": {
+    "distinct_saved_chats": 2,
+    "successor_launches": 1,
+    "validated_steps": 2,
+    "rotated_repo_only_probe_used": true,
+    "terminal_action": "STOP_FINISHED"
+  },
+  "actual": {
+    "distinct_saved_chats": 2,
+    "successor_launches": 1,
+    "validated_steps": 2,
+    "rotated_repo_only_probe_used": true,
+    "terminal_action": "STOP_FINISHED"
+  },
+  "useful_work_validated": true,
+  "continuation_count": 1,
+  "successor_launch_count": 1,
+  "duplicate_send_count": 0,
+  "wrong_destination_count": 0,
+  "false_semantic_completion_count": 0,
+  "owner_interventions": [
+    "Assisted first worker bootstrap",
+    "Operator prepare-only cycle and separately published repository probe rotation before controller successor dispatch",
+    "Independent exact-published remote verification",
+    "Separate deliberately stale local Git checkout refreshed current branch (not a live browser fault)"
+  ],
+  "evidence_paths": [
+    "PROGRESS.md",
+    "succession-tests/astra-l06-20261118-a/RUN.json",
+    "succession-tests/astra-l06-20261118-a/STATE.json",
+    "succession-tests/astra-l06-20261118-a/RESULTS.json",
+    "evidence/astra-l06-20261118-a/setup.md",
+    "evidence/astra-l06-20261118-a/first_worker_slice1.md",
+    "evidence/astra-l06-20261118-a/second_worker_slice2.md",
+    "evidence/astra-l06-20261118-a/operator_sequence.json",
+    "evidence/astra-l06-20261118-a/live_record.json",
+    "evidence/live_test_results_20261118.csv",
+    "Private Windows controller config/state not uploaded"
+  ],
+  "limitations": [
+    "Initial worker manually bootstrapped; successor sent automatically by sole existing controller.",
+    "Stale Git checkout refresh scenario tested independently against real remote Git; not a natural stale-view fault within successor chat.",
+    "The operator did not record exact UTC start time for each browser/UIA event.",
+    "No real semantic fallback was used or claimed."
+  ]
+}
