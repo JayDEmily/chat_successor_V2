@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run A fourth saved worker — slice 4 of 5, 18 November 2026
+
+- **Actual saved worker:** `6afd572e-73d8-83ec-9bf7-ba08380a6861`, matched by the existing external controller's persisted fourth-chat ID and independently confirmed via the existing read-only Windows UIA observation of the nominated Project conversation. The fourth saved chat was launched by the controller, not this worker.
+- **Published fixture commit:** `eaec57557c9fc1d3a352828dbb416c72b70da43e`, successfully pushed and independently read back by pinned GitHub ref for STATE.json, RESULTS.json and `evidence/astra-l13-20261118-a/run_a_worker_slice4.md`. Initial working revision was `8bda40da46271d424e8c3035e89ac58da17f8520`.
+- **Useful work:** processed only RUN.json slice 4, normalising six rows: alpha count 2/total 21, beta 2/46, gamma 2/35; combined count 6 and total 102. The new result records this worker's actual saved ID and the current step-4 probe. State is `completed_steps=4/5`, `programme_complete=false`, next task slice 5. Earlier results and Runs B/C were unchanged.
+- **Checks:** fixture validator returned `fixture_valid=true, completed_steps=4, total_steps=5`; unstaged and staged Git diff checks passed. Pinned remote STATE.json and RESULTS.json were verified independently after the successful push. First commit attempt failed before committing because the new isolated checkout lacked local author identity; the worker reused the verified identity from the earlier worker checkout and successfully committed/pushed without changing global Git configuration.
+- **Next action:** only the **existing external controller** may consume this worker's one canonical final completion marker, verify published programme state and launch the fifth distinct Run A saved worker for slice 5. Do not launch a successor from this worker. Run A's five-chat verdict remains pending; Runs B/C remain staged and untouched.
+
 ## L13 Run A third saved worker — slice 3 of 5, 18 November 2026
 
 - **Actual saved worker:** `6afd5556-f9c0-83ec-975d-363ed733db3b`, independently matched by the running external controller's persisted saved-chat state and a read-only Chrome UIA target observation in the nominated Project. The third chat was launched by the existing controller, not by the worker.
