@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run A third saved worker — slice 3 of 5, 18 November 2026
+
+- **Actual saved worker:** `6afd5556-f9c0-83ec-975d-363ed733db3b`, independently matched by the running external controller's persisted saved-chat state and a read-only Chrome UIA target observation in the nominated Project. The third chat was launched by the existing controller, not by the worker.
+- **Published fixture commit:** `3af7c82fc2140634efeb6e78ddfa5dd2b850d2ab`, pushed to the nominated branch and independently read back by pinned GitHub ref (RUN A STATE.json, RESULTS.json, evidence). Starting source was `5f91f52cdd671d715725e3a73abfdb92eed6e3f9`.
+- **Useful work:** processed only six rows in step 3: alpha 2/29, beta 2/38, gamma 2/23; combined count 6 and total 90. RESULTS.json records the current real saved worker ID and step-3 RUN.json probe; state is `completed_steps=3/5`, `programme_complete=false`, next task slice 4.
+- **Checks:** existing fixture validator returned `fixture_valid=true, completed_steps=3, total_steps=5`; `git diff --check` and staged-diff check passed before commit. Remote pinned STATE.json and RESULTS.json matched the calculated values and saved ID. Evidence: `evidence/astra-l13-20261118-a/run_a_worker_slice3.md`.
+- **Next action:** only the **existing external controller** may consume this worker's one final canonical completion marker, verify the published programme state and launch the fourth distinct Run A saved worker for slice 4. This worker must not launch a successor. Run A's five-chat verdict remains pending; Runs B/C are staged and untouched.
+
 ## L13 Run A second saved worker — slice 2 of 5, 18 November 2026
 
 - **Actual saved worker:** `6afd5379-92c4-83ec-8297-d60011fd0c2e`, independently confirmed by read-only Chrome UIA in the nominated Project. The existing controller had launched this second saved chat; the worker did not send, launch, reset or modify the controller.
