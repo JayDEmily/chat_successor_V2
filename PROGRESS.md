@@ -1,5 +1,12 @@
 # Progress
 
+## L07 bounded retry — desktop focus/window contention, 18 November 2026
+
+- Continued from the verified remote L07 checkpoint `355b263226f31c2bf9a51578742f25b6bf1b5ab7`. Read README, AGENTS, PROGRESS and Astra's Leaf 06/runbook. Reused the authorised Remote Desktop Commander and Ubuntu; no controller or successor run.
+- The previously verified L06 test composer window had navigated to another Project by the time it was re-inspected; the destination check stopped before interaction. A new Chrome window was opened at the **existing saved** L06 second-worker URL, but actual editable content was nonempty, so no attempt was made to clear/replace it. Another pre-existing L06 test-chat window lost foreground focus twice before a clipboard/editor read completed. Nothing was attached or sent, and unrelated Project details were omitted from the public evidence.
+- **L07 remains BLOCKED, 3/4 composer states observed.** This retry adds evidence of window/draft/focus instability, **not** a verified attachment-only draft or an attachment-handling defect. L01–L06 PASS and L08–L15 NOT_RUN remain unchanged. See `evidence/astra-l07-20261118-a/attempt3.json`.
+- **Next action:** once an independently empty nominated-Project composer retains focus, use a harmless attachment and verify both actual editable text empty and positive attachment presence. If destination/draft/focus evidence is uncertain, hold without Send, and do not promote L07 to PASS. No owner-operated step has been established as necessary.
+
 ## L07 follow-up — existing test-chat attachment probe, 18 November 2026
 
 - Continued L07 using the existing nominated Project and authenticated Windows Chrome session, with no owner action needed. The existing completed L06 test chat `6afd0f07-e17c-83ec-ae22-a257184d7db4` had independently verified empty editable text, UIA Value `"Ask ChatGPT\\n"` and no detected attachments. This resolves the first attempt's lack of an empty composer, without clearing the separate unsent drafts.

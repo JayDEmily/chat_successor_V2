@@ -1,0 +1,58 @@
+{
+  "test_id": "L07",
+  "attempt_id": "astra-l07-20261118-c",
+  "observation_end_utc": "2026-11-18T04:04:39.4313603Z",
+  "scenario_type": "MANUAL_OBSERVATION_ONLY",
+  "status": "BLOCKED_NO_NEW_ATTACHMENT_OBSERVATION",
+  "repository": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "project_id": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "starting_branch_commit": "355b263226f31c2bf9a51578742f25b6bf1b5ab7",
+  "observations": [
+    {
+      "kind": "previous_window_no_longer_target",
+      "previous_handle": 1774104,
+      "observation": "The reused Chrome window's address did not match the nominated Chat Succession Project or saved chat. The operation stopped before editable inspection or any attachment action.",
+      "unrelated_project_url": "OMITTED_FROM_PUBLIC_EVIDENCE"
+    },
+    {
+      "kind": "authorised_project_window_inventory",
+      "observation": "Current existing authenticated Chrome contained Project windows and saved test chats. The originally nominated L06 second saved chat had no current matching target window.",
+      "scope": "read-only address and UIA window inventory; no navigation or Send"
+    },
+    {
+      "kind": "existing_saved_test_chat_fresh_window",
+      "known_existing_saved_chat_id": "6afd0f07-e17c-83ec-ae22-a257184d7db4",
+      "observed_new_window_handle": 20713818,
+      "observation": "The exact existing saved Chat Succession conversation was opened in a new Chrome window without creating a new saved conversation. An independent editable-read check found a nonempty draft.",
+      "result": "HOLD_EXISTING_DRAFT",
+      "draft_content": "NOT_EXPORTED",
+      "action": "No typing, clearing, attachment or Send"
+    },
+    {
+      "kind": "alternate_existing_test_chat",
+      "existing_saved_chat_id": "6afd0a50-bb5c-83ec-8769-aad757de38c9",
+      "window_handle": 19206068,
+      "observation": "Two separate read-only clipboard/editor probes aborted after focus changed away from the nominated Chrome handle.",
+      "result": "HOLD_FOREGROUND_UNCERTAINTY",
+      "action": "No typing, clearing, attachment or Send"
+    }
+  ],
+  "controller_used": false,
+  "messages_sent": 0,
+  "chats_created": 0,
+  "attachments_selected": 0,
+  "unrelated_projects_modified": false,
+  "draft_clear_actions": 0,
+  "acceptance": {
+    "first_three_composer_states": "VERIFIED_IN_PRIOR_LIVE_RECORD",
+    "fourth_attachment_only": "NOT_VERIFIED",
+    "l07_overall": "BLOCKED_NOT_PASS"
+  },
+  "interpretation": "The new observations show target-window churn and unstable foreground selection. They do not prove a ChatGPT composer or attachment-handling defect, and do not establish attachment-only state.",
+  "next_action": "Resume when an independently empty, correctly addressed nominated Project composer can retain focus long enough for file selection; use only a harmless test attachment, independently verify a visible attachment and actual editable text empty, never Send or clear drafts. Then re-run L07 validation and update cumulative sheet; otherwise preserve HOLD.",
+  "prior_evidence_paths": [
+    "evidence/astra-l07-20261118-a/live_record.json",
+    "evidence/astra-l07-20261118-a/attempt2.json"
+  ]
+}
