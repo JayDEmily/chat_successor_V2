@@ -1,5 +1,14 @@
 # Progress
 
+## L01 second live fixture worker — 18 November 2026
+
+- **Assigned scope:** resumed the published `astra-l01-20261118-a` fixture on `work/astra-succession-implementation-20261118`; processed slice 2 of 2 only. The external controller remains the sole successor launcher.
+- **Provenance:** existing controller state recorded second saved Chat Succession ID `6afced4f-870c-83ec-8370-fbe7e296b386`, distinct from first worker `6afce427-98c4-83ec-b3e7-a05c19f0806f`. No additional successor was launched by this worker.
+- **Worker result:** trimmed/lowercased slice-2 categories: alpha count=2 total=40; beta count=2 total=18; gamma count=2 total=15. Appended a second `RESULTS.json` result with the published RUN.json probe and observed successor ID; updated `STATE.json` to `completed_steps=2`, `programme_complete=true`, `next_task=null`.
+- **Verification:** `python3 succession-tests/astra-l01-20261118-a/fixture_tools.py verify --root succession-tests/astra-l01-20261118-a` reported `fixture_valid=true`, `completed_steps=2`, `total_steps=2`; `git diff --check` clean. Fixture commit `8041f08323f0865c69afda29be9196138959dfb1`.
+- **Boundary:** this is published-worker evidence, not yet a full L01 PASS. The single live controller still needs to consume this worker's completed, status-marked turn, read the published terminal repo state and observe that no additional successor is launched.
+- **Next action:** complete the above read-only terminal controller observation and record L01's actual outcome; then follow Leaf 06 for the remaining bounded cases. Preserve one controller and the existing worker chats.
+
 ## Astra implementation Worker — 18 November 2026 (work in progress)
 
 - **Owner scope correction:** no drift or new orchestration system. Use Astra's existing reference controller, the nominated implementation leaves, and the already demonstrated Windows/Chrome method. Keep only necessary integration code; disposable investigative scripts have been deleted. Do not expand scope by importing assumptions or architecture from other projects.
