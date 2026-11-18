@@ -1,8 +1,8 @@
 {
-  "completed_steps": 1,
-  "last_chat_id": "6afcf6b8-65a0-83ec-9e23-6bf655cf8004",
-  "next_task": "Process fixture slice 2 of 3; read RUN.json and verify RESULTS.json.",
+  "completed_steps": 2,
+  "last_chat_id": "6afcf7a9-93a8-83ec-aa5f-435905e0c1ae",
+  "next_task": "Process fixture slice 3 of 3; read RUN.json and verify RESULTS.json.",
   "programme_complete": false,
-  "progress_summary": "Completed slice 1 of 3; six rows aggregated and published; slices 2 and 3 remain.",
+  "progress_summary": "Completed slice 2 of 3 in saved worker 2 after same-chat continuation; six rows aggregated and published; slice 3 remains unfinished.",
   "run_id": "astra-l05-20261118-a"
 }

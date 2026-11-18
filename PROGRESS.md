@@ -1,5 +1,11 @@
 # Progress
 
+## L05 second live fixture worker - slice 2, 18 November 2026
+
+- Starting remote HEAD d1398b1ff25e2c221ecc1b21e56621f280f02107. Resumed as saved Project chat 6afcf7a9-93a8-83ec-aa5f-435905e0c1ae; existing controller recorded two distinct chats, cap 2, and consumed chat 2's first NEED_MORE_TIME response before same-chat continuation.
+- From current RUN.json slice 2: alpha 2/40, beta 2/18, gamma 2/15, six rows, total 73. Appended a worker-attributed result and advanced fixture to 2/3; programme_complete remains false; slice 3 is the next task.
+- Evidence: evidence/astra-l05-20261118-a/second_worker_slice2.md. No worker-initiated successor Send. The external controller still must observe this worker's final marked response and verify STOP_CAP with no third chat. Not an L05 verdict.
+
 ## L05 first live fixture worker ? slice 1, 18 November 2026
 
 - Worker processed only slice 1 of 3 for Astra L05 from remote HEAD a33f37bf9602e6a28fb1a10e0ea7402874c9b8c0 on the nominated implementation branch.
