@@ -1,8 +1,8 @@
 {
-  "completed_steps": 1,
-  "last_chat_id": "6afe1bba-a8b0-83ec-b393-3017ea056dd2",
-  "next_task": "Process fixture slice 2 of 5; read RUN.json and verify RESULTS.json.",
+  "completed_steps": 2,
+  "last_chat_id": "6afe362d-5088-83ec-8b45-afc15aba6b1d",
+  "next_task": "Process fixture slice 3 of 5; read RUN.json and verify RESULTS.json.",
   "programme_complete": false,
-  "progress_summary": "Completed slice 1 of 5.",
+  "progress_summary": "Completed slice 2 of 5.",
   "run_id": "astra-l13-20261119-e"
 }
