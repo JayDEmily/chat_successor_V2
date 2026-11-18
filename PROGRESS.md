@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run B third saved worker — slice 3 of 5, 18 November 2026
+
+- **Actual saved worker:** `6afd5ff2-8f6c-83ec-b143-c7e715fdbb2b`, observed in the connected browser tab inventory at the nominated Chat Succession Project conversation URL (last opened 19:20 Melbourne). This proves saved Project/chat identity, not response completion or controller transport.
+- **Verified fixture publication:** `a9c2efc0d825d28798e201d2ecd710e236017b4c`, committed and pushed from the independent clean worker checkout based on `edf856205e853a114c9504e5488701aeb308dfe0`. Remote Git HEAD matched the commit; independent pinned GitHub readback verified `STATE.json`, `RESULTS.json` and `evidence/astra-l13-20261118-b/run_b_worker_slice3.md`, including saved worker ID and the step-3 probe.
+- **Useful work:** processed only RUN.json step 3 (six rows): alpha count 2/total 29, beta 2/38, gamma 2/23, combined total 90. Three distinct workers have published three results. `completed_steps=3/5`; `programme_complete=false`; next task is slice 4. Previous results and Runs A/C unchanged.
+- **Validation:** original fixture validator reported `fixture_valid=true, completed_steps=3, total_steps=5`; Git whitespace check clean, commit/push successful, remote pinned files matched. This is not Run B or three-run L13 PASS.
+- **Next action:** the **existing external controller alone** consumes this worker's single canonical final completion marker, verifies handover and launches the fourth distinct saved Run B worker for exactly slice 4. No worker-side controller action, successor, same-chat continuation or additional slice was performed. Controller transport and terminal Run B evidence remain to be observed.
+
 ## L13 Run B second saved worker — slice 2 of 5, 18 November 2026
 
 - **Actual saved worker:** `6afd5e97-dc08-83ec-9725-1d5ce61b3183`, observed by read-only connected browser tab inventory at the exact nominated Chat Succession Project conversation URL. This observation establishes the saved chat and Project identity, not response completion or controller transport.
