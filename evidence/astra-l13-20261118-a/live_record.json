@@ -1,0 +1,110 @@
+{
+  "test_id": "L13",
+  "run_id": "astra-l13-20261118-a",
+  "scenario_type": "NATURAL_LIVE_EXISTING_CHROME_PROJECT",
+  "outcome": "PASS",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "repository": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "start_utc": "2026-11-18T07:23:26.1056025Z",
+  "controller_last_log_write_utc": "2026-11-18T07:59:56.395955+00:00",
+  "repository_head_verified": "73b495e960a6a36765b3c611363a6125a81bcf96",
+  "selection_commit": "34e5c6c4d65d636de557716851b28bda0f712286",
+  "verified_initial_bootstrap": true,
+  "max_unique_chats": 5,
+  "observed_saved_chat_ids": [
+    "6afd5272-342c-83ec-b108-134d391b3577",
+    "6afd5379-92c4-83ec-8297-d60011fd0c2e",
+    "6afd5556-f9c0-83ec-975d-363ed733db3b",
+    "6afd572e-73d8-83ec-9bf7-ba08380a6861",
+    "6afd58e7-3934-83ec-ae7c-fd24df740e51"
+  ],
+  "observed_successor_launches": 4,
+  "recorded_continuation_actions": 0,
+  "consumed_response_count": 5,
+  "successor_launch_source": "Existing single integration/cli.py controller",
+  "controller_actions": {
+    "WAIT": 177,
+    "STOP_FINISHED": 1
+  },
+  "last_controller_action": "STOP_FINISHED",
+  "controller_halted": "programme_finished",
+  "pending_action_present": false,
+  "events": [
+    {
+      "slice": 1,
+      "saved_chat_id": "6afd5272-342c-83ec-b108-134d391b3577",
+      "processed_response_id": "uia-turn-1-c5467ec374b9ce82f88d",
+      "publication_commit": "3b93d64423ce5e5f0fdd8de359343d196b57fc4a",
+      "publication_commit_time": "2026-11-18T18:26:34+11:00",
+      "validated": {
+        "fixture_valid": true,
+        "completed_steps": 1,
+        "total_steps": 5
+      },
+      "programme_complete": false,
+      "next_task": "Process fixture slice 2 of 5; read RUN.json and verify RESULTS.json."
+    },
+    {
+      "slice": 2,
+      "saved_chat_id": "6afd5379-92c4-83ec-8297-d60011fd0c2e",
+      "processed_response_id": "uia-turn-1-b6c1018fe9d899913211",
+      "publication_commit": "9982cd25e087ac569b0e5cdf9ebba5ef6de19e6e",
+      "publication_commit_time": "2026-11-18T18:33:46+11:00",
+      "validated": {
+        "fixture_valid": true,
+        "completed_steps": 2,
+        "total_steps": 5
+      },
+      "programme_complete": false,
+      "next_task": "Process fixture slice 3 of 5; read RUN.json and verify RESULTS.json."
+    },
+    {
+      "slice": 3,
+      "saved_chat_id": "6afd5556-f9c0-83ec-975d-363ed733db3b",
+      "processed_response_id": "uia-turn-1-4c2f91eb65657addbcd4",
+      "publication_commit": "3af7c82fc2140634efeb6e78ddfa5dd2b850d2ab",
+      "publication_commit_time": "2026-11-18T18:42:23+11:00",
+      "validated": {
+        "fixture_valid": true,
+        "completed_steps": 3,
+        "total_steps": 5
+      },
+      "programme_complete": false,
+      "next_task": "Process fixture slice 4 of 5; read RUN.json and verify RESULTS.json."
+    },
+    {
+      "slice": 4,
+      "saved_chat_id": "6afd572e-73d8-83ec-9bf7-ba08380a6861",
+      "processed_response_id": "uia-turn-1-0a91c67f2d2fd54ae965",
+      "publication_commit": "eaec57557c9fc1d3a352828dbb416c72b70da43e",
+      "publication_commit_time": "2026-11-18T18:48:56+11:00",
+      "validated": {
+        "fixture_valid": true,
+        "completed_steps": 4,
+        "total_steps": 5
+      },
+      "programme_complete": false,
+      "next_task": "Process fixture slice 5 of 5; read RUN.json and verify RESULTS.json."
+    },
+    {
+      "slice": 5,
+      "saved_chat_id": "6afd58e7-3934-83ec-ae7c-fd24df740e51",
+      "processed_response_id": "uia-turn-1-011ff94615808adc1adc",
+      "publication_commit": "eb3dad69c2092c0c699e5d6552e6494c5812c2f4",
+      "publication_commit_time": "2026-11-18T18:58:18+11:00",
+      "validated": {
+        "fixture_valid": true,
+        "completed_steps": 5,
+        "total_steps": 5
+      },
+      "programme_complete": true,
+      "next_task": null
+    }
+  ],
+  "corrective_user_messages_observed": 0,
+  "manual_successor_launches_observed": 0,
+  "duplicate_sends_observed": 0,
+  "misroutes_observed": 0,
+  "controller_failure_holds_observed": 0
+}

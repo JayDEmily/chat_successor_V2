@@ -14,17 +14,25 @@
     {
       "id": "astra-l13-20261118-a",
       "fixture": "succession-tests/astra-l13-20261118-a",
-      "status": "BLOCKED_PRE_BOOTSTRAP_0_OF_5",
-      "active": true,
-      "saved_chat_ids": [],
-      "controller_state": "NOT_INITIALISED",
-      "reason": "Nominated Project new-chat composer contains a genuine unsent draft; no independently empty Project composer observed."
+      "status": "PASS",
+      "active": false,
+      "saved_chat_ids": [
+        "6afd5272-342c-83ec-b108-134d391b3577",
+        "6afd5379-92c4-83ec-8297-d60011fd0c2e",
+        "6afd5556-f9c0-83ec-975d-363ed733db3b",
+        "6afd572e-73d8-83ec-9bf7-ba08380a6861",
+        "6afd58e7-3934-83ec-ae7c-fd24df740e51"
+      ],
+      "controller_state": "STOP_FINISHED",
+      "evidence_path": "evidence/astra-l13-20261118-a/live_record.json",
+      "published_slices": 5,
+      "automatic_successors": 4
     },
     {
       "id": "astra-l13-20261118-b",
       "fixture": "succession-tests/astra-l13-20261118-b",
-      "status": "STAGED_0_OF_5",
-      "active": false,
+      "status": "SELECTED_0_OF_5",
+      "active": true,
       "saved_chat_ids": [],
       "controller_state": "NOT_INITIALISED"
     },
@@ -37,12 +45,14 @@
       "controller_state": "NOT_INITIALISED"
     }
   ],
-  "actual_live_runs_completed": 0,
-  "actual_workers_launched": 0,
+  "actual_live_runs_completed": 1,
+  "actual_workers_launched": 5,
   "worker_contract": "one next uncompleted slice per saved chat; validate, commit/push, independently verify; one final canonical status marker",
   "restrictions": "No worker operates controller or launches successor; no manual corrective prompting during normal runs; keep run states separate",
   "acceptance": "Three completed natural five-chat runs with exactly four automatic successors each, no duplicates/misroutes and remote-verified useful work",
-  "evidence_type": "FIXTURE_SETUP_ONLY",
-  "next_action": "After the user has preserved or dispatched the existing unsent Project draft, verify an independent empty Project composer. Bootstrap Run A once and observe its saved ID before initialising the existing one-controller CLI with cap 5. Do not reset staged fixtures.",
-  "active_run_status": "PRE_BOOTSTRAP_HOLD"
+  "evidence_type": "NATURAL_LIVE_REPETITION",
+  "next_action": "Bootstrap astra-l13-20261118-b once in a verified empty Project composer, then use its own cap-five controller.",
+  "active_run_status": "RUN_B_SELECTED_FOR_BOOTSTRAP",
+  "actual_automatic_successor_launches": 4,
+  "outcome": "IN_PROGRESS"
 }
