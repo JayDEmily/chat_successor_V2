@@ -1,8 +1,8 @@
 {
-  "completed_steps": 0,
-  "last_chat_id": null,
-  "next_task": "Process fixture slice 1 of 1; read RUN.json and verify RESULTS.json.",
-  "programme_complete": false,
-  "progress_summary": "Fixture seeded; no worker has performed a slice.",
+  "completed_steps": 1,
+  "last_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+  "next_task": null,
+  "programme_complete": true,
+  "progress_summary": "Completed L03 recovery fixture slice 1 of 1 after operator-restored input.",
   "run_id": "astra-l03-20261118-a"
 }

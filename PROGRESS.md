@@ -1,5 +1,12 @@
 # Progress
 
+## L03 recovered first worker — 18 November 2026
+
+- **Recovery input:** operator published `RECOVERY_INPUT.json` at `cbd95946d80a4ea93385a6a812dfcab125b30928` with the correct run ID and `repair_authorised=true`. Initial missing-input `ERROR` was preserved.
+- **Same saved worker:** `6afcf279-ed74-83ec-b39b-dacaf73af948` confirmed by read-only controller state, with one unique chat and the earlier `ERROR` consumed. No successor launch by this worker.
+- **Fixture result:** six rows, alpha 2/34; beta 2/31; gamma 2/11; total 76. `RESULTS.json` and `STATE.json` terminal 1/1, `programme_complete=true`, `next_task=null`. Validator returned `fixture_valid=true, completed_steps=1, total_steps=1` and `git diff --check` was clean. See [worker evidence](evidence/astra-l03-20261118-a/worker_recovery.md).
+- **Next action:** external controller independently observes and consumes this worker's new `TASK_COMPLETE` event, verifies same-chat continuation and preserved count/history, and records the L03 verdict. This worker publication alone does **not** claim L03 PASS. L04–L15 remain untested.
+
 ## L03 controlled ERROR/recovery setup — 18 November 2026 (in progress)
 
 - **Case:** Leaf 06 L03 on `work/astra-succession-implementation-20261118`. Test-only run `astra-l03-20261118-a` seeds one normal Astra fixture slice. Its `INSTRUCTIONS.md` requires a `RECOVERY_INPUT.json` file deliberately absent at seed, so first worker must report a concrete `ERROR` and not modify results.
