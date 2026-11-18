@@ -1,5 +1,13 @@
 # Progress
 
+## L05 first live fixture worker ? slice 1, 18 November 2026
+
+- Worker processed only slice 1 of 3 for Astra L05 from remote HEAD a33f37bf9602e6a28fb1a10e0ea7402874c9b8c0 on the nominated implementation branch.
+- Existing controller private state recorded saved chat 6afcf6b8-65a0-83ec-9e23-6bf655cf8004, cap 2, one saved chat and no pending action. Worker made no successor Send.
+- Computation directly from RUN.json: alpha 2/34, beta 2/31, gamma 2/11; six rows, total 76. Result and state set completed_steps 1, programme_complete false and next_task for slice 2. Slice 3 remains outstanding.
+- Worker evidence: evidence/astra-l05-20261118-a/first_worker_slice1.md. The external controller must independently verify publication and complete the staged second-worker continuation and cap-stop observations. This is not an L05 verdict.
+
+
 ## L05 two-chat cap setup — 18 November 2026 (in progress)
 
 - **Case:** Astra Leaf 06 L05, fresh test-only `succession-tests/astra-l05-20261118-a` with **three slices** and controller cap **two saved chats**. Seeded using the unchanged Astra fixture tool; validated initially at 0/3. The fixture's `INSTRUCTIONS.md` stages worker 1 publication of slice 1; successor worker 2's `NEED_MORE_TIME` followed by a controller same-chat continuation at cap; worker 2's publication of slice 2 while leaving slice 3 outstanding.
