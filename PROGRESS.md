@@ -4,7 +4,7 @@
 
 - **Saved Project worker ID:** `6afe362d-5088-83ec-8b45-afc15aba6b1d`, observed in the read-only connected-browser tab inventory and matching the one existing controller's current-chat state. Two distinct saved chat IDs were present; this worker did not operate the controller.
 - **Completed next fixture slice:** from source branch HEAD `35db97a5f6b205768baa0cece0144592921215f8`, processed Run E step 2 only, probe `fixture-b4a02517e1ff83ab`. Alpha 2/40, beta 2/18, gamma 2/15; six records, overall 73. Published state now has 2/5, `programme_complete=false`, next slice 3.
-- **Evidence:** `evidence/astra-l13-20261119-e/run_e_worker_slice2.md` and fixture state/results; the existing fixture validator and Git whitespace checks must pass, followed by push and independent remote readback. The prior controller-monitor timeout is preserved and G4 remains open.
+- **Publication and checks:** fixture commit `d7f5a39a1653c06d4f661107cf84d6d3f0db3bd9` was pushed to the nominated branch; `git ls-remote` matched the full SHA. The unchanged fixture validator returned `fixture_valid=true`, `completed_steps=2`, `total_steps=5`; staged `git diff --check` passed. Independent pinned GitHub readback confirmed `STATE.json`, `RESULTS.json`, `PROGRESS.md` and `evidence/astra-l13-20261119-e/run_e_worker_slice2.md`. The previous observer timeout remains recorded and G4 is open.
 - **Next action:** the sole external Run E controller consumes this worker's finished status, verifies remote state and launches one distinct worker for slice 3. Do not Send or start a second controller from this worker.
 
 ## L13 Run E monitoring timeout and read-only recovery — 19 November 2026
