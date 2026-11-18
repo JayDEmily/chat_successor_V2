@@ -1,0 +1,74 @@
+{
+  "test_id": "L10",
+  "run_id": "astra-l10-20261118-a",
+  "outcome": "PASS",
+  "qualification": "PASS_BY_SYNTHETIC_ADAPTER_INJECTION",
+  "scenario_type": "SYNTHETIC_ADAPTER_FAULT_INJECTION",
+  "environment": "UBUNTU_PYTHON_REFERENCE_CONTROLLER_NO_BROWSER",
+  "observed_end_utc": "2026-11-18T05:37:21.238Z",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "project_id": "SYNTHETIC_TEST_ID_ONLY",
+  "controller_source": "Imported Astra succession.core.Controller and actual integration.runner.cycle",
+  "test_method": "Injected Response objects at the controller observation seam using an in-memory adapter and ephemeral state; no real ChatGPT Send",
+  "cases_total": 21,
+  "cases_passed": 21,
+  "cases_failed": 0,
+  "outcome_counts": {
+    "WAIT": 3,
+    "HOLD": 11,
+    "CONTINUE_CURRENT": 4,
+    "LAUNCH_SUCCESSOR": 2,
+    "STOP_FINISHED": 1
+  },
+  "observations": {
+    "partial_and_streaming": "Incomplete and absent response observations WAIT without Send or state advancement",
+    "missing_markers": "Held; plain-language task-completion claim is not a final status marker",
+    "conflicting_and_repeated_markers": "Held; no automatic continuation or successor",
+    "malformed_and_nonterminal_markers": "Held; no Send",
+    "code_example_only": "Held; code-fenced status does not become actionable",
+    "code_example_plus_one_valid_final": "Only valid final marker controls a prepared action; Send deliberately deferred",
+    "quote_and_indented_example": "Ignored as action markers; one valid final status controls preparation",
+    "valid_ERROR": "HOLD without Send",
+    "valid_TASK_COMPLETE": "Prepared successor only for published work; test deferred Send",
+    "valid_programme_complete": "STOP_FINISHED without Send",
+    "L09_ambiguous_narrative_replay": "Held; model response reproduced synthetically rather than replaying transcript verbatim"
+  },
+  "actual": {
+    "real_chatgpt_conversations_created": 0,
+    "real_browser_prepare_calls": 0,
+    "real_browser_send_calls": 0,
+    "controller_injected_observation_cases": 21,
+    "false_task_complete_from_ambiguous_cases": 0,
+    "actual_external_controller_operated": false,
+    "semantic_classifier_executed": false,
+    "semantic_shadow_labels": null,
+    "semantic_confusion_matrix": null,
+    "classifier_false_TASK_COMPLETE": null,
+    "automatic_semantic_fallback_enabled": false
+  },
+  "acceptance": {
+    "no_incomplete_or_ambiguous_send": true,
+    "valid_final_marker_controls_routing": true,
+    "code_and_quote_examples_not_authoritative": true,
+    "conflicting_statuses_hold": true,
+    "no_semantic_claim_without_real_classifier": true,
+    "optional_classifier_shadow_not_run": true,
+    "outcome": "PASS_INJECTION_SCOPE"
+  },
+  "limitations": [
+    "All 21 cases were synthetic observations at the existing runner seam; none is a naturally generated malformed live ChatGPT reply.",
+    "The valid final marker routes were verified as prepared/terminal controller actions using defer_dispatch=True. Actual browser dispatch was deliberately not tested in L10.",
+    "Semantic classifier shadow labelling and confusion metrics are not applicable because no classifier was evaluated; automatic fallback remains disabled.",
+    "Prior live L09 UIA streaming observations are contextual only, not counted as a dedicated new L10 live-chat run."
+  ],
+  "evidence_paths": [
+    "evidence/astra-l10-20261118-a/run_injection.py",
+    "evidence/astra-l10-20261118-a/observations.json",
+    "evidence/astra-l10-20261118-a/injection_record.json",
+    "evidence/astra-l10-20261118-a/validate_observations.py",
+    "evidence/live_test_results_20261118.csv",
+    "PROGRESS.md"
+  ],
+  "next_action": "Leaf 06 L11: inject test-only publication/tool-access failure or disposable branch conflict; do not dispatch any successor until actual remote publication is verified."
+}

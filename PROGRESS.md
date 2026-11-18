@@ -1,5 +1,12 @@
 # Progress
 
+## L10 status and streaming regression — PASS (synthetic observation injection), 18 November 2026
+
+- **L10 PASS within the runbook's permitted injection scope:** 21/21 test-only Response observations were supplied to the existing imported Astra controller through `integration/runner.py` using ephemeral state, **not** to a new ChatGPT conversation. Cases covered incomplete/streaming and absent observations, missing/truncated/malformed/nonterminal statuses, repeated/conflicting markers, examples inside fenced/indented/quoted text and the observed L09-style ambiguous status pattern.
+- **Actual results:** streaming or unavailable observations WAIT; ambiguous/malformed/code-example-only cases HOLD; valid final explicit or bare marker determines the prepared `CONTINUE_CURRENT`/`LAUNCH_SUCCESSOR` or terminal `STOP_FINISHED` route. The runner's dispatch was deliberately deferred for positives. **Zero browser prepare/Send calls, zero false `TASK_COMPLETE` from ambiguous cases, zero new chats or controller launches.** See `evidence/astra-l10-20261118-a/observations.json`, `run_injection.py`, `injection_record.json`.
+- **Evidence boundary:** every case is labelled `SYNTHETIC_ADAPTER_FAULT_INJECTION`; this is **not** proof that 21 live ChatGPT responses naturally exhibited these behaviours. No real semantic classifier was used, the optional shadow/confusion matrix is **NOT_RUN**, and automatic semantic fallback remains disabled. L09's previous live streaming observations are contextual, not new L10 evidence.
+- **Continuity:** cumulative results sheet records L01–L10 PASS with L10's synthetic scope identified; L11–L15 remain NOT_RUN. **Next leaf: L11**, controlled test-only publication/tool failure or disposable branch conflict; validate that unpublished work cannot cause a successor Send.
+
 ## L09 final live verdict — PASS (owner-assisted), 18 November 2026
 
 - **All three L09 fault boundaries verified live:** durable `sending` then positive **before-click no-Send/rearm**; **after-click successor acknowledgement loss**, adopted once from the actual new saved Project ID; and **after-click same-chat continuation acknowledgement loss**, adopted once without a new chat. Unknown outcomes held until read-only reconciliation; no blind retry, duplicate Send or parallel controller.
