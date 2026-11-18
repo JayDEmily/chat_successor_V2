@@ -119,9 +119,18 @@ class WindowsUIA(Browser):
                 record.get("kind") != p["kind"] or
                 record.get("source") != p["source_chat_id"]):
             raise BrowserObservationError("Prepared window identity mismatch")
+        # L09 test-only fault points. Set this only for a bounded test CLI
+        # process; normal controller runs have no injection.
+        fault = os.environ.get("ASTRA_L09_FAULT", "")
+        if fault not in ("", "before_click", "after_click"):
+            raise BrowserObservationError("Unknown L09 fault point")
+        if fault == "before_click":
+            raise BrowserObservationError(
+                "L09 injected after durable sending but before UIA Send; no click")
         result = self._invoke(
             "Send", Kind=p["kind"], ChatId=p["source_chat_id"],
-            WindowHandle=target.private_window_handle, Message=message)
+            WindowHandle=target.private_window_handle, Message=message,
+            L09Fault="after_click" if fault == "after_click" else None)
         return Submitted(project=result.get("project", ""),
                          chat_id=result.get("chat_id"),
                          submitted_text=result.get("submitted_text"),

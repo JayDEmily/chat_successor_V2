@@ -1,5 +1,12 @@
 # Progress
 
+## L09 scoped uncertain-Send hooks — offline preparation, 18 November 2026
+
+- **L09 LIVE NOT_RUN.** Added only two fault points to the existing single Windows UIA Send path: environment variable ASTRA_L09_FAULT=before_click raises after persisted sending but before any UIA Send call; after_click sends once and raises immediately after Enter but before acknowledgement. Normal operation with the variable unset is unchanged. The controller/state machine, statuses and unique-chat counting were not modified.
+- **Checks:** 22/22 integration tests passed, including four focused before-click/after-click/successor/same-chat recovery seam tests; unchanged Astra offline suite 119/119 passed; PowerShell UIA adapter parsed with zero errors. These are offline fault injections and parser checks, **not live L09 evidence**. No ChatGPT Send or successor was launched.
+- **Evidence:** evidence/astra-l09-20261118-a/setup.md; modified integration/windows_backend.py and integration/uia_adapter.ps1 plus integration/tests/test_l09_faults.py. Cumulative L09 result remains NOT_RUN; L01–L08 PASS untouched.
+- **Next action:** create a fresh scoped L09 fixture and private controller state, then conduct the three live cases under the **existing one controller**: positive before-click no-submission/rearm; after-click successor lost ack/restart/read-only adoption; after-click same-chat continuation lost ack/restart/read-only adoption. Preserve unknown outcomes and never automatically resend.
+
 ## L08 live active Project routing — PASS, 18 November 2026
 
 - **L08 PASS (preparation-only, no Send).** Began with an ordinary authenticated ChatGPT composer active outside the nominated Project; Chat Succession was visible in the sidebar. Recorded the unrelated editor's UIA Value SHA-256 and length without exporting its content. The unchanged existing adapter's Prepare LAUNCH_SUCCESSOR opened the correct Chat Succession Project URL in a distinct Chrome window (saved chat ID null), independently read an empty editable buffer and found no attachment. No message was typed or sent.

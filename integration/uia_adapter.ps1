@@ -9,6 +9,7 @@ param(
  [ValidateSet('CONTINUE_CURRENT','LAUNCH_SUCCESSOR')][string]$Kind = 'CONTINUE_CURRENT',
  [long]$WindowHandle = 0,
  [string]$Message = '',
+ [string]$L09Fault = '',
  [string]$ChromeExe = 'C:\Program Files\Google\Chrome\Application\chrome.exe',
  [switch]$AlreadyTyped
 )
@@ -315,6 +316,9 @@ if($Mode -eq 'Send') {
  if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Foreground changed before Send'}
  # ONE and only one Send. If process dies afterwards, controller reconciles.
  [System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+ if($L09Fault -eq 'after_click'){
+  throw 'L09 injected after single click before acknowledgement; reconcile, never retry blindly'
+ }
  for($i=0;$i -lt 60;$i++){
   Start-Sleep -Milliseconds 400
   $url=Get-Address $target.window
