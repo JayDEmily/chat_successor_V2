@@ -1,5 +1,13 @@
 # Progress
 
+## L06 second saved Project worker — terminal slice 2, 18 November 2026
+
+- Second saved Project chat `6afd0f07-e17c-83ec-ae22-a257184d7db4` positively observed in live Chrome UIA while its current assistant response was produced. The external reference controller had already delivered the ordinary short successor pointer and its same-chat continuation. Worker made no Send or controller call.
+- Starting remote commit `7b2eca1305a5bfe92734cc8a56155b9e55f1721d` contains the separately rotated step-2 probe `281e408db06ee9ba01d562299f75b794`. Fresh cloned working copy on the nominated branch was used; no stale L05 state or prior-chat nonce.
+- Worker computed step 2 directly: alpha 2/40, beta 2/18, gamma 2/15, six rows and combined total 73; appended the result with current probe/chat ID. STATE.json terminal 2/2, programme_complete=true, next_task=null; first-worker slice 1 intact.
+- Evidence: `evidence/astra-l06-20261118-a/second_worker_slice2.md`. This worker's publication is not itself an L06 PASS; the live controller/operator still must validate the pinned remote result, consume the final response, record STOP_FINISHED and update the live results sheet.
+- Next action (external controller/operator only): observe the terminal worker reply, verify exactly two observed saved chats and zero extra Sends, independently pin/validate publication, and record L06 verdict. Then proceed to L07 according to Astra's Leaf 06. Do not launch an independent successor.
+
 ## L06 first live fixture worker — slice 1, 18 November 2026
 
 - First saved Chat Succession Project conversation confirmed via existing Chrome UIA URL and matching displayed user assignment: `6afd0a50-bb5c-83ec-8769-aad757de38c9`. Starting nominated branch HEAD `353373b206eae8131c63431b2fec69a5a2edad77`.
