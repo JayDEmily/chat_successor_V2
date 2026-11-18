@@ -1,8 +1,8 @@
 {
-  "completed_steps": 1,
-  "last_chat_id": "6afcef76-26b0-83ec-82e2-0de6db78a838",
-  "next_task": "Process fixture slice 2 of 2; read RUN.json and verify RESULTS.json.",
-  "programme_complete": false,
-  "progress_summary": "L02 first worker completed fixture slice 1 of 2; next worker should process slice 2.",
+  "completed_steps": 2,
+  "last_chat_id": "6afcf107-76f0-83ec-9367-eee546d55837",
+  "next_task": null,
+  "programme_complete": true,
+  "progress_summary": "L02 second worker completed slice 2 of 2; programme finished.",
   "run_id": "astra-l02-20261118-a"
 }
