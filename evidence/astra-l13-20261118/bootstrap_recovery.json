@@ -1,0 +1,22 @@
+{
+  "test_id": "L13",
+  "run_id": "astra-l13-20261118-a",
+  "scenario_type": "LIVE_PREBOOTSTRAP_RECOVERY",
+  "observed_at_utc": "2026-11-18T07:21:37.1032235Z",
+  "project_id": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "fresh_project_window_inherited_existing_draft": true,
+  "draft_text_verified_by": [
+    "ValuePattern",
+    "TextPattern",
+    "visible editor text leaf",
+    "exact match in two original Project windows"
+  ],
+  "private_local_backup_verified_exact": true,
+  "original_project_windows_with_draft_after_clear": 2,
+  "fresh_project_composer_clear_verified": true,
+  "send_enabled_after_clear": false,
+  "attachments_observed": false,
+  "worker_started_at_checkpoint": false,
+  "controller_initialised_at_checkpoint": false,
+  "prior_hold_evidence": "prebootstrap_hold.json"
+}

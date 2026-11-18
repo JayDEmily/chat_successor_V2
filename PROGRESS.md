@@ -1,5 +1,11 @@
 # Progress
 
+## L13 pre-bootstrap recovery — Run A selected, 18 November 2026
+
+- The fresh authenticated Chrome Project window inherited the existing one-line draft. The operator verified a private local backup against the live editor and cleared only the fresh composer. Both original Project windows retained the exact draft at readback. The fresh Project composer had no attachments and no enabled Send button. See `evidence/astra-l13-20261118/bootstrap_recovery.json` for the observation.
+- **Active worker assignment: Run A** at `succession-tests/astra-l13-20261118-a/INSTRUCTIONS.md`. Each saved worker completes and publishes one next slice on its first turn. It uses the canonical final status line after validating remote publication. The external controller alone handles successors. Runs B and C stay staged until selected.
+- This checkpoint clears the pre-bootstrap hold. Three fixtures independently validated at 0/5. No Run A worker or controller had started at this checkpoint. The operator now bootstraps one initial saved worker and starts the existing controller with cap 5.
+
 ## L13 pre-bootstrap HOLD — existing private Project draft, 18 November 2026
 
 - **L13 BLOCKED BEFORE START, not a five-chat reliability verdict.** Three independent five-slice fixtures remain valid at 0/5, and their seed checkpoint is published at commit 95122d34eaaee9cd445405a25ff3a35581cbd0e6. No L13 saved worker or private controller has been created.
