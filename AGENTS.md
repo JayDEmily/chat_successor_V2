@@ -13,3 +13,19 @@ Execute only the assigned plan step. Record actual commits, evidence, failures a
 Preserve drafts and authenticated sessions. After an uncertain launch or Send, inspect existing evidence; never automatically repeat the action. Keep credentials and account transcripts out of GitHub.
 
 Review-only assignments produce a separate review report; a worker does not independently approve its own output. No automatic merge or production task is implied by a transport test.
+
+### Scope discipline — prevent engineering drift
+
+The nominated implementation leaf and its published acceptance criteria determine the work.
+
+Do not convert incidental technical difficulties into new requirements, gates, architecture or engineering workstreams.
+
+Reuse the established implementation approach. Ordinary browser windows and tabs within the existing authenticated Chrome session are permitted.
+
+Before introducing additional automation or infrastructure, establish that it is necessary to satisfy a specific published acceptance criterion.
+
+If a technique fails, investigate the immediate cause without losing sight of the assigned objective. Prefer the simplest existing method that can complete the task.
+
+Record genuine blockers accurately. Do not manufacture additional constraints, checks or approval requirements.
+
+Do not modify unrelated projects or expand the assignment without owner authorisation.
