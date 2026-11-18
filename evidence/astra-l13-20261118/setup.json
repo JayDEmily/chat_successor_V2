@@ -48,20 +48,33 @@
     {
       "id": "astra-l13-20261118-c",
       "fixture": "succession-tests/astra-l13-20261118-c",
-      "status": "SELECTED_0_OF_5",
-      "active": true,
-      "saved_chat_ids": [],
-      "controller_state": "NOT_INITIALISED"
+      "status": "COMPLETE_ASSISTED",
+      "active": false,
+      "saved_chat_ids": [
+        "6afd651b-db04-83ec-a386-4d709438d383",
+        "6afd6699-9f68-83ec-8fd8-06fbf9b37f4f",
+        "6afd68e9-b2d8-83ec-b803-36ccda13c6d9",
+        "6afd6a75-8b94-83ec-ba02-94aeab6a1d92",
+        "6afd6fea-c214-83ec-b0ee-7781196b5a06"
+      ],
+      "controller_state": "STOP_FINISHED",
+      "evidence_path": "evidence/astra-l13-20261118-c/live_record.json",
+      "published_slices": 5,
+      "automatic_successors": 4,
+      "reason": "Windows UIA foreground failure before the fifth chat required one explicit resume."
     }
   ],
-  "actual_live_runs_completed": 2,
-  "actual_workers_launched": 10,
+  "actual_live_runs_completed": 3,
+  "actual_workers_launched": 15,
   "worker_contract": "one next uncompleted slice per saved chat; validate, commit/push, independently verify; one final canonical status marker",
   "restrictions": "No worker operates controller or launches successor; no manual corrective prompting during normal runs; keep run states separate",
   "acceptance": "Three completed natural five-chat runs with exactly four automatic successors each, no duplicates/misroutes and remote-verified useful work",
-  "evidence_type": "NATURAL_LIVE_REPETITION",
-  "next_action": "Bootstrap astra-l13-20261118-c once in a verified empty Project composer, then use its own cap-five controller.",
-  "active_run_status": "RUN_C_SELECTED_FOR_BOOTSTRAP",
-  "actual_automatic_successor_launches": 8,
-  "outcome": "IN_PROGRESS"
+  "evidence_type": "TWO_UNATTENDED_LIVE_RUNS_AND_ONE_ASSISTED_LIVE_COMPLETION",
+  "next_action": "There is no active test worker assignment. G4 remains open pending a fresh unattended repetition. L14 remains optional and NOT_RUN.",
+  "active_run_status": "ALL_STAGED_RUNS_FINISHED_G4_OPEN",
+  "actual_automatic_successor_launches": 12,
+  "outcome": "FAIL",
+  "actual_unattended_runs_passed": 2,
+  "actual_controller_continuations": 0,
+  "actual_operator_resumes": 1
 }

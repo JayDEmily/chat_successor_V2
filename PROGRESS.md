@@ -1,5 +1,14 @@
 # Progress
 
+## L13 closeout — two unattended passes and one assisted completion
+
+**L13 did not meet its unattended acceptance criterion.** All three staged runs finished. Runs A and B passed unattended. Run C required a controller resume before its fifth saved chat. There is no active test worker assignment.
+
+- Across the three runs, 15 distinct saved Project chats published 15 validated slices. The existing controller made all 12 successor launches. There were zero corrective prompts, same-chat continuations, manual successor launches, duplicate Sends or misroutes observed.
+- In Run C, the fourth worker published its slice and finished. The controller held with the fifth-chat action still prepared after Windows UI Automation could not focus the new Project composer. The failed preparation reached no Send. The operator foregrounded the empty Project window and used the controller's existing resume operation. That controller sent the original pending pointer once and the fifth worker published its slice.
+- All three private controller states reached `STOP_FINISHED` with no pending action. Run C's final remote state at `20f8ebc6869d` had `programme_complete=true` and `next_task=null`. The existing fixture validator passed against every pinned GitHub slice publication. Per-run evidence is linked from `evidence/astra-l13-20261118/setup.json`.
+- G4 remains open pending a fresh unattended repetition. L01–L12 are recorded as PASS, L14 is optional and NOT_RUN, and L15 is recorded as PASS within its controlled-injection scope.
+
 ## L13 Run C fifth saved worker — terminal slice 5 of 5, 18 November 2026
 
 - **Saved worker identity:** `6afd6fea-c214-83ec-b0ee-7781196b5a06` from connected browser read-only tab inventory under the nominated Chat Succession Project; saved-chat identity only, not completed-turn observation or controller transport.

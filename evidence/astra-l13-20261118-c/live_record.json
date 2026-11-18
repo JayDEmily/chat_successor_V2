@@ -1,0 +1,134 @@
+{
+  "test_id": "L13",
+  "run_id": "astra-l13-20261118-c",
+  "scenario_type": "NATURAL_LIVE_EXISTING_CHROME_PROJECT",
+  "outcome": "COMPLETE_ASSISTED",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "repository": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "start_utc": "2026-11-18T08:43:03.7391008Z",
+  "controller_last_log_write_utc": "2026-11-18T09:41:40.608369+00:00",
+  "repository_head_verified": "20f8ebc6869df4b9cc6426f39dab1eb6e8a3ea8f",
+  "selection_commit": "d433fd337cf3e4d2ece3b8db1381cd1a3e770780",
+  "verified_initial_bootstrap": true,
+  "max_unique_chats": 5,
+  "observed_saved_chat_ids": [
+    "6afd651b-db04-83ec-a386-4d709438d383",
+    "6afd6699-9f68-83ec-8fd8-06fbf9b37f4f",
+    "6afd68e9-b2d8-83ec-b803-36ccda13c6d9",
+    "6afd6a75-8b94-83ec-ba02-94aeab6a1d92",
+    "6afd6fea-c214-83ec-b0ee-7781196b5a06"
+  ],
+  "observed_successor_launches": 4,
+  "recorded_continuation_actions": 0,
+  "consumed_response_count": 5,
+  "successor_launch_source": "Existing single integration/cli.py controller",
+  "controller_actions": {
+    "WAIT": 224,
+    "HOLD": 1,
+    "STOP_FINISHED": 1
+  },
+  "last_controller_action": "STOP_FINISHED",
+  "controller_halted": "programme_finished",
+  "pending_action_present": false,
+  "events": [
+    {
+      "slice": 1,
+      "saved_chat_id": "6afd651b-db04-83ec-a386-4d709438d383",
+      "processed_response_id": "uia-turn-1-98ce15f7c9eaaadc4f3f",
+      "publication_commit": "9752a6502b44bfb2e59beec29613ed937744a302",
+      "publication_commit_time": "2026-11-18T19:46:40+11:00",
+      "validated": {
+        "fixture_valid": true,
+        "completed_steps": 1,
+        "total_steps": 5
+      },
+      "programme_complete": false,
+      "next_task": "Process fixture slice 2 of 5; read RUN.json and verify RESULTS.json."
+    },
+    {
+      "slice": 2,
+      "saved_chat_id": "6afd6699-9f68-83ec-8fd8-06fbf9b37f4f",
+      "processed_response_id": "uia-turn-1-fef14a3c718dc5366f9e",
+      "publication_commit": "b3bf6333cd1f031cdb42582b38c13f195cb600da",
+      "publication_commit_time": "2026-11-18T19:55:23+11:00",
+      "validated": {
+        "fixture_valid": true,
+        "completed_steps": 2,
+        "total_steps": 5
+      },
+      "programme_complete": false,
+      "next_task": "Process fixture slice 3 of 5; read RUN.json and verify RESULTS.json."
+    },
+    {
+      "slice": 3,
+      "saved_chat_id": "6afd68e9-b2d8-83ec-b803-36ccda13c6d9",
+      "processed_response_id": "uia-turn-1-db943f4f1e44cb463e5c",
+      "publication_commit": "01f3ab753ab467b0d7cb5cd8ad68e0007683247a",
+      "publication_commit_time": "2026-11-18T20:04:13+11:00",
+      "validated": {
+        "fixture_valid": true,
+        "completed_steps": 3,
+        "total_steps": 5
+      },
+      "programme_complete": false,
+      "next_task": "Process fixture slice 4 of 5; read RUN.json and verify RESULTS.json."
+    },
+    {
+      "slice": 4,
+      "saved_chat_id": "6afd6a75-8b94-83ec-ba02-94aeab6a1d92",
+      "processed_response_id": "uia-turn-1-72db57599a8d8ef72114",
+      "publication_commit": "ee2c999d973225305220a15b7dccaa6b7b65ce5a",
+      "publication_commit_time": "2026-11-18T20:12:23+11:00",
+      "validated": {
+        "fixture_valid": true,
+        "completed_steps": 4,
+        "total_steps": 5
+      },
+      "programme_complete": false,
+      "next_task": "Process fixture slice 5 of 5; read RUN.json and verify RESULTS.json."
+    },
+    {
+      "slice": 5,
+      "saved_chat_id": "6afd6fea-c214-83ec-b0ee-7781196b5a06",
+      "processed_response_id": "uia-turn-1-ccf9a671f443ece1b8bc",
+      "publication_commit": "20f8ebc6869df4b9cc6426f39dab1eb6e8a3ea8f",
+      "publication_commit_time": "2026-11-18T20:33:17+11:00",
+      "validated": {
+        "fixture_valid": true,
+        "completed_steps": 5,
+        "total_steps": 5
+      },
+      "programme_complete": true,
+      "next_task": null
+    }
+  ],
+  "focus_hold_and_recovery": {
+    "observed_hold_utc": "2026-11-18T09:27:13.4800181Z",
+    "preceding_foreground_check_utc": "2026-11-18T09:25:57.8217849Z",
+    "after_published_slice": 4,
+    "source_chat_id": "6afd6a75-8b94-83ec-ba02-94aeab6a1d92",
+    "remote_head_during_hold": "ee2c999d973225305220a15b7dccaa6b7b65ce5a",
+    "failure": "The existing Windows UIA Prepare operation could not focus the nominated new Project window.",
+    "pending_phase_at_hold": "prepared",
+    "send_invoked_during_failed_prepare": false,
+    "resumed_at_utc": "2026-11-18T09:28:53.1432062Z",
+    "operator_action": "Foregrounded the newly opened, empty Project window and ran the existing controller's explicit resume command. The same prepared action was retained.",
+    "pending_action_id": "6afd6a75-8b94-83ec-ba02-94aeab6a1d92:uia-turn-1-72db57599a8d8ef72114:LAUNCH_SUCCESSOR",
+    "successor_posted_by_existing_controller": "6afd6fea-c214-83ec-b0ee-7781196b5a06",
+    "material_intervention": true
+  },
+  "terminal_worker_foreground_observation": {
+    "matched_chat": "6afd6fea-c214-83ec-b0ee-7781196b5a06",
+    "foreground": true,
+    "already_foreground": false,
+    "observed_at_utc": "2026-11-18T09:41:15.5991305Z"
+  },
+  "corrective_user_messages_observed": 0,
+  "manual_successor_launches_observed": 0,
+  "duplicate_sends_observed": 0,
+  "misroutes_observed": 0,
+  "controller_failure_holds_observed": 1,
+  "explicit_operator_resumes_observed": 1,
+  "unattended_acceptance_met": false
+}
