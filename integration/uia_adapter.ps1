@@ -132,11 +132,11 @@ function Safe-ClipboardEditorRead($window,$editor) {
   [System.Windows.Forms.Clipboard]::SetText($sentinel)
   if(-not [AstraFocus]::SetForegroundWindow($hwnd)){throw 'Could not focus nominated window'}
   $editor.SetFocus()
-  Start-Sleep -Milliseconds 150
+  Start-Sleep -Milliseconds 300
   if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw ('Foreground focus changed before clipboard probe; target=' + $hwnd + ', actual=' + [AstraFocus]::GetForegroundWindow())}
   [System.Windows.Forms.SendKeys]::SendWait('^a')
   [System.Windows.Forms.SendKeys]::SendWait('^c')
-  Start-Sleep -Milliseconds 150
+  Start-Sleep -Milliseconds 900
   $actual=[System.Windows.Forms.Clipboard]::GetText()
   if($actual -ceq $sentinel){return ''}
   return $actual
@@ -292,7 +292,9 @@ if($Mode -eq 'Send') {
   # without editing the authorised pretyped message.
   [System.Windows.Forms.SendKeys]::SendWait('{END}')
  }else{
-  [System.Windows.Forms.SendKeys]::SendWait($Message)
+  # The Chrome editor exposes writable UIA ValuePattern. Native SetValue
+  # avoids dropped SendKeys characters and clipboard timing.
+  $editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($Message)
  }
  $typed=''
  for($i=0;$i -lt 25;$i++){
