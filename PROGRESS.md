@@ -1,5 +1,14 @@
 # Progress
 
+## L13 Run A second saved worker — slice 2 of 5, 18 November 2026
+
+- **Actual saved worker:** `6afd5379-92c4-83ec-8297-d60011fd0c2e`, independently confirmed by read-only Chrome UIA in the nominated Project. The existing controller had launched this second saved chat; the worker did not send, launch, reset or modify the controller.
+- **Published fixture commit:** `9982cd25e087ac569b0e5cdf9ebba5ef6de19e6e`, pushed from the dedicated worker checkout; GitHub ref and pinned remote RESULTS.json, STATE.json and worker evidence were read back successfully. The source revision was `3b93d64423ce5e5f0fdd8de359343d196b57fc4a`.
+- **Useful work:** calculated only slice 2 from current RUN.json. Six normalised rows: alpha 2/40, beta 2/18, gamma 2/15; total 73. RESULTS.json records this actual worker and step-2 repo probe; state is `completed_steps=2/5`, `programme_complete=false`, and the next task is slice 3.
+- **Validation:** existing fixture tool returned `fixture_valid=true, completed_steps=2, total_steps=5`. `git diff --check` and cached-diff check passed; remote pinned readback agreed with the computed totals and observed ID. Evidence: `evidence/astra-l13-20261118-a/run_a_worker_slice2.md`.
+- **Next action:** the **sole existing external controller** observes this second worker's one unambiguous final completion marker, verifies current published programme state and launches the third distinct Run A saved worker for slice 3. The worker must not launch a successor. Run A's five-chat repeatability verdict remains pending; Runs B/C remain staged and untouched.
+
+
 ## L13 Run A first saved worker ? slice 1 of 5, 18 November 2026
 
 - **Run A worker identity:** browser UI Automation read-only address of the authenticated Chat Succession Project conversation showed saved ID `6afd5272-342c-83ec-b108-134d391b3577`. This is the first observed Run A worker, not a simulated conversation.
