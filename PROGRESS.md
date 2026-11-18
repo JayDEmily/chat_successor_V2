@@ -1,5 +1,13 @@
 # Progress
 
+## L03 live ERROR/recovery result — 18 November 2026 (current)
+
+- **L03 verdict: PASS with explicit operator interventions.** Case `astra-l03-20261118-a` used only initial saved chat `6afcf279-ed74-83ec-b39b-dacaf73af948` and the same Astra reference controller. The worker observed deliberately missing `RECOVERY_INPUT.json`, returned final `CHAT_STATUS: ERROR` (`uia-turn-1-674db1c40e5e6095ceba`), and the controller returned `HOLD` with `last_status=ERROR`, `pending=null`, `unique_chat_count=1`, zero automatic posts.
+- **Repair and resume:** operator published matching `RECOVERY_INPUT.json` at `cbd95946d80a4ea93385a6a812dfcab125b30928`; explicitly resumed existing controller; assisted recovery prompt posted/read back in the same saved chat. Worker published validated one-slice terminal fixture in remote commit `99fae2147d2bd5bbdcd3bd95227741cb2f19adbc`. Independent Git archive validation: `fixture_valid=true`, `completed_steps=1`, `total_steps=1`, `programme_complete=true`, `next_task=null`, and published worker attribution unchanged.
+- **Additional terminal-marker hold:** the first recovered assistant turn's UIA-flattened text contained an inline bare `TASK_COMPLETE` fragment as well as the final canonical marker. Astra's unchanged strict parser held this ambiguous response; no Send followed. Operator explicitly resumed the same controller and posted/read back a request for one clean final marker. The new response `uia-turn-2-d4e15be845b76613ca0f` was consumed, and controller produced **`STOP_FINISHED`** with `halted=programme_finished`, `pending=null`, `unique_chat_count=1`, prior consumed identities retained, and **zero successor launches**.
+- **Evidence:** `evidence/astra-l03-20261118-a/live_record.json`, worker's `worker_recovery.md`, fixture and cumulative `evidence/live_test_results_20261118.csv`. The repeated-marker observation may inform L10 but **does not count as an L10 PASS**. No parser or new architecture was introduced; L01–L03 PASS and L04–L15 NOT_RUN (L14 outside scope).
+- **Next action:** Leaf 06 **L04** — use a fresh one-slice fixture and cap 30, publish programme completion in the first saved worker, and verify `STOP_FINISHED` with **no successor Send**. Use new private controller state; do not modify completed L01–L03.
+
 ## L03 recovered first worker — 18 November 2026
 
 - **Recovery input:** operator published `RECOVERY_INPUT.json` at `cbd95946d80a4ea93385a6a812dfcab125b30928` with the correct run ID and `repair_authorised=true`. Initial missing-input `ERROR` was preserved.

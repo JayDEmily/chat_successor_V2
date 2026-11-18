@@ -1,0 +1,151 @@
+{
+  "template_only": false,
+  "outcome": "PASS",
+  "test_id": "L03",
+  "run_id": "astra-l03-20261118-a",
+  "scenario_type": "NATURAL_LIVE",
+  "environment": "OWNER_AUTHENTICATED_WINDOWS_11_CHROME_UBUNTU_WSL_GIT",
+  "observed_start_utc": null,
+  "observed_end_utc": "2026-11-18T00:43:29.766Z",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "project_name": "Chat succession folder",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "max_unique_chats": 3,
+  "initial_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+  "observed_run_chat_ids": [
+    "6afcf279-ed74-83ec-b39b-dacaf73af948"
+  ],
+  "controller_or_launcher_version": "Astra original reference controller; Windows UIA adapter at 4515e1e6462222ba0c87d3541a31506a7a29f17b",
+  "write_tool_used": "Worker Git commit/push and operator Git repair via authorised Ubuntu WSL; remote revisions independently verified",
+  "fixture_path": "succession-tests/astra-l03-20261118-a",
+  "events": [
+    {
+      "event": "test_fault_seed",
+      "publication_outcome": "published remote",
+      "normal_commit_reference": "b0f4526f92f8620ac395aa15cbe9276e9a13f516",
+      "reconciliation_evidence": "RECOVERY_INPUT.json intentionally absent; fixture validator initially 0/1"
+    },
+    {
+      "event": "assisted_initial_worker",
+      "source_chat_id": null,
+      "destination_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+      "send_outcome": "L03 assignment posted in nominated Project; saved ID observed",
+      "count_before": 0,
+      "count_after": 1
+    },
+    {
+      "event": "worker_error_hold",
+      "source_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+      "response_id": "uia-turn-1-674db1c40e5e6095ceba",
+      "response_complete": true,
+      "status": "ERROR",
+      "interpretation_basis": "canonical final marker",
+      "planned_action": "HOLD",
+      "send_outcome": "No controller message sent",
+      "count_before": 1,
+      "count_after": 1,
+      "reconciliation_evidence": "Controller halted Worker reported ERROR; pending=null; consumed response retained. Worker observed missing RECOVERY_INPUT.json on remote branch and did not alter fixture."
+    },
+    {
+      "event": "operator_repair",
+      "publication_outcome": "published remote",
+      "normal_commit_reference": "cbd95946d80a4ea93385a6a812dfcab125b30928",
+      "reconciliation_evidence": "RECOVERY_INPUT.json now has matching run_id and repair_authorised=true; fixture still 0/1"
+    },
+    {
+      "event": "explicit_resume_and_assisted_recovery_prompt",
+      "source_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+      "destination_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+      "send_outcome": "One operator-assisted recovery message posted and read back in same saved chat, not automatically dispatched",
+      "count_before": 1,
+      "count_after": 1,
+      "reconciliation_evidence": "Reference Controller.resume_after_owner cleared nonterminal ERROR hold without resetting consumed history."
+    },
+    {
+      "event": "recovered_worker_publication",
+      "source_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+      "publication_outcome": "published remote",
+      "normal_commit_reference": "99fae2147d2bd5bbdcd3bd95227741cb2f19adbc",
+      "programme_complete": true,
+      "next_task": null,
+      "workload_verification": "Independent remote Git archive validator fixture_valid=true, completed_steps=1, total_steps=1; last_chat_id equals initial saved chat"
+    },
+    {
+      "event": "ambiguous_recovery_turn",
+      "source_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+      "response_id": "uia-turn-2-9e5d47c3bed6a2ff2870",
+      "response_complete": true,
+      "interpretation_basis": "ambiguous explicit status",
+      "planned_action": "HOLD",
+      "send_outcome": "No controller post",
+      "reconciliation_evidence": "UIA flattening exposed an inline bare TASK_COMPLETE fragment in prose as a second status candidate; unchanged Astra parser held Repeated, conflicting or nonterminal status."
+    },
+    {
+      "event": "explicit_status_clarification",
+      "source_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+      "destination_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+      "send_outcome": "Operator-assisted request for a single clean terminal marker posted and read back; no automated retry",
+      "count_before": 1,
+      "count_after": 1
+    },
+    {
+      "event": "clean_terminal_response",
+      "source_chat_id": "6afcf279-ed74-83ec-b39b-dacaf73af948",
+      "response_id": "uia-turn-2-d4e15be845b76613ca0f",
+      "status": "TASK_COMPLETE",
+      "response_complete": true,
+      "interpretation_basis": "single canonical final marker",
+      "publication_outcome": "published remote",
+      "normal_commit_reference": "99fae2147d2bd5bbdcd3bd95227741cb2f19adbc",
+      "programme_complete": true,
+      "next_task": null,
+      "planned_action": "STOP_FINISHED",
+      "count_after": 1,
+      "reconciliation_evidence": "Controller action STOP_FINISHED, state halted=programme_finished, pending=null, unique_chat_count=1; prior ERROR and ambiguous event IDs remain consumed."
+    }
+  ],
+  "expected": {
+    "error_hold_no_auto_posts": true,
+    "explicit_recovery_preserves_history": true,
+    "validated_steps": 1,
+    "unique_saved_chats": 1,
+    "automatic_successors": 0,
+    "terminal_action": "STOP_FINISHED"
+  },
+  "actual": {
+    "error_hold_no_auto_posts": true,
+    "explicit_recovery_preserves_history": true,
+    "validated_steps": 1,
+    "unique_saved_chats": 1,
+    "automatic_successors": 0,
+    "terminal_action": "STOP_FINISHED"
+  },
+  "useful_work_validated": true,
+  "continuation_count": 0,
+  "successor_launch_count": 0,
+  "duplicate_send_count": 0,
+  "wrong_destination_count": 0,
+  "false_semantic_completion_count": 0,
+  "owner_interventions": [
+    "Assisted initial worker bootstrap",
+    "Operator published test-only missing input, explicitly resumed original controller and posted one recovery instruction to same chat",
+    "Operator explicitly resumed a second ambiguous-marker hold and posted one clean-status clarification to same chat"
+  ],
+  "evidence_paths": [
+    "PROGRESS.md",
+    "succession-tests/astra-l03-20261118-a/RECOVERY_INPUT.json",
+    "succession-tests/astra-l03-20261118-a/STATE.json",
+    "succession-tests/astra-l03-20261118-a/RESULTS.json",
+    "evidence/astra-l03-20261118-a/worker_recovery.md",
+    "evidence/astra-l03-20261118-a/live_record.json",
+    "evidence/live_test_results_20261118.csv",
+    "Private Windows controller state not uploaded"
+  ],
+  "limitations": [
+    "L03 uses deliberate test-only missing input and two explicit operator interventions, not unattended error recovery.",
+    "UIA inline marker became a separate parser candidate in the first post-repair turn; the controller correctly held, and no parser or model changes were made. This observation is not a completed L10 result.",
+    "Initial exact UTC start timestamp not captured; observed_end_utc is final evidence verification time.",
+    "L04-L15 remain untested and L14 remains outside owner scope."
+  ]
+}
