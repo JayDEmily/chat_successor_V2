@@ -1,0 +1,25 @@
+{
+  "test_id": "L13",
+  "run_id": "astra-l13-20261118-d",
+  "outcome": "IN_PROGRESS_WAITING_FOR_FINAL_RESPONSE",
+  "observed_at_utc": "2026-11-18T10:51:05.9827731Z",
+  "bootstrap_intent_utc": "2026-11-18T09:48:19.6692296Z",
+  "published_commit": "db10153473915af59cfec3186dc6b22151a9058b",
+  "verified_slices": 1,
+  "total_slices": 5,
+  "observed_saved_chat_id": "6afd746b-6a30-83ec-a408-6a7408771beb",
+  "controller_status": "WAIT",
+  "distinct_saved_chats": 1,
+  "consumed_responses": 0,
+  "automatic_successors": 0,
+  "pending_action": null,
+  "chrome_observation": {
+    "stop_control": true,
+    "completed_response_ready": false,
+    "response_id": "uia-turn-3-6d563cbe603408e926e7",
+    "same_response_also_observed_at_utc": "2026-11-18T10:34:23.8769326Z"
+  },
+  "interventions_after_bootstrap": 0,
+  "controller_left_running": true,
+  "note": "Worker published slice 1. Chrome continued to expose the Stop control and the controller had no completed response to consume. No timeout or terminal result was inferred."
+}
