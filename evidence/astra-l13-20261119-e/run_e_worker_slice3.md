@@ -8,7 +8,7 @@
 - Category aggregates: alpha 2 records/29; beta 2/38; gamma 2/23; six records and total **90**.
 - `RESULTS.json`: one new result for step 3; previous steps 1–2 preserved.
 - `STATE.json`: `completed_steps=3`, `programme_complete=false`, `last_chat_id=6afe37c3-efcc-83ec-8644-1f418f439259`, next task slice 4/5.
-- Existing fixture validator and `git diff --check` must pass before publishing. Commit, push and remote readback are recorded in the worker response and verified separately.
+- Validation before publication: original fixture validator `fixture_valid=true`, `completed_steps=3`, `total_steps=5`; staged `git diff --cached --check` passed. Fixture commit `68188a6957bf1804e3f1b94cb764688205242d99` was pushed and `git ls-remote` matched. Independent GitHub pinned readback at that SHA confirmed the two fixture files, progress and this evidence file.
 - No operation of the controller, browser Send, continuation, successor launch, private controller state or unrelated test runs.
 
 ## Next action

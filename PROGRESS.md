@@ -4,7 +4,7 @@
 
 - **Observed saved Chat Succession worker:** `6afe37c3-efcc-83ec-8644-1f418f439259`, from connected-browser read-only tab inventory in the nominated Project. Page content and completed-turn status were not established by that read-only inventory.
 - **Published work:** source revision `dba5d1f130ea7d3b6bce178809a34ac840cf5621`; processed **only step 3** of Run E, using probe `fixture-f09529af81dda9da`. Alpha 2/29, beta 2/38, gamma 2/23; six rows and total 90. Previous Run E steps and earlier runs preserved. Updated fixture state to 3/5 with `programme_complete=false` and next slice 4.
-- **Checks and evidence:** the existing fixture validator and Git whitespace check were run against the isolated checkout before publication. See `evidence/astra-l13-20261119-e/run_e_worker_slice3.md`; commit, remote SHA and pinned readback are to be reported after publication, not inferred from a local commit.
+- **Validation and verified GitHub publication:** original fixture validator `fixture_valid=true`, `completed_steps=3`, `total_steps=5`; staged Git diff whitespace check passed. Fixture commit `68188a6957bf1804e3f1b94cb764688205242d99` was pushed; `git ls-remote` matched its full SHA. Independent GitHub pinned readback confirmed `STATE.json`, `RESULTS.json`, `PROGRESS.md` and `evidence/astra-l13-20261119-e/run_e_worker_slice3.md`. The final verification note is this separate progress-only evidence update.
 - **Next action:** the sole external controller verifies the completed worker status and published GitHub state, then launches exactly one new saved worker for slice 4. Do not operate or duplicate the controller from this worker. G4 remains open.
 
 ## L13 Run E second saved worker — slice 2 of 5, 19 November 2026
