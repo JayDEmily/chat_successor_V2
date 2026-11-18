@@ -1,0 +1,69 @@
+{
+  "test_id": "L12",
+  "run_id": "astra-l12-20261118-a",
+  "outcome": "PASS",
+  "qualification": "PASS_SCOPED_DELAY_SESSION_AND_PAUSE_INJECTIONS",
+  "scenario_type": "SYNTHETIC_DELAY_TOOL_LOSS_AND_PAUSE_INJECTION",
+  "environment": "UBUNTU_PYTHON_REFERENCE_CONTROLLER_NO_BROWSER",
+  "observed_end_utc": "2026-11-18T05:44:02.919Z",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "cases_passed": 6,
+  "case_names": [
+    "delayed_incomplete_observation",
+    "tool_session_loss_then_repair",
+    "owner_pause_while_idle",
+    "owner_pause_while_prepared",
+    "uncertain_send_reconciled_no_retry",
+    "prepare_session_failure_then_repair"
+  ],
+  "observed": {
+    "delay_injected_with_measured_elapsed": true,
+    "silence_or_unavailable_response_actions": "WAIT until completed response",
+    "missing_observation_tool_actions": "HOLD and persist through restart",
+    "paused_idle_and_prepared_states_preserved": true,
+    "prepared_pending_does_not_send_while_paused": true,
+    "uncertain_action_held_before_positive_readback": true,
+    "positive_readback_source": "SYNTHETIC_POSITIVE_READ_ONLY",
+    "after_repair_prepared_or_wait_allowed_without_send": true,
+    "inspect_state_includes_current_chat_reason_last_status_and_pending": true,
+    "measured_elapsed_wait_ms": "See observations.json; measured during test, not a production timeout"
+  },
+  "actual": {
+    "real_browser_send_calls": 0,
+    "real_login_attempts": 0,
+    "real_successor_launches": 0,
+    "real_chatgpt_session_interrupted": false,
+    "real_user_pause_signal_issued": false,
+    "production_owner_silence_deadline_established": false,
+    "false_success_from_silence": 0,
+    "automatic_send_retry_count": 0
+  },
+  "acceptance": {
+    "no_success_from_silence": true,
+    "no_auto_login_or_send_while_held": true,
+    "idle_pause_preserves_state": true,
+    "prepared_pause_preserves_pending": true,
+    "in_flight_uncertain_requires_positive_readback": true,
+    "recovery_behavior_tested_after_tool_restoration": true,
+    "outcome": "PASS_TEST_ONLY"
+  },
+  "limitations": [
+    "All six cases use the reference controller and injected observation or tool failures. No actual Chrome session outage was induced.",
+    "The in-flight delivery receipt is an explicitly synthetic positive confirmation, not evidence of a newly posted ChatGPT message.",
+    "The measured short delay is not a configured or recommended production silence deadline.",
+    "No real login or browser Send was attempted. The existing terminal L09 private controller was not restarted."
+  ],
+  "evidence_paths": [
+    "evidence/astra-l12-20261118-a/run_pause.py",
+    "evidence/astra-l12-20261118-a/observations.json",
+    "evidence/astra-l12-20261118-a/injection_record.json",
+    "evidence/astra-l12-20261118-a/validate_observations.py",
+    "evidence/live_test_results_20261118.csv",
+    "PROGRESS.md"
+  ],
+  "next_action": "Leaf 06 L13: three independent five-chat natural live repetitions on the existing authenticated Chat Succession Project, no manual corrective prompting during normal paths; keep published L01-L12 evidence and controller states separate.",
+  "reverified_at_utc": "2026-11-18T06:53:40.046577+00:00",
+  "original_publication_blocker_commit": "4ec487f773a51a8bf9f449c8c7b2878c9f9ff5c4",
+  "original_publication_blocker_resolved": true
+}

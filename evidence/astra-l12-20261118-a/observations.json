@@ -1,0 +1,221 @@
+{
+  "test_id": "L12",
+  "run_id": "astra-l12-20261118-a",
+  "scenario_type": "SYNTHETIC_DELAY_TOOL_LOSS_AND_PAUSE_INJECTION",
+  "cases": [
+    {
+      "case": "delayed_incomplete_observation",
+      "source": "TEST_ONLY_ADAPTER_AND_STATE_INJECTION",
+      "observed_state": {
+        "project": "g-p-L12-INJECTION",
+        "repo": "JayDEmily/chat_successor",
+        "branch": "work/astra-succession-implementation-20261118",
+        "current_chat_id": "l12-injected-chat",
+        "unique_chat_count": 1,
+        "last_status": "NEED_MORE_TIME",
+        "pending_action": {
+          "kind": "CONTINUE_CURRENT",
+          "phase": "prepared",
+          "action_id": "l12-injected-chat:l12-first:CONTINUE_CURRENT"
+        },
+        "halted": null
+      },
+      "browser_calls": [
+        "observe",
+        "observe",
+        "observe"
+      ],
+      "browser_send_calls": 0,
+      "automatic_login_calls": 0,
+      "real_chat_created": false,
+      "result": "PASS",
+      "initial_actions": [
+        "WAIT",
+        "WAIT"
+      ],
+      "completed_action": "CONTINUE_CURRENT",
+      "measured_elapsed_wait_ms": 123,
+      "production_owner_silence_deadline": "NOT_CONFIGURED_BY_THIS_TEST",
+      "no_premature_completion": true
+    },
+    {
+      "case": "tool_session_loss_then_repair",
+      "source": "TEST_ONLY_ADAPTER_AND_STATE_INJECTION",
+      "observed_state": {
+        "project": "g-p-L12-INJECTION",
+        "repo": "JayDEmily/chat_successor",
+        "branch": "work/astra-succession-implementation-20261118",
+        "current_chat_id": "l12-injected-chat",
+        "unique_chat_count": 1,
+        "last_status": "NEED_MORE_TIME",
+        "pending_action": {
+          "kind": "CONTINUE_CURRENT",
+          "phase": "prepared",
+          "action_id": "l12-injected-chat:l12-first:CONTINUE_CURRENT"
+        },
+        "halted": null
+      },
+      "browser_calls": [
+        "observe",
+        "observe"
+      ],
+      "browser_send_calls": 0,
+      "automatic_login_calls": 0,
+      "real_chat_created": false,
+      "result": "PASS",
+      "first_action": "HOLD",
+      "held_across_restart": true,
+      "repair_action": "CONTINUE_CURRENT",
+      "no_automatic_login": true
+    },
+    {
+      "case": "owner_pause_while_idle",
+      "source": "TEST_ONLY_ADAPTER_AND_STATE_INJECTION",
+      "observed_state": {
+        "project": "g-p-L12-INJECTION",
+        "repo": "JayDEmily/chat_successor",
+        "branch": "work/astra-succession-implementation-20261118",
+        "current_chat_id": "l12-injected-chat",
+        "unique_chat_count": 1,
+        "last_status": "NEED_MORE_TIME",
+        "pending_action": {
+          "kind": "CONTINUE_CURRENT",
+          "phase": "prepared",
+          "action_id": "l12-injected-chat:l12-first:CONTINUE_CURRENT"
+        },
+        "halted": null
+      },
+      "browser_calls": [
+        "observe"
+      ],
+      "browser_send_calls": 0,
+      "automatic_login_calls": 0,
+      "real_chat_created": false,
+      "result": "PASS",
+      "held_state": {
+        "project": "g-p-L12-INJECTION",
+        "repo": "JayDEmily/chat_successor",
+        "branch": "work/astra-succession-implementation-20261118",
+        "current_chat_id": "l12-injected-chat",
+        "unique_chat_count": 1,
+        "last_status": null,
+        "pending_action": null,
+        "halted": "Owner pause while idle"
+      },
+      "after_resume_action": "CONTINUE_CURRENT"
+    },
+    {
+      "case": "owner_pause_while_prepared",
+      "source": "TEST_ONLY_ADAPTER_AND_STATE_INJECTION",
+      "observed_state": {
+        "project": "g-p-L12-INJECTION",
+        "repo": "JayDEmily/chat_successor",
+        "branch": "work/astra-succession-implementation-20261118",
+        "current_chat_id": "l12-injected-chat",
+        "unique_chat_count": 1,
+        "last_status": "NEED_MORE_TIME",
+        "pending_action": {
+          "kind": "CONTINUE_CURRENT",
+          "phase": "prepared",
+          "action_id": "l12-injected-chat:l12-first:CONTINUE_CURRENT"
+        },
+        "halted": null
+      },
+      "browser_calls": [
+        "observe"
+      ],
+      "browser_send_calls": 0,
+      "automatic_login_calls": 0,
+      "real_chat_created": false,
+      "result": "PASS",
+      "held_state": {
+        "project": "g-p-L12-INJECTION",
+        "repo": "JayDEmily/chat_successor",
+        "branch": "work/astra-succession-implementation-20261118",
+        "current_chat_id": "l12-injected-chat",
+        "unique_chat_count": 1,
+        "last_status": "NEED_MORE_TIME",
+        "pending_action": {
+          "kind": "CONTINUE_CURRENT",
+          "phase": "prepared",
+          "action_id": "l12-injected-chat:l12-first:CONTINUE_CURRENT"
+        },
+        "halted": "Owner pause while prepared"
+      },
+      "after_resume_action": "CONTINUE_CURRENT"
+    },
+    {
+      "case": "uncertain_send_reconciled_no_retry",
+      "source": "TEST_ONLY_ADAPTER_AND_STATE_INJECTION",
+      "observed_state": {
+        "project": "g-p-L12-INJECTION",
+        "repo": "JayDEmily/chat_successor",
+        "branch": "work/astra-succession-implementation-20261118",
+        "current_chat_id": "l12-injected-chat",
+        "unique_chat_count": 1,
+        "last_status": "NEED_MORE_TIME",
+        "pending_action": null,
+        "halted": null
+      },
+      "browser_calls": [
+        "observe"
+      ],
+      "browser_send_calls": 0,
+      "automatic_login_calls": 0,
+      "real_chat_created": false,
+      "result": "PASS",
+      "previous_hold": {
+        "project": "g-p-L12-INJECTION",
+        "repo": "JayDEmily/chat_successor",
+        "branch": "work/astra-succession-implementation-20261118",
+        "current_chat_id": "l12-injected-chat",
+        "unique_chat_count": 1,
+        "last_status": "NEED_MORE_TIME",
+        "pending_action": {
+          "kind": "CONTINUE_CURRENT",
+          "phase": "uncertain",
+          "action_id": "l12-injected-chat:l12-first:CONTINUE_CURRENT"
+        },
+        "halted": "Restart with a possibly submitted message: reconcile without sending"
+      },
+      "receipt_source": "SYNTHETIC_POSITIVE_READ_ONLY",
+      "after_receipt_action": "WAIT"
+    },
+    {
+      "case": "prepare_session_failure_then_repair",
+      "source": "TEST_ONLY_ADAPTER_AND_STATE_INJECTION",
+      "observed_state": {
+        "project": "g-p-L12-INJECTION",
+        "repo": "JayDEmily/chat_successor",
+        "branch": "work/astra-succession-implementation-20261118",
+        "current_chat_id": "l12-injected-chat",
+        "unique_chat_count": 1,
+        "last_status": "NEED_MORE_TIME",
+        "pending_action": {
+          "kind": "CONTINUE_CURRENT",
+          "phase": "prepared",
+          "action_id": "l12-injected-chat:l12-first:CONTINUE_CURRENT"
+        },
+        "halted": null
+      },
+      "browser_calls": [
+        "observe",
+        "prepare"
+      ],
+      "browser_send_calls": 0,
+      "automatic_login_calls": 0,
+      "real_chat_created": false,
+      "result": "PASS",
+      "first_action": "HOLD",
+      "retained_pending": "prepared",
+      "after_repair": "CONTINUE_CURRENT"
+    }
+  ],
+  "cases_passed": 6,
+  "cases_failed": 0,
+  "real_browser_sends": 0,
+  "real_browser_login_attempts": 0,
+  "real_successor_launches": 0,
+  "owner_silence_deadline": "NOT_ESTABLISHED_FOR_PRODUCTION",
+  "outcome": "PASS_TEST_INJECTION_SCOPE"
+}
