@@ -1,5 +1,11 @@
 # Progress
 
+## L09 live fixture staged — 18 November 2026
+
+- **L09 LIVE NOT_RUN; staged only.** Fresh independent test-only fixture `succession-tests/astra-l09-20261118-a` seeded with the unchanged imported Astra repo_fixture.py for exactly two work slices and validated at `completed_steps=0/2`. No worker wrote results, no controller state was initialised, no messages sent and no successor launched.
+- The fixture's INSTRUCTIONS.md establishes the prescribed L09 sequence: first worker first emits NEED_MORE_TIME; operator exercises persisted-sending before-click injection, positive no-Send/rearm and one same-chat continuation; worker then publishes slice 1; existing controller injects after-click lost acknowledgement on one successor launch and reconciles the actual new saved ID; successor emits NEED_MORE_TIME, then controller injects after-click on continuation and adopts exact same-chat message once; successor publishes slice 2, then STOP_FINISHED. Each fault applies to one controlled CLI process and no parallel controller exists.
+- **Next action:** verify fixture seed on remote branch, bootstrap first L09 worker in the existing authenticated Chat Succession Project with the short L09 fixture assignment, positively observe its saved conversation ID, and initialise a **fresh private** L09 state with cap 3. Do not recycle or reset any earlier controller. Wait for completed NEED_MORE_TIME before applying a before-click injection. If an initial Send outcome is uncertain, reconcile read-only rather than retrying.
+
 ## L09 scoped uncertain-Send hooks — offline preparation, 18 November 2026
 
 - **L09 LIVE NOT_RUN.** Added only two fault points to the existing single Windows UIA Send path: environment variable ASTRA_L09_FAULT=before_click raises after persisted sending but before any UIA Send call; after_click sends once and raises immediately after Enter but before acknowledgement. Normal operation with the variable unset is unchanged. The controller/state machine, statuses and unique-chat counting were not modified.
