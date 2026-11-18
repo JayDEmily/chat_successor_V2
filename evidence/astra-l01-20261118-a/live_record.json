@@ -1,0 +1,121 @@
+{
+  "template_only": false,
+  "outcome": "PASS",
+  "test_id": "L01",
+  "run_id": "astra-l01-20261118-a",
+  "environment": "OWNER_AUTHENTICATED_WINDOWS_11_CHROME_WITH_UBUNTU_WSL_GIT",
+  "scenario_type": "NATURAL_LIVE",
+  "observed_start_utc": null,
+  "observed_end_utc": "2026-11-18T00:17:19.306Z",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "project_name": "Chat succession folder",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "max_unique_chats": 3,
+  "initial_chat_id": "6afce427-98c4-83ec-b3e7-a05c19f0806f",
+  "observed_run_chat_ids": [
+    "6afce427-98c4-83ec-b3e7-a05c19f0806f",
+    "6afced4f-870c-83ec-8370-fbe7e296b386"
+  ],
+  "controller_or_launcher_version": "Unmodified Astra reference controller at f2f0a3de9f6ed55f2315c8389eeddd4486b34209; Windows UIA adapter at 4515e1e6462222ba0c87d3541a31506a7a29f17b",
+  "write_tool_used": "Authorised worker Git publication to the nominated branch; remote commits independently inspected",
+  "fixture_path": "succession-tests/astra-l01-20261118-a",
+  "events": [
+    {
+      "event": "assisted_first_worker_bootstrap",
+      "source_chat_id": null,
+      "destination_chat_id": "6afce427-98c4-83ec-b3e7-a05c19f0806f",
+      "send_outcome": "exact initial assignment posted and saved ID observed",
+      "count_before": 0,
+      "count_after": 1
+    },
+    {
+      "event": "first_worker_completion",
+      "response_id": "uia-turn-1-35f8089cee45e185a1d3",
+      "source_chat_id": "6afce427-98c4-83ec-b3e7-a05c19f0806f",
+      "status": "TASK_COMPLETE",
+      "response_complete": true,
+      "interpretation_basis": "canonical final status line",
+      "publication_outcome": "published remote",
+      "normal_commit_reference": "a375250b60e31c44836f5452a3fd64f7be54bf76",
+      "programme_complete": false,
+      "next_task": "Process fixture slice 2 of 2; read RUN.json and verify RESULTS.json.",
+      "planned_action": "LAUNCH_SUCCESSOR",
+      "workload_verification": "fixture_valid=true; completed_steps=1; total_steps=2"
+    },
+    {
+      "event": "automatic_successor",
+      "response_id": "uia-turn-1-35f8089cee45e185a1d3",
+      "source_chat_id": "6afce427-98c4-83ec-b3e7-a05c19f0806f",
+      "destination_chat_id": "6afced4f-870c-83ec-8370-fbe7e296b386",
+      "status": "TASK_COMPLETE",
+      "planned_action": "LAUNCH_SUCCESSOR",
+      "attempt_id": "6afce427-98c4-83ec-b3e7-a05c19f0806f:uia-turn-1-35f8089cee45e185a1d3:LAUNCH_SUCCESSOR",
+      "send_outcome": "exact ordinary repo/branch pointer posted by single controller; fresh saved Project chat observed",
+      "count_before": 1,
+      "count_after": 2,
+      "reconciliation_evidence": "Two earlier UI text-readback holds happened before Enter; their own disposable drafts were cleared and the same action explicitly re-armed via reference Controller.confirm_not_sent before the one observed Send."
+    },
+    {
+      "event": "second_worker_completion",
+      "response_id": "uia-turn-1-83b5d69c474a4c9384b5",
+      "source_chat_id": "6afced4f-870c-83ec-8370-fbe7e296b386",
+      "status": "TASK_COMPLETE",
+      "response_complete": true,
+      "interpretation_basis": "canonical final status line",
+      "publication_outcome": "published remote",
+      "normal_commit_reference": "d6302c55097188cd8a23c89641e862e715d0eab7",
+      "programme_complete": true,
+      "next_task": null,
+      "planned_action": "STOP_FINISHED",
+      "workload_verification": "Remote Git archive independently checked: fixture_valid=true; completed_steps=2; total_steps=2"
+    },
+    {
+      "event": "terminal_controller_state",
+      "source_chat_id": "6afced4f-870c-83ec-8370-fbe7e296b386",
+      "planned_action": "STOP_FINISHED",
+      "count_after": 2,
+      "send_outcome": "No additional Send",
+      "reconciliation_evidence": "Saved reference controller state halted=programme_finished, pending=null, last_status=TASK_COMPLETE; live CLI output action=STOP_FINISHED."
+    }
+  ],
+  "expected": {
+    "unique_saved_chats": 2,
+    "automatic_successors": 1,
+    "validated_steps": 2,
+    "terminal_action": "STOP_FINISHED",
+    "further_send": false
+  },
+  "actual": {
+    "unique_saved_chats": 2,
+    "automatic_successors": 1,
+    "validated_steps": 2,
+    "terminal_action": "STOP_FINISHED",
+    "further_send": false
+  },
+  "useful_work_validated": true,
+  "continuation_count": 0,
+  "successor_launch_count": 1,
+  "duplicate_send_count": 0,
+  "wrong_destination_count": 0,
+  "false_semantic_completion_count": 0,
+  "owner_interventions": [
+    "Initial worker created and seeded as assisted bootstrap in the nominated Project",
+    "Existing Chrome conversation scrolled to latest assistant turn to expose the complete response",
+    "Pre-Send UIA text-entry failures recovered with explicit not-sent reconciliation; no duplicate posting; native ValuePattern used for final successful Send"
+  ],
+  "evidence_paths": [
+    "PROGRESS.md",
+    "succession-tests/astra-l01-20261118-a/RUN.json",
+    "succession-tests/astra-l01-20261118-a/RESULTS.json",
+    "succession-tests/astra-l01-20261118-a/STATE.json",
+    "evidence/astra-l01-20261118-a/live_record.json",
+    "Private Windows controller state (not uploaded)"
+  ],
+  "limitations": [
+    "Exact observed initial start timestamp not captured; end time is the later result-verification time.",
+    "One assisted bootstrap and two explicit pre-Send recoveries were needed; this L01 pass does not demonstrate unattended repeatability (L13).",
+    "UIA assistant-count prefix changed across viewport observations; the persisted final second-turn identity is recorded, and stable turn deduplication needs attention in L02.",
+    "No claims for L02-L15; older three-chat trial remains separate."
+  ]
+}

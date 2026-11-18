@@ -1,5 +1,15 @@
 # Progress
 
+## L01 live integration result — 18 November 2026 (current)
+
+- **L01 verdict: PASS against the prescribed L01 acceptance criteria**, with assisted first-chat setup and explicit recovery of two *pre-Send* UIA entry failures (not unattended-repeatability evidence).
+- Test run `astra-l01-20261118-a`, cap 3. First saved Chat Succession worker `6afce427-98c4-83ec-b3e7-a05c19f0806f` published slice 1 at `a375250b60e31c44836f5452a3fd64f7be54bf76`. The original Astra controller then automatically posted the plain GitHub repo/branch pointer **once** and positively observed successor `6afced4f-870c-83ec-8370-fbe7e296b386` in the nominated Project. No chat 3 was launched.
+- The second worker published slice 2 and terminal `programme_complete=true`, `next_task=null` in remote commit `d6302c55097188cd8a23c89641e862e715d0eab7`. Independent validation from an archive of that exact remote Git object: `fixture_valid=true`, `completed_steps=2`, `total_steps=2`; two distinct matching worker IDs and correct category aggregates.
+- **Observed terminal controller outcome:** `action=STOP_FINISHED`, saved `halted=programme_finished`, `unique_chat_count=2`, `pending=null`, `last_status=TASK_COMPLETE`. It consumed the second worker's completed status and made **no further Send**.
+- **Local adapter corrections:** Windows-to-WSL repo path preserved via `Path.as_posix()`; a failed Git observation now holds *without consuming* a valid turn; native writable Chrome UIA `ValuePattern.SetValue` successfully entered the complete 173-character pointer after unreliable simulated keystrokes/paste. All 17 simulated integration tests passed; Windows PowerShell parsed with zero syntax errors. Earlier failing Send attempts stopped *before Enter* and were explicitly re-armed through reference `confirm_not_sent` with their disposable drafts cleared. No new browser-instance verification machinery was introduced.
+- **Live evidence:** `evidence/astra-l01-20261118-a/live_record.json` and `live_test_results.csv`; L02–L15 remain `NOT_RUN`. The imported Astra source deliverables are unchanged; the earlier three-chat trial is unrelated.
+- **Next action:** continue Leaf 06 with a **fresh L02 fixture and controller state**, preserving terminal L01. L02 must prove two same-chat `NEED_MORE_TIME` continuations, then a handover. Before claiming repeatable event deduplication, investigate the observed UIA assistant-count component changing across viewport scroll for the same second-worker content; do not add a new orchestration system. G4/L13 remains pending.
+
 ## L01 second live fixture worker — 18 November 2026
 
 - **Assigned scope:** resumed the published `astra-l01-20261118-a` fixture on `work/astra-succession-implementation-20261118`; processed slice 2 of 2 only. The external controller remains the sole successor launcher.
