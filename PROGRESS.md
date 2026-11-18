@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run B first saved worker — slice 1 of 5, 18 November 2026
+
+- **Actual saved worker:** `6afd5cc9-f314-83ec-a31d-7b08037957d3`, independently identified in the nominated Chat Succession Project through the connected browser tab inventory and existing Windows UIA read-only Observe mode. The adapter reported streaming at observation; it was not a completed-turn test.
+- **Published checkpoint:** `be235c810f983a60cbab71623956cec2dfef4f4c`, pushed to `work/astra-succession-implementation-20261118` and independently read back on GitHub at that pinned commit for `STATE.json`, `RESULTS.json` and `evidence/astra-l13-20261118-b/run_b_worker_slice1.md`. Input revision was `5cb3db77b9ab3d75f5c487f75471b0443e4fc735`.
+- **Useful work:** only Run B slice 1 was processed: six rows, alpha 2/34, beta 2/31, gamma 2/11, combined total 76. Updated Run B state to `completed_steps=1/5`, `programme_complete=false`, next task slice 2; Runs A and C remain untouched.
+- **Checks:** original fixture validator returned `fixture_valid=true, completed_steps=1, total_steps=5`; staged whitespace check passed; pinned GitHub contents matched the worker ID, probe and totals. This is one worker checkpoint, **not** Run B or full L13 repeatability PASS.
+- **Next action:** only the existing external controller consumes this worker's final completion marker, verifies the published handover and launches the second distinct saved Run B worker for exactly slice 2. This worker must not launch a successor, continue the same chat or process another slice.
+
 ## L13 Run A verified — 1/3 live repetitions complete
 
 **Active ChatGPT worker assignment is Run B only.** Read `succession-tests/astra-l13-20261118-b/INSTRUCTIONS.md`, then process and publish exactly one next slice from that fixture. Read the current branch, finish with one canonical final status line, and leave all controller actions to the external operator.
