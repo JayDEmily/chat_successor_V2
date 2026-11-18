@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run B fifth saved worker — terminal slice 5 of 5, 18 November 2026
+
+- **Actual saved worker:** `6afd6318-d2c4-83ec-9fc5-99657da67de1`, observed in the connected browser's read-only tab inventory under the nominated Chat Succession Project. This is saved-chat identity evidence only; no completed-turn or external-controller transport observation is claimed.
+- **Published terminal fixture:** `a855bfac062ba1eb27e3872f6fad03f1aa31c12d`, committed and pushed on `work/astra-succession-implementation-20261118` from `855016bb98e3688f76ce9a04a6e2064624eb7b9f`. Remote `git ls-remote` matched, and independent pinned GitHub readback verified the exact Run B `STATE.json`, `RESULTS.json` and `evidence/astra-l13-20261118-b/run_b_worker_slice5.md`.
+- **Useful work:** normalised the six Run B step-5 rows only: alpha count 2/total 34; beta 2/8; gamma 2/19; combined total 61. All five distinct worker IDs now have five published results. Run B `completed_steps=5/5`, `programme_complete=true`, `next_task=null`; prior Run B results and Runs A/C unchanged.
+- **Validation:** original fixture validator returned `fixture_valid=true, completed_steps=5, total_steps=5`; Git whitespace check clean. This proves the terminal worker fixture publication, **not** external Run B `STOP_FINISHED` or three-run L13 PASS.
+- **Next action:** the **existing external controller alone** consumes this worker's single final completion marker, verifies this published terminal programme and observes `STOP_FINISHED` with exactly five saved IDs and four automatic successors. Record actual Run B transport and terminal evidence. Then follow the nominated plan for the independent Run C repetition; no worker-side controller operation, successor launch, continuation or other run modification occurred.
+
 ## L13 Run B fourth saved worker — slice 4 of 5, 18 November 2026
 
 - **Actual saved worker:** `6afd6197-7d70-83ec-b2b4-ae597adbae69`, verified by read-only Chrome UI Automation of the current saved Chat Succession Project conversation address. This proves the worker's saved-chat/Project identity, not completed-turn observation or controller transport.
