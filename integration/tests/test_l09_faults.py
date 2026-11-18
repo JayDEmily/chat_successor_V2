@@ -120,6 +120,18 @@ class L09AdapterFaultTests(unittest.TestCase):
                 self.w.send_once(target, decision.message)
         self.w._invoke.assert_not_called()
 
+    def test_documented_manual_already_typed_switch_has_no_boolean_argument(self):
+        completed = Mock(returncode=0, stdout='{"ok": true}', stderr="")
+        with patch("windows_backend.subprocess.run", return_value=completed) as run:
+            result = self.w._invoke(
+                "Send", Kind="CONTINUE_CURRENT",
+                AlreadyTyped=True, Message="Okay, continue working.")
+        self.assertEqual(result, {"ok": True})
+        argv = run.call_args.args[0]
+        self.assertIn("-AlreadyTyped", argv)
+        self.assertNotIn("True", argv)
+        self.assertEqual(argv.count("-AlreadyTyped"), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

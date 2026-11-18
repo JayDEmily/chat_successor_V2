@@ -38,7 +38,11 @@ class WindowsUIA(Browser):
                "-File", str(self.script), "-Mode", mode,
                "-ProjectId", self.project, "-ProjectName", self.project_name]
         for name, value in arguments.items():
-            if value is not None:
+            if type(value) is bool:
+                # PowerShell switch parameters are flags, not "-Flag True".
+                if value:
+                    cmd.append(f"-{name}")
+            elif value is not None:
                 cmd.extend([f"-{name}", str(value)])
         result = subprocess.run(cmd, text=True, capture_output=True,
                                 encoding="utf-8", errors="replace", timeout=90)

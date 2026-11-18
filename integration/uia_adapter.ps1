@@ -285,23 +285,19 @@ if($Mode -eq 'Send') {
  $editorName=if($Kind -eq 'CONTINUE_CURRENT'){'Ask ChatGPT'}else{'New chat in ' + $ProjectName}
  $editor=Find-Composer $target.window $editorName
  if(-not (Check-NoAttachments $target.window)){throw 'Attachment exists; hold before typing'}
- $actual=Safe-ClipboardEditorRead $target.window $editor
  if($AlreadyTyped){
-  # Explicit manual recovery only after positive evidence of no prior click.
-  # This mode is NEVER used by the automatic Windows backend.
+  # Explicit manual recovery after positive evidence of no prior click.
+  # Verify the exact existing text and leave it untouched. No keyboard
+  # focus is needed for the later native UIA Send Invoke.
+  $actual=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value.TrimEnd([char]13,[char]10)
   if($actual -cne $Message){throw 'Pretyped draft does not exactly match expected message'}
- }elseif($actual -cne ''){
-  throw 'Draft exists; hold before typing'
- }
- $hwnd=[IntPtr]$target.window.Current.NativeWindowHandle
- if(-not [AstraFocus]::SetForegroundWindow($hwnd)){throw 'Focus failed before typing'}
- $editor.SetFocus()
- if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Incorrect foreground before typing'}
- if($AlreadyTyped){
-  # Selection/copy leaves the existing draft selected; collapse selection
-  # without editing the authorised pretyped message.
-  [System.Windows.Forms.SendKeys]::SendWait('{END}')
  }else{
+  $actual=Safe-ClipboardEditorRead $target.window $editor
+  if($actual -cne ''){throw 'Draft exists; hold before typing'}
+  $hwnd=[IntPtr]$target.window.Current.NativeWindowHandle
+  if(-not [AstraFocus]::SetForegroundWindow($hwnd)){throw 'Focus failed before typing'}
+  $editor.SetFocus()
+  if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Incorrect foreground before typing'}
   # The Chrome editor exposes writable UIA ValuePattern. Native SetValue
   # avoids dropped SendKeys characters and clipboard timing.
   $editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($Message)
@@ -322,9 +318,10 @@ if($Mode -eq 'Send') {
        -not $el.Current.IsOffscreen){$sendButtons+= $el}}catch{}
  }
  if($sendButtons.Count -ne 1){throw 'Send button not unique and enabled'}
- if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Foreground changed before Send'}
- # ONE and only one Send. If process dies afterwards, controller reconciles.
- [System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+ # ONE and only one UIA Send. Native Invoke acts on the already verified
+ # target control and does not depend on whichever window is in foreground.
+ # If acknowledgement is lost, reconcile; never click again automatically.
+ $sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
  if($L09Fault -eq 'after_click'){
   throw 'L09 injected after single click before acknowledgement; reconcile, never retry blindly'
  }
