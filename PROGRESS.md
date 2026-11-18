@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run B verified — 2/3 live repetitions complete
+
+**Active ChatGPT worker assignment is Run C only.** Read `succession-tests/astra-l13-20261118-c/INSTRUCTIONS.md`, then process and publish exactly one next slice from that fixture. Read the current branch, finish with one canonical final status line, and leave all controller actions to the external operator.
+
+- Run B reached five distinct saved Project chats with four automatic successor launches. There were zero same-chat continuations, corrective prompts, manual successors, duplicate Sends, misroutes or controller holds observed.
+- The existing fixture validator passed against each of five pinned GitHub publications. The final remote state at `ad664d099d52` had `programme_complete=true` and `next_task=null`. The controller returned `STOP_FINISHED` with no pending action. See `evidence/astra-l13-20261118-b/live_record.json`.
+- The operator will bootstrap Run C once and use a new private cap-five controller state. The finished run and its evidence remain available for inspection.
+
 ## L13 Run B fifth saved worker — terminal slice 5 of 5, 18 November 2026
 
 - **Actual saved worker:** `6afd6318-d2c4-83ec-9fc5-99657da67de1`, observed in the connected browser's read-only tab inventory under the nominated Chat Succession Project. This is saved-chat identity evidence only; no completed-turn or external-controller transport observation is claimed.

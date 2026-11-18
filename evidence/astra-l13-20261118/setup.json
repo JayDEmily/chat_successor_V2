@@ -31,28 +31,37 @@
     {
       "id": "astra-l13-20261118-b",
       "fixture": "succession-tests/astra-l13-20261118-b",
-      "status": "SELECTED_0_OF_5",
-      "active": true,
-      "saved_chat_ids": [],
-      "controller_state": "NOT_INITIALISED"
+      "status": "PASS",
+      "active": false,
+      "saved_chat_ids": [
+        "6afd5cc9-f314-83ec-a31d-7b08037957d3",
+        "6afd5e97-dc08-83ec-9725-1d5ce61b3183",
+        "6afd5ff2-8f6c-83ec-b143-c7e715fdbb2b",
+        "6afd6197-7d70-83ec-b2b4-ae597adbae69",
+        "6afd6318-d2c4-83ec-9fc5-99657da67de1"
+      ],
+      "controller_state": "STOP_FINISHED",
+      "evidence_path": "evidence/astra-l13-20261118-b/live_record.json",
+      "published_slices": 5,
+      "automatic_successors": 4
     },
     {
       "id": "astra-l13-20261118-c",
       "fixture": "succession-tests/astra-l13-20261118-c",
-      "status": "STAGED_0_OF_5",
-      "active": false,
+      "status": "SELECTED_0_OF_5",
+      "active": true,
       "saved_chat_ids": [],
       "controller_state": "NOT_INITIALISED"
     }
   ],
-  "actual_live_runs_completed": 1,
-  "actual_workers_launched": 5,
+  "actual_live_runs_completed": 2,
+  "actual_workers_launched": 10,
   "worker_contract": "one next uncompleted slice per saved chat; validate, commit/push, independently verify; one final canonical status marker",
   "restrictions": "No worker operates controller or launches successor; no manual corrective prompting during normal runs; keep run states separate",
   "acceptance": "Three completed natural five-chat runs with exactly four automatic successors each, no duplicates/misroutes and remote-verified useful work",
   "evidence_type": "NATURAL_LIVE_REPETITION",
-  "next_action": "Bootstrap astra-l13-20261118-b once in a verified empty Project composer, then use its own cap-five controller.",
-  "active_run_status": "RUN_B_SELECTED_FOR_BOOTSTRAP",
-  "actual_automatic_successor_launches": 4,
+  "next_action": "Bootstrap astra-l13-20261118-c once in a verified empty Project composer, then use its own cap-five controller.",
+  "active_run_status": "RUN_C_SELECTED_FOR_BOOTSTRAP",
+  "actual_automatic_successor_launches": 8,
   "outcome": "IN_PROGRESS"
 }
