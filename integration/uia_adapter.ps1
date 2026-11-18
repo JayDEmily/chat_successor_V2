@@ -294,12 +294,8 @@ if($Mode -eq 'Send') {
  }else{
   $actual=Safe-ClipboardEditorRead $target.window $editor
   if($actual -cne ''){throw 'Draft exists; hold before typing'}
-  $hwnd=[IntPtr]$target.window.Current.NativeWindowHandle
-  if(-not [AstraFocus]::SetForegroundWindow($hwnd)){throw 'Focus failed before typing'}
-  $editor.SetFocus()
-  if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Incorrect foreground before typing'}
-  # The Chrome editor exposes writable UIA ValuePattern. Native SetValue
-  # avoids dropped SendKeys characters and clipboard timing.
+  # The exact saved Project window/editor is already identified. Native
+  # ValuePattern writes to that editor without requiring foreground focus.
   $editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($Message)
  }
  $typed=''
