@@ -12,6 +12,7 @@ from runner import (
 )
 from succession.composer import ComposerObservation
 from succession.core import Action, Config, Controller, Response, RepoView
+from repo_reader import PublishedStateError
 
 
 CFG = Config(project="g-p-TEST", repo="JayDEmily/chat_successor",
@@ -57,7 +58,7 @@ class Reader:
     def read(self, expected_run):
         self.calls += 1
         if not self.publication:
-            raise RuntimeError("Injected remote fetch outage")
+            raise PublishedStateError("Injected remote fetch outage")
         class O: pass
         o = O()
         o.view = RepoView(CFG.repo, CFG.branch, "chat-first",
@@ -139,6 +140,20 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(restarted.state.pending.phase, "uncertain")
         self.assertIsNotNone(restarted.state.halted)
         self.assertEqual(cycle(restarted, b, Reader(), "test", self.path), Action.HOLD)
+        self.assertEqual(b.calls.count("send"), 1)
+
+    def test_publication_outage_does_not_consume_turn_before_repair(self):
+        b = SyntheticBrowser()
+        b.response = self.response()
+        self.assertEqual(cycle(self.controller, b, Reader(publication=False),
+                               "test", self.path), Action.HOLD)
+        self.assertEqual(self.controller.state.consumed_responses, [])
+        self.assertNotIn("send", b.calls)
+        self.controller.resume_after_owner()
+        self.controller.save(self.path)
+        self.assertEqual(cycle(self.controller, b, Reader(), "test", self.path),
+                         Action.WAIT)
+        self.assertEqual(self.controller.unique_count, 2)
         self.assertEqual(b.calls.count("send"), 1)
 
     def test_preparation_failures_do_not_begin_send(self):

@@ -51,7 +51,7 @@ class GitPublishedReader:
 
     def _git(self, *args: str) -> str:
         result = subprocess.run(
-            [*self.git_command, "-C", str(self.repo_dir), *args],
+            [*self.git_command, "-C", self.repo_dir.as_posix(), *args],
             capture_output=True, text=True, encoding="utf-8", errors="replace",
             timeout=45, check=False,
         )

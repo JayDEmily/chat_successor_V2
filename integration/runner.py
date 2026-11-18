@@ -125,11 +125,11 @@ def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader,
         try:
             repo = reader.read(run_id).view
         except (PublishedStateError, OSError, ValueError) as exc:
-            # Preserve the completed response event for audit; controller holds
-            # with an unavailable published state instead of fabricating a view.
-            decision = controller.consume(response)
+            # Hold without consuming: publication can be repaired and this
+            # exact completed turn can then be processed once on resume.
+            controller.pause(f"Published Git state unavailable: {exc}")
             controller.save(state_path)
-            return decision.action
+            return Action.HOLD
     decision = controller.consume(response, repo)
     controller.save(state_path)
     if decision.action in (Action.CONTINUE_CURRENT, Action.LAUNCH_SUCCESSOR):
