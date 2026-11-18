@@ -1,8 +1,8 @@
 {
-  "completed_steps": 1,
-  "last_chat_id": "6afce427-98c4-83ec-b3e7-a05c19f0806f",
-  "next_task": "Process fixture slice 2 of 2; read RUN.json and verify RESULTS.json.",
-  "programme_complete": false,
-  "progress_summary": "Fixture slice 1 of 2 completed by first L01 test worker; slice 2 remains.",
+  "completed_steps": 2,
+  "last_chat_id": "6afced4f-870c-83ec-8370-fbe7e296b386",
+  "next_task": null,
+  "programme_complete": true,
+  "progress_summary": "Fixture slices 1 and 2 of 2 completed and published by distinct saved L01 workers; programme complete. Controller stop/terminal observation remains separately verifiable.",
   "run_id": "astra-l01-20261118-a"
 }
