@@ -1,5 +1,15 @@
 # Progress
 
+## L02 live integration result — 18 November 2026 (current)
+
+- **L02 verdict: PASS.** Run `astra-l02-20261118-a` with configured cap 3 used one assisted initial worker and one automatic successor. The external reference controller alone sent both exact same-chat continuations and the one successor pointer. No new UI automation or isolation layer.
+- **Two continuations, same saved chat:** first worker `6afcef76-26b0-83ec-82e2-0de6db78a838` produced two completed, distinct `NEED_MORE_TIME` turns; controller persisted both consumed identities and posted exactly `Okay, continue working.` twice. Read-only Chrome UIA message history confirmed exactly two actual user messages of that text (one extra matching assistant explanation was not a Send). Unique-chat count remained 1 and there was no pending Send after either.
+- **Published first worker handover:** after the second continuation, worker committed/pushed slice 1 of 2 at remote HEAD `f08da56d9a7f1437723bf49bb011fda49a64dba3`, with validator `fixture_valid=true` and published `last_chat_id` matching first worker. Controller consumed its third, marked `TASK_COMPLETE` and automatically posted the ordinary pointer once, observing a distinct successor `6afcf107-76f0-83ec-9367-eee546d55837`.
+- **Published terminal result:** successor committed/pushed slice 2 at remote HEAD `83a82f3112ad90503887058b32d1895ea8beef77`; independent verification by Git archive of this exact commit returned `fixture_valid=true`, `completed_steps=2`, `total_steps=2`, `programme_complete=true`, `next_task=null`, and `last_chat_id` equal to the successor.
+- **Controller terminal:** observed `action=STOP_FINISHED` and persisted `halted=programme_finished`, `pending=null`, exactly two saved chat IDs, last status `TASK_COMPLETE`. Zero additional successor sends. L01 terminal state remains untouched.
+- **Evidence:** `evidence/astra-l02-20261118-a/live_record.json`, the two worker evidence Markdown files, fixture data, and cumulative `evidence/live_test_results_20261118.csv`. Imported Astra deliverables unchanged. L01 and L02 PASS; **L03–L15 NOT_RUN**; L14 remains outside owner scope.
+- **Next action:** Leaf 06, case **L03**: fresh test-only controlled blocker and same-run repair. Confirm completed `ERROR` produces HOLD with zero automatic posts, then explicit recovery preserving count and event history. Continue using the same Astra controller/Windows UIA/WSL Git method on the nominated branch, without duplicate launchers or extra ceremony.
+
 ## L02 second live fixture worker — terminal slice 2, 18 November 2026
 
 - **Run:** `astra-l02-20261118-a`; second saved Chat Succession worker ID `6afcf107-76f0-83ec-9367-eee546d55837`, independently recorded by the existing controller state, distinct from first worker `6afcef76-26b0-83ec-82e2-0de6db78a838`.
