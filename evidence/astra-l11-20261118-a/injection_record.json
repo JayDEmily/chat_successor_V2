@@ -1,0 +1,77 @@
+{
+  "test_id": "L11",
+  "run_id": "astra-l11-20261118-a",
+  "outcome": "PASS",
+  "qualification": "PASS_SCOPED_PUBLICATION_FAILURE_TESTS",
+  "scenario_type": "TEST_TOOL_FAILURE_INJECTION_AND_DISPOSABLE_LOCAL_GIT",
+  "environment": "UBUNTU_PYTHON_AND_REAL_GIT_FETCH_NO_BROWSER",
+  "observed_end_utc": "2026-11-18T05:41:01.129Z",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "pinned_published_commit": "fd49e4df47029008264083dc989ab196af6b5d6e",
+  "scenarios": [
+    {
+      "type": "SYNTHETIC_ADAPTER_PUBLICATION_ACCESS_FAILURE",
+      "source": "Injected PublishedStateError from test reader, not real GitHub access denial",
+      "first_action": "HOLD",
+      "persisted_on_restart": true,
+      "response_consumed_during_outage": false,
+      "pending_during_outage": null,
+      "browser_send_count": 0,
+      "browser_prepare_count": 0,
+      "unique_chat_count": 1,
+      "repair": "Simulated remote reader access restored and owner resume_after_owner",
+      "after_repair": "LAUNCH_SUCCESSOR prepared only; dispatch deferred; no real Send",
+      "result": "PASS"
+    },
+    {
+      "type": "REAL_LOCAL_ONLY_GIT_COMMIT_VS_PUBLISHED_REMOTE",
+      "source": "Actual disposable detached worktree and origin fetch on nominated repository",
+      "local_only_commit": "1116fe71c2f77c4022a90cfb06ca557091ebabb4",
+      "remote_commit": "fd49e4df47029008264083dc989ab196af6b5d6e",
+      "disposable_local_state_programme_complete": false,
+      "remote_published_state_programme_complete": true,
+      "remote_reader_used_local_state": false,
+      "controller_action": "STOP_FINISHED",
+      "browser_send_count": 0,
+      "browser_prepare_count": 0,
+      "real_successor_created": false,
+      "local_commit_pushed": false,
+      "worktree_removed": true,
+      "result": "PASS"
+    }
+  ],
+  "actual": {
+    "scenarios_passed": 2,
+    "real_browser_sends": 0,
+    "real_successor_launches": 0,
+    "real_GitHub_permission_or_network_failure_induced": false,
+    "real_remote_branch_changes_caused_by_disposable_test": false,
+    "actual_remote_readback_used": true,
+    "local_only_commit_did_not_count_as_publication": true,
+    "repair_retest_prepared_action_without_send": true
+  },
+  "acceptance": {
+    "local_only_commit_not_accepted_as_published": true,
+    "repo_access_failure_held_before_send": true,
+    "persisted_hold_survived_restart": true,
+    "repair_and_retest_verified_at_controller_boundary": true,
+    "no_duplicate_or_wrong_successor": true,
+    "overall": "PASS_TEST_ONLY"
+  },
+  "limitations": [
+    "The publication-access outage was injected at the reader seam, not a real GitHub permission or network failure.",
+    "The repair used a controlled mock reader returning published=True; it did not alter real GitHub permissions.",
+    "The local-only commit was real but restricted to an ephemeral detached worktree and never pushed.",
+    "Prepared/terminal controller actions were observed without browser dispatch; this is not evidence of a new live ChatGPT successor."
+  ],
+  "evidence_paths": [
+    "evidence/astra-l11-20261118-a/run_failure.py",
+    "evidence/astra-l11-20261118-a/observations.json",
+    "evidence/astra-l11-20261118-a/injection_record.json",
+    "evidence/astra-l11-20261118-a/validate_observations.py",
+    "evidence/live_test_results_20261118.csv",
+    "PROGRESS.md"
+  ],
+  "next_action": "Leaf 06 L12: controlled delayed/missing observation and operator pause while idle and prepared; no browser Send while held."
+}

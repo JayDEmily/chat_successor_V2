@@ -1,5 +1,12 @@
 # Progress
 
+## L11 publication failure regression — PASS (test-only), 18 November 2026
+
+- **L11 PASS within its published test-failure scope.** A one-shot injected `PublishedStateError` in the existing runner's repository reader caused a `HOLD` before any Send or consumption of the completed worker response. The hold survived restart, with unique chat count unchanged. After an explicit owner-resume and simulated restored published read, the same response produced only a **prepared** successor action; browser dispatch remained disabled.
+- **Actual local Git verification:** a *disposable detached worktree* created an unpushed local-only commit `1116fe71c2f77c4022a90cfb06ca557091ebabb4` changing the L09 fixture's completion flag. The existing `GitPublishedReader` fetched and read actual nominated remote commit `fd49e4df47029008264083dc989ab196af6b5d6e`, whose terminal fixture was unchanged. The reference controller correctly returned `STOP_FINISHED` rather than launching a successor based on the local-only change. The temporary worktree was removed and the disposable commit was **never pushed**.
+- **Evidence boundary:** the outage was a *synthetic adapter injection*, not a real GitHub permission/network outage. The local-only Git commit was a real disposable local test, not published work. Both scenarios recorded **zero browser Send, zero real successor launches**, no account permission changes and no production controller operation. Evidence: `evidence/astra-l11-20261118-a/run_failure.py`, `observations.json`, `injection_record.json`. L01–L11 PASS now recorded with scenario types; L12–L15 remain NOT_RUN.
+- **Next leaf: L12** — controlled delayed response/session-tool loss, and owner pause while idle and while prepared; no auto-login or Send while held.
+
 ## L10 status and streaming regression — PASS (synthetic observation injection), 18 November 2026
 
 - **L10 PASS within the runbook's permitted injection scope:** 21/21 test-only Response observations were supplied to the existing imported Astra controller through `integration/runner.py` using ephemeral state, **not** to a new ChatGPT conversation. Cases covered incomplete/streaming and absent observations, missing/truncated/malformed/nonterminal statuses, repeated/conflicting markers, examples inside fenced/indented/quoted text and the observed L09-style ambiguous status pattern.
