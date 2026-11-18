@@ -1,5 +1,12 @@
 # Progress
 
+## L13 Run C fifth saved worker — terminal slice 5 of 5, 18 November 2026
+
+- **Saved worker identity:** `6afd6fea-c214-83ec-b0ee-7781196b5a06` from connected browser read-only tab inventory under the nominated Chat Succession Project; saved-chat identity only, not completed-turn observation or controller transport.
+- **Work:** Run C step 5 only from source branch revision `ee2c999d973225305220a15b7dccaa6b7b65ce5a`. Step-5 nonce `fixture-3fa244adf517a775`; alpha 2/34, beta 2/8, gamma 2/19, overall six rows/61. Five distinct saved chat IDs have five results. `STATE.json` is terminal with `completed_steps=5/5`, `programme_complete=true`, `next_task=null`.
+- **Evidence:** `evidence/astra-l13-20261118-c/run_c_worker_slice5.md` and fixture; original validation, Git whitespace, remote push and pinned readback are checked separately. Runs A/B and earlier Run C slices unchanged.
+- **Next action:** the sole existing external controller consumes this worker's final status, verifies terminal publication, observes `STOP_FINISHED` with no sixth chat, and writes Run C live transport evidence and three-run G4 assessment. This worker has not run the controller, sent messages, or concluded L13 PASS.
+
 ## L13 Run C fourth saved worker — slice 4 of 5, 18 November 2026
 
 - **Saved worker identity:** `6afd6a75-8b94-83ec-ba02-94aeab6a1d92`, independently observed from the authorised read-only Chrome UI Automation window/address inventory in the nominated Chat Succession Project. This establishes saved conversation identity, not controller transport or completed-turn observation.
