@@ -15,14 +15,27 @@ UI Automation method and Git/WSL publication route, **not another controller**.
   controller state file. It does not launch additional controllers.
 - `tests/` covers these connections with simulated browser/Git observations.
 
-**Current validation:** the reference 119 offline tests and 16 separate
-local integration tests pass. A controlled, unsent live editor probe
-distinguished the placeholder from an identical real draft. The initial live Project-new-chat preparation stopped because the sidebar
-button remained offscreen. A subsequent preparation used the already observed
-Project URL and established a fresh, empty Project composer without sending.
-No live ChatGPT Send, genuine successor, or end-to-end Git worker handover
-has passed. Live scenarios remain NOT_RUN.
+**Validation to date (18 November):** reference 119/119 offline and
+16/16 new simulated integration tests passed independently. Chrome UIA
+placeholder/draft, exact Project URL navigation, and initial authenticated
+message Send were exercised on Windows. The **first** L01 test worker is an
+assisted bootstrap. The controller has not yet demonstrated an autonomous
+successor or completed L01; L02-L15 remain unproven.
 
-Do not invoke `Send` against the authenticated environment before
-the Leaf 03 desktop observation/navigation boundary is confirmed.
-Continue from the original `docs/astra-succession/leaves/` plan.
+**Windows state placement:** Use a private native NTFS file path for the
+controller state and its lock (for example under the user's LocalAppData).
+Windows `msvcrt.locking` on a `\\wsl.localhost` UNC path returned
+`OSError: [Errno 22] Invalid argument` in the live preflight. Keep the
+private config and the fixture repository wherever appropriate; do not
+put controller state into the Git branch or reset an existing run.
+
+The PowerShell `-AlreadyTyped` recovery switch is reserved for a manually
+verified, **not previously sent** exact test draft. It is not called by
+the automatic backend, which requires a genuinely empty composer. A
+short UIA rendering delay caused an exact immediate readback failure,
+so bounded polling of the exact draft is now used before any Send.
+
+A browser Send is only valid after the reference controller has written
+the matching `sending` phase (except the separately recorded *initial*
+bootstrap). Never retry a possibly submitted message. Read the unchanged
+original `docs/astra-succession/leaves/` for the test gates.

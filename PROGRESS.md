@@ -20,6 +20,15 @@
 - **Result:** category trimming/lowercasing gives alpha count=2 total=34, beta count=2 total=31, gamma count=2 total=11. Updated `RESULTS.json` and `STATE.json`; no mock slice executed.
 - **Next action:** Process fixture slice 2 of 2 from fresh published repository state. `programme_complete=false`; the external controller alone handles any successor launch.
 
+## L01 live controller checkpoint — 18 November 2026
+
+- L01 uses the nominated Project and `work/astra-succession-implementation-20261118`; the first worker was **assisted bootstrap**, not a controller-created successor. Its posted initial assignment and saved chat ID `6afce427-98c4-83ec-b3e7-a05c19f0806f` were observed through existing Windows Chrome UIA.
+- First worker published fixture slice 1 in remote commit `a375250b60e31c44836f5452a3fd64f7be54bf76`. Independently ran the unchanged fixture validator on a Git archive of this exact remote revision: `fixture_valid=true`, `completed_steps=1`, `total_steps=2`. The published fixture `last_chat_id` agrees with the observed initial worker ID; slice 2 remains.
+- The single L01 controller is saved privately at `C:\Users\james\AppData\Local\chat_successor_astra_l01_20261118\state.json` (not tracked). Its observed status on resuming: **one saved chat; no pending action; no terminal status; no successor Send**.
+- **First incomplete boundary:** repeated UIA Observe reads returned `ready=false`, `stop_control=true`, only an early partial assistant reply, and no final status marker. Publishing slice 1 does **not** substitute for observing a completed assistant turn. The reference controller appropriately returned `WAIT` and did not launch a successor. Do not mark L01 PASS or reset/re-send the initial assignment.
+- The owner explicitly rejected extra window-isolation or identity-checking ceremony. Continue with the existing Chrome/UIA mechanism and its already specified Astra adapter rules; do not add machinery to protect the other project.
+- **Next action:** use the existing live observer to consume a completed, marked first-worker turn; if one appears, let the *single* controller read the current published fixture and decide whether to launch the ordinary short successor pointer once. If UIA remains stuck in an incomplete view, investigate that Leaf 03 observation boundary directly, without a second orchestration system. Preserve the first chat and fixture result.
+
 ## Astra execution handoff — 18 November 2026
 
 - Source branch `evidence/astra-source-import-20261118`, import commit `44c0d5948318e305c42fb0ac4f463e77f90531bc`. The [execution plan](docs/astra-succession/README.md) organizes Astra's existing cases and integration work into seven leaves with gates G0–G5.
