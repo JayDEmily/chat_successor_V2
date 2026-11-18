@@ -1,5 +1,12 @@
 # Progress
 
+## L09 first live before-click case — observed and repaired, 18 November 2026
+
+- **L09 overall IN_PROGRESS, not PASS.** Initial L09 first worker was bootstrapped in the nominated existing Chat Succession Project at actual saved conversation `6afd2e8f-606c-83ec-a47b-4d6783bd711c`, returned completed final `NEED_MORE_TIME` (response `uia-turn-1-743656fa12f7da2e6a01`) and left the two-slice test fixture untouched at 0/2. Fresh private Windows L09 controller initialised with unique count 1.
+- Controlled `ASTRA_L09_FAULT=before_click` produced persisted `sending` then `uncertain` with detail that **UIA Send was never called**. On restart the original read-only reconciliation **incorrectly marked the standard continuation as posted**, although it existed only as a quotation in the assistant's reply. Root cause in `Find-PostedMessage`: it accepted exact text from assistant turns. **That first reconciliation result is invalid and is not evidence of a Send.**
+- Corrected the existing UIA readback routine to accept matching text only within user-turn boundaries. In the actual saved conversation a no-send readback now returns `posted_message_observed=false` for `Okay, continue working.`, while the known original submitted user message returns `true`. Following explicit before-click no-invocation evidence, the same single private controller's misconfirmed pending action was repaired to `prepared CONTINUE_CURRENT` without Send; backup and state hashes recorded in `evidence/astra-l09-20261118-a/before_click_observation.json`. The unique chat count remains 1, no other Project was changed.
+- **Next action:** validate and publish this readback correction, then dispatch the prepared continuation **once** using the existing L09 controller with no fault variable. Verify same saved chat and no duplicate, allow first worker to publish fixture slice 1, then proceed to the two published after-click fault/reconciliation variants. L01–L08 PASS unchanged; L09 cumulative row remains NOT_RUN until all required live cases are verified.
+
 ## L09 live fixture staged — 18 November 2026
 
 - **L09 LIVE NOT_RUN; staged only.** Fresh independent test-only fixture `succession-tests/astra-l09-20261118-a` seeded with the unchanged imported Astra repo_fixture.py for exactly two work slices and validated at `completed_steps=0/2`. No worker wrote results, no controller state was initialised, no messages sent and no successor launched.

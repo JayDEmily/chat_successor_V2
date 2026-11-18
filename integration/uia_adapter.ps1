@@ -151,17 +151,26 @@ function Safe-ClipboardEditorRead($window,$editor) {
  }
 }
 function Find-PostedMessage($window,$expected) {
+ # Only text under a user turn is a posted message. The assistant may quote
+ # the exact continuation string while instructing the operator to send it.
  $all=Desc $window
- $latestUser=''
+ $inUserTurn=$false
+ $latestUserMatches=$false
  foreach($el in $all) {
   try{
-   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
-      $el.Current.Name -ceq 'You said:') {$latestUser=''}
-   elseif($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
-          $el.Current.Name -ceq $expected){$latestUser=$expected}
+   if($el.Current.ControlType -ne [System.Windows.Automation.ControlType]::Text){continue}
+   $name=$el.Current.Name
+   if($name -ceq 'You said:'){
+    $inUserTurn=$true
+    $latestUserMatches=$false
+   }elseif($name -ceq 'ChatGPT said:'){
+    $inUserTurn=$false
+   }elseif($inUserTurn -and $name -ceq $expected){
+    $latestUserMatches=$true
+   }
   }catch{}
  }
- return ($latestUser -ceq $expected)
+ return $latestUserMatches
 }
 
 if($Mode -eq 'Observe') {

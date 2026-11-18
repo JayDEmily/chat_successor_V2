@@ -1,0 +1,73 @@
+{
+  "test_id": "L09",
+  "run_id": "astra-l09-20261118-a",
+  "phase": "BEFORE_CLICK_INJECTION_VERIFIED_WITH_READBACK_CORRECTION",
+  "live_overall": "IN_PROGRESS_NOT_PASS",
+  "recorded_at_utc": "2026-11-18T04:54:58.411Z",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "prior_published_setup_commit": "0a18dec9b5120e6977a1c2e277d3caac773db769",
+  "first_worker": {
+    "chat_id": "6afd2e8f-606c-83ec-a47b-4d6783bd711c",
+    "bootstrap_posted_exact_message_observed": true,
+    "response_id": "uia-turn-1-743656fa12f7da2e6a01",
+    "final_status": "NEED_MORE_TIME",
+    "fixture_completed_steps": "0/2",
+    "worker_responses_complete": true
+  },
+  "before_click": {
+    "environment_variable": "ASTRA_L09_FAULT=before_click",
+    "same_single_controller_private_state": true,
+    "persisted_last_status": "NEED_MORE_TIME",
+    "persisted_pending_kind": "CONTINUE_CURRENT",
+    "persisted_phase_after_fault": "uncertain",
+    "persisted_detail": "UI submission outcome uncertain: L09 injected after durable sending but before UIA Send; no click",
+    "unique_chat_count_after_fault": 1,
+    "send_attempt_in_UIA_adapter": false,
+    "note": "Positive before-click injection occurred in Python before _invoke Send; not an inference from absent sidebar content."
+  },
+  "detected_reconciliation_defect": {
+    "original_reconcile_result": "reconciled / WAIT / pending null / one chat counted",
+    "defect": "Role-blind Find-PostedMessage matched quoted expected continuation inside assistant response, misidentifying it as a posted user message.",
+    "match_source": "The first worker assistant reply quoted the exact continuation phrase. Its user message had not been posted by the L09 controller.",
+    "original_outcome_invalid": true
+  },
+  "correction": {
+    "file": "integration/uia_adapter.ps1",
+    "function": "Find-PostedMessage",
+    "method": "Only accept exact expected text while scanning the user turn, not assistant turn.",
+    "live_negative_readback": {
+      "message": "Okay, continue working.",
+      "posted_message_observed": false,
+      "chat_id": "6afd2e8f-606c-83ec-a47b-4d6783bd711c"
+    },
+    "live_positive_readback": {
+      "message_type": "Original initial assignment, known to have been submitted",
+      "posted_message_observed": true,
+      "chat_id": "6afd2e8f-606c-83ec-a47b-4d6783bd711c"
+    },
+    "script_parser_errors": 0
+  },
+  "private_state_repair": {
+    "repair_script": "evidence/astra-l09-20261118-a/repair_false_readback.py",
+    "source_state_and_backup": "Private Windows NTFS only; not published",
+    "before_backup_sha256": "38043a279eb898915c5a588111648532fe4b3cd1851569aa6cb75e4b8de79de9",
+    "after_repair_sha256": "1a913dc5a5f308d328a46f2b21e35476243056da2e94c0b36b8549e2c5858d9b",
+    "explicit_positive_no_send_rearm": true,
+    "restored_pending_phase": "prepared",
+    "restored_pending_kind": "CONTINUE_CURRENT",
+    "unique_chat_count": 1,
+    "messages_sent_by_repair": 0,
+    "parallel_controller_created": false
+  },
+  "remaining_live_cases": [
+    "Issue one prepared continuation without the fault variable and verify one posted message in first worker chat.",
+    "After first worker publishes fixture slice 1, inject after-click lost acknowledgement for successor; reconcile exact new saved chat ID once.",
+    "Inject after-click lost acknowledgement for successor same-chat continuation; reconcile exact posted message in same saved chat without duplicate."
+  ],
+  "limitations": [
+    "L09 is not complete. No after-click fault case or new successor was run in this evidence slice.",
+    "The initial false-positive readback was a real observed defect, repaired with a role-scoped message check and test-only state recovery.",
+    "Current evidence includes only limited status and hashes; private controller state, credentials and full chat transcripts remain off GitHub."
+  ]
+}
