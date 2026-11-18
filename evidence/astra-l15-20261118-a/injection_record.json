@@ -1,0 +1,53 @@
+{
+  "test_id": "L15",
+  "run_id": "astra-l15-20261118-a",
+  "outcome": "PASS",
+  "qualification": "PASS_SCOPED_DISPOSABLE_CORRUPTION_AND_SYNTHETIC_METADATA",
+  "scenario_type": "DISPOSABLE_FIXTURE_CORRUPTION_AND_SYNTHETIC_METADATA_INJECTION",
+  "observed_at_utc": "2026-11-18T07:05:00.010Z",
+  "repository": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "scenarios": {
+    "corrupt_completed_result": "Actual imported fixture validator rejected tampered category value total in a disposable copy of completed L09 fixture; original bytes restored and validator passed.",
+    "missing_next_input": "Actual imported fixture validator rejected a removed RUN.json in a disposable copy of staged L13 fixture; original bytes restored and validator passed.",
+    "metadata_rejections": [
+      "stale_last_worker_attribution",
+      "non_boolean_completion_flag",
+      "finished_and_next_task_contradiction",
+      "unfinished_without_next_task",
+      "unpublished_handover",
+      "missing_repository_handover"
+    ]
+  },
+  "results": {
+    "cases_total": 8,
+    "cases_passed": 8,
+    "fixture_corruption_cases": 2,
+    "metadata_hold_cases": 6,
+    "post_repair_action": "prepared successor only, no dispatch",
+    "actual_browser_sends": 0,
+    "actual_successor_launches": 0,
+    "real_worker_error_observed": false
+  },
+  "preservation": {
+    "published_fixture_files_changed": false,
+    "only_temp_local_fixture_copies_modified": true,
+    "temp_copies_removed": true,
+    "L09_terminal_controller_untouched": true,
+    "L13_staged_fixtures_untouched": true
+  },
+  "limitations": [
+    "Not a live ChatGPT worker error or repair; fixture corruption and metadata are deliberate test injections.",
+    "No corrupt fixture was pushed to GitHub; the original published source files remained unchanged.",
+    "Controller validates handover metadata rather than arbitrary correctness; substantive errors are caught by the separate fixture validator."
+  ],
+  "evidence_paths": [
+    "evidence/astra-l15-20261118-a/run_corruption.py",
+    "evidence/astra-l15-20261118-a/observations.json",
+    "evidence/astra-l15-20261118-a/injection_record.json",
+    "evidence/astra-l15-20261118-a/validate_observations.py",
+    "PROGRESS.md",
+    "evidence/live_test_results_20261118.csv"
+  ],
+  "next_action": "Resume L13 Run A after an independently empty authenticated Project new-chat composer is available. Run B/C remain staged, L14 optional and unstarted."
+}

@@ -7,6 +7,13 @@
 - **Preservation:** no draft was typed over, cleared, selected for Send, or copied into GitHub; no initial worker message, successor, controller or fixture slice was executed. Evidence: evidence/astra-l13-20261118/prebootstrap_hold.json.
 - **Next action:** once that draft is preserved or sent through normal account use, or an independently empty nominated-Project composer is available, bootstrap the Run A initial worker exactly once. Observe its saved conversation ID and initialise the pre-existing CLI in a fresh private state with five-chat cap. Then let only that controller launch four successors following verified publication. Runs B/C remain staged. L01–L12 PASS and L14–L15 NOT_RUN.
 
+## L15 corruption and stale metadata — PASS (scoped injection), 18 November 2026
+
+- **L15 PASS within its bounded test scope (8/8).** Two real fixture-validator runs on **disposable local copies** rejected (a) a tampered completed L09 result total and (b) a missing next-input `RUN.json` in staged L13 data. Both passed after restoring the original bytes. Nothing corrupt was pushed to GitHub or written into the staged live fixtures.
+- **Six controller metadata injections:** stale last-worker attribution, string completion flag, finished-with-next-work contradiction, unfinished-without-next-task, unpublished handover and absent handover each produced **HOLD** from the imported reference controller. A separately injected valid published state with an explicit resume and fresh response produced a **prepared** successor action only, not a Send. No controller invoked a browser or launched a real successor.
+- **Evidence boundary:** `evidence/astra-l15-20261118-a/run_corruption.py`, `observations.json` and `injection_record.json`. These are local copied-fixture and synthetic metadata tests, **not** live worker encounters or claims that a terminal marker verifies arbitrary engineering results. L15's outcome is labelled accordingly; no real ChatGPT worker was asked to repair corrupted remote input.
+- **Next active leaf remains L13 Run A**, held before first worker because the nominated Project composer contains a genuine unsent private draft. Runs A/B/C remain 0/5; L14 is optional and NOT_RUN. No L09 terminal controller state was changed.
+
 ## L13 fixture setup — Run A staged (18 November 2026)
 
 - **L13 NOT_RUN until live evidence exists.** Three separate five-slice repository-only fixtures have been seeded and independently validated at 0/5: `succession-tests/astra-l13-20261118-a`, `-b` and `-c`. The fixtures are bounded independent workloads; their preparation is **not** live five-chat evidence. See `evidence/astra-l13-20261118/setup.json`.

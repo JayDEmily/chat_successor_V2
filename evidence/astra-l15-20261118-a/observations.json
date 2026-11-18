@@ -1,0 +1,125 @@
+{
+  "test_id": "L15",
+  "run_id": "astra-l15-20261118-a",
+  "scenario_type": "DISPOSABLE_FIXTURE_CORRUPTION_AND_SYNTHETIC_METADATA_INJECTION",
+  "reference_fixture_validators_used": true,
+  "real_worker_correctness_proven": false,
+  "real_browser_sends": 0,
+  "real_successor_launches": 0,
+  "published_workloads_edited": false,
+  "fixture_cases": [
+    {
+      "case": "corrupt_completed_result_total",
+      "source": "DISPOSABLE_LOCAL_COPY_OF_PUBLISHED_COMPLETED_L09_FIXTURE",
+      "baseline_valid": true,
+      "corruption_detected_by": "REAL_FIXTURE_VALIDATOR",
+      "validator_rejected": true,
+      "diagnostic": "Incorrect substantive slice result",
+      "repaired_by": "Restored original bytes",
+      "restored_valid": true,
+      "published_fixture_changed": false,
+      "browser_send_calls": 0,
+      "result": "PASS"
+    },
+    {
+      "case": "missing_next_work_input_RUN_json",
+      "source": "DISPOSABLE_LOCAL_COPY_OF_PUBLISHED_SEEDED_L13_FIXTURE",
+      "baseline_valid": true,
+      "corruption_detected_by": "REAL_FIXTURE_VALIDATOR",
+      "validator_rejected": true,
+      "diagnostic_contains": "RUN.json",
+      "repaired_by": "Restored original bytes",
+      "restored_valid": true,
+      "published_fixture_changed": false,
+      "browser_send_calls": 0,
+      "result": "PASS"
+    }
+  ],
+  "metadata_cases": [
+    {
+      "case": "stale_last_worker_attribution",
+      "source": "SYNTHETIC_REPOVIEW_REFERENCE_CONTROLLER",
+      "rejected_action": "HOLD",
+      "hold_reason": "Repo state is stale or belongs to a different worker",
+      "positive_repair": "Explicit owner resume and new response event with valid published RepoView",
+      "post_repair_action": "LAUNCH_SUCCESSOR",
+      "post_repair_pending_phase": "prepared",
+      "actual_browser_send_calls": 0,
+      "actual_successor_launches": 0,
+      "unique_chat_count": 1,
+      "result": "PASS"
+    },
+    {
+      "case": "non_boolean_completion_flag",
+      "source": "SYNTHETIC_REPOVIEW_REFERENCE_CONTROLLER",
+      "rejected_action": "HOLD",
+      "hold_reason": "programme_complete must be a real boolean",
+      "positive_repair": "Explicit owner resume and new response event with valid published RepoView",
+      "post_repair_action": "LAUNCH_SUCCESSOR",
+      "post_repair_pending_phase": "prepared",
+      "actual_browser_send_calls": 0,
+      "actual_successor_launches": 0,
+      "unique_chat_count": 1,
+      "result": "PASS"
+    },
+    {
+      "case": "finished_and_next_task_contradiction",
+      "source": "SYNTHETIC_REPOVIEW_REFERENCE_CONTROLLER",
+      "rejected_action": "HOLD",
+      "hold_reason": "Repo state says finished but also supplies remaining work",
+      "positive_repair": "Explicit owner resume and new response event with valid published RepoView",
+      "post_repair_action": "LAUNCH_SUCCESSOR",
+      "post_repair_pending_phase": "prepared",
+      "actual_browser_send_calls": 0,
+      "actual_successor_launches": 0,
+      "unique_chat_count": 1,
+      "result": "PASS"
+    },
+    {
+      "case": "unfinished_without_next_task",
+      "source": "SYNTHETIC_REPOVIEW_REFERENCE_CONTROLLER",
+      "rejected_action": "HOLD",
+      "hold_reason": "Unfinished programme lacks a next task",
+      "positive_repair": "Explicit owner resume and new response event with valid published RepoView",
+      "post_repair_action": "LAUNCH_SUCCESSOR",
+      "post_repair_pending_phase": "prepared",
+      "actual_browser_send_calls": 0,
+      "actual_successor_launches": 0,
+      "unique_chat_count": 1,
+      "result": "PASS"
+    },
+    {
+      "case": "unpublished_handover",
+      "source": "SYNTHETIC_REPOVIEW_REFERENCE_CONTROLLER",
+      "rejected_action": "HOLD",
+      "hold_reason": "Handover publication or programme state is unavailable",
+      "positive_repair": "Explicit owner resume and new response event with valid published RepoView",
+      "post_repair_action": "LAUNCH_SUCCESSOR",
+      "post_repair_pending_phase": "prepared",
+      "actual_browser_send_calls": 0,
+      "actual_successor_launches": 0,
+      "unique_chat_count": 1,
+      "result": "PASS"
+    },
+    {
+      "case": "missing_repository_handover",
+      "source": "SYNTHETIC_REPOVIEW_REFERENCE_CONTROLLER",
+      "rejected_action": "HOLD",
+      "hold_reason": "Handover publication or programme state is unavailable",
+      "positive_repair": "Explicit owner resume and new response event with valid published RepoView",
+      "post_repair_action": "LAUNCH_SUCCESSOR",
+      "post_repair_pending_phase": "prepared",
+      "actual_browser_send_calls": 0,
+      "actual_successor_launches": 0,
+      "unique_chat_count": 1,
+      "result": "PASS"
+    }
+  ],
+  "cases_passed": 8,
+  "outcome": "PASS_SCOPED_INJECTION_ONLY",
+  "limitations": [
+    "Fixture corruption occurred only in automatically deleted disposable local copies; no actual bad commit was pushed.",
+    "Invalid RepoView observations were injected; no live ChatGPT worker or browser Send was operated.",
+    "A terminal marker is not treated as evidence of substantive fixture accuracy; the separate validator rejected corrupt results."
+  ]
+}
