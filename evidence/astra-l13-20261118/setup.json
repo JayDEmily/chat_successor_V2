@@ -14,10 +14,11 @@
     {
       "id": "astra-l13-20261118-a",
       "fixture": "succession-tests/astra-l13-20261118-a",
-      "status": "STAGED_0_OF_5",
+      "status": "BLOCKED_PRE_BOOTSTRAP_0_OF_5",
       "active": true,
       "saved_chat_ids": [],
-      "controller_state": "NOT_INITIALISED"
+      "controller_state": "NOT_INITIALISED",
+      "reason": "Nominated Project new-chat composer contains a genuine unsent draft; no independently empty Project composer observed."
     },
     {
       "id": "astra-l13-20261118-b",
@@ -42,5 +43,6 @@
   "restrictions": "No worker operates controller or launches successor; no manual corrective prompting during normal runs; keep run states separate",
   "acceptance": "Three completed natural five-chat runs with exactly four automatic successors each, no duplicates/misroutes and remote-verified useful work",
   "evidence_type": "FIXTURE_SETUP_ONLY",
-  "next_action": "Bootstrap Run A initial saved worker using existing authenticated Chrome Project; record observed saved chat ID then initialise fresh single private controller cap 5."
+  "next_action": "After the user has preserved or dispatched the existing unsent Project draft, verify an independent empty Project composer. Bootstrap Run A once and observe its saved ID before initialising the existing one-controller CLI with cap 5. Do not reset staged fixtures.",
+  "active_run_status": "PRE_BOOTSTRAP_HOLD"
 }
