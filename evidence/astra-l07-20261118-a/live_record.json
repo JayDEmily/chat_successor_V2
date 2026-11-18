@@ -123,5 +123,6 @@
     "Selection/copy for actual editable read changes selection and focus, restores clipboard, and does not mutate composer text; captured screenshots show selected text.",
     "No controller operation, live status routing, new saved chat or message Send occurred during L07."
   ],
-  "next_action": "Obtain a separate independently verified empty disposable nominated-Project composer without clearing or replacing any current draft, prepare attachment-only with a harmless test file, capture rendered and UIA/editable observations, classify and update L07. Do not mark PASS before the fourth case is live-verified. L08 remains unstarted."
+  "follow_up_attempt_path": "evidence/astra-l07-20261118-a/attempt2.json",
+  "next_action": "A verified empty composer is available in the existing L06 Project test chat, and the upload menu has been observed. Complete actual attachment selection and verify an attachment preview/remove control with actual editable text still empty. Do not mark L07 PASS until the fourth live condition is independently observed. L08 remains unstarted."
 }

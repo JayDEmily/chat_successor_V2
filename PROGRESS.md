@@ -1,5 +1,12 @@
 # Progress
 
+## L07 follow-up — existing test-chat attachment probe, 18 November 2026
+
+- Continued L07 using the existing nominated Project and authenticated Windows Chrome session, with no owner action needed. The existing completed L06 test chat `6afd0f07-e17c-83ec-ae22-a257184d7db4` had independently verified empty editable text, UIA Value `"Ask ChatGPT\\n"` and no detected attachments. This resolves the first attempt's lack of an empty composer, without clearing the separate unsent drafts.
+- The nominated browser's `Add files and more` menu was positively expanded (UIA ExpandCollapse Collapsed → Expanded); the actual `Add photos & files — Upload from computer` action was identified. A cropped menu screenshot is retained, excluding conversations. The Invoke action did not produce a positively observed file chooser/attachment and the foreground switched to another Chrome window. A generated harmless-image clipboard paste also left actual editable text empty but produced no visible attachment. A later combined menu-click check could not find the upload item, so no unverified selection was attempted.
+- **L07 remains BLOCKED (3/4 live conditions verified).** An accessible empty test composer and the upload-menu path are now confirmed, but **attachment-only has not been observed**. No chats launched, no messages sent, no controller operation and no existing draft or attachment deleted. This is an observation limitation, not an established application defect. Evidence: `evidence/astra-l07-20261118-a/attempt2.json` and `attachment_menu_cropped.png`. L01–L06 are unchanged.
+- **Next action:** complete actual attachment selection in the existing authenticated Project test composer; independently observe editable text empty and a file preview/remove control. Only then update the L07 outcome. Do not proceed to L08 as a substitute for unverified L07 acceptance.
+
 ## L07 live browser composer regression — 18 November 2026
 
 - **L07 outcome: BLOCKED, not PASS.** Three of four required states were independently inspected in the existing authenticated Chat Succession Project through the existing Windows Chrome UIA adapter plus a test-only selection/clipboard probe. No controller, successor, saved chat or Send was invoked. Existing drafts and attachments were neither cleared nor submitted.

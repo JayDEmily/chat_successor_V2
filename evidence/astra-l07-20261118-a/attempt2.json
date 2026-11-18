@@ -1,0 +1,59 @@
+{
+  "test_id": "L07",
+  "attempt_id": "astra-l07-20261118-b",
+  "status": "BLOCKED_NO_ATTACHMENT_OBSERVED",
+  "scenario_type": "MANUAL_OBSERVATION_ONLY",
+  "environment": "OWNER_AUTHENTICATED_WINDOWS11_CHROME_UBUNTU_WSL",
+  "observed_at_utc": "2026-11-18T03:17:50Z",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "project_id": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "test_only_existing_chat_id": "6afd0f07-e17c-83ec-ae22-a257184d7db4",
+  "browser_window_handle": 1774104,
+  "observed": {
+    "verified_empty_composer": {
+      "actual_editable_text": "",
+      "uia_value": "Ask ChatGPT\n",
+      "attachments_present": false,
+      "source": "Existing integration/uia_adapter.ps1 Prepare CONTINUE_CURRENT on observed L06 saved test chat",
+      "meaning": "Prior no-empty-composer blocker resolved for this existing test conversation, without touching unsent drafts in new Project windows"
+    },
+    "upload_menu": {
+      "expanded": true,
+      "expand_collapse_transition": "Collapsed to Expanded",
+      "attachment_button": "Add files and more",
+      "available_item": "Add photos & files Upload from computer",
+      "item_control_type": "ControlType.Button",
+      "supported_action": "InvokePattern",
+      "observed_screenshot": "attachment_menu_cropped.png",
+      "screenshot_scope": "Crop of upload menu only; no conversation transcript"
+    },
+    "attempted_selection": {
+      "invoked_upload_item": true,
+      "observed_native_file_dialog": false,
+      "resulting_attachment_verified": false,
+      "foreground_after_invoke_handle": 463716,
+      "foreground_after_invoke_kind": "Different Chrome window; no native file picker observed in window inventory",
+      "independent_safe_fallback": "Pasted a generated 16x16 solid colour image through clipboard into verified-empty test chat; actual editable text remained empty, UIA did not expose an attachment control and cropped composer screenshot displayed no attachment",
+      "subsequent_attempt": "Single-step expand-and-click probe could not observe the upload menu item reliably (0 matches); no blind click or Send performed"
+    }
+  },
+  "validation": {
+    "three_prior_text_state_observations": "Preserved unchanged",
+    "attachment_only": "NOT_VERIFIED",
+    "l07_acceptance": "BLOCKED",
+    "messages_sent": 0,
+    "test_chat_created": 0,
+    "controller_used": false,
+    "existing_drafts_cleared": false,
+    "existing_attachments_deleted": false,
+    "upload_file": "65 byte harmless ASCII file prepared in Windows temp; no evidence of successful selection or upload"
+  },
+  "outcome_reason": "The test resumed in an independently verified empty existing Project test chat, but neither accessible upload-item invocation nor safe image clipboard paste yielded a verifiable attached file; the UIA menu was confirmed open, and the foreground switched to another Chrome window during file-picker attempt. No attachment-only state is claimed.",
+  "next_action": "Complete file selection and attachment observation using the existing authenticated browser while preserving all unsent drafts; verify image/file thumbnail or remove-control plus actual editable text empty before promoting L07 to PASS.",
+  "evidence_paths": [
+    "evidence/astra-l07-20261118-a/live_record.json",
+    "evidence/astra-l07-20261118-a/attachment_menu_cropped.png",
+    "evidence/astra-l07-20261118-a/attempt2.json"
+  ]
+}
