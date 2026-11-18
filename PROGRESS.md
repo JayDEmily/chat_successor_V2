@@ -1,5 +1,14 @@
 # Progress
 
+## L05 live cap-two controller verdict - 18 November 2026
+
+- L05 verdict: PASS. Existing reference controller, assisted first saved chat 6afcf6b8-65a0-83ec-9e23-6bf655cf8004, one automatic successor 6afcf7a9-93a8-83ec-aa5f-435905e0c1ae, cap 2.
+- First worker completed and published at d1398b1ff25e2c221ecc1b21e56621f280f02107; controller consumed uia-turn-1-4be4e32fa1e885da2024 and confirmed distinct successor. Chat 2 first emitted NEED_MORE_TIME (uia-turn-1-39b7ac67377778332681), then received exact same-chat continuation while unique-chat count stayed 2.
+- Final worker turn uia-turn-2-bbcc38a3c3a0c5b0aa1a consumed after publication c411dc7bd74d608c05837a6155b6f3c2984cc4bb. Fresh pinned remote clone independently verified fixture_valid=true, completed_steps=2, total_steps=3, both chat IDs and probes. Slice 3 outstanding, programme_complete=false.
+- Controller terminal: action STOP_CAP; persisted halted=chat_cap, pending=null, last_status=TASK_COMPLETE, exactly two saved chats, no chat-3 Send. Controller process exited normally.
+- Evidence: evidence/astra-l05-20261118-a/live_record.json and cumulative evidence/live_test_results_20261118.csv. Assisted initial bootstrap and no separate full UIA message-enumeration are recorded limitations. L01-L04 untouched.
+- Next action: Leaf 06 L06: seed a fresh two-slice fixture, stage first-worker completion and a prepared unsent handover, rotate the next-slice probe only in GitHub, then use the existing controller to send ordinary pointer. Independently check successor uses current probe and correct branch and validate completed slice 2. Do not reuse L05 state.
+
 ## L05 second live fixture worker - slice 2, 18 November 2026
 
 - Starting remote HEAD d1398b1ff25e2c221ecc1b21e56621f280f02107. Resumed as saved Project chat 6afcf7a9-93a8-83ec-aa5f-435905e0c1ae; existing controller recorded two distinct chats, cap 2, and consumed chat 2's first NEED_MORE_TIME response before same-chat continuation.

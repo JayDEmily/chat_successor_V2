@@ -1,0 +1,145 @@
+{
+  "template_only": false,
+  "outcome": "PASS",
+  "test_id": "L05",
+  "run_id": "astra-l05-20261118-a",
+  "scenario_type": "NATURAL_LIVE",
+  "environment": "OWNER_AUTHENTICATED_WINDOWS_11_CHROME_UBUNTU_WSL_GIT",
+  "observed_start_utc": null,
+  "observed_end_utc": "2026-11-18T01:47:55.733Z",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "project_name": "Chat succession folder",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "max_unique_chats": 2,
+  "initial_chat_id": "6afcf6b8-65a0-83ec-9e23-6bf655cf8004",
+  "observed_run_chat_ids": [
+    "6afcf6b8-65a0-83ec-9e23-6bf655cf8004",
+    "6afcf7a9-93a8-83ec-aa5f-435905e0c1ae"
+  ],
+  "controller_or_launcher_version": "Astra reference controller and existing Windows Chrome UIA adapter on nominated implementation branch",
+  "write_tool_used": "Worker Ubuntu Git push; independent fresh remote clone and fixture validator",
+  "fixture_path": "succession-tests/astra-l05-20261118-a",
+  "events": [
+    {
+      "event": "assisted_initial_worker",
+      "destination_chat_id": "6afcf6b8-65a0-83ec-9e23-6bf655cf8004",
+      "count_before": 0,
+      "count_after": 1
+    },
+    {
+      "event": "first_worker_completion",
+      "source_chat_id": "6afcf6b8-65a0-83ec-9e23-6bf655cf8004",
+      "response_id": "uia-turn-1-4be4e32fa1e885da2024",
+      "response_complete": true,
+      "status": "TASK_COMPLETE",
+      "interpretation_basis": "Canonical final marker",
+      "publication_outcome": "published remote",
+      "normal_commit_reference": "d1398b1ff25e2c221ecc1b21e56621f280f02107",
+      "programme_complete": false,
+      "planned_action": "LAUNCH_SUCCESSOR",
+      "count_before": 1,
+      "count_after": 1
+    },
+    {
+      "event": "automatic_successor",
+      "source_chat_id": "6afcf6b8-65a0-83ec-9e23-6bf655cf8004",
+      "destination_chat_id": "6afcf7a9-93a8-83ec-aa5f-435905e0c1ae",
+      "planned_action": "LAUNCH_SUCCESSOR",
+      "send_outcome": "One successor confirmed by persisted current and distinct saved chat ID",
+      "count_before": 1,
+      "count_after": 2
+    },
+    {
+      "event": "second_worker_need_more_time",
+      "source_chat_id": "6afcf7a9-93a8-83ec-aa5f-435905e0c1ae",
+      "response_id": "uia-turn-1-39b7ac67377778332681",
+      "response_complete": true,
+      "status": "NEED_MORE_TIME",
+      "interpretation_basis": "Canonical final marker",
+      "planned_action": "CONTINUE_CURRENT",
+      "count_before": 2,
+      "count_after": 2
+    },
+    {
+      "event": "same_chat_continuation_at_cap",
+      "source_chat_id": "6afcf7a9-93a8-83ec-aa5f-435905e0c1ae",
+      "destination_chat_id": "6afcf7a9-93a8-83ec-aa5f-435905e0c1ae",
+      "planned_action": "CONTINUE_CURRENT",
+      "send_outcome": "Exact Okay, continue working. received in same saved worker conversation",
+      "count_before": 2,
+      "count_after": 2
+    },
+    {
+      "event": "second_worker_publication",
+      "source_chat_id": "6afcf7a9-93a8-83ec-aa5f-435905e0c1ae",
+      "response_id": "uia-turn-2-bbcc38a3c3a0c5b0aa1a",
+      "response_complete": true,
+      "status": "TASK_COMPLETE",
+      "interpretation_basis": "Canonical final marker",
+      "publication_outcome": "published remote",
+      "normal_commit_reference": "c411dc7bd74d608c05837a6155b6f3c2984cc4bb",
+      "programme_complete": false,
+      "next_task": "Process fixture slice 3 of 3; read RUN.json and verify RESULTS.json.",
+      "workload_verification": "Independent fresh remote clone of pinned SHA: fixture_valid true, completed_steps 2, total_steps 3; both chat IDs and probes verified",
+      "planned_action": "STOP_CAP",
+      "count_before": 2,
+      "count_after": 2
+    },
+    {
+      "event": "terminal_controller_state",
+      "source_chat_id": "6afcf7a9-93a8-83ec-aa5f-435905e0c1ae",
+      "planned_action": "STOP_CAP",
+      "send_outcome": "No third-chat Send; work remains",
+      "reconciliation_evidence": "CLI action STOP_CAP; state halted chat_cap, pending null, last_status TASK_COMPLETE, exactly two IDs",
+      "count_after": 2
+    }
+  ],
+  "expected": {
+    "cap": 2,
+    "distinct_saved_chats": 2,
+    "same_chat_continuations": 1,
+    "successor_launches": 1,
+    "validated_steps": 2,
+    "total_steps": 3,
+    "programme_complete": false,
+    "terminal_action": "STOP_CAP"
+  },
+  "actual": {
+    "cap": 2,
+    "distinct_saved_chats": 2,
+    "same_chat_continuations": 1,
+    "successor_launches": 1,
+    "validated_steps": 2,
+    "total_steps": 3,
+    "programme_complete": false,
+    "terminal_action": "STOP_CAP"
+  },
+  "useful_work_validated": true,
+  "continuation_count": 1,
+  "successor_launch_count": 1,
+  "duplicate_send_count": 0,
+  "wrong_destination_count": 0,
+  "false_semantic_completion_count": 0,
+  "owner_interventions": [
+    "Assisted first-worker bootstrap",
+    "Read-only controller state inspection and fresh remote clone validation"
+  ],
+  "evidence_paths": [
+    "PROGRESS.md",
+    "succession-tests/astra-l05-20261118-a/RUN.json",
+    "succession-tests/astra-l05-20261118-a/STATE.json",
+    "succession-tests/astra-l05-20261118-a/RESULTS.json",
+    "evidence/astra-l05-20261118-a/first_worker_slice1.md",
+    "evidence/astra-l05-20261118-a/second_worker_slice2.md",
+    "evidence/astra-l05-20261118-a/live_record.json",
+    "evidence/live_test_results_20261118.csv",
+    "Private Windows controller state not uploaded"
+  ],
+  "limitations": [
+    "First worker bootstrap assisted",
+    "Exact start time unrecorded; end time is evidence inspection timestamp",
+    "Same-chat continuation observed in conversation and controller history; no separate full UIA user-message enumeration",
+    "L06 and later live tests untested; L14 excluded"
+  ]
+}
