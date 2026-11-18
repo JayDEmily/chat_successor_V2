@@ -1,5 +1,12 @@
 # Progress
 
+## L13 Run E monitoring timeout and read-only recovery — 19 November 2026
+
+- The first Run E worker published validated slice 1/5. The Windows observer wrapper, a local serial caller of the existing controller, then hit its own 740-second timeout before the worker produced a completed final assistant status. This was an observation interruption, **not** a successful handover or a browser Send.
+- The existing private controller still held exactly one saved chat, no consumed responses, no pending action and no halt. The operator corrected the wrapper polling/time limit and restarted observation against **the same persisted state**; no second controller, duplicate Send, manual chat continuation or successor was initiated.
+- Evidence: `evidence/astra-l13-20261119-e/controller_observer_timeout.json`; Run E is **IN_PROGRESS**, but does not independently prove an uninterrupted repetition because the observation wrapper was restarted. G4 remains open.
+- **Next action:** allow the original Run E controller to observe the first worker's final response and, if valid, complete the five-chat fixture without further interference. Preserve the monitor interruption in the final report; schedule a genuinely uninterrupted replacement repetition if needed for G4.
+
 ## L13 Run E first saved worker — slice 1 of 5, 19 November 2026
 
 - **Current active assignment:** Run E (`astra-l13-20261119-e`) only. This first worker observed its actual saved Chat Succession Project conversation ID `6afe1bba-a8b0-83ec-b393-3017ea056dd2` using read-only authenticated Chrome UI Automation. The separate pre-existing Windows controller was observed with cap-five Run E state, one distinct saved chat, no pending action and no halt. This worker did not operate the controller.
