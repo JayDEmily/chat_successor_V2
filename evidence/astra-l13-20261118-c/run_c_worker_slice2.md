@@ -12,5 +12,5 @@
   - gamma: count 2, total 15
   - combined: count 6, total 73
 - Result: Run C completed_steps 2/5; programme_complete false; next task slice 3.
-- Verification: existing fixture validator and Git whitespace check to be recorded in worker run output. Git remote publication and independent readback to be verified separately.
+- Verification: original fixture validator returned `fixture_valid=true, completed_steps=2, total_steps=5`; unstaged and staged Git whitespace checks were clean. Fixture commit `b3bf6333cd1f031cdb42582b38c13f195cb600da` was pushed to the nominated branch; independent pinned GitHub readback confirmed STATE.json, RESULTS.json and this evidence file including the saved worker ID and aggregates.
 - Boundary: no worker-side controller action, new chat, Send, same-chat continuation or changes to private controller state. Only the existing external controller may launch the third saved Run C worker.
