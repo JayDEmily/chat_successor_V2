@@ -1,0 +1,103 @@
+{
+  "test_id": "L08",
+  "run_id": "astra-l08-20261118-a",
+  "outcome": "PASS",
+  "scenario_type": "MANUAL_OBSERVATION_ONLY",
+  "environment": "OWNER_AUTHENTICATED_WINDOWS11_CHROME_UBUNTU_WSL",
+  "observed_start_utc": null,
+  "observed_end_utc": "2026-11-18T04:29:03.9033221Z",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "project_name": "Chat succession folder",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "starting_remote_commit": "4cd7cc75f7447cc715ae823d4f44ceea9ad81ef0",
+  "observed_run_chat_ids": [],
+  "initial_chat_id": null,
+  "controller_or_launcher_version": "Existing integration/uia_adapter.ps1 Prepare LAUNCH_SUCCESSOR only; no controller/Send",
+  "events": [
+    {
+      "event": "unrelated_composer_active_initial",
+      "window_handle": 9178254,
+      "browser_is_chrome": true,
+      "foreground_is_nominated_project": false,
+      "nominated_project_visible_in_sidebar": true,
+      "editor_name": "Ask ChatGPT",
+      "editor_value_length": 12,
+      "editor_value_sha256": "c0fae6a6c1582f13454101d3c2da4f5d951c84a31cff3f6206f6585b2ae6b747",
+      "unrelated_URL_or_transcript": "NOT_EXPORTED"
+    },
+    {
+      "event": "L08_existing_adapter_prepare_only",
+      "operation": "Prepare LAUNCH_SUCCESSOR",
+      "project": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+      "observed_url": "https://chatgpt.com/g/g-p-6afbfc5e59248191a8c690296b24c8ef-chat-succession-folder/project",
+      "prepared_window_handle": 6099570,
+      "current_chat_id": null,
+      "editable_text": "",
+      "uia_value": "New chat in Chat succession folder\n",
+      "attachments_present": false,
+      "no_typed_message": true,
+      "no_sent_message": true
+    },
+    {
+      "event": "unrelated_composer_unchanged_post_prepare",
+      "window_handle": 9178254,
+      "editor_value_length": 12,
+      "editor_value_sha256": "c0fae6a6c1582f13454101d3c2da4f5d951c84a31cff3f6206f6585b2ae6b747",
+      "unchanged": true,
+      "unsaved_chat": true,
+      "nominated_project": false,
+      "prepared_project_chat_is_unsaved": true,
+      "visible_sidebar_chat_action_controls": 14,
+      "sidebar_controls_note": "Controls are not asserted to be 14 Project chats or counted run IDs"
+    },
+    {
+      "event": "combined_existing_live_count_evidence",
+      "source": "evidence/astra-l06-20261118-a/live_record.json",
+      "source_scope": "Separately completed live L06 controller, not a fresh L08 controller",
+      "L06_live_run_chat_ids": [
+        "6afd0a50-bb5c-83ec-8769-aad757de38c9",
+        "6afd0f07-e17c-83ec-ae22-a257184d7db4"
+      ],
+      "L06_run_unique_count": 2,
+      "older_project_chats_existed": true,
+      "unrelated_chats_not_counted_in_L06": true,
+      "L08_new_saved_chat_count": 0
+    }
+  ],
+  "expected": {
+    "correct_project": true,
+    "other_composer_unchanged": true,
+    "nonempty_project_supported": true,
+    "no_send": true,
+    "unrelated_chat_count_unchanged": true
+  },
+  "actual": {
+    "correct_project": true,
+    "other_composer_unchanged": true,
+    "nonempty_project_supported": true,
+    "no_send": true,
+    "unrelated_chat_count_unchanged": true
+  },
+  "unique_chats_created": 0,
+  "successor_launch_count": 0,
+  "continuation_count": 0,
+  "wrong_destination_count": 0,
+  "useful_work_validated": false,
+  "controller_used_in_L08": false,
+  "evidence_paths": [
+    "evidence/astra-l08-20261118-a/live_record.json",
+    "evidence/astra-l08-20261118-a/validate_observations.py",
+    "evidence/astra-l06-20261118-a/live_record.json",
+    "evidence/live_test_results_20261118.csv",
+    "PROGRESS.md"
+  ],
+  "limitations": [
+    "Preparation-only: no post-Send delivery was tested.",
+    "No L08 controller or unique-chat counter was exercised; separately published L06 live controller evidence supplies the nonempty-Project count observation.",
+    "Exact UTC start was not recorded; end timestamp is observed.",
+    "Unrelated composer content and URL were not exported; before/after UIA Value SHA-256 and length match.",
+    "RDC timeout after a local-only commit required publication through native GitHub Git API; separate Ubuntu L08 checkout requires refresh/reconciliation."
+  ],
+  "next_action": "Leaf 06 L09: controlled lost acknowledgement and restart reconciliation using existing single actor and test-only hooks; no blind retry."
+}

@@ -1,5 +1,13 @@
 # Progress
 
+## L08 live active Project routing — PASS, 18 November 2026
+
+- **L08 PASS (preparation-only, no Send).** Began with an ordinary authenticated ChatGPT composer active outside the nominated Project; Chat Succession was visible in the sidebar. Recorded the unrelated editor's UIA Value SHA-256 and length without exporting its content. The unchanged existing adapter's Prepare LAUNCH_SUCCESSOR opened the correct Chat Succession Project URL in a distinct Chrome window (saved chat ID null), independently read an empty editable buffer and found no attachment. No message was typed or sent.
+- **Non-interference and nonempty Project:** the original unrelated composer retained exactly the same UIA Value SHA-256 and length and remained unsaved. Navigation worked with existing saved chats in the Project. Fourteen sidebar chat-action controls were visible, but are not represented as Project-only saved IDs. Separately published **L06** live-controller evidence shows two run IDs counted despite other Project chats already being present; the earlier counting observation is reused under Astra's combined-case option. L08 did not operate a new controller or increment a run count.
+- **Evidence and limits:** evidence/astra-l08-20261118-a/live_record.json and validate_observations.py; supporting count evidence evidence/astra-l06-20261118-a/live_record.json. PASS covers correct destination preparation and nonempty Project behaviour; no post-Send delivery is claimed. L01-L07 PASS preserved and L09-L15 NOT_RUN.
+- **Publication note:** Remote Desktop Commander timed out after creating local-only L08 commit 2f29e38. This remote L08 publication uses the existing connected GitHub Git API instead. The separate Ubuntu L08 working copy must be refreshed/reconciled before its next Git push; do not treat the local-only commit as the remote publication.
+- **Next action:** Leaf 06 L09 — controlled uncertain Send and restart reconciliation using the existing single controller and scoped test hooks, without blind retries or new launch architecture.
+
 ## L07 final live composer regression — PASS, 18 November 2026
 
 - L07 PASS: all four composer states observed. Previously verified empty, real draft and placeholder-identical draft preserved. In the existing authenticated Chat Succession Project, an unsaved composer displayed placeholder and disabled Send. Native Windows Open picker selected a harmless 65-byte text file; the accessible filename and Remove filename control established a real attachment. Independent clipboard/selection read returned actual editable text empty while UIA Value remained the placeholder. Send became enabled due to the attachment.
