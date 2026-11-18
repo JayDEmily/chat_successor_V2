@@ -1,5 +1,13 @@
 # Progress
 
+## L02 first live fixture worker — slice 1 prepared and committed, 18 November 2026
+
+- **Run and authority:** `astra-l02-20261118-a` on `work/astra-succession-implementation-20261118`, first worker's prescribed third turn only. Two earlier in-chat replies ended `NEED_MORE_TIME` before this fixture publication. External controller's two same-chat postings still require independent observation before L02 can pass.
+- **Saved worker ID:** `6afcef76-26b0-83ec-82e2-0de6db78a838`, observed in the exact Chat Succession Chrome window URL via Windows UIA; its title was `Inspect L02 Inputs`. The worker did not start a new conversation or Send a browser message.
+- **Starting remote revision:** `78a961da068d01ffcc699ca67aed8f811caad8d8`. Slice 1 result, state and [worker observations](evidence/astra-l02-20261118-a/first_worker_slice1.md) committed at `22e6c56b592ed5c2e379affec5a3fc52cc5b8b5a`. No simulated worker was used.
+- **Result:** alpha 2/34, beta 2/31, gamma 2/11 (count/total); overall six rows and value total 76. The published fixture's `completed_steps=1`, `programme_complete=false`, `next_task=Process fixture slice 2 of 2; read RUN.json and verify RESULTS.json.`. Validator returned `fixture_valid=true, completed_steps=1, total_steps=2`; `git diff --check` clean.
+- **Next action:** external controller consumes the final first-worker `TASK_COMPLETE`, confirms both same-saved-ID continuations and distinct-chat count 1, reads the published branch and handles any single successor. A later distinct worker finishes slice 2. L02 remains pending until live controller evidence and terminal observation; L03–L15 unchanged.
+
 ## L02 live preparation — 18 November 2026
 
 - **Current task:** Leaf 06, case L02 only. New run `astra-l02-20261118-a` is a two-slice test-only workload on `work/astra-succession-implementation-20261118`. The first worker's three turns are staged in this run's `INSTRUCTIONS.md`: initial `NEED_MORE_TIME`, continuation `NEED_MORE_TIME`, then commit/push slice 1 and `TASK_COMPLETE`. Later worker finishes slice 2 normally.
