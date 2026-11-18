@@ -1,5 +1,12 @@
 # Progress
 
+## L13 Run D first saved worker — slice 1 of 5, 18 November 2026
+
+- **Observed saved worker ID:** `6afd746b-6a30-83ec-a408-6a7408771beb` in the nominated Chat Succession Project, from read-only Chrome UI Automation address observation. This is chat identity evidence, not controller transport or completed-turn observation.
+- **Source and work:** starting at branch commit `f058654e974b441d48f7eea6a9a444b217b999dd`, computed only Run D step 1: alpha 2/-7, beta 2/31, gamma 2/5, six rows/29 total. Used the live Run D repository probe and left Runs A/B/C unchanged.
+- **Published fixture and evidence:** `succession-tests/astra-l13-20261118-d/` updated to one result, `completed_steps=1/5`, `programme_complete=false`, next task slice 2. See `evidence/astra-l13-20261118-d/run_d_worker_slice1.md`. Exact commit and verification will be recorded by the worker in its final response after GitHub readback.
+- **Next action:** the sole external controller independently verifies this worker's published slice and final status, then launches exactly one new saved Project worker for Run D slice 2. No worker-side controller action or successor launch. G4 remains open.
+
 ## L13 / G4 — Run D selected for the unattended repeat
 
 **Active ChatGPT worker assignment is Run D only.** Read `succession-tests/astra-l13-20261118-d/INSTRUCTIONS.md`, then process and publish exactly one next slice from that fixture. Verify the publication and end with one canonical final status line. The external controller is the only actor that launches successors.
