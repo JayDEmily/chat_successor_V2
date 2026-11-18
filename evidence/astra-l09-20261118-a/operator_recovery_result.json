@@ -1,0 +1,79 @@
+{
+  "test_id": "L09",
+  "run_id": "astra-l09-20261118-a",
+  "scenario_type": "OWNER_ASSISTED_LIVE_FAULT_RECOVERY",
+  "project_id": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "repository": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "initial_worker_chat_id": "6afd2e8f-606c-83ec-a47b-4d6783bd711c",
+  "successor_chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+  "status_before": {
+    "halted": "Repeated, conflicting or nonterminal status",
+    "unique_chats": 2,
+    "pending": null,
+    "ambiguous_response_id": "uia-turn-1-775697475c9fbc793a56"
+  },
+  "owner_corrective_message": {
+    "message_sha256": "fb389e630b54858c03a57ca52d10fce3c93c499b046733194030de46a6b1caf6",
+    "sent_once": true,
+    "posted_message_observed": true,
+    "saved_chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+    "recorded_private_intent": "l09_owner_corrective_intent.json",
+    "procedure": "evidence/astra-l09-20261118-a/operator_corrective_reply.py",
+    "qualifies_as": "EXPLICIT_OWNER_OPERATOR_INTERVENTION_NOT_AUTOMATIC_CONTROLLER_CONTINUATION"
+  },
+  "successor_corrected_response": {
+    "exact_text": "CHAT_STATUS: NEED_MORE_TIME",
+    "stable_response_id": "uia-turn-2-ca48d703800c6e9a4c0e",
+    "ready": true,
+    "stop_control": false,
+    "observed_chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+    "unambiguous": true
+  },
+  "private_controller_resume": {
+    "operation": "Existing cli.py resume using same private state and exclusive lock",
+    "pending": null,
+    "halted": null,
+    "unique_chats": 2
+  },
+  "same_chat_after_click_fault": {
+    "injected_var": "ASTRA_L09_FAULT=after_click",
+    "action_id": "6afd3221-f970-83ec-9889-1d09b1762a5f:uia-turn-2-ca48d703800c6e9a4c0e:CONTINUE_CURRENT",
+    "persisted_phase_after_fault": "uncertain",
+    "persisted_detail_contains": "L09 injected after single click before acknowledgement",
+    "send_invoked_once": true,
+    "restarted_read_only_reconcile": {
+      "event": "reconciled",
+      "action": "WAIT",
+      "exact_message": "Okay, continue working.",
+      "source_and_destination_same_chat": true,
+      "current_chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+      "unique_chats": 2,
+      "pending": null,
+      "halted": null
+    },
+    "blind_retry": false,
+    "duplicate_send": false,
+    "new_successor_created": false
+  },
+  "fixture_before_terminal": {
+    "completed_steps": 1,
+    "total_steps": 2,
+    "source_worker_step1_commit": "20200223d4a384aa00cd10ed33b20e557dea4bae"
+  },
+  "terminal_fixture": {
+    "published_commit": "eedd2038278ff2371bd02d3571836c8a853b8b4e",
+    "fixture_valid": true,
+    "completed_steps": 2,
+    "total_steps": 2,
+    "programme_complete": true,
+    "next_task": null,
+    "worker_final_status": "TASK_COMPLETE",
+    "controller_terminal_action": "STOP_FINISHED",
+    "controller_unique_chat_count": 2,
+    "controller_pending": null,
+    "controller_halted": "programme_finished"
+  },
+  "overall_l09": "PASS_ASSISTED",
+  "evidence_boundary": "Full remote fixture verified independently; L09 assisted fault-recovery complete. This is not unattended repeatability evidence."
+}

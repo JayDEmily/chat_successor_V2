@@ -1,5 +1,13 @@
 # Progress
 
+## L09 final live verdict — PASS (owner-assisted), 18 November 2026
+
+- **All three L09 fault boundaries verified live:** durable `sending` then positive **before-click no-Send/rearm**; **after-click successor acknowledgement loss**, adopted once from the actual new saved Project ID; and **after-click same-chat continuation acknowledgement loss**, adopted once without a new chat. Unknown outcomes held until read-only reconciliation; no blind retry, duplicate Send or parallel controller.
+- **Explicit owner intervention:** the successor's first status was ambiguous and the existing controller correctly held. One recorded corrective owner/operator message to the *same* successor (under the existing private controller lock) produced a fresh exact one-line `CHAT_STATUS: NEED_MORE_TIME`; the same private controller then resumed and completed the planned after-click continuation. This was assisted recovery, **not** unattended repeatability.
+- **Remote work and terminal check:** first worker published slice 1 at `20200223d4a384aa00cd10ed33b20e557dea4bae`; second worker published slice 2 at `eedd2038278ff2371bd02d3571836c8a853b8b4e`. Independent verification of that pinned remote fixture yielded `fixture_valid=true`, `completed_steps=2/2`, `programme_complete=true`, `next_task=null`. The external controller consumed the successor's final `TASK_COMPLETE` and returned **`STOP_FINISHED`** with `unique_chat_count=2`, `pending_action=null`, `halted=programme_finished`. Exactly one successor launch and two controller continuations; no third saved chat.
+- **Evidence:** `evidence/astra-l09-20261118-a/live_record.json` and `operator_recovery_result.json`, with prior fault/hold records preserved. The cumulative live sheet records L09 PASS and L01–L08 remain unchanged. Private controller state remains outside GitHub.
+- **Next leaf: L10** — streaming/truncated, missing/conflicting status and code-example cases under Leaf 06. Preserve the finished L09 state; label any synthetic observation injections explicitly and do not infer automatic semantic fallback.
+
 ## L09 successor fixture slice 2 — worker publication, 18 November 2026
 
 - **Worker output:** the same saved successor `6afd3221-f970-83ec-9889-1d09b1762a5f` has received the exact continuation after the externally controlled after-click recovery. It processed only the second `astra-l09-20261118-a` fixture slice from published RUN.json, independently aggregating alpha 2/40, beta 2/18, gamma 2/15 (six rows, total 73). Appended RESULTS.json and made STATE.json terminal with `completed_steps=2/2`, `programme_complete=true`, `next_task=null`. See `evidence/astra-l09-20261118-a/successor_worker_slice2.md`.

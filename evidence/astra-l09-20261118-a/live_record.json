@@ -1,0 +1,145 @@
+{
+  "test_id": "L09",
+  "run_id": "astra-l09-20261118-a",
+  "outcome": "PASS",
+  "scenario_type": "OWNER_ASSISTED_LIVE_FAULT_INJECTION",
+  "environment": "OWNER_AUTHENTICATED_WINDOWS11_CHROME_UBUNTU_WSL",
+  "observed_end_utc": "2026-11-18T05:32:43.513Z",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "worker_chat_ids": [
+    "6afd2e8f-606c-83ec-a47b-4d6783bd711c",
+    "6afd3221-f970-83ec-9889-1d09b1762a5f"
+  ],
+  "events": [
+    {
+      "event": "before_click_fault",
+      "state_saved_before_action": "sending",
+      "fault": "ASTRA_L09_FAULT=before_click",
+      "UIA_Send_invoked": false,
+      "outcome": "uncertain_hold",
+      "recovery": "Positive no-invocation evidence; after fixing a role-blind false-positive readback, explicitly rearmed exact current-chat action and observed one real posted continuation",
+      "unique_chat_count": 1,
+      "evidence": "evidence/astra-l09-20261118-a/before_click_observation.json"
+    },
+    {
+      "event": "first_worker_published_slice_1",
+      "chat_id": "6afd2e8f-606c-83ec-a47b-4d6783bd711c",
+      "commit": "20200223d4a384aa00cd10ed33b20e557dea4bae",
+      "published": true,
+      "validator": "fixture_valid=true; 1/2",
+      "rows": 6,
+      "total": 76
+    },
+    {
+      "event": "successor_after_click_fault",
+      "state_saved_before_action": "sending",
+      "fault": "ASTRA_L09_FAULT=after_click",
+      "UIA_Send_invoked_once": true,
+      "acknowledgement_lost": true,
+      "state_after_fault": "uncertain",
+      "read_only_reconciliation": "Positive posted pointer adopted once",
+      "saved_successor_chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+      "unique_chat_count": 2,
+      "duplicate_send": false,
+      "evidence": "evidence/astra-l09-20261118-a/after_click_successor_observation.json"
+    },
+    {
+      "event": "ambiguous_successor_first_response",
+      "original_response_id": "uia-turn-1-775697475c9fbc793a56",
+      "actual_controller_hold": "Repeated, conflicting or nonterminal status",
+      "pending_after_hold": null,
+      "remediation": "One owner/operator corrective message in same successor chat, recorded with durable single-attempt private intent; no manual parser override",
+      "owner_corrective_message_count": 1,
+      "message_sha256": "fb389e630b54858c03a57ca52d10fce3c93c499b046733194030de46a6b1caf6",
+      "owner_corrective_posted": true,
+      "corrected_response_id": "uia-turn-2-ca48d703800c6e9a4c0e",
+      "corrected_response_text": "CHAT_STATUS: NEED_MORE_TIME",
+      "same_private_controller_resumed": true,
+      "evidence": "evidence/astra-l09-20261118-a/operator_recovery_result.json"
+    },
+    {
+      "event": "same_chat_continuation_after_click_fault",
+      "fault": "ASTRA_L09_FAULT=after_click",
+      "action_id": "6afd3221-f970-83ec-9889-1d09b1762a5f:uia-turn-2-ca48d703800c6e9a4c0e:CONTINUE_CURRENT",
+      "UIA_Send_invoked_once": true,
+      "acknowledgement_lost": true,
+      "persisted_state_after_fault": "uncertain",
+      "read_only_reconciliation": "Positive exact user continuation adopted in existing chat",
+      "posted_message": "Okay, continue working.",
+      "destination_chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+      "unique_chat_count_after": 2,
+      "pending_after": null,
+      "duplicate_send": false,
+      "evidence": "evidence/astra-l09-20261118-a/operator_recovery_result.json"
+    },
+    {
+      "event": "second_worker_published_terminal_fixture",
+      "chat_id": "6afd3221-f970-83ec-9889-1d09b1762a5f",
+      "completed_response_id": "uia-turn-3-abbead3a3f1597ecc92e",
+      "final_status": "TASK_COMPLETE",
+      "published_commit": "eedd2038278ff2371bd02d3571836c8a853b8b4e",
+      "independently_verified_fixture": true,
+      "completed_steps": 2,
+      "total_steps": 2,
+      "programme_complete": true,
+      "next_task": null,
+      "slice_2_rows": 6,
+      "slice_2_total": 73
+    },
+    {
+      "event": "controller_terminal",
+      "action": "STOP_FINISHED",
+      "last_status": "TASK_COMPLETE",
+      "halted": "programme_finished",
+      "unique_chat_count": 2,
+      "pending_action": null,
+      "third_chat_created": false
+    }
+  ],
+  "actual": {
+    "unique_saved_chats": 2,
+    "successor_launches": 1,
+    "controller_continuations": 2,
+    "owner_corrective_messages": 1,
+    "duplicate_sends": 0,
+    "unresolved_pending_actions": 0,
+    "controller_finished": true,
+    "fixture_valid": true,
+    "completed_fixture_steps": 2,
+    "planned_fixture_steps": 2,
+    "result_rows": 12,
+    "aggregate_value_total": 149,
+    "repo_publication_verified": true
+  },
+  "acceptance": {
+    "persisted_sending_before_click_verified": true,
+    "before_click_positive_no_send_explicit_rearm_verified": true,
+    "after_click_successor_recovery_once_verified": true,
+    "after_click_same_chat_recovery_once_verified": true,
+    "unknown_submission_no_blind_retry_verified": true,
+    "no_automatic_extra_successor_verified": true,
+    "terminal_published_work_verified": true,
+    "overall": "PASS_ASSISTED"
+  },
+  "limitations": [
+    "This is an owner-assisted live fault test, not evidence of unattended normal multi-chat reliability.",
+    "The first successor status was ambiguous, and a separate owner corrective message was necessary; the controller correctly held and did not bypass its parser.",
+    "Private raw controller state, browser transcripts, owner identity and credentials were not published.",
+    "This result does not substitute for L10 status-regression cases or L13 multi-run repeatability."
+  ],
+  "evidence_paths": [
+    "evidence/astra-l09-20261118-a/setup.md",
+    "evidence/astra-l09-20261118-a/before_click_observation.json",
+    "evidence/astra-l09-20261118-a/after_click_successor_observation.json",
+    "evidence/astra-l09-20261118-a/successor_first_turn_ambiguity.json",
+    "evidence/astra-l09-20261118-a/operator_recovery_result.json",
+    "evidence/astra-l09-20261118-a/successor_worker_slice2.md",
+    "succession-tests/astra-l09-20261118-a/STATE.json",
+    "succession-tests/astra-l09-20261118-a/RESULTS.json",
+    "evidence/live_test_results_20261118.csv",
+    "PROGRESS.md"
+  ],
+  "next_action": "L10 streaming, ambiguous and semantic-shadow statuses under the published Leaf 06 acceptance criteria; preserve L09 private terminal state and do not restart its finished controller."
+}
