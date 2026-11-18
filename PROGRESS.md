@@ -1,5 +1,11 @@
 # Progress
 
+## L12 local test complete; GitHub evidence publication BLOCKED, 18 November 2026
+
+- **L12 remains BLOCKED, not PASS.** The existing Ubuntu test-only script at `evidence/astra-l12-20261118-a/run_pause.py` was executed locally and returned `cases_passed=6`, `browser_sends=0`, `real_login_attempts=0`. The cases covered delayed observation, temporary session/tool loss, owner pause while idle and prepared, uncertain in-flight reconciliation and preparation failure. These are **injected tests**, not naturally observed Chrome outages; a short measured delay is not a production silence deadline.
+- **Material publication blocker:** Remote Desktop Commander lost communication before the L12 results-sheet edit was acknowledged (pending call `6cffa9d1-22d5-4cfd-8479-c8f8c139ce3c`, later failed with device timeout). A separate read-only desktop ping also timed out. Consequently, the detailed L12 source and `observations.json` remain **local-only in Ubuntu**; their exact contents and remote publication cannot be verified from GitHub. This GitHub-only checkpoint documents the blocker, not a substitute validation or successful handover.
+- **Next action:** after desktop connection returns, inspect the nominated checkout and queued edit result without blindly repeating changes, review L12 local artifacts, run `python3 evidence/astra-l12-20261118-a/run_pause.py` and a focused validator, reconcile with this branch, then commit/push and independently verify the actual evidence before marking L12 PASS. Keep the finished L09 controller untouched, L01–L11 PASS, and L13–L15 NOT_RUN.
+
 ## L11 publication failure regression — PASS (test-only), 18 November 2026
 
 - **L11 PASS within its published test-failure scope.** A one-shot injected `PublishedStateError` in the existing runner's repository reader caused a `HOLD` before any Send or consumption of the completed worker response. The hold survived restart, with unique chat count unchanged. After an explicit owner-resume and simulated restored published read, the same response produced only a **prepared** successor action; browser dispatch remained disabled.

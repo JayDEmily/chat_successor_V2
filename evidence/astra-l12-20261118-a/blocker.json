@@ -1,0 +1,17 @@
+{
+  "test_id": "L12",
+  "run_id": "astra-l12-20261118-a",
+  "outcome": "BLOCKED_UNPUBLISHED",
+  "source": "REMOTE_DESKTOP_COMMANDER_LOCAL_TEST_OUTPUT",
+  "local_execution_observed": {
+    "cases_passed": 6,
+    "real_browser_sends": 0,
+    "login_attempts": 0
+  },
+  "local_artifacts_unverified_remotely": true,
+  "last_published_pass_leaf": "L11",
+  "publication_error": "RDC device timed out before acknowledging L12 sheet edit",
+  "pending_call_id": "6cffa9d1-22d5-4cfd-8479-c8f8c139ce3c",
+  "cannot_claim": "L12 PASS until actual artifacts are validated and published",
+  "next_action": "Reconnect device; inspect pending edit and local L12 files; validate then publish on nominated branch."
+}
