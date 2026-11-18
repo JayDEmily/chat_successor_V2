@@ -1,5 +1,12 @@
 # Progress
 
+## L13 fresh uninterrupted repeat — Run E staged, 19 November 2026
+
+- **Owner decision:** restart one complete unattended five-chat L13 repetition after the PC was switched off overnight. Keep historical Runs A/B (unattended PASS), C (assisted), and D (1/5 published) intact; do not reset or replay any prior state.
+- **New independent run:** `astra-l13-20261119-e` in `succession-tests/astra-l13-20261119-e/`; fixture validator passed at 0/5. See `evidence/astra-l13-20261119-e/setup.json`.
+- **Active assignment:** Run E only. Each distinct worker publishes exactly one slice with observed saved ID. The existing single external controller handles successor launches.
+- **Next action:** Bootstrap the first worker in the existing authenticated Project; observe the saved chat ID and initialise **one fresh private Run E** cap-five controller; verify four automatic successors, five remote-published slices and `STOP_FINISHED` without intervention. Preserve all prior evidence.
+
 ## L13 Run D first saved worker — slice 1 of 5, 18 November 2026
 
 - **Observed saved worker ID:** `6afd746b-6a30-83ec-a408-6a7408771beb` in the nominated Chat Succession Project, from read-only Chrome UI Automation address observation. This is chat identity evidence, not controller transport or completed-turn observation.
