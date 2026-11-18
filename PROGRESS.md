@@ -1,5 +1,12 @@
 # Progress
 
+## L06 first live fixture worker — slice 1, 18 November 2026
+
+- First saved Chat Succession Project conversation confirmed via existing Chrome UIA URL and matching displayed user assignment: `6afd0a50-bb5c-83ec-8769-aad757de38c9`. Starting nominated branch HEAD `353373b206eae8131c63431b2fec69a5a2edad77`.
+- Original unrotated fixture step 1 normalised and aggregated directly from RUN.json: alpha 2/34, beta 2/31, gamma 2/11; six rows, total 76. Worker updated RESULTS.json and STATE.json to completed_steps=1/2, programme_complete=false, next_task=slice 2.
+- Evidence: `evidence/astra-l06-20261118-a/first_worker_slice1.md`. Fixture validator and remote publication are independently checked during this worker handover; no simulation, controller action, successor launch, slice 2 or probe rotation by this worker.
+- Next action (external controller/operator only): consume the clean terminal first-worker event with a fresh L06 controller, persist its prepared unsent action, rotate/publish only the next probe as a separate Git commit, then dispatch its existing pending action to the second saved Project worker. Do not claim L06 PASS until that real two-worker sequence and STOP_FINISHED are verified.
+
 ## L06 repository-only continuity setup - 18 November 2026
 
 - New two-slice test-only fixture succession-tests/astra-l06-20261118-a seeded with unchanged Astra repo_fixture.py; initial validation 0/2. No worker has processed this fixture and no L06 controller or successor has been started. The next-slice probe is intentionally not rotated yet.
