@@ -92,7 +92,11 @@ def main():
     ap.add_argument("--initial-chat-id")
     ap.add_argument("--poll-seconds", type=float, default=5)
     ap.add_argument("--max-polls", type=int, default=0)
+    ap.add_argument("--prepare-only", action="store_true",
+                    help="L06: persist the observed prepared handover without Send (cycle only)")
     args = ap.parse_args()
+    if args.prepare_only and args.command != "cycle":
+        ap.error("--prepare-only is valid only with cycle")
     path = args.state
     if args.command == "status":
         output("status", path)
@@ -147,7 +151,8 @@ def main():
                 c.save(path)
                 output("paused", path)
                 return
-            act = cycle(c, browser, reader, cfg["run_id"], path)
+            act = cycle(c, browser, reader, cfg["run_id"], path,
+                        defer_dispatch=args.prepare_only)
             output("cycle", path, action=act.value)
             if args.command == "cycle" or act not in (Action.WAIT, Action.IGNORE):
                 return

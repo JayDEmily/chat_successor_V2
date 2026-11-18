@@ -39,3 +39,11 @@ A browser Send is only valid after the reference controller has written
 the matching `sending` phase (except the separately recorded *initial*
 bootstrap). Never retry a possibly submitted message. Read the unchanged
 original `docs/astra-succession/leaves/` for the test gates.
+
+**L06 prepared-handover test seam:** CLI cycle --prepare-only observes the
+completed current worker, validates published handover state, and saves the
+reference controller's prepared action without touching the composer or sending.
+After the operator rotates the next-slice probe and publishes it, a normal CLI
+cycle dispatches that exact persisted action once. Repeating prepare-only on the
+prepared action makes no Send. This is a one-shot L06 test facility, not another
+controller or a general automatic pause scheduler.

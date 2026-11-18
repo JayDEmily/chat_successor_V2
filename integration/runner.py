@@ -100,13 +100,21 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
 
 
 def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader,
-          run_id: str, state_path: Path) -> Action:
-    """One observation/dispatch cycle. Duplicate observations are deduplicated."""
+          run_id: str, state_path: Path, *, defer_dispatch: bool = False) -> Action:
+    """One observation/dispatch cycle.
+
+    The L06 one-shot preparation mode persists the reference controller's
+    prepared action without opening a composer or sending; a normal later cycle
+    dispatches that same pending action after the repo-only probe is rotated.
+    """
+
     if controller.state.halted:
         return Action.HOLD
     if controller.state.pending:
         if controller.state.pending.phase != "prepared":
             return Action.HOLD
+        if defer_dispatch:
+            return Action(controller.state.pending.kind)
         return dispatch_prepared(controller, browser, state_path)
 
     try:
@@ -133,6 +141,8 @@ def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader,
     decision = controller.consume(response, repo)
     controller.save(state_path)
     if decision.action in (Action.CONTINUE_CURRENT, Action.LAUNCH_SUCCESSOR):
+        if defer_dispatch:
+            return decision.action
         return dispatch_prepared(controller, browser, state_path)
     return decision.action
 

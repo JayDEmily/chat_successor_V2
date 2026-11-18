@@ -1,5 +1,13 @@
 # Progress
 
+## L06 repository-only continuity setup - 18 November 2026
+
+- New two-slice test-only fixture succession-tests/astra-l06-20261118-a seeded with unchanged Astra repo_fixture.py; initial validation 0/2. No worker has processed this fixture and no L06 controller or successor has been started. The next-slice probe is intentionally not rotated yet.
+- The L06 handover is staged: first worker publishes slice 1; one existing-controller CLI cycle in --prepare-only mode stores the prepared unsent action; operator rotates/publishes only the next probe via Astra rotate-probe; a normal cycle then sends the ordinary branch pointer; successor publishes slice 2 and controller must stop on programme completion.
+- Focused integration change: an optional deferral of dispatch using the same Astra Controller and persistent pending action, never a second launcher. New simulated test verifies no Send in the preparation phase, restart persistence, and exactly one subsequent dispatch.
+- Evidence: evidence/astra-l06-20261118-a/setup.md. L06 remains NOT_RUN until the actual two-worker transport, changed probe and terminal observation. L01-L05 evidence and stopped controllers preserved.
+- Next action: commit/push this L06 setup and implementation, verify remotely, then bootstrap first L06 saved Project worker with observed ID before initialising a fresh L06 controller. Do not create an independent successor or use L05 state.
+
 ## L05 live cap-two controller verdict - 18 November 2026
 
 - L05 verdict: PASS. Existing reference controller, assisted first saved chat 6afcf6b8-65a0-83ec-9e23-6bf655cf8004, one automatic successor 6afcf7a9-93a8-83ec-aa5f-435905e0c1ae, cap 2.

@@ -96,6 +96,31 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(r.calls, 1)
         self.assertEqual(Controller.load(self.path).unique_count, 2)
 
+    def test_l06_prepare_only_persists_unsent_handover_then_dispatches_once(self):
+        b = SyntheticBrowser()
+        b.response = self.response()
+        reader = Reader()
+        result = cycle(self.controller, b, reader, "test", self.path,
+                       defer_dispatch=True)
+        self.assertEqual(result, Action.LAUNCH_SUCCESSOR)
+        self.assertEqual(b.calls, ["observe"])
+        self.assertEqual(reader.calls, 1)
+        self.assertEqual(self.controller.unique_count, 1)
+        self.assertEqual(self.controller.state.pending.phase, "prepared")
+        pending_id = self.controller.state.pending.action_id
+
+        restarted = Controller.load(self.path)
+        self.assertEqual(restarted.state.pending.action_id, pending_id)
+        self.assertEqual(cycle(restarted, b, Reader(), "test", self.path,
+                               defer_dispatch=True), Action.LAUNCH_SUCCESSOR)
+        self.assertEqual(b.calls, ["observe"])
+        self.assertEqual(restarted.unique_count, 1)
+        self.assertEqual(cycle(restarted, b, Reader(), "test", self.path),
+                         Action.WAIT)
+        self.assertEqual(b.calls, ["observe", "prepare", "send"])
+        self.assertEqual(restarted.unique_count, 2)
+        self.assertIsNone(Controller.load(self.path).state.pending)
+
     def test_continuation_at_cap_does_not_create_new_chat(self):
         self.controller.config = Config(CFG.project, CFG.repo, CFG.branch, 1)
         b = SyntheticBrowser()
