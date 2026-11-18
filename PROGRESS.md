@@ -1,5 +1,12 @@
 # Progress
 
+## L13 Run E third saved worker — slice 3 of 5, 19 November 2026
+
+- **Observed saved Chat Succession worker:** `6afe37c3-efcc-83ec-8644-1f418f439259`, from connected-browser read-only tab inventory in the nominated Project. Page content and completed-turn status were not established by that read-only inventory.
+- **Published work:** source revision `dba5d1f130ea7d3b6bce178809a34ac840cf5621`; processed **only step 3** of Run E, using probe `fixture-f09529af81dda9da`. Alpha 2/29, beta 2/38, gamma 2/23; six rows and total 90. Previous Run E steps and earlier runs preserved. Updated fixture state to 3/5 with `programme_complete=false` and next slice 4.
+- **Checks and evidence:** the existing fixture validator and Git whitespace check were run against the isolated checkout before publication. See `evidence/astra-l13-20261119-e/run_e_worker_slice3.md`; commit, remote SHA and pinned readback are to be reported after publication, not inferred from a local commit.
+- **Next action:** the sole external controller verifies the completed worker status and published GitHub state, then launches exactly one new saved worker for slice 4. Do not operate or duplicate the controller from this worker. G4 remains open.
+
 ## L13 Run E second saved worker — slice 2 of 5, 19 November 2026
 
 - **Saved Project worker ID:** `6afe362d-5088-83ec-8b45-afc15aba6b1d`, observed in the read-only connected-browser tab inventory and matching the one existing controller's current-chat state. Two distinct saved chat IDs were present; this worker did not operate the controller.
