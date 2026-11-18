@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run B fourth saved worker — slice 4 of 5, 18 November 2026
+
+- **Actual saved worker:** `6afd6197-7d70-83ec-b2b4-ae597adbae69`, verified by read-only Chrome UI Automation of the current saved Chat Succession Project conversation address. This proves the worker's saved-chat/Project identity, not completed-turn observation or controller transport.
+- **Published fixture checkpoint:** `5bb570fb325211d366b12c42d85bb7308af6e2c0`, committed and pushed on `work/astra-succession-implementation-20261118` from source `2f2efeeef6554cfff3d7f5338c31cb9a121dd084`. Remote `git ls-remote` matched, and independent pinned GitHub readback verified `STATE.json`, `RESULTS.json` and `evidence/astra-l13-20261118-b/run_b_worker_slice4.md` including the worker ID and step-4 probe.
+- **Useful work:** normalised only six Run B step-4 rows: alpha count 2/total 21; beta 2/46; gamma 2/35; combined total 102. Four distinct saved workers have four published results. `completed_steps=4/5`, `programme_complete=false`, next task slice 5. Earlier results and Runs A/C unchanged.
+- **Validation:** the original fixture tool returned `fixture_valid=true, completed_steps=4, total_steps=5`; Git whitespace checks clean; staged three-file commit and push succeeded. This is not Run B or three-run L13 PASS.
+- **Next action:** the **existing external controller alone** consumes this worker's single final completion marker, verifies the published handover and launches the fifth distinct saved Run B worker for exactly slice 5. No worker-side controller operation, continuation, successor or additional slice was performed. Run B transport evidence and terminal programme state remain to be observed.
+
 ## L13 Run B third saved worker — slice 3 of 5, 18 November 2026
 
 - **Actual saved worker:** `6afd5ff2-8f6c-83ec-b143-c7e715fdbb2b`, observed in the connected browser tab inventory at the nominated Chat Succession Project conversation URL (last opened 19:20 Melbourne). This proves saved Project/chat identity, not response completion or controller transport.
