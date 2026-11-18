@@ -1,5 +1,12 @@
 # Progress
 
+## L13 / G4 — Run D selected for the unattended repeat
+
+**Active ChatGPT worker assignment is Run D only.** Read `succession-tests/astra-l13-20261118-d/INSTRUCTIONS.md`, then process and publish exactly one next slice from that fixture. Verify the publication and end with one canonical final status line. The external controller is the only actor that launches successors.
+
+- Run D is an independent replacement for the assisted Run C. A and B already passed. Original Run C remains recorded as assisted. The new fixture verified at 0/5 with five distinct inputs and repository-only probes separate from the earlier runs.
+- The operator bootstraps one chat in the nominated Project and starts one fresh controller with cap five. For G4, Run D must deliver five validated published slices, five distinct saved chats, four automatic successors, no material intervention, and `STOP_FINISHED`. Log any hold promptly.
+
 ## L13 closeout — two unattended passes and one assisted completion
 
 **L13 did not meet its unattended acceptance criterion.** All three staged runs finished. Runs A and B passed unattended. Run C required a controller resume before its fifth saved chat. There is no active test worker assignment.

@@ -62,6 +62,15 @@
       "published_slices": 5,
       "automatic_successors": 4,
       "reason": "Windows UIA foreground failure before the fifth chat required one explicit resume."
+    },
+    {
+      "id": "astra-l13-20261118-d",
+      "fixture": "succession-tests/astra-l13-20261118-d",
+      "status": "SELECTED_0_OF_5",
+      "active": true,
+      "replacement_for": "astra-l13-20261118-c",
+      "saved_chat_ids": [],
+      "controller_state": "NOT_INITIALISED"
     }
   ],
   "actual_live_runs_completed": 3,
@@ -70,10 +79,10 @@
   "restrictions": "No worker operates controller or launches successor; no manual corrective prompting during normal runs; keep run states separate",
   "acceptance": "Three completed natural five-chat runs with exactly four automatic successors each, no duplicates/misroutes and remote-verified useful work",
   "evidence_type": "TWO_UNATTENDED_LIVE_RUNS_AND_ONE_ASSISTED_LIVE_COMPLETION",
-  "next_action": "There is no active test worker assignment. G4 remains open pending a fresh unattended repetition. L14 remains optional and NOT_RUN.",
-  "active_run_status": "ALL_STAGED_RUNS_FINISHED_G4_OPEN",
+  "next_action": "Bootstrap Run D once and use its own cap-five controller. Preserve the original Run C evidence. Record any hold without treating an assisted run as an unattended pass.",
+  "active_run_status": "RUN_D_SELECTED_FOR_BOOTSTRAP",
   "actual_automatic_successor_launches": 12,
-  "outcome": "FAIL",
+  "outcome": "IN_PROGRESS",
   "actual_unattended_runs_passed": 2,
   "actual_controller_continuations": 0,
   "actual_operator_resumes": 1
