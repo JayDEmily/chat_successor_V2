@@ -1,0 +1,46 @@
+{
+  "test_id": "L13",
+  "scenario_type": "LIVE_CHAT_REPETITION_SETUP_NOT_EXECUTED",
+  "repository": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "project_name": "Chat succession folder",
+  "project_id": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "required_independent_runs": 3,
+  "required_distinct_saved_chats_per_run": 5,
+  "required_successor_launches_per_run": 4,
+  "max_unique_chats_per_run": 5,
+  "controller": "Existing integration/cli.py, one private state and one actor per run",
+  "runs": [
+    {
+      "id": "astra-l13-20261118-a",
+      "fixture": "succession-tests/astra-l13-20261118-a",
+      "status": "STAGED_0_OF_5",
+      "active": true,
+      "saved_chat_ids": [],
+      "controller_state": "NOT_INITIALISED"
+    },
+    {
+      "id": "astra-l13-20261118-b",
+      "fixture": "succession-tests/astra-l13-20261118-b",
+      "status": "STAGED_0_OF_5",
+      "active": false,
+      "saved_chat_ids": [],
+      "controller_state": "NOT_INITIALISED"
+    },
+    {
+      "id": "astra-l13-20261118-c",
+      "fixture": "succession-tests/astra-l13-20261118-c",
+      "status": "STAGED_0_OF_5",
+      "active": false,
+      "saved_chat_ids": [],
+      "controller_state": "NOT_INITIALISED"
+    }
+  ],
+  "actual_live_runs_completed": 0,
+  "actual_workers_launched": 0,
+  "worker_contract": "one next uncompleted slice per saved chat; validate, commit/push, independently verify; one final canonical status marker",
+  "restrictions": "No worker operates controller or launches successor; no manual corrective prompting during normal runs; keep run states separate",
+  "acceptance": "Three completed natural five-chat runs with exactly four automatic successors each, no duplicates/misroutes and remote-verified useful work",
+  "evidence_type": "FIXTURE_SETUP_ONLY",
+  "next_action": "Bootstrap Run A initial saved worker using existing authenticated Chrome Project; record observed saved chat ID then initialise fresh single private controller cap 5."
+}
