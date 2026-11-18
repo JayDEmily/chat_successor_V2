@@ -1,0 +1,127 @@
+{
+  "test_id": "L07",
+  "run_id": "astra-l07-20261118-a",
+  "outcome": "BLOCKED",
+  "acceptance_met": false,
+  "scenario_type": "MANUAL_OBSERVATION_ONLY",
+  "environment": "OWNER_AUTHENTICATED_WINDOWS11_CHROME_UBUNTU_WSL",
+  "observed_start_utc": "2026-11-18T02:59:48.4426195Z",
+  "observed_end_utc": "2026-11-18T03:04:14.7969602Z",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "project_name": "Chat succession folder",
+  "project_url": "https://chatgpt.com/g/g-p-6afbfc5e59248191a8c690296b24c8ef-chat-succession-folder/project",
+  "repository": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "starting_remote_head": "601d922f7c153db76c2b8d080bd353d9bdbfe5b1",
+  "worktree": "Separate clean L07 Ubuntu clone; pre-existing dirty /home/jds/chat_successor worktree untouched",
+  "controller_or_launcher_used": false,
+  "save_or_send_operations": 0,
+  "saved_chat_ids_created": [],
+  "successor_launches": 0,
+  "continuations": 0,
+  "observation_method": "Existing integration/uia_adapter.ps1 Prepare observed Project URL, fresh unsaved chat ID null, ValuePattern and selection-based clipboard actual editable read. L07 test-only probe separately used Ctrl+A/Ctrl+C with temporary clipboard sentinel, restored clipboard and captured cropped editor screenshots. Never treated UIA Value alone as editable content.",
+  "observations": [
+    {
+      "state": "empty_with_placeholder",
+      "status": "OBSERVED",
+      "window_handle": 267044,
+      "preparation": "Adapter Prepare LAUNCH_SUCCESSOR opened fresh nominated Project composer; zero attachments and no saved chat ID",
+      "actual_editable_text": "",
+      "uia_value": "New chat in Chat succession folder\n",
+      "attachments_present": false,
+      "classification": "EMPTY",
+      "observed_utc": "2026-11-18T02:59:48.4426195Z",
+      "rendered_editor": "empty.png",
+      "screenshot_sha256": "7245894d038f5bcd9d0d8194935476fd0031774c91c57d36f7df7b2be8edc9d5"
+    },
+    {
+      "state": "genuine_unsent_draft",
+      "status": "OBSERVED",
+      "window_handle": 1053448,
+      "preparation": "Fresh nominated Project composer observed empty and attachment-free; test-only script typed a deliberately unsent known draft without Enter or Send",
+      "editable_before": "",
+      "actual_editable_text": "L07 unsent test draft keep intact",
+      "uia_value": "L07 unsent test draft keep intact",
+      "attachments_present": false,
+      "classification": "DRAFT",
+      "observed_utc": "2026-11-18T03:00:20.2228942Z",
+      "rendered_editor": "real_draft.png",
+      "screenshot_sha256": "5ec91ad319b278cafbfa1d1d14cd2fa0d9545c5e4ab57987f2b7dd69c0cf8325"
+    },
+    {
+      "state": "real_draft_equal_to_placeholder",
+      "status": "OBSERVED",
+      "window_handle": 267044,
+      "preparation": "Previously independently observed empty disposable Project window (267044), still empty when re-inspected, was typed with exactly the UIA placeholder string; no Send",
+      "editable_before": "",
+      "actual_editable_text": "New chat in Chat succession folder",
+      "uia_value": "New chat in Chat succession folder",
+      "attachments_present": false,
+      "classification": "DRAFT",
+      "observed_utc": "2026-11-18T03:01:21.1434205Z",
+      "rendered_editor": "same_as_placeholder.png",
+      "screenshot_sha256": "09a0046c0048bb13dc94e62b9776c18f7b7dd03fd1d974ec5c98dc3a99ee2344"
+    },
+    {
+      "state": "attachment_only",
+      "status": "NOT_OBSERVED",
+      "classification": "UNKNOWN",
+      "preparation": "No attachment was uploaded and no test-only unsent text was erased. Two subsequent Project-window Prepare observations produced copied unsent drafts rather than a genuinely empty independent composer.",
+      "actual_editable_text": null,
+      "attachments_present": null,
+      "reason": "No independently verified empty disposable Project composer was available without clearing/replacing existing test drafts; an attachment-only state therefore was not safely prepared."
+    }
+  ],
+  "ancillary_observations": [
+    {
+      "kind": "draft_state_reuse",
+      "window_handle": 1512244,
+      "source": "Existing adapter Prepare output",
+      "url_kind": "unsaved_nominal_project",
+      "saved_chat_id": null,
+      "actual_editable_text": "L07 unsent test draft keep intact",
+      "uia_value": "L07 unsent test draft keep intact",
+      "attachments_present": false,
+      "consequence": "Do not type over copied draft."
+    },
+    {
+      "kind": "draft_state_reuse",
+      "window_handle": 6427372,
+      "source": "Existing adapter Prepare output",
+      "url_kind": "unsaved_nominal_project",
+      "saved_chat_id": null,
+      "actual_editable_text": "New chat in Chat succession folder",
+      "uia_value": "New chat in Chat succession folder",
+      "attachments_present": false,
+      "consequence": "Do not type over copied draft or attempt attachment-only condition."
+    },
+    {
+      "kind": "foreground_focus_hold",
+      "source": "Read-only L07 probe",
+      "detail": "Two inspector re-probes and final fresh-window screenshot attempt aborted with 'Foreground changed'; no typing or submission was attempted."
+    }
+  ],
+  "acceptance": {
+    "empty_vs_real_draft": "VERIFIED",
+    "same_text_as_placeholder_is_real_draft": "VERIFIED",
+    "attachment_only_independent_live_observation": "NOT_VERIFIED",
+    "preserve_existing_drafts": "OBSERVED_NO_CLEAR_OR_SEND",
+    "ambiguous_or_foreground_changing_cases": "HELD_NO_SEND",
+    "overall": "BLOCKED_NOT_PASS"
+  },
+  "evidence_paths": [
+    "evidence/astra-l07-20261118-a/live_record.json",
+    "evidence/astra-l07-20261118-a/empty.png",
+    "evidence/astra-l07-20261118-a/real_draft.png",
+    "evidence/astra-l07-20261118-a/same_as_placeholder.png",
+    "evidence/astra-l07-20261118-a/l07_composer_probe.ps1"
+  ],
+  "limitations": [
+    "The fourth attachment-only case was not created or observed; no live attachment detection claim is made.",
+    "New Project windows twice inherited unsent draft text from prior disposable windows, so a new window alone did not establish an empty composer.",
+    "UIA focus changed during three independent read-only re-probes. Those observations were not used to claim a classification.",
+    "Selection/copy for actual editable read changes selection and focus, restores clipboard, and does not mutate composer text; captured screenshots show selected text.",
+    "No controller operation, live status routing, new saved chat or message Send occurred during L07."
+  ],
+  "next_action": "Obtain a separate independently verified empty disposable nominated-Project composer without clearing or replacing any current draft, prepare attachment-only with a harmless test file, capture rendered and UIA/editable observations, classify and update L07. Do not mark PASS before the fourth case is live-verified. L08 remains unstarted."
+}
