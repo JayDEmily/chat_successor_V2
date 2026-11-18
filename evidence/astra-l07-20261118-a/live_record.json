@@ -1,12 +1,12 @@
 {
   "test_id": "L07",
   "run_id": "astra-l07-20261118-a",
-  "outcome": "BLOCKED",
-  "acceptance_met": false,
+  "outcome": "PASS",
+  "acceptance_met": true,
   "scenario_type": "MANUAL_OBSERVATION_ONLY",
   "environment": "OWNER_AUTHENTICATED_WINDOWS11_CHROME_UBUNTU_WSL",
   "observed_start_utc": "2026-11-18T02:59:48.4426195Z",
-  "observed_end_utc": "2026-11-18T03:04:14.7969602Z",
+  "observed_end_utc": "2026-11-18T04:23:33.1124594Z",
   "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
   "project_name": "Chat succession folder",
   "project_url": "https://chatgpt.com/g/g-p-6afbfc5e59248191a8c690296b24c8ef-chat-succession-folder/project",
@@ -19,7 +19,7 @@
   "saved_chat_ids_created": [],
   "successor_launches": 0,
   "continuations": 0,
-  "observation_method": "Existing integration/uia_adapter.ps1 Prepare observed Project URL, fresh unsaved chat ID null, ValuePattern and selection-based clipboard actual editable read. L07 test-only probe separately used Ctrl+A/Ctrl+C with temporary clipboard sentinel, restored clipboard and captured cropped editor screenshots. Never treated UIA Value alone as editable content.",
+  "observation_method": "Existing integration/uia_adapter.ps1 Prepare observed Project URL, fresh unsaved chat ID null, ValuePattern and selection-based clipboard actual editable read. L07 test-only probe separately used Ctrl+A/Ctrl+C with temporary clipboard sentinel, restored clipboard and captured cropped editor screenshots. Never treated UIA Value alone as editable content. Fourth state: native Open file picker, accessible filename and Remove filename button, independent clipboard editable read, and target-Chrome PrintWindow cropped rendering.",
   "observations": [
     {
       "state": "empty_with_placeholder",
@@ -64,12 +64,37 @@
     },
     {
       "state": "attachment_only",
-      "status": "NOT_OBSERVED",
-      "classification": "UNKNOWN",
-      "preparation": "No attachment was uploaded and no test-only unsent text was erased. Two subsequent Project-window Prepare observations produced copied unsent drafts rather than a genuinely empty independent composer.",
-      "actual_editable_text": null,
-      "attachments_present": null,
-      "reason": "No independently verified empty disposable Project composer was available without clearing/replacing existing test drafts; an attachment-only state therefore was not safely prepared."
+      "status": "OBSERVED",
+      "classification": "DRAFT",
+      "window_handle": 526472,
+      "saved_chat_id": null,
+      "preparation": "Existing authenticated nominated Project unsaved composer with placeholder, disabled Send and no existing attachment. Selected harmless 65-byte file through native Windows Open; no message sent.",
+      "actual_editable_text": "",
+      "uia_value": "New chat in Chat succession folder\n",
+      "attachments_present": true,
+      "attachment_filename": "chat_successor_l07_attachment_test_20261118.txt",
+      "attachment_bytes": 65,
+      "attachment_test_file_sha256": "2bacf73e21514925af4f3e15be65e5dcd562cceb61a815a14d24d997e7626b9b",
+      "positive_accessibility_controls": [
+        {
+          "name": "chat_successor_l07_attachment_test_20261118.txt",
+          "control_type": "Text"
+        },
+        {
+          "name": "chat_successor_l07_attachment_test_20261118.txt",
+          "control_type": "Button"
+        },
+        {
+          "name": "Remove chat_successor_l07_attachment_test_20261118.txt",
+          "control_type": "Button"
+        }
+      ],
+      "send_button_enabled_after_attachment": true,
+      "source_of_actual_editable_text": "Independent clipboard sentinel actual editable read: before and after empty while UIA Value was the placeholder",
+      "rendered_editor": "l07_attachment_only_printwindow.png",
+      "render_source": "PrintWindow nominated Chrome window, not desktop foreground",
+      "screenshot_sha256": "299c4a5fa19be9d31aba939d455e2f5134f45809be164e8c1649e105ea0b028a",
+      "observed_utc": "2026-11-18T04:23:33.1124594Z"
     }
   ],
   "ancillary_observations": [
@@ -104,25 +129,34 @@
   "acceptance": {
     "empty_vs_real_draft": "VERIFIED",
     "same_text_as_placeholder_is_real_draft": "VERIFIED",
-    "attachment_only_independent_live_observation": "NOT_VERIFIED",
+    "attachment_only_independent_live_observation": "VERIFIED",
     "preserve_existing_drafts": "OBSERVED_NO_CLEAR_OR_SEND",
     "ambiguous_or_foreground_changing_cases": "HELD_NO_SEND",
-    "overall": "BLOCKED_NOT_PASS"
+    "overall": "PASS_ALL_FOUR_COMPOSER_STATES"
   },
   "evidence_paths": [
     "evidence/astra-l07-20261118-a/live_record.json",
     "evidence/astra-l07-20261118-a/empty.png",
     "evidence/astra-l07-20261118-a/real_draft.png",
     "evidence/astra-l07-20261118-a/same_as_placeholder.png",
-    "evidence/astra-l07-20261118-a/l07_composer_probe.ps1"
+    "evidence/astra-l07-20261118-a/l07_composer_probe.ps1",
+    "evidence/astra-l07-20261118-a/attempt4.json",
+    "evidence/astra-l07-20261118-a/l07_attachment_only_printwindow.png",
+    "evidence/astra-l07-20261118-a/validate_observations.py"
   ],
   "limitations": [
-    "The fourth attachment-only case was not created or observed; no live attachment detection claim is made.",
+    "Initial attachment-only attempts were unverified (see preserved attempt2.json and attempt3.json); final attempt positively verified the fourth state.",
     "New Project windows twice inherited unsent draft text from prior disposable windows, so a new window alone did not establish an empty composer.",
     "UIA focus changed during three independent read-only re-probes. Those observations were not used to claim a classification.",
     "Selection/copy for actual editable read changes selection and focus, restores clipboard, and does not mutate composer text; captured screenshots show selected text.",
-    "No controller operation, live status routing, new saved chat or message Send occurred during L07."
+    "No controller operation, live status routing, new saved chat or message Send occurred during L07.",
+    "Test attachment remains unsent in new-Project composer; no saved chat or previous draft was changed."
   ],
   "follow_up_attempt_path": "evidence/astra-l07-20261118-a/attempt2.json",
-  "next_action": "A verified empty composer is available in the existing L06 Project test chat, and the upload menu has been observed. Complete actual attachment selection and verify an attachment preview/remove control with actual editable text still empty. Do not mark L07 PASS until the fourth live condition is independently observed. L08 remains unstarted."
+  "next_action": "Leaf 06 L08: active Project routing with another composer active and nonempty nominated Project. Prepare correct Project destination without Send; verify no wrong-composer interaction or unrelated chat counted.",
+  "follow_up_attempt_paths": [
+    "evidence/astra-l07-20261118-a/attempt2.json",
+    "evidence/astra-l07-20261118-a/attempt3.json",
+    "evidence/astra-l07-20261118-a/attempt4.json"
+  ]
 }

@@ -1,0 +1,41 @@
+{
+  "test_id": "L07",
+  "run_id": "astra-l07-20261118-a",
+  "attempt": 4,
+  "outcome": "PASS",
+  "scenario_type": "MANUAL_OBSERVATION_ONLY",
+  "observed_at_utc": "2026-11-18T04:23:33.1124594Z",
+  "project_id": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "project_url": "https://chatgpt.com/g/g-p-6afbfc5e59248191a8c690296b24c8ef-chat-succession-folder/project",
+  "window_handle": 526472,
+  "before": {
+    "editor_uia_value": "New chat in Chat succession folder\n",
+    "send_enabled": false,
+    "attachment_remove_control": false,
+    "saved_chat_id": null
+  },
+  "native_file_picker": {
+    "name": "Open",
+    "class": "#32770",
+    "file_name": "chat_successor_l07_attachment_test_20261118.txt",
+    "bytes": 65,
+    "sha256": "2bacf73e21514925af4f3e15be65e5dcd562cceb61a815a14d24d997e7626b9b",
+    "closed_after_selection": true
+  },
+  "after": {
+    "actual_editable_text": "",
+    "editor_uia_value": "New chat in Chat succession folder\n",
+    "attachment_present": true,
+    "filename_accessibility_text": "chat_successor_l07_attachment_test_20261118.txt",
+    "positive_remove_control": "Remove chat_successor_l07_attachment_test_20261118.txt",
+    "send_enabled": true,
+    "screenshot": "l07_attachment_only_printwindow.png",
+    "screenshot_sha256": "299c4a5fa19be9d31aba939d455e2f5134f45809be164e8c1649e105ea0b028a",
+    "rendering": "PrintWindow selected Chrome window cropped to composer; no unrelated foreground content"
+  },
+  "messages_sent": 0,
+  "saved_chats_created": 0,
+  "controller_actions": 0,
+  "previous_drafts_cleared": 0,
+  "history": "Earlier unsuccessful attempts remain in attempt2.json and attempt3.json"
+}

@@ -1,5 +1,12 @@
 # Progress
 
+## L07 final live composer regression — PASS, 18 November 2026
+
+- L07 PASS: all four composer states observed. Previously verified empty, real draft and placeholder-identical draft preserved. In the existing authenticated Chat Succession Project, an unsaved composer displayed placeholder and disabled Send. Native Windows Open picker selected a harmless 65-byte text file; the accessible filename and Remove filename control established a real attachment. Independent clipboard/selection read returned actual editable text empty while UIA Value remained the placeholder. Send became enabled due to the attachment.
+- No message Send, saved chat, succession-controller action, or existing draft deletion. The test attachment remains unsent. Target Chrome PrintWindow screenshot is cropped to the attachment chip and editor without unrelated desktop content. Evidence: evidence/astra-l07-20261118-a/attempt4.json, l07_attachment_only_printwindow.png, live_record.json. Earlier failed attempts remain in attempt2.json and attempt3.json.
+- Validation: validate_observations.py verifies four classifications and all four screenshot hashes. Cumulative evidence/live_test_results_20261118.csv records L07 PASS; L01-L06 remain PASS and L08-L15 remain NOT_RUN. This is a live composer test, not an unattended controller handover.
+- Next action: Leaf 06 L08, active Project routing with a different composer active and existing chats in the nominated Project. Prepare the correct destination without Send; verify no wrong-composer typing/Send or unrelated chat counting. Use existing authenticated browser, no new foreground-focus workstream.
+
 ## L07 bounded retry — desktop focus/window contention, 18 November 2026
 
 - Continued from the verified remote L07 checkpoint `355b263226f31c2bf9a51578742f25b6bf1b5ab7`. Read README, AGENTS, PROGRESS and Astra's Leaf 06/runbook. Reused the authorised Remote Desktop Commander and Ubuntu; no controller or successor run.
