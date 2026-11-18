@@ -1,5 +1,12 @@
 # Progress
 
+## L13 Run C third saved worker ? slice 3 of 5, 18 November 2026
+
+- **Saved worker identity:** `6afd68e9-b2d8-83ec-b803-36ccda13c6d9`, observed from the browser's read-only tab inventory in the nominated Chat Succession Project. This proves saved chat and Project identity, not controller completed-turn or successor transport.
+- **Work:** one next Run C slice only (step 3); alpha 2/29, beta 2/38, gamma 2/23, combined six rows/90. Source run probe `fixture-f09529af81dda9da`. Completed steps now 3/5, programme incomplete, next slice 4.
+- **Evidence:** `evidence/astra-l13-20261118-c/run_c_worker_slice3.md` and published fixture state/results. Git publication/readback and fixture validation are checked as separate operations; no three-run L13 verdict follows from one worker.
+- **Next action:** the sole existing external controller consumes this worker's one canonical completion marker, verifies the published fixture, and launches the fourth distinct saved Run C worker for slice 4 only. Do not run the controller, send messages, launch a successor or touch its private state from this worker. Runs A/B remain untouched.
+
 ## L13 Run C second saved worker — slice 2 of 5, 18 November 2026
 
 - **Saved worker identity:** `6afd6699-9f68-83ec-8fd8-06fbf9b37f4f`, observed in the authorised read-only browser tab inventory under the nominated Chat Succession Project. This establishes saved chat identity only, not controller transport or a completed response event.
