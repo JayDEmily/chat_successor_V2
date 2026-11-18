@@ -1,5 +1,13 @@
 # Progress
 
+## L04 live early-completion result — 18 November 2026 (current)
+
+- **L04 verdict: PASS.** Test `astra-l04-20261118-a`, cap **30**, first and only saved Chat Succession worker `6afcf52d-bed4-83ec-ad68-98479eb0caf9`, assisted bootstrap. Worker committed/pushed the one-slice fixture terminal result in remote `9476d451fb12896317765529972583c1b6081f51`.
+- Independent Git archive of exact remote revision: `fixture_valid=true`, `completed_steps=1`, `total_steps=1`, `last_chat_id` matching worker, `programme_complete=true`, `next_task=null`. The browser observer saw a single clean final `CHAT_STATUS: TASK_COMPLETE` with completed turn identity `uia-turn-1-aac2393264a2cdf2d134`.
+- **Controller:** observed `action=STOP_FINISHED`; persisted `halted=programme_finished`, `pending=null`, `unique_chat_count=1`, `last_status=TASK_COMPLETE`. Exactly **zero successor Sends** despite cap 30. No effect on prior L01–L03 states.
+- **Evidence:** `evidence/astra-l04-20261118-a/live_record.json`, `first_worker_slice1.md`, fixture files, and cumulative `evidence/live_test_results_20261118.csv`. L01–L04 PASS with their recorded intervention caveats; L05–L15 NOT_RUN and L14 excluded by owner.
+- **Next action:** Leaf 06 **L05**, a fresh **three-slice** fixture with **cap 2**. First worker publishes slice 1 and controller automatically launches worker 2. Worker 2 emits one `NEED_MORE_TIME`; controller sends exact same-chat continuation despite cap. Worker 2 then publishes slice 2, leaving slice 3 undone, and controller must emit `STOP_CAP` without creating chat 3. No new controller architecture or extra browser isolation.
+
 ## L04 initial live worker ? terminal fixture slice, 18 November 2026
 
 - **Assigned run:** `astra-l04-20261118-a` on `work/astra-succession-implementation-20261118`, starting remote HEAD `1777b14c980de47697c16edd002f21bc0e879d3c`. Only the one authorised slice was processed.

@@ -1,0 +1,90 @@
+{
+  "template_only": false,
+  "outcome": "PASS",
+  "test_id": "L04",
+  "run_id": "astra-l04-20261118-a",
+  "scenario_type": "NATURAL_LIVE",
+  "environment": "OWNER_AUTHENTICATED_WINDOWS_11_CHROME_UBUNTU_WSL_GIT",
+  "observed_start_utc": null,
+  "observed_end_utc": "2026-11-18T00:49:31.452Z",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "project_name": "Chat succession folder",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "max_unique_chats": 30,
+  "initial_chat_id": "6afcf52d-bed4-83ec-ad68-98479eb0caf9",
+  "observed_run_chat_ids": [
+    "6afcf52d-bed4-83ec-ad68-98479eb0caf9"
+  ],
+  "controller_or_launcher_version": "Astra original reference controller and existing Windows Chrome UIA adapter at 4515e1e6462222ba0c87d3541a31506a7a29f17b",
+  "write_tool_used": "Initial worker Git commit/push to nominated branch; independent remote Git archive verification",
+  "fixture_path": "succession-tests/astra-l04-20261118-a",
+  "events": [
+    {
+      "event": "assisted_initial_worker",
+      "destination_chat_id": "6afcf52d-bed4-83ec-ad68-98479eb0caf9",
+      "send_outcome": "Exact first worker assignment posted in nominated Project, saved ID read back",
+      "count_before": 0,
+      "count_after": 1
+    },
+    {
+      "event": "worker_terminal_publication",
+      "source_chat_id": "6afcf52d-bed4-83ec-ad68-98479eb0caf9",
+      "response_id": "uia-turn-1-aac2393264a2cdf2d134",
+      "response_complete": true,
+      "status": "TASK_COMPLETE",
+      "interpretation_basis": "single canonical final marker",
+      "publication_outcome": "published remote",
+      "normal_commit_reference": "9476d451fb12896317765529972583c1b6081f51",
+      "programme_complete": true,
+      "next_task": null,
+      "workload_verification": "Remote Git archive fixture_valid=true, completed_steps=1, total_steps=1; last_chat_id equals observed initial worker",
+      "planned_action": "STOP_FINISHED"
+    },
+    {
+      "event": "controller_terminal_observation",
+      "source_chat_id": "6afcf52d-bed4-83ec-ad68-98479eb0caf9",
+      "planned_action": "STOP_FINISHED",
+      "send_outcome": "No successor Send",
+      "count_after": 1,
+      "reconciliation_evidence": "CLI action=STOP_FINISHED; persisted halted=programme_finished, pending=null, last_status=TASK_COMPLETE, unique_chat_count=1; cap 30"
+    }
+  ],
+  "expected": {
+    "cap": 30,
+    "initial_saved_chats": 1,
+    "validated_steps": 1,
+    "successor_launches": 0,
+    "terminal_action": "STOP_FINISHED"
+  },
+  "actual": {
+    "cap": 30,
+    "initial_saved_chats": 1,
+    "validated_steps": 1,
+    "successor_launches": 0,
+    "terminal_action": "STOP_FINISHED"
+  },
+  "useful_work_validated": true,
+  "continuation_count": 0,
+  "successor_launch_count": 0,
+  "duplicate_send_count": 0,
+  "wrong_destination_count": 0,
+  "false_semantic_completion_count": 0,
+  "owner_interventions": [
+    "Assisted first worker bootstrap only"
+  ],
+  "evidence_paths": [
+    "PROGRESS.md",
+    "succession-tests/astra-l04-20261118-a/STATE.json",
+    "succession-tests/astra-l04-20261118-a/RESULTS.json",
+    "evidence/astra-l04-20261118-a/first_worker_slice1.md",
+    "evidence/astra-l04-20261118-a/live_record.json",
+    "evidence/live_test_results_20261118.csv",
+    "Private Windows controller state not uploaded"
+  ],
+  "limitations": [
+    "The first worker bootstrap was assisted; no successor was required or launched.",
+    "Exact initial start UTC time was not captured; observed_end_utc is record creation time.",
+    "L05-L15 remain untested and L14 remains outside owner scope."
+  ]
+}
