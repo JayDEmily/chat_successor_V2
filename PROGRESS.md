@@ -1,5 +1,12 @@
 # Progress
 
+## L04 initial live worker ? terminal fixture slice, 18 November 2026
+
+- **Assigned run:** `astra-l04-20261118-a` on `work/astra-succession-implementation-20261118`, starting remote HEAD `1777b14c980de47697c16edd002f21bc0e879d3c`. Only the one authorised slice was processed.
+- **Worker provenance:** L04 controller private state recorded first saved chat `6afcf52d-bed4-83ec-ad68-98479eb0caf9` with configured cap 30, one unique saved chat, and no pending action before fixture publication. The worker did not launch a successor.
+- **Computed result:** alpha 2/34, beta 2/31, gamma 2/11 (count/integer total); six rows, combined total 76. Updated RESULTS.json and STATE.json to `completed_steps=1`, `programme_complete=true`, `next_task=null`, with matching worker attribution. See [worker evidence](evidence/astra-l04-20261118-a/first_worker_slice1.md).
+- **Boundary:** This published terminal fixture is worker evidence, not a live L04 verdict. The external controller must independently consume this worker's clean terminal marker, validate remote state and record STOP_FINISHED with one saved chat and zero successor Send. Preserve completed L01?L03.
+
 ## L04 early-completion setup — 18 November 2026 (in progress)
 
 - **Case:** Leaf 06 L04, one-slice fixture `astra-l04-20261118-a` in the nominated repo/branch. The initial worker should read the fixture, compute and publish slice 1 of 1, verify `programme_complete=true` and `next_task=null`, and finish with one canonical final `CHAT_STATUS: TASK_COMPLETE`.
