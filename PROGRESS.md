@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run A fifth saved worker — slice 5 of 5, 18 November 2026
+
+- **Actual saved worker:** `6afd58e7-3934-83ec-ae7c-fd24df740e51`. The existing external controller's persisted read-only Run A state listed this as current and recorded five distinct saved chat IDs. Independent invocation of the existing Windows Chrome UIA adapter in Observe mode positively matched the same saved conversation and nominated Chat Succession Project. The worker did not invoke Send, control the successor loop or modify its private state.
+- **Published fixture commit:** `eb3dad69c2092c0c699e5d6552e6494c5812c2f4`, pushed to `work/astra-succession-implementation-20261118`. GitHub remote readback confirms five result entries, the fifth chat ID, `completed_steps=5/5`, `programme_complete=true` and `next_task=null`. Starting source revision was `ceb258ad9c5e5aa33124063f6d28ed3c76064ad3`.
+- **Useful work:** independently processed only RUN.json slice 5: alpha count 2/total 34, beta 2/8, gamma 2/19; combined six rows and total 61. Earlier four fixture entries and Runs B/C were unchanged.
+- **Checks:** existing fixture validator returned `fixture_valid=true, completed_steps=5, total_steps=5`; staged Git diff whitespace check passed. Evidence: `evidence/astra-l13-20261118-a/run_a_worker_slice5.md`.
+- **Next action:** **only the existing external controller** consumes this worker's one canonical final completion marker, verifies the published terminal programme and records `STOP_FINISHED` with exactly five saved worker IDs and four automatic successors. The full Run A transport verdict is pending this observation. Then independently repeat L13 with Runs B and C; do not treat one five-chat fixture as the three-run L13 PASS. The worker must not launch or operate a successor.
+
 ## L13 Run A fourth saved worker — slice 4 of 5, 18 November 2026
 
 - **Actual saved worker:** `6afd572e-73d8-83ec-9bf7-ba08380a6861`, matched by the existing external controller's persisted fourth-chat ID and independently confirmed via the existing read-only Windows UIA observation of the nominated Project conversation. The fourth saved chat was launched by the controller, not this worker.
