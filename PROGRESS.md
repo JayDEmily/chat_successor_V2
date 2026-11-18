@@ -1,5 +1,12 @@
 # Progress
 
+## L13 Run C first saved worker — slice 1 of 5, 18 November 2026
+
+- **Saved worker identity:** `6afd651b-db04-83ec-a386-4d709438d383`, from the read-only browser tab inventory, matched to the nominated Chat Succession Project. This does not establish completed-turn or controller transport.
+- **Work:** from source remote revision `d433fd337cf3e4d2ece3b8db1381cd1a3e770780`, processed only Run C slice 1. Six rows: alpha 2/34, beta 2/31, gamma 2/11; combined total 76. Run C is now `completed_steps=1/5`, `programme_complete=false`, next task slice 2. Runs A and B unchanged.
+- **Evidence:** `evidence/astra-l13-20261118-c/run_c_worker_slice1.md`. Fixture validation, remote Git publication and readback are required before treating this checkpoint as published.
+- **Next action:** the sole external controller consumes this worker's final status, verifies the remote fixture and launches the second distinct saved Run C worker. No worker-side controller action or successor launch. Run C and G4 remain pending.
+
 ## L13 Run B verified — 2/3 live repetitions complete
 
 **Active ChatGPT worker assignment is Run C only.** Read `succession-tests/astra-l13-20261118-c/INSTRUCTIONS.md`, then process and publish exactly one next slice from that fixture. Read the current branch, finish with one canonical final status line, and leave all controller actions to the external operator.
