@@ -1,0 +1,8 @@
+{
+  "completed_steps": 0,
+  "last_chat_id": null,
+  "next_task": "Process fixture slice 1 of 2; read RUN.json and verify RESULTS.json.",
+  "programme_complete": false,
+  "progress_summary": "Fixture seeded; no worker has performed a slice.",
+  "run_id": "astra-l02-20261118-a"
+}

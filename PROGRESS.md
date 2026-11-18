@@ -1,5 +1,11 @@
 # Progress
 
+## L02 live preparation — 18 November 2026
+
+- **Current task:** Leaf 06, case L02 only. New run `astra-l02-20261118-a` is a two-slice test-only workload on `work/astra-succession-implementation-20261118`. The first worker's three turns are staged in this run's `INSTRUCTIONS.md`: initial `NEED_MORE_TIME`, continuation `NEED_MORE_TIME`, then commit/push slice 1 and `TASK_COMPLETE`. Later worker finishes slice 2 normally.
+- **Acceptance:** two exact controller-sent `Okay, continue working.` messages in the *same* saved first worker; distinct-chat count remains 1 across both; published slice 1 allows one automatic successor; slice 2 publishes programme completion and controller stops. Fresh private controller state; L01 terminal state preserved unchanged.
+- **Gate/evidence:** fixture seeded with Astra's unchanged `repo_fixture.py` and validated as 0/2 before publication. L02 is not yet passed; L03–L15 remain NOT_RUN. Record live observations in a new evidence file, not as offline simulation. No extra browser isolation or new controller framework.
+
 ## L01 live integration result — 18 November 2026 (current)
 
 - **L01 verdict: PASS against the prescribed L01 acceptance criteria**, with assisted first-chat setup and explicit recovery of two *pre-Send* UIA entry failures (not unattended-repeatability evidence).
