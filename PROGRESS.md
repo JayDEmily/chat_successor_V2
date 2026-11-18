@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run A first saved worker ? slice 1 of 5, 18 November 2026
+
+- **Run A worker identity:** browser UI Automation read-only address of the authenticated Chat Succession Project conversation showed saved ID `6afd5272-342c-83ec-b108-134d391b3577`. This is the first observed Run A worker, not a simulated conversation.
+- **Published-work candidate:** independently calculated only the first six fixture rows, yielding alpha count 2/total 34, beta 2/31, gamma 2/11. Updated only Run A RESULTS.json and STATE.json, leaving `completed_steps=1/5`, `programme_complete=false` and the next task at slice 2. Existing fixture validator returned `fixture_valid=true` and `git diff --check` passed locally.
+- **Control boundary:** no same-chat continuation, browser Send, successor launch, private controller state change or Run B/C mutation was performed by this worker. This worker publication alone does not constitute an L13 five-chat result.
+- **Next action:** after verifying the remote publication and consuming this worker's unambiguous final status, the **sole external controller** uses its Run A cap-5 state to launch the next distinct saved worker for slice 2. Verify real saved IDs and remote state at every step; stop after five published slices and four successors. Runs B/C remain staged.
+- **Evidence:** `evidence/astra-l13-20261118-a/run_a_worker_slice1.md`.
+
 ## L13 pre-bootstrap recovery — Run A selected, 18 November 2026
 
 - The fresh authenticated Chrome Project window inherited the existing one-line draft. The operator verified a private local backup against the live editor and cleared only the fresh composer. Both original Project windows retained the exact draft at readback. The fresh Project composer had no attachments and no enabled Send button. See `evidence/astra-l13-20261118/bootstrap_recovery.json` for the observation.
