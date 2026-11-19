@@ -205,7 +205,8 @@ def main():
                      c.state.current_chat_id, poll_seconds, wait_minutes)
         polls = 0
         while True:
-            if path.with_suffix(".pause").exists():
+            if (c.state.halted not in ("programme_finished", "chat_cap")
+                    and path.with_suffix(".pause").exists()):
                 c.pause("Operator pause requested")
                 c.save(path)
                 output("paused", path)

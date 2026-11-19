@@ -97,6 +97,10 @@ the automatic backend, which requires a genuinely empty composer. A
 short UIA rendering delay caused an exact immediate readback failure,
 so bounded polling of the exact draft is now used before any Send.
 
+Manual same-chat Send or reconciliation requires both `-ChatId` and
+`-SourceResponse` from the recorded action. The adapter verifies the posted
+user turn after that exact assistant response.
+
 A browser Send is only valid after the reference controller has written
 the matching `sending` phase (except the separately recorded *initial*
 bootstrap). Never retry a possibly submitted message. Read the unchanged

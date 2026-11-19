@@ -14,7 +14,10 @@ import subprocess
 import tempfile
 import time
 
-from runner import Browser, Destination, PausedBeforeClick, Submitted, WorkerAdvancedBeforeClick
+from runner import (
+    Browser, Destination, PausedBeforeClick, SendBlockedBeforeClick, Submitted,
+    WorkerAdvancedBeforeClick,
+)
 from succession.composer import ComposerObservation
 from succession.core import Controller, Response
 
@@ -184,10 +187,12 @@ class WindowsUIA(Browser):
             "Send", Kind=p["kind"], ChatId=p["source_chat_id"],
             WindowHandle=target.private_window_handle, Message=message,
             PausePath=self.state_path.with_suffix(".pause").resolve(),
-            OwnerAnchor=p["response_id"] if p.get("owner_request_id") else None,
+            SourceResponse=p["response_id"] if p["kind"] == "CONTINUE_CURRENT" else None,
             L09Fault="after_click" if fault == "after_click" else None)
         if result.get("paused_before_click") is True:
             raise PausedBeforeClick("Operator pause requested before Send")
+        if result.get("destination_changed_before_click") is True:
+            raise SendBlockedBeforeClick("Chrome destination changed before Send. Preserve any draft.")
         if result.get("worker_advanced_before_click") is True:
             raise WorkerAdvancedBeforeClick()
         return Submitted(project=result.get("project", ""),
@@ -205,6 +210,7 @@ class WindowsUIA(Browser):
             raise BrowserObservationError("Saved target is for a different action")
         result = self._invoke("Reconcile", WindowHandle=record["handle"],
                               Kind=p.kind, ChatId=p.source_chat_id,
+                              SourceResponse=p.response_id if p.kind == "CONTINUE_CURRENT" else None,
                               Message=p.message)
         return Submitted(project=result.get("project", ""),
                          chat_id=result.get("chat_id"),

@@ -31,8 +31,14 @@ def prepare_first(browser, reader):
     return target
 
 
+def check_bootstrap_journal(state_path: Path) -> None:
+    if not state_path.exists() and state_path.with_name("controller-timing.log").exists():
+        raise RuntimeError("A prior controller was registered but its journal is missing. Restore the journal before continuing.")
+
+
 def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=None) -> dict:
     """Persist intent once and use read-only reconciliation on uncertain retries."""
+    check_bootstrap_journal(state_path)
     intent_path = state_path.with_name("bootstrap-intent.json")
     pause_path = state_path.with_suffix(".pause").resolve()
     pointer = (
@@ -64,6 +70,9 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
         if receipt == {"paused_before_click": True}:
             intent_path.unlink()
             raise RuntimeError("Owner paused before the initial Send")
+        if receipt == {"destination_changed_before_click": True}:
+            intent_path.unlink()
+            raise RuntimeError("The initial destination changed before Send. No click was made; preserve any draft.")
 
     if (receipt.get("posted_message_observed") is not True
             or receipt.get("project") != cfg["project"]

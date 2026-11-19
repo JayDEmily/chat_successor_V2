@@ -1,12 +1,15 @@
 import json
 import sys
 import unittest
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from launch_project import launch_request
+import cli
+from launch_project import launch_request, matching_runs
 from owner_reentry import resume_request
 from repo_reader import GitHandoffReader, PublishedStateError
 from runner import Destination, Submitted, checkpoint_from_response, cycle, initialise
@@ -134,6 +137,40 @@ class ReentryTests(unittest.TestCase):
         self.assertEqual(json.loads(self.state.read_text())["version"], 1)
         self.resume(owner_context=self.context)
         self.assertEqual(json.loads(self.state.read_text())["version"], 2)
+
+    def test_missing_registered_journal_is_not_an_initial_send(self):
+        runs = self.base / "Runs"
+        run = runs / ("c" * 24)
+        run.mkdir(parents=True)
+        (run / "config.json").write_bytes(self.cfg.read_bytes())
+        (run / "bootstrap-intent.json").touch()
+        self.assertEqual(matching_runs(runs, PROJECT, REPO)["c" * 24][1]["run_stage"],
+                         "initial_send_pending")
+        (run / "controller-timing.log").touch()
+        with self.assertRaisesRegex(RuntimeError, "journal is missing"):
+            matching_runs(runs, PROJECT, REPO)
+
+    def test_terminal_run_survives_pause_and_cycle(self):
+        run = self.base / ("c" * 24)
+        run.mkdir()
+        cfg = run / "config.json"
+        state = run / "controller.json"
+        cfg.write_bytes(self.cfg.read_bytes())
+        pause = state.with_suffix(".pause")
+        for reason in ("programme_finished", "chat_cap"):
+            with self.subTest(reason=reason):
+                controller = Controller.load(self.state)
+                controller.state.halted = reason
+                controller.save(state)
+                before = state.read_bytes()
+                args = ["--config", str(cfg), "--state", str(state)]
+                with patch.object(sys, "argv", ["cli.py", "pause", *args]), redirect_stdout(StringIO()):
+                    cli.main()
+                self.assertTrue(pause.exists())
+                with patch.object(sys, "argv", ["cli.py", "cycle", *args]), redirect_stdout(StringIO()):
+                    cli.main()
+                self.assertEqual(state.read_bytes(), before)
+                pause.unlink()
 
     def test_launch_branch_rename_and_explicit_new_job(self):
         path = self.base / "request.json"

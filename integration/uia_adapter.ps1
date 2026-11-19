@@ -166,21 +166,35 @@ function Find-EnabledSendButtons($window) {
   }catch{}
  }
 }
-function Find-PostedMessage($window,$expected) {
+function Find-PostedMessage($window,$expected,[string]$afterResponse='') {
  # Only text under a user turn is a posted message. The assistant may quote
- # the exact continuation string while instructing the operator to send it.
+ # the exact continuation string. A repeated continuation also needs a user
+ # turn after the specific assistant response that triggered this action.
+ $afterOrdinal=0
+ if($afterResponse){
+  if($afterResponse -cnotmatch '^uia-turn-([1-9][0-9]*)-[a-f0-9]{20}$'){return $false}
+  $afterOrdinal=[int]$Matches[1]
+ }
  $all=Desc $window
+ $assistantCount=0
+ $anchorSeen=($afterOrdinal -eq 0)
  $inUserTurn=$false
  $latestUserMatches=$false
- foreach($el in $all) {
+ for($i=0;$i -lt $all.Count;$i++) {
+  $el=$all[$i]
   try{
    if($el.Current.ControlType -ne [System.Windows.Automation.ControlType]::Text){continue}
    $name=$el.Current.Name
    if($name -ceq 'You said:'){
-    $inUserTurn=$true
+    $inUserTurn=$anchorSeen
     $latestUserMatches=$false
    }elseif($name -ceq 'ChatGPT said:'){
     $inUserTurn=$false
+    $assistantCount++
+    if($afterOrdinal -gt 0){
+     $anchorSeen=($assistantCount -eq $afterOrdinal -and
+        (Read-AssistantContent $all $i $assistantCount).response_id -ceq $afterResponse)
+    }
    }elseif($inUserTurn -and $name -ceq $expected){
     $latestUserMatches=$true
    }
@@ -269,6 +283,34 @@ function Compare-OwnerTurn($turn,[string]$anchor) {
  return 'unknown'
 }
 
+function Read-AssistantContent($all,[int]$header,[int]$ordinal) {
+ $parts=@()
+ $locatorProse=$false
+ $finalProse=$false
+ for($i=$header+1;$i -lt $all.Count;$i++){
+  $el=$all[$i]
+  try {
+   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text) {
+    $name=$el.Current.Name
+    if($name -ceq 'You said:' -or $name -ceq 'ChatGPT said:' -or
+       $name -ceq 'ChatGPT can make mistakes. Check important info.' -or
+       $name -ceq 'Latest response' -or $name -ceq 'Ask ChatGPT'){break}
+    if($name){
+     $parts+= $name
+     if($name -cmatch '^CHAT_HANDOFF_BRANCH: '){$locatorProse=Test-AssistantProse $el}
+     if($name -ceq 'CHAT_STATUS: TASK_COMPLETE'){$finalProse=Test-AssistantProse $el}
+    }
+   }
+  }catch{}
+ }
+ $body=$parts -join [Environment]::NewLine
+ $sha=[Security.Cryptography.SHA256]::Create()
+ try{$digest=[BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($body))).Replace('-','').ToLowerInvariant()}finally{$sha.Dispose()}
+ $final=if($parts.Count){$parts[-1]}else{''}
+ return @{text=$body;final=$final;response_id=('uia-turn-' + $ordinal + '-' + $digest.Substring(0,20))
+          handoff_locator_verified=($locatorProse -and $finalProse)}
+}
+
 function Read-CurrentTurn($target) {
  $all=Desc $target.window
  $last=-1
@@ -290,39 +332,17 @@ function Read-CurrentTurn($target) {
   return @{ready=$false;reason='No assistant turn observed';chat_id=$target.chat
            stop_control=$stop;user_after_assistant=$false;user_turn_seen=$false}
  }
- $parts=@()
- $locatorProse=$false
- $finalProse=$false
- for($i=$last+1;$i -lt $all.Count;$i++){
-  $el=$all[$i]
-  try {
-   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text) {
-    $name=$el.Current.Name
-    if($name -ceq 'You said:' -or $name -ceq 'ChatGPT said:' -or
-       $name -ceq 'ChatGPT can make mistakes. Check important info.' -or
-       $name -ceq 'Latest response' -or $name -ceq 'Ask ChatGPT'){break}
-    if($name){
-     $parts+= $name
-     if($name -cmatch '^CHAT_HANDOFF_BRANCH: '){$locatorProse=Test-AssistantProse $el}
-     if($name -ceq 'CHAT_STATUS: TASK_COMPLETE'){$finalProse=Test-AssistantProse $el}
-    }
-   }
-  }catch{}
- }
- $body=$parts -join [Environment]::NewLine
- $sha=[Security.Cryptography.SHA256]::Create()
- try{$digest=[BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($body))).Replace('-','').ToLowerInvariant()}finally{$sha.Dispose()}
- $final=if($parts.Count){$parts[-1]}else{''}
+ $content=Read-AssistantContent $all $last $assistantCount
  # No automatic turn completion until a final status line and no active Stop.
- $terminal=($final -cmatch '^(?:CHAT_STATUS: )?(?:NEED_MORE_TIME|TASK_COMPLETE|ERROR)$')
+ $terminal=($content.final -cmatch '^(?:CHAT_STATUS: )?(?:NEED_MORE_TIME|TASK_COMPLETE|ERROR)$')
  $ready=$terminal -and -not $stop -and $last -gt $lastUser
  return @{
   ready=$ready;chat_id=$target.chat;project=$ProjectId;role='assistant'
-  response_id=('uia-turn-' + $assistantCount + '-' + $digest.Substring(0,20))
-  text=$body;complete=$ready;reason=$(if($stop){'Streaming/Stop control present'}elseif(-not $terminal){'No final standalone status leaf'}else{'Completed marker candidate; UIA hierarchy validation pending'})
+  response_id=$content.response_id
+  text=$content.text;complete=$ready;reason=$(if($stop){'Streaming/Stop control present'}elseif(-not $terminal){'No final standalone status leaf'}else{'Completed marker candidate; UIA hierarchy validation pending'})
   method='UIA_ACCESSIBILITY_TEXT';stop_control=$stop
   user_after_assistant=($lastUser -gt $last);user_turn_seen=($lastUser -ge 0)
-  handoff_locator_verified=($locatorProse -and $finalProse)
+  handoff_locator_verified=$content.handoff_locator_verified
  }
 }
 
@@ -516,21 +536,30 @@ function Hold-IfOwnerPaused {
  }
 }
 
+function Hold-ForChangedDestination {
+ @{destination_changed_before_click=$true} | ConvertTo-Json -Compress
+ exit 0
+}
+
 if($Mode -eq 'Send') {
  Hold-IfOwnerPaused
  if($WindowHandle -le 0){throw 'Saved prepared window handle required'}
  if($Message -cnotmatch '^[A-Za-z0-9 .,/_:-]+$'){throw 'Unsupported message characters'}
  if(-not $Message){throw 'Empty message'}
+ if($Kind -eq 'CONTINUE_CURRENT' -and
+    (-not $ChatId -or $SourceResponse -cnotmatch '^uia-turn-[1-9][0-9]*-[a-f0-9]{20}$')){
+  throw 'Continuation needs the saved chat and triggering response'
+ }
  $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
- if($OwnerAnchor){
+ if($Kind -eq 'CONTINUE_CURRENT'){
   $turn=Read-CurrentTurn $target
-  $comparison=Compare-OwnerTurn $turn $OwnerAnchor
+  $comparison=Compare-OwnerTurn $turn $SourceResponse
   if($comparison -eq 'advanced'){
    @{worker_advanced_before_click=$true} | ConvertTo-Json -Compress
    exit 0
   }
   if($comparison -ne 'idle'){
-   throw 'Owner action hold could not be confirmed before typing'
+   throw 'Triggering assistant response could not be confirmed before typing'
   }
  }
  if($Kind -eq 'LAUNCH_SUCCESSOR' -and $null -ne $target.chat){throw 'Successor composer already saved before Send'}
@@ -550,6 +579,7 @@ if($Mode -eq 'Send') {
    throw 'Composer is not verified empty; hold before typing'
   }
   Hold-IfOwnerPaused
+  if((Get-Address $target.window) -cne $target.url){Hold-ForChangedDestination}
   $pattern.SetValue($Message)
  }
  $typed=''
@@ -561,24 +591,39 @@ if($Mode -eq 'Send') {
  if($typed.TrimEnd([char]13,[char]10) -cne $Message){
   throw ('Exact typed prompt readback failed; observed_len=' + $typed.Length + ', expected_len=' + $Message.Length + '; do not Send')
  }
- $sendButtons=@(Find-EnabledSendButtons $target.window)
- if($sendButtons.Count -ne 1){throw 'Send button not unique and enabled'}
- # ONE and only one UIA Send. Native Invoke acts on the already verified
- # target control and does not depend on whichever window is in foreground.
- # If acknowledgement is lost, reconcile; never click again automatically.
- $send = $sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
  Hold-IfOwnerPaused
- if($OwnerAnchor){
+ if($Kind -eq 'CONTINUE_CURRENT'){
   $turn=Read-CurrentTurn $target
-  $comparison=Compare-OwnerTurn $turn $OwnerAnchor
+  $comparison=Compare-OwnerTurn $turn $SourceResponse
   if($comparison -eq 'advanced'){
    @{worker_advanced_before_click=$true} | ConvertTo-Json -Compress
    exit 0
   }
   if($comparison -ne 'idle'){
-   throw 'The held turn could not be verified after typing. Preserve the composer and reconcile.'
+   throw 'The triggering response could not be verified after typing. Preserve the composer and reconcile.'
   }
  }
+ # Bind the button to the same document as the exact verified composer. A
+ # tab switch after typing must not select the new tab's Send button.
+ try {
+  $liveEditor=Find-Composer $target.window $editorName
+  $liveValue=$liveEditor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+  if(-not [System.Windows.Automation.Automation]::Compare($editor,$liveEditor) -or
+     $liveValue.TrimEnd([char]13,[char]10) -cne $Message -or
+     -not (Check-NoAttachments $target.window)){Hold-ForChangedDestination}
+  $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
+  $document=$walker.GetParent($liveEditor)
+  while($null -ne $document -and $document.Current.ControlType -ne [System.Windows.Automation.ControlType]::Document){
+   $document=$walker.GetParent($document)
+  }
+  if($null -eq $document){Hold-ForChangedDestination}
+  $sendButtons=@(Find-EnabledSendButtons $document)
+  if($sendButtons.Count -ne 1){Hold-ForChangedDestination}
+  $send=$sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+  if((Get-Address $target.window) -cne $target.url){Hold-ForChangedDestination}
+ } catch {Hold-ForChangedDestination}
+ Hold-IfOwnerPaused
+ # One native UIA Invoke. Reconcile if its acknowledgement is lost.
  $send.Invoke()
  if($L09Fault -eq 'after_click'){
   throw 'L09 injected after single click before acknowledgement; reconcile, never retry blindly'
@@ -587,7 +632,8 @@ if($Mode -eq 'Send') {
   Start-Sleep -Milliseconds 400
   $url=Get-Address $target.window
   $chat=Chat-FromUrl $url
-  if($chat -and (Check-Project $url) -and (Find-PostedMessage $target.window $Message)){
+  if($chat -and (Check-Project $url) -and ($Kind -ne 'CONTINUE_CURRENT' -or $chat -ceq $ChatId) -and
+     (Find-PostedMessage $target.window $Message $SourceResponse)){
    @{project=$ProjectId;chat_id=$chat;submitted_text=$Message;posted_message_observed=$true;window_handle=$WindowHandle} | ConvertTo-Json -Compress
    exit 0
   }
@@ -595,9 +641,13 @@ if($Mode -eq 'Send') {
  throw 'Send attempted but exact posted message + saved ID not both observed'
 }
 if($Mode -eq 'Reconcile') {
- $target=Get-TargetWindow '' $WindowHandle
+ if($Kind -eq 'CONTINUE_CURRENT' -and -not ($ChatId -and $SourceResponse)){
+  throw 'Reconcile needs the saved chat and triggering response'
+ }
+ $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
  $chat=Chat-FromUrl (Get-Address $target.window)
- $posted= $chat -and (Find-PostedMessage $target.window $Message)
+ $posted= $chat -and ($Kind -ne 'CONTINUE_CURRENT' -or $chat -ceq $ChatId) -and
+          (Find-PostedMessage $target.window $Message $SourceResponse)
  @{project=$ProjectId;chat_id=$chat;submitted_text=$(if($posted){$Message}else{$null});posted_message_observed=[bool]$posted} | ConvertTo-Json -Compress
  exit 0
 }

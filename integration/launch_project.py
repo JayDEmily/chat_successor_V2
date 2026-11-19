@@ -10,7 +10,7 @@ import re
 import subprocess
 
 from cli import create_dependencies, exclusive_lock, load_config
-from launch_story import launch, start_controller
+from launch_story import check_bootstrap_journal, launch, start_controller
 from owner_reentry import owner_context, record_context, resume_request
 from repo_reader import GitHandoffReader, HANDOFF_WORKFLOW, validate_github_repo
 from runner import inspect_state
@@ -108,6 +108,7 @@ def matching_runs(runs, project, repo):
         if cfg["run_id"] != path.parent.name or cfg.get("workflow") != HANDOFF_WORKFLOW:
             raise RuntimeError("Saved run configuration is inconsistent")
         state = path.with_name("controller.json")
+        check_bootstrap_journal(state)
         stage = "registered" if state.exists() else (
             "initial_send_pending" if path.with_name("bootstrap-intent.json").exists() else "configured"
         )

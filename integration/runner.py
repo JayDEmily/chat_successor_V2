@@ -41,12 +41,16 @@ class Submitted:
     posted_message_observed: bool
 
 
-class PausedBeforeClick(RuntimeError):
+class SendBlockedBeforeClick(RuntimeError):
+    """The adapter positively established that it did not invoke Send."""
+
+
+class PausedBeforeClick(SendBlockedBeforeClick):
     """The browser adapter observed owner pause before invoking Send."""
 
 
 class WorkerAdvancedBeforeClick(RuntimeError):
-    """The prepared owner request was superseded before Send."""
+    """The worker already advanced past the response that triggered Send."""
 
 
 class Browser(Protocol):
@@ -113,7 +117,7 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
                                       receipt.project, message_observed=True)
         controller.save(state_path)
         return decision.action
-    except PausedBeforeClick as exc:
+    except SendBlockedBeforeClick as exc:
         controller.confirm_not_sent(p.action_id, str(exc))
         controller.pause(str(exc))
         controller.save(state_path)

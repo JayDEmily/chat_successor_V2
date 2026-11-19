@@ -10,7 +10,7 @@ from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from repo_reader import GitPublishedReader, PublishedStateError
-from runner import Destination, initialise
+from runner import Destination, SendBlockedBeforeClick, initialise
 from windows_backend import WindowsUIA, BrowserObservationError
 from succession.core import Config, Controller, Response
 from succession.composer import ComposerObservation
@@ -150,6 +150,12 @@ class WindowsBridgeTests(unittest.TestCase):
             receipt = w.send_once(t, d.message)
             self.assertTrue(receipt.posted_message_observed)
             self.assertEqual(w._invoke.call_count, 1)
+            self.assertEqual(w._invoke.call_args.kwargs["SourceResponse"], "turn1")
+            w._invoke.return_value = {"destination_changed_before_click": True}
+            with self.assertRaises(SendBlockedBeforeClick):
+                w.send_once(t, d.message)
+            w.reconcile_readonly()
+            self.assertEqual(w._invoke.call_args.kwargs["SourceResponse"], "turn1")
 
 
 if __name__ == "__main__":

@@ -159,6 +159,7 @@ class GitHandoffReader(PublishedGit):
             "For more time in this chat use CHAT_STATUS: NEED_MORE_TIME. "
             "If the assignment is unclear, held, requires approval, or cannot be published "
             "under the project rules, report the blocker and end with CHAT_STATUS: ERROR. "
+            "Put commentary and timestamps before the status. The status is the final plain line. "
             "The controller owns successor launches."
         )
 
