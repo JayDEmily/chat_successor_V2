@@ -1,5 +1,12 @@
 # Progress
 
+## L13 Run F fourth saved worker — slice 4 of 5, 19 November 2026
+
+- **Scope and provenance:** Run F `astra-l13-20261119-f`, fourth distinct saved Project worker `6afe4875-e7b8-83ec-bc8b-6a14169b58e5`. Read-only UIA matched this chat and correct Project. The already-running controller had four distinct IDs, three consumed completed turns, no pending action/halt; this worker did not operate its controller or Send.
+- **One slice only:** from remote source `da00f4b1c223fee647c705d4f582b6f34407f9cc`, normalised six fourth-probe rows into alpha 2/23, beta 2/25, gamma 2/24; 72 total. One result was appended; state is 4/5, `programme_complete=false`, next slice 5. Prior Run F steps and independent Run E untouched.
+- **Validation and evidence:** unchanged fixture validator returned `fixture_valid=true`, `completed_steps=4`, `total_steps=5`; Git whitespace check passed and both JSON files parsed. See `evidence/astra-l13-20261119-f/run_f_worker_slice4.md`. The follow-up publication receipt records the exact remote SHA and GitHub readback.
+- **Next action:** the sole existing Run F controller consumes the final published `TASK_COMPLETE` and launches precisely one distinct saved successor for slice 5. G4 and Run F terminal assessment remain open until fifth worker, four actual handovers and terminal `STOP_FINISHED`.
+
 ## L13 Run F third saved worker — slice 3 of 5, 19 November 2026
 
 - **Assignment and observed ID:** Run F `astra-l13-20261119-f`, third distinct saved Project worker `6afe468d-80f8-83ec-9058-1b8aba066115`. Read-only Windows Chrome UIA matched this exact chat ID, the nominated Project ID and this worker's in-progress assistant content. The pre-existing external controller (Windows PID 6684) recorded three distinct IDs, two consumed `TASK_COMPLETE` turns, no pending action and no halt; this worker neither operated nor duplicated it.
