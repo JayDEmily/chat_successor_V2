@@ -1,5 +1,15 @@
 # Progress
 
+## Shoco rollout — 20 November 2026
+
+Resumed at `30f5757` on `codex/chat-succession-finish`. At the owner's direction, the rollout now targets the Shoco account. [Finish plan](docs/astra-succession/finish-chat-succession.md)
+
+- **Private release saved.** Chat Succession 0.4.3 was created in Shoco from the staged package at `2c29406`. Readback confirmed the private personal release, the `start-chat-succession` skill, and its Remote Desktop Commander binding. [Chat Succession](https://chatgpt.com/plugins/plugins_6aff6858ab788191a4a6b7c15a7216bc)
+- **Windows route verified.** The installed launcher routes the verified Shoco Desktop Commander environment to Ubuntu candidate `2c29406` and Chrome's signed-in Shoko profile (`Profile 11`). It passes the native installation directory used by the 0.4.3 worker instructions. The previous command remains the default for other environments. The original Windows wrapper is backed up beside the launcher as `start-project.pre-shoco-0.4.3.cmd`.
+- **Validation.** All 63 Python integration tests and the Windows PowerShell recovery comparisons passed. The Desktop Commander launcher verified an empty Project A Test composer without a Send. Repeat no-Send tests in Shoko verified the pinned Rowing `993741f` and SolidWorks `bb258b6` checkpoints using the existing disposable Project A Test and Project B Test, respectively.
+- **Phone fixture staged.** `codex/g2-iphone-approval-shoco-20261120` was published with its instructions pinned to the new branch. Its base predates the first approval edit. [Fixture `b91b00f`](https://github.com/JayDEmily/chat-succession-trial-approval/blob/b91b00fe75be2ca011eac1ad1cc0d668ffd8d8bf/README.md)
+- **Next.** Verify the overlapping Rowing and SolidWorks desktop trials with a cap of two and observe live worker-view recovery. Run the fresh Shoco iPhone approval from Project A Test after the desktop trials. The prior account's trial evidence is recorded below.
+
 ## James Student release handoff
 
 Resume in `JayDEmily/chat_successor` on `codex/chat-succession-finish`. The audit baseline is `8345978`. The previous iPhone approval, overlapping desktop runs, and two-worker cap are verified below. [Approved finish plan](docs/astra-succession/finish-chat-succession.md) · [Astra ADR](docs/adr/0001-generic-entry-and-re-entry.md)
