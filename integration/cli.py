@@ -17,6 +17,7 @@ import logging
 import os
 import sys
 import time
+from uuid import uuid4
 
 from runner import cycle, initialise, inspect_state
 from repo_reader import (
@@ -31,8 +32,8 @@ DEFAULT_POLL_SECONDS = 20
 
 
 @contextmanager
-def exclusive_lock(state_path: Path):
-    """Non-blocking lock held across observe, prepare, state and Send."""
+def exclusive_lock(state_path: Path, *, blocking: bool = False):
+    """A run lock defaults to non-blocking. Pause marker changes can wait briefly."""
     path = state_path.with_suffix(".lock")
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a+b") as f:
@@ -42,10 +43,10 @@ def exclusive_lock(state_path: Path):
         f.seek(0)
         if os.name == "nt":
             import msvcrt
-            msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+            msvcrt.locking(f.fileno(), msvcrt.LK_LOCK if blocking else msvcrt.LK_NBLCK, 1)
         else:
             import fcntl
-            fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.flock(f.fileno(), fcntl.LOCK_EX if blocking else fcntl.LOCK_EX | fcntl.LOCK_NB)
         try:
             yield
         finally:
@@ -54,6 +55,25 @@ def exclusive_lock(state_path: Path):
                 msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, 1)
             else:
                 fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+
+def read_pause_marker(path: Path) -> bytes | None:
+    try:
+        return path.read_bytes()
+    except FileNotFoundError:
+        return None
+
+
+def release_pause_marker(path: Path, observed: bytes | None) -> bool:
+    """Release the previously observed pause and preserve a concurrent request."""
+    with exclusive_lock(path.with_name(path.name + ".marker"), blocking=True):
+        current = read_pause_marker(path)
+        if current is None:
+            return True
+        if current != observed:
+            return False
+        path.unlink()
+        return True
 
 
 def load_config(path: Path) -> dict:
@@ -135,7 +155,9 @@ def main():
         output("status", path)
         return
     if args.command == "pause":
-        path.with_suffix(".pause").write_text("Operator pause\n", encoding="utf-8")
+        pause = path.with_suffix(".pause")
+        with exclusive_lock(pause.with_name(pause.name + ".marker"), blocking=True):
+            pause.write_text(f"Operator pause {uuid4().hex}\n", encoding="utf-8")
         output("pause_requested", path)
         return
     if args.config is None:
@@ -186,10 +208,14 @@ def main():
             c = Controller.load(path)
             if c.config != config:
                 raise ValueError("Persisted controller configuration does not match run")
+            pause = path.with_suffix(".pause")
+            observed_pause = read_pause_marker(pause)
             c.resume_after_owner()
+            released = release_pause_marker(pause, observed_pause)
+            if not released:
+                c.pause("Operator pause requested")
             c.save(path)
-            path.with_suffix(".pause").unlink(missing_ok=True)
-            output("resumed", path)
+            output("resumed" if released else "pause_preserved", path)
         return
 
     with exclusive_lock(path):

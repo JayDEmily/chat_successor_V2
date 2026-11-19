@@ -12,11 +12,15 @@ cannot find that list. Inspection selects using the verified Project ID and
 normalized repo, or a matching explicit `run_id`. A genuine new job requires
 a stable `job_id`. An optional `owner_context` follows the [plugin request
 contract](../plugins/chat-succession/skills/start-chat-succession/SKILL.md).
-Adding `--check` verifies the GitHub branch and the browser composer without
-posting a message or starting a controller.
+Supply the published `branch` when using `--check`. It verifies the exact
+GitHub branch through Ubuntu Git and checks an empty composer in a temporary
+Chrome window. It closes that window and leaves private run state and saved
+chats intact, including when the Project and repo already have a run.
 
-The launcher keeps controller files in `%LOCALAPPDATA%\ChatSuccession\Runs`
-and makes an Ubuntu bare readback repository for each run. `GitHandoffReader`
+The installed wrapper passes its own private installation directory as
+`--install-root` and uses it for `Requests` and `Runs`. Direct launcher calls
+without that option continue to use `%LOCALAPPDATA%\ChatSuccession`. The
+launcher makes an Ubuntu bare readback repository for each run. `GitHandoffReader`
 fetches the nominated branch tip and checks the run ID, saved chat ID and
 next-assignment Git trailers described in the [startup guide](../README.md).
 Each worker reads and applies its repository's own instructions before it

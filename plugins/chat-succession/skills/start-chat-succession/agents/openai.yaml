@@ -1,6 +1,6 @@
 interface:
   display_name: Chat Succession
-  short_description: Start or continue GitHub-backed work
+  short_description: Start and resume GitHub work
   default_prompt: Continue this project using Chat Succession.
 policy:
   allow_implicit_invocation: false

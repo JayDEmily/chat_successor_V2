@@ -14,6 +14,8 @@ from launch_story import check_bootstrap_journal, launch, start_controller
 from owner_reentry import owner_context, record_context, resume_request
 from repo_reader import GitHandoffReader, HANDOFF_WORKFLOW, validate_github_repo
 from runner import inspect_state
+from succession.composer import ComposerObservation, ComposerState, classify_composer
+from succession.core import Action
 from windows_backend import WindowsUIA
 
 
@@ -99,6 +101,39 @@ def resolve_project(request: dict, state_path: Path) -> tuple[str, str, str]:
     return match[1], name, url
 
 
+def preflight_request(request: dict, state_path: Path) -> dict:
+    branch = request.get("branch")
+    if branch is None:
+        raise ValueError("Preflight requires the published work branch")
+    repo = request["repo"]
+    ref = f"refs/heads/{branch}"
+    result = wsl("/usr/bin/git", "ls-remote", "--exit-code", "--heads",
+                 f"https://github.com/{repo}.git", ref)
+    commit, _, observed_ref = result.partition("\t")
+    if observed_ref != ref or not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", commit):
+        raise RuntimeError("Ubuntu Git did not verify the exact published work branch")
+
+    project, name, url = resolve_project(request, state_path)
+    browser = WindowsUIA(project, name, Path(__file__).with_name("uia_adapter.ps1"),
+                         state_path, project_url=url)
+    observed = browser._invoke("Prepare", Kind=Action.LAUNCH_SUCCESSOR.value,
+                               ProjectUrl=url, Preflight=True)
+    observed_url = observed.get("observed_url", "")
+    landing = PROJECT_URL.fullmatch(observed_url) if isinstance(observed_url, str) else None
+    handle = observed.get("private_window_handle")
+    if (not landing or landing[1] != project or observed.get("project") != project
+            or "current_chat_id" not in observed or observed["current_chat_id"] is not None
+            or type(handle) is not int or handle <= 0):
+        raise RuntimeError("Chrome did not verify a fresh composer in the exact Project")
+    composer = ComposerObservation(editable_text=observed.get("editable_text"),
+                                   uia_value=observed.get("uia_value"),
+                                   attachments_present=observed.get("attachments_present"))
+    if composer.attachments_present is not False or classify_composer(composer) != ComposerState.EMPTY:
+        raise RuntimeError("Chrome did not verify an empty composer without attachments")
+    return {"event": "preflight_passed", "project": project, "repo": repo,
+            "branch": branch, "published_commit": commit}
+
+
 def matching_runs(runs, project, repo):
     matches = {}
     for path in sorted(runs.glob("*/config.json")):
@@ -126,6 +161,8 @@ def matching_runs(runs, project, repo):
 
 def launch_request(path: Path, base: Path, *, check_only: bool = False) -> dict:
     request = read_request(path)
+    if check_only:
+        return preflight_request(request, base / "controller.json")
     project, name, url = resolve_project(request, base / "controller.json")
     identity = project, request["repo"].casefold()
     key = hashlib.sha256(json.dumps(identity).encode()).hexdigest()[:24]
@@ -158,9 +195,9 @@ def launch_request(path: Path, base: Path, *, check_only: bool = False) -> dict:
             state_path = cfg_path.with_name("controller.json")
             if request.get("max_unique_chats", summary["max_unique_chats"]) != summary["max_unique_chats"]:
                 raise RuntimeError("The existing run has a different chat cap")
-            if state_path.exists() and operation == "resume" and not check_only:
+            if state_path.exists() and operation == "resume":
                 return resume_request(cfg_path, state_path, request, name, create_dependencies, start_controller)
-            if state_path.exists() and not check_only:
+            if state_path.exists():
                 return {**summary, "event": "existing_run"}
             intent_path = cfg_path.with_name("bootstrap-intent.json")
             if context and intent_path.exists():
@@ -184,20 +221,27 @@ def launch_request(path: Path, base: Path, *, check_only: bool = False) -> dict:
         if operation == "resume" and not state_path.with_name("bootstrap-intent.json").exists():
             raise RuntimeError("No initialized worker exists to resume")
         kwargs = {}
-        if context and not check_only:
+        if context:
             kwargs["owner_request_id"] = record_context(state_path, context)
-        result = launch(cfg_path, state_path, check_only=check_only, **kwargs)
+        result = launch(cfg_path, state_path, **kwargs)
         return {**result, "run_id": run_id}
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--request", required=True, type=Path)
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--install-root", type=Path,
+                        help="Private Chat Succession installation directory")
     args = parser.parse_args()
-    base = Path(os.environ["LOCALAPPDATA"]) / "ChatSuccession"
+    base = (args.install_root.resolve() if args.install_root is not None
+            else Path(os.environ["LOCALAPPDATA"]) / "ChatSuccession")
     try:
         print(json.dumps(launch_request(args.request, base, check_only=args.check)))
     except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as exc:
         print(json.dumps({"event": "launch_held", "reason": str(exc)}))
         raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

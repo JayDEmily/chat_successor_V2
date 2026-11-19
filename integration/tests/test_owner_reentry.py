@@ -93,6 +93,24 @@ class ReentryTests(unittest.TestCase):
         self.assertFalse(pause.exists())
         self.assertEqual(Controller.load(self.state).state.pending.action_id, action)
 
+    def test_new_pause_during_scoped_release_is_preserved(self):
+        pause = self.state.with_suffix(".pause")
+        pause.write_text("original pause", encoding="utf-8")
+
+        def request_pause(*_args, **_kwargs):
+            pause.write_text("later pause", encoding="utf-8")
+            return "idle"
+
+        self.browser.reentry_disposition.side_effect = request_pause
+        outcome = self.resume(owner_context=self.context, release_pause=True)
+        self.assertEqual(outcome["event"], "pause_preserved")
+        self.assertEqual(pause.read_text(encoding="utf-8"), "later pause")
+        controller = Controller.load(self.state)
+        self.assertEqual(controller.state.pending.phase, "prepared")
+        self.assertTrue(controller.state.halted)
+        self.start.assert_not_called()
+        self.browser.send_once.assert_not_called()
+
     def test_worker_advances_after_preparation(self):
         self.resume(owner_context=self.context)
         self.browser.reentry_disposition.return_value = "advanced"

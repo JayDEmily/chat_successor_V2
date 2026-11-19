@@ -2,7 +2,7 @@
 # reference-controller 'sending' state. No automatic retries or reset.
 [CmdletBinding()]
 param(
- [Parameter(Mandatory=$true)][ValidateSet('ResolveProject','Observe','ObserveReentry','Prepare','Send','Reconcile')][string]$Mode,
+ [Parameter(Mandatory=$true)][ValidateSet('ResolveProject','Observe','ObserveReentry','RecoverView','Prepare','Send','Reconcile')][string]$Mode,
  [string]$ProjectId = '',
  [Parameter(Mandatory=$true)][string]$ProjectName,
  [string]$ProjectUrl = '',
@@ -16,8 +16,10 @@ param(
  [string]$PrepareTargetPath = '',
  [string]$L09Fault = '',
  [string]$PausePath = '',
+ [ValidateSet('missing','stale')][string]$Recovery,
  [string]$ChromeExe = 'C:\Program Files\Google\Chrome\Application\chrome.exe',
- [switch]$AlreadyTyped
+ [switch]$AlreadyTyped,
+ [switch]$Preflight
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -100,8 +102,7 @@ function Chat-FromUrl($url) {
  }
  return $null
 }
-function Get-TargetWindow([string]$expectedChat,[long]$handle) {
- $hits=@()
+function Find-TargetWindows([string]$expectedChat,[long]$handle) {
  foreach($w in (Get-ChromeWindows)) {
   try{
    if($handle -ne 0 -and $w.Current.NativeWindowHandle -ne $handle){continue}
@@ -109,10 +110,21 @@ function Get-TargetWindow([string]$expectedChat,[long]$handle) {
    if(-not (Check-Project $url)){continue}
    $chat=Chat-FromUrl $url
    if($expectedChat -and $chat -cne $expectedChat){continue}
-   $hits+=@{window=$w;url=$url;chat=$chat}
+   @{window=$w;url=$url;chat=$chat}
   }catch{}
  }
+}
+function Get-TargetWindow([string]$expectedChat,[long]$handle) {
+ $hits=@(Find-TargetWindows $expectedChat $handle)
  if($hits.Count -ne 1){throw ('Expected exactly one active Project target, found ' + $hits.Count)}
+ return $hits[0]
+}
+function Get-ObservableSavedTarget {
+ $hits=@(Find-TargetWindows $ChatId 0)
+ if($hits.Count -ne 1){
+  $status=if($hits.Count -eq 0){'missing'}else{'ambiguous'}
+  return @{view_status=$status;project=$ProjectId;chat_id=$ChatId;ready=$false}
+ }
  return $hits[0]
 }
 function Find-Composer($window,$expectedName) {
@@ -317,15 +329,17 @@ function Read-AssistantContent($all,[int]$header,[int]$ordinal) {
  $sha=[Security.Cryptography.SHA256]::Create()
  try{$digest=[BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($body))).Replace('-','').ToLowerInvariant()}finally{$sha.Dispose()}
  $final=if($parts.Count){$parts[-1]}else{''}
- return @{text=$body;final=$final;response_id=('uia-turn-' + $ordinal + '-' + $digest.Substring(0,20))
+ $shortDigest=$digest.Substring(0,20)
+ return @{text=$body;final=$final;response_id=('uia-turn-' + $ordinal + '-' + $shortDigest);digest=$shortDigest
           handoff_locator_verified=($locatorProse -and $finalProse)}
 }
 
-function Read-CurrentTurn($target) {
+function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
  $all=Desc $target.window
  $last=-1
  $lastUser=-1
  $assistantCount=0
+ $userCount=0
  $stop=$false
  for($i=0;$i -lt $all.Count;$i++){
   $el=$all[$i]
@@ -333,27 +347,182 @@ function Read-CurrentTurn($target) {
    if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
       $el.Current.Name -ceq 'ChatGPT said:'){$assistantCount++;$last=$i}
    if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
-      $el.Current.Name -ceq 'You said:'){$lastUser=$i}
+      $el.Current.Name -ceq 'You said:'){$userCount++;$lastUser=$i}
    if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
       $el.Current.Name -ceq 'Stop' -and $el.Current.IsEnabled){$stop=$true}
   }catch{}
  }
  if($last -lt 0){
-  return @{ready=$false;reason='No assistant turn observed';chat_id=$target.chat
-           stop_control=$stop;user_after_assistant=$false;user_turn_seen=$false}
+  $turn=@{ready=$false;reason='No assistant turn observed';chat_id=$target.chat
+          stop_control=$stop;user_after_assistant=$false;user_turn_seen=($lastUser -ge 0)}
+ }else{
+  $content=Read-AssistantContent $all $last $assistantCount
+  # No automatic turn completion until a final status line and no active Stop.
+  $terminal=($content.final -cmatch '^(?:CHAT_STATUS: )?(?:NEED_MORE_TIME|TASK_COMPLETE|ERROR)$')
+  $ready=$terminal -and -not $stop -and $last -gt $lastUser
+  $turn=@{
+   ready=$ready;chat_id=$target.chat;project=$ProjectId;role='assistant'
+   response_id=$content.response_id
+   text=$content.text;complete=$ready;reason=$(if($stop){'Streaming/Stop control present'}elseif(-not $terminal){'No final standalone status leaf'}else{'Completed marker candidate; UIA hierarchy validation pending'})
+   method='UIA_ACCESSIBILITY_TEXT';stop_control=$stop
+   user_after_assistant=($lastUser -gt $last);user_turn_seen=($lastUser -ge 0)
+   handoff_locator_verified=$content.handoff_locator_verified
+  }
  }
- $content=Read-AssistantContent $all $last $assistantCount
- # No automatic turn completion until a final status line and no active Stop.
- $terminal=($content.final -cmatch '^(?:CHAT_STATUS: )?(?:NEED_MORE_TIME|TASK_COMPLETE|ERROR)$')
- $ready=$terminal -and -not $stop -and $last -gt $lastUser
- return @{
-  ready=$ready;chat_id=$target.chat;project=$ProjectId;role='assistant'
-  response_id=$content.response_id
-  text=$content.text;complete=$ready;reason=$(if($stop){'Streaming/Stop control present'}elseif(-not $terminal){'No final standalone status leaf'}else{'Completed marker candidate; UIA hierarchy validation pending'})
-  method='UIA_ACCESSIBILITY_TEXT';stop_control=$stop
-  user_after_assistant=($lastUser -gt $last);user_turn_seen=($lastUser -ge 0)
-  handoff_locator_verified=$content.handoff_locator_verified
+ if($IncludeUserAnchor){
+  $turn['assistant_turn_count']=$assistantCount
+  $turn['user_turn_count']=$userCount
+  if($lastUser -ge 0){
+   $lastUserContent=Read-AssistantContent $all $lastUser $userCount
+   if($lastUserContent.text){$turn['latest_user_digest']=$lastUserContent.digest}
+  }
  }
+ return $turn
+}
+
+function Read-SavedWorkerView($target) {
+ $null=Find-Composer $target.window 'Ask ChatGPT'
+ $turn=Read-CurrentTurn $target -IncludeUserAnchor
+ if(-not $turn.user_turn_seen -or (Get-Address $target.window) -cne $target.url){
+  throw 'Exact saved worker conversation has not loaded'
+ }
+ return $turn
+}
+
+function Test-SameWorkerTurn($first,$second) {
+ return ($first['response_id'] -ceq $second['response_id'] -and
+         $first.ready -eq $second.ready -and $first.stop_control -eq $second.stop_control -and
+         $first.user_after_assistant -eq $second.user_after_assistant -and
+         $first.assistant_turn_count -eq $second.assistant_turn_count -and
+         $first.user_turn_count -eq $second.user_turn_count -and
+         $first['latest_user_digest'] -ceq $second['latest_user_digest'])
+}
+
+function Test-FreshWorkerCompletion($original,$fresh) {
+ if(-not $fresh.ready -or -not $original['latest_user_digest'] -or
+    $original['latest_user_digest'] -cne $fresh['latest_user_digest'] -or
+    $original.user_turn_count -ne $fresh.user_turn_count){return $false}
+ if($original.ready){return $fresh.assistant_turn_count -gt $original.assistant_turn_count}
+ # An unfinished rendering may already contain the final text but still show Stop.
+ return $fresh.assistant_turn_count -ge $original.assistant_turn_count
+}
+
+function Test-ViewRecoveryPaused {
+ return ($PausePath -and (Test-Path -LiteralPath $PausePath))
+}
+
+function Assert-EmptyWorkerComposer($target) {
+ $editor=Find-Composer $target.window 'Ask ChatGPT'
+ $value=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+ if((Read-ComposerText $editor $value) -cne '' -or -not (Check-NoAttachments $target.window) -or
+    @(Find-EnabledSendButtons $target.window).Count){
+  throw 'Saved worker reload held to preserve a draft, attachment or unverified composer'
+ }
+}
+
+function Recover-SavedWorkerView {
+ if($ChatId -cnotmatch '^[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}$' -or -not $Recovery){
+  throw 'Recovery needs a registered saved chat UUID and recovery mode'
+ }
+ if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
+ $savedUrl=$null
+ if($ProjectUrl -cmatch '^(https://chatgpt[.]com/g/(g-p-[a-f0-9]+)(?:-[A-Za-z0-9-]+)?)/project/?$' -and
+    $Matches[2] -ceq $ProjectId){
+  $savedUrl=$Matches[1]+'/c/'+$ChatId
+ }elseif($ProjectUrl -or $Recovery -eq 'missing'){
+  throw 'Recovery needs the verified Project landing URL for the saved worker'
+ }
+ $matchesFound=@(Find-TargetWindows $ChatId 0)
+ if($matchesFound.Count -gt 1){throw 'Multiple accessible Chrome views show the saved worker'}
+ $original=$null
+ $originalTurn=$null
+ if($Recovery -eq 'missing' -and $matchesFound.Count -eq 1){
+  $null=Read-SavedWorkerView $matchesFound[0]
+  return @{recovery_status='restored';window_handle=[long]$matchesFound[0].window.Current.NativeWindowHandle}
+ }
+ if($Recovery -eq 'stale'){
+  if($WindowHandle -le 0){throw 'Stale view recovery needs the original window handle'}
+  if($matchesFound.Count -ne 1 -or $matchesFound[0].window.Current.NativeWindowHandle -ne $WindowHandle){
+   return @{recovery_status='waiting';reason='Original saved worker window changed'}
+  }
+  $original=$matchesFound[0]
+  $originalTurn=Read-SavedWorkerView $original
+  if([string]$originalTurn['response_id'] -cne $SourceResponse -or -not $originalTurn['latest_user_digest']){
+   return @{recovery_status='waiting';reason='Original worker turn changed or its latest user turn is unavailable'}
+  }
+  Assert-EmptyWorkerComposer $original
+ }
+ if(-not $savedUrl){
+  if($original.url -cmatch ('^(https://chatgpt[.]com/g/g-p-[a-f0-9]+(?:-[A-Za-z0-9-]+)?/c/'+[regex]::Escape($ChatId)+')(?:[/?#]|$)')){
+   $savedUrl=$Matches[1]
+  }else{
+   throw 'The original saved worker address is unavailable for recovery'
+  }
+ }
+ if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
+ $probe=Open-ChromeWindow $savedUrl
+ $probeHandle=[long]$probe.Current.NativeWindowHandle
+ $probeWindow=$probe.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
+ $retainProbe=$false
+ $provedCompletion=$false
+ try {
+  $priorFresh=$null
+  for($i=0;$i -lt 25;$i++){
+   Start-Sleep -Milliseconds 400
+   if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
+   try {
+    $candidate=Get-TargetWindow $ChatId $probeHandle
+    $fresh=Read-SavedWorkerView $candidate
+   }catch{
+    $priorFresh=$null
+    continue
+   }
+   if($Recovery -eq 'missing'){
+    $active=@(Find-TargetWindows $ChatId 0)
+    if($active.Count -ne 1 -or $active[0].window.Current.NativeWindowHandle -ne $probeHandle){
+     throw 'The recovered view is not the unique accessible saved worker'
+    }
+    if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
+    $retainProbe=$true
+    return @{recovery_status='restored';window_handle=$probeHandle}
+   }
+   if(Test-FreshWorkerCompletion $originalTurn $fresh){
+    if($null -ne $priorFresh -and (Test-SameWorkerTurn $priorFresh $fresh)){
+     $provedCompletion=$true
+     break
+    }
+    $priorFresh=$fresh
+    Start-Sleep -Milliseconds 800
+   }else{$priorFresh=$null}
+  }
+ } finally {
+  if(-not $retainProbe){$probeWindow.Close()}
+ }
+ if($Recovery -eq 'missing'){throw 'The exact saved chat did not load in the recovery window'}
+ if(-not $provedCompletion){return @{recovery_status='waiting';reason='Fresh view did not verify a completed reply to the same user turn'}}
+ if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
+ # Close the duplicate first. Only the original, still unchanged target may reload.
+ $active=@(Find-TargetWindows $ChatId 0)
+ if($active.Count -ne 1 -or $active[0].window.Current.NativeWindowHandle -ne $WindowHandle -or
+    $active[0].url -cne $original.url){
+  return @{recovery_status='waiting';reason='Original saved worker view changed during recovery'}
+ }
+ $reload=@((Desc $original.window) | Where-Object {
+  $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
+  $_.Current.Name -cmatch '^Reload(?: this page)?$' -and $_.Current.IsEnabled
+ })
+ if($reload.Count -ne 1){throw 'Chrome Reload was not uniquely available in the saved worker window'}
+ $reloadPattern=$reload[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+ if(-not (Test-SameWorkerTurn $originalTurn (Read-SavedWorkerView $active[0]))){
+  return @{recovery_status='waiting';reason='Original worker turn changed before reload'}
+ }
+ Assert-EmptyWorkerComposer $original
+ if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
+ if((Get-Address $original.window) -cne $original.url){
+  return @{recovery_status='waiting';reason='Original saved worker address changed before reload'}
+ }
+ $reloadPattern.Invoke()
+ return @{recovery_status='refreshed';window_handle=$WindowHandle}
 }
 
 function Get-ProjectNavigation($source) {
@@ -398,13 +567,29 @@ function Save-NavigationTarget($source) {
 
 if($Mode -eq 'Observe') {
  if(-not $ChatId){throw 'Observe needs a known saved chat ID'}
- Read-CurrentTurn (Get-TargetWindow $ChatId 0) | ConvertTo-Json -Compress -Depth 5
+ $target=Get-ObservableSavedTarget
+ if($target['view_status']){$target | ConvertTo-Json -Compress;exit 0}
+ $turn=Read-CurrentTurn $target -IncludeUserAnchor
+ if((Get-Address $target.window) -cne $target.url){throw 'Saved worker address changed during observation'}
+ $turn['project']=$ProjectId
+ $turn['view_status']='observed'
+ $turn['window_handle']=[long]$target.window.Current.NativeWindowHandle
+ $turn | ConvertTo-Json -Compress -Depth 5
+ exit 0
+}
+
+if($Mode -eq 'RecoverView') {
+ $receipt=Recover-SavedWorkerView
+ $receipt['project']=$ProjectId
+ $receipt['chat_id']=$ChatId
+ $receipt | ConvertTo-Json -Compress
  exit 0
 }
 
 if($Mode -eq 'ObserveReentry') {
  if(-not $ChatId -or -not $OwnerAnchor){throw 'Owner re-entry needs a saved worker and hold anchor'}
- $existing=Get-TargetWindow $ChatId 0
+ $existing=Get-ObservableSavedTarget
+ if($existing['view_status']){$existing | ConvertTo-Json -Compress;exit 0}
  $turn=Read-CurrentTurn $existing
  if($turn.stop_control -or $turn.user_after_assistant){
   @{disposition='advanced';project=$ProjectId;chat_id=$ChatId} | ConvertTo-Json -Compress
@@ -460,9 +645,16 @@ if($Mode -eq 'ObserveReentry') {
 }
 
 if($Mode -eq 'Prepare') {
+ if($Preflight -and ($Kind -ne 'LAUNCH_SUCCESSOR' -or $ChatId -or $WindowHandle -or
+                    $SourceResponse -or $PrepareAction -or $PrepareTargetPath)){
+  throw 'Preflight only inspects a fresh Project composer'
+ }
+ $preflightWindow=$null
+ try {
  if($Kind -eq 'CONTINUE_CURRENT') {
   if(-not $ChatId){throw 'Continuation needs current saved chat'}
-  $target=Get-TargetWindow $ChatId 0
+  $target=Get-ObservableSavedTarget
+  if($target['view_status']){$target | ConvertTo-Json -Compress;exit 0}
   $editor=Find-Composer $target.window 'Ask ChatGPT'
  }else{
   # In this Chrome installation the Project-specific sidebar control
@@ -512,6 +704,7 @@ if($Mode -eq 'Prepare') {
    }
   }
   if($null -eq $new){$new=Open-ChromeWindow $projectPage}
+  if($Preflight){$preflightWindow=$new.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)}
   $target=$null
   for($i=0;$i -lt 50;$i++){
    Start-Sleep -Milliseconds 400
@@ -536,6 +729,9 @@ if($Mode -eq 'Prepare') {
   attachments_present=$attachments
   observed_url=$target.url
  } | ConvertTo-Json -Compress -Depth 5
+ } finally {
+  if($null -ne $preflightWindow){$preflightWindow.Close()}
+ }
  exit 0
 }
 

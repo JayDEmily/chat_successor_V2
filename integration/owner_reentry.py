@@ -5,7 +5,7 @@ import json
 import os
 import re
 
-from cli import exclusive_lock, load_config
+from cli import exclusive_lock, load_config, read_pause_marker, release_pause_marker
 from runner import inspect_state
 from succession.core import Config, Controller
 
@@ -78,7 +78,8 @@ def resume_request(cfg_path, state_path, request, name, dependencies, start):
             context = None
         if c.state.halted in ("programme_finished", "chat_cap"):
             raise ValueError("Finished or capped runs cannot resume")
-        if pause.exists() and request.get("release_pause") is not True:
+        observed_pause = read_pause_marker(pause)
+        if observed_pause is not None and request.get("release_pause") is not True:
             raise ValueError("The separate operator pause is still in effect")
         if p and p.phase in ("sending", "uncertain"):
             receipt = browser.reconcile_readonly()
@@ -99,7 +100,7 @@ def resume_request(cfg_path, state_path, request, name, dependencies, start):
             if (worker != c.state.current_chat_id or c.state.consumed_responses[-1:] != [[worker, anchor]]
                     or not c.state.halted):
                 raise ValueError("The owner request no longer matches the observed worker and hold")
-            disposition = browser.reentry_disposition(worker, anchor)
+            disposition = browser.reentry_disposition(worker, anchor, release_pause=request.get("release_pause", False))
             if disposition == "idle":
                 request_id = record_context(state_path, context)
                 pointer = (f"Continue the approved work in GitHub repo {cfg['repo']}, "
@@ -110,13 +111,15 @@ def resume_request(cfg_path, state_path, request, name, dependencies, start):
                 c.resume_after_owner()
         else:
             c.resume_after_owner()
+        if request.get("release_pause") and not release_pause_marker(pause, observed_pause):
+            c.pause("Operator pause requested")
+            c.save(state_path)
+            return {"run_id": cfg["run_id"], **inspect_state(state_path), "event": "pause_preserved"}
         c.save(state_path)
         if name_changed:
             config_pending = cfg_path.with_suffix(".tmp")
             config_pending.write_text(json.dumps(cfg), encoding="utf-8")
             config_pending.replace(cfg_path)
-        if request.get("release_pause"):
-            pause.unlink(missing_ok=True)
         result = {"run_id": cfg["run_id"], **inspect_state(state_path)}
     pid = start(cfg_path, state_path)
     return {**result, "event": event, "controller_pid": pid}

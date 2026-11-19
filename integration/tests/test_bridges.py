@@ -122,6 +122,7 @@ class WindowsBridgeTests(unittest.TestCase):
             self.assertNotIn("WindowHandle", w._invoke.call_args.kwargs)
             w.prepare("LAUNCH_SUCCESSOR", "chat-second")
             self.assertNotIn("WindowHandle", w._invoke.call_args.kwargs)
+            w._invoke.return_value["current_chat_id"] = "chat-second"
             w.prepare("CONTINUE_CURRENT", "chat-second")
             self.assertNotIn("WindowHandle", w._invoke.call_args.kwargs)
 

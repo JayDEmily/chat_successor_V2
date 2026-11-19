@@ -137,7 +137,7 @@ class GitHandoffReader(PublishedGit):
     def instructions(self, run_id: str, worker_number: int, owner_request_id: str | None = None) -> str:
         owner = (
             f" Read the scoped owner input for this turn through Remote Desktop Commander from "
-            f"LOCALAPPDATA ChatSuccession/Runs/{run_id}/owner-{owner_request_id}.json. "
+            f"Runs/{run_id}/owner-{owner_request_id}.json. "
             "Apply that scope and record any required approval through the normal project process."
             if owner_request_id else ""
         )
@@ -145,11 +145,13 @@ class GitHandoffReader(PublishedGit):
             f" Chat Succession run {run_id}, worker {worker_number}. "
             "Read the published project rules and work record. "
             "Do the authorized discovery, planning, review or implementation. "
-            "Reconcile published progress and respect explicit holds."
+            "Reconcile published progress and respect explicit holds. "
+            "Use Remote Desktop Commander to locate the Windows ChatSuccession folder containing the unique "
+            "start-project.cmd. Check the connector LocalAppData and the native AppData/Local under the "
+            "current Windows SID profile from Win32_UserProfile. "
+            f"Read your current_chat_id from Runs/{run_id}/controller.json in that installation."
             + owner + " "
             "If there is a prior handoff for this run, read Chat-Succession-Next on the published tip. "
-            "Use Remote Desktop Commander on Windows to read your current_chat_id from "
-            f"LOCALAPPDATA ChatSuccession/Runs/{run_id}/controller.json. "
             "Wait until unique_chat_ids contains your expected worker count before using the ID. "
             "Before TASK_COMPLETE publish a final commit using the authorized project branch with trailers "
             f"Chat-Succession-Run: {run_id}, Chat-ID: your saved chat ID, and "

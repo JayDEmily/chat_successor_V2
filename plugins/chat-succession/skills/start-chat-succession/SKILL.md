@@ -17,13 +17,33 @@ Resolve the exact owner-approved GitHub repository from the conversation and rep
 
 ### Send the private launch request
 
-Use Remote Desktop Commander on the authorized Windows PC. Run this PowerShell expression to allocate a private request path:
+Use Remote Desktop Commander on the authorized Windows PC. The connector's LocalAppData can differ from the native Windows profile. Resolve the installed wrapper and allocate the request beside it with this PowerShell command.
 
 ```powershell
-Join-Path $env:LOCALAPPDATA ('ChatSuccession/Requests/' + [guid]::NewGuid().ToString('N') + '.json')
+$windowsSid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+$nativeProfile = Get-CimInstance -ClassName Win32_UserProfile -Filter "SID = '$windowsSid'" -ErrorAction SilentlyContinue
+$localRoots = @($env:LOCALAPPDATA)
+if ($nativeProfile.LocalPath) {
+    $localRoots += Join-Path $nativeProfile.LocalPath 'AppData\Local'
+}
+$launcherRelativePath = 'ChatSuccession\start-project.cmd'
+$launchers = @(
+    $localRoots | Where-Object { $_ } |
+        ForEach-Object { Join-Path $_ $launcherRelativePath } |
+        Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } |
+        ForEach-Object { (Get-Item -LiteralPath $_).FullName } |
+        Sort-Object -Unique
+)
+if ($launchers.Count -ne 1) {
+    throw "Expected one installed Chat Succession launcher, found $($launchers.Count)."
+}
+$successionLauncher = $launchers[0]
+$requests = Join-Path ([IO.Path]::GetDirectoryName($successionLauncher)) 'Requests'
+[void][IO.Directory]::CreateDirectory($requests)
+@{ launcher = $successionLauncher; request = (Join-Path $requests ([guid]::NewGuid().ToString('N') + '.json')) } | ConvertTo-Json -Compress
 ```
 
-Use Remote Desktop Commander's file write tool to save JSON at that exact returned path. Substitute the confirmed values for this run:
+If launcher discovery is unresolved, report the result. Use Remote Desktop Commander's file write tool to save JSON at the exact returned `request` path. Substitute the confirmed values for this run.
 
 ```json
 {"operation":"inspect","repo":"OWNER/REPO","project_name":"Exact Project name"}
@@ -31,13 +51,13 @@ Use Remote Desktop Commander's file write tool to save JSON at that exact return
 
 Use `project_url` when a verified ChatGPT Project landing link is available. Otherwise the desktop looks for the exact Project's sidebar list. Report unresolved or ambiguous identity. For starts, set the published entry `branch` and optionally `max_unique_chats` (default five).
 
-Start this PowerShell command once, substituting the actual absolute file path from the earlier command. Escape any apostrophe in the Windows path by doubling it inside the literal:
+Run the exact returned `launcher` with that request path once. Escape any apostrophe in either Windows path by doubling it inside the literal.
 
 ```powershell
-& (Join-Path $env:LOCALAPPDATA 'ChatSuccession/start-project.cmd') --request 'ABSOLUTE_REQUEST_PATH'
+& 'ABSOLUTE_LAUNCHER_PATH' --request 'ABSOLUTE_REQUEST_PATH'
 ```
 
-Read the same process output if it returns a PID first. Once you have the inspection result, choose the applicable operation and write a new private request.
+Read the same process output if it returns a PID first. Once you have the inspection result, choose the applicable operation and write a new private request under the same installation. For a no-Send preflight, supply the exact published `branch` and add `--check` to the same launcher command.
 
 | Operation | When to use it |
 | --- | --- |
@@ -57,10 +77,10 @@ Use the final `CHAT_STATUS: TASK_COMPLETE` line only after verifying publication
 
 ## Existing My Cat and Dog trial
 
-When explicitly asked to use the original four-turn fixture for `JayDEmily/my-cat-and-dog`, run its existing Windows command through Remote Desktop Commander and read back that process's result.
+When explicitly asked to use the original four-turn fixture for `JayDEmily/my-cat-and-dog`, use the launcher lookup above with `ChatSuccession\MyCatAndDog\start.cmd` as `$launcherRelativePath`. Return the unique matched launcher path in place of allocating a request. Run that exact path without arguments and read back its process result.
 
 ```powershell
-& (Join-Path $env:LOCALAPPDATA 'ChatSuccession\MyCatAndDog\start.cmd')
+& 'ABSOLUTE_STORY_LAUNCHER_PATH'
 ```
 
 For startup instructions and verified trial results, see the [Chat Succession usage guide](https://github.com/JayDEmily/chat_successor/blob/codex/chat-succession-template/README.md).
