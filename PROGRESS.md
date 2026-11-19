@@ -1,5 +1,14 @@
 # Progress
 
+## iPhone approval and Cat and Dog overlap — 19 November 2026
+
+The owner launched a disposable approval run from the iPhone with Chat
+Succession 0.4.2. It overlapped with Cat and Dog on Windows for 94 seconds
+before the approval hold. Both made one automatic handoff and reached
+`STOP_FINISHED` with two saved workers. Cat and Dog needed one format-only
+follow-up after publication. The iPhone approval was delivered once to the
+original worker. [Live evidence](evidence/astra-generic-entry-20261119/live-acceptance.md#iphone-approval-and-cat-and-dog-overlap)
+
 ## Desktop approval and branch-rotation closeout — 19 November 2026
 
 The bounded desktop replays delivered one scoped approval to the original
@@ -9,7 +18,8 @@ receipt. The replay uncovered two Windows adapter faults, both fixed and
 reviewed. [Replay evidence](evidence/astra-generic-entry-20261119/live-acceptance.md#desktop-closeout-replays)
 
 The personal plugin's 0.4.2 source points to the maintained usage guide. The
-iPhone approval replay and the owner's Stage C workload remain open.
+iPhone approval result is recorded above. The owner's Stage C workload remains
+open.
 
 ## Concurrent Chrome window startup — 19 November 2026
 

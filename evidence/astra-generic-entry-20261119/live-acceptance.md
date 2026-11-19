@@ -159,3 +159,28 @@ but it did not establish the cause of the failed Chrome navigation.
   independent OpenAI Exec Plans review passed. The phone-specific approval
   replay and direct-to-worker approval are `NOT_RUN` in this replay. The
   owner's ordinary Stage C workload remains to be exercised.
+
+## iPhone approval and Cat and Dog overlap
+
+- The owner launched the iPhone trial from the Bird and Pig Trial Project
+  using Chat Succession 0.4.2. Cat and Dog started through the installed
+  Windows wrapper. Both used controller code at `f32c146` and separate
+  Projects, GitHub branches and run journals. Their first active intervals
+  overlapped from 12:04:07 to 12:05:41 UTC. Chrome had three windows during
+  the overlap and returned to one after the test windows closed.
+- Cat and Dog run `5a766a5d366b70c0f482e7aa` published both story lines and
+  confirmed its one successor at 12:06:26 UTC. Worker 2 put its timestamp
+  after a formatted status marker. The observer waited until a format-only
+  follow-up produced the final standalone marker. The controller recorded
+  `STOP_FINISHED` at 12:12:28 UTC with two workers. Both published receipts
+  matched the saved chats. [Final story](https://github.com/JayDEmily/chat-succession-cat-dog-pair/blob/2523cfe54a1c339b0906617c33494cc09a6fd98e/STORY.md)
+- The iPhone run `8f8bb228a19625f450959aaa` first held for the fixture's
+  approval. Approvals entered in the worker chat left the fixture on hold.
+  The request chat then routed one scoped approval, which the controller
+  confirmed in the original worker at 12:11:42 UTC. The approved note was
+  published at `cba98805faec9cbc57bcba8737dd9347b99e0d3d`. The controller
+  confirmed one automatic successor at 12:13:13 UTC and recorded
+  `STOP_FINISHED` at 12:15:10 UTC with two workers. Both published receipts
+  matched the saved chats. Replaying the same launcher approval returned
+  `owner_request_already_recorded` with matching journal and timing hashes.
+  [Final notes](https://github.com/JayDEmily/chat-succession-trial-approval/blob/1590c45af104e34cdcd5c2820e9ce30c9da35e80/NOTES.md)
