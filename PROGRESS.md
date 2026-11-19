@@ -1,15 +1,10 @@
 # Progress
 
-## Active disposable L12 browser test — owner pause during preparation
+## Completed disposable L12 browser test — owner pause during preparation
 
-This branch is the isolated owner-pause regression test. The current saved Chat Succession worker processes only slice 1 under [the test fixture](succession-tests/astra-l12-owner-pause-20261119/INSTRUCTIONS.md), publishes the result on this branch and emits one final completion status. The outside controller and watcher own pause and Send. Run F and all earlier runs are historical evidence on this branch.
+The browser test is closed. Its single saved worker published slice 1 of 2 at `cc6771484fb596cf3a4caa69742cc3e3ea762155`. The local watcher requested owner pause during successful Chrome composer preparation and the controller held before Send. The controller is stopped with its single prepared action preserved, zero successor posts and the second slice outstanding by design.
 
-### L12 first saved worker — slice 1 of 2, 19 November 2026
-
-- Controller state identified saved Project conversation `6afe5110-8f4c-83ec-b91d-e8ee36c272ce` and the nominated branch; the external watcher and controller were running separately. No worker browser Send, controller execution, or successor launch.
-- Processed exactly six first-probe rows: alpha count 2 / value 28, beta 2 / 29, gamma 2 / 21, total six rows / 78. Appended only result 1 and set fixture state to 1/2, `programme_complete=false`, next slice 2.
-- Existing fixture validator passed `fixture_valid=true`, 1/2; local `git diff --check` passed. Evidence: `evidence/astra-l12-owner-pause-20261119/worker_slice1.md`. Remote commit and readback are to be verified separately.
-- Next action: the external watcher/controller handles owner-pause and any subsequent routing; this worker does not assess the live pause outcome or process slice 2.
+This branch is retained as test evidence. Normal assignments use the ordinary repo and working-branch pointer. The main Astra working branch is `work/astra-succession-implementation-20261118`.
 
 ## L13 Run F fifth saved worker — terminal slice 5 of 5, 19 November 2026
 
