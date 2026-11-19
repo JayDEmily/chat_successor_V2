@@ -1,0 +1,43 @@
+{
+  "test_id": "L12",
+  "run_id": "astra-l12-owner-pause-20261119",
+  "scenario_type": "LIVE_OWNER_PAUSE_DURING_CHROME_PREPARE",
+  "outcome": "PASS",
+  "repository": "JayDEmily/chat_successor",
+  "fixture_branch": "codex/astra-owner-pause-20261119",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "implementation_revision": "1610597ade9ef238698c22546b94916bf1e87f68",
+  "worker_publication_commit": "cc6771484fb596cf3a4caa69742cc3e3ea762155",
+  "fixture_branch_closeout_commit": "9ae63a41e4f306705174f92c84077c1a59d9f642",
+  "original_injection_evidence": "evidence/astra-l12-20261118-a/injection_record.json",
+  "first_attempt": {
+    "outcome": "HELD_ON_CHROME_FOCUS_BEFORE_SEND",
+    "prepare_end_utc": "2026-11-19T01:36:27Z",
+    "saved_chat_count": 1,
+    "pending_phase": "prepared",
+    "successor_sends": 0,
+    "recovery": "Explicitly resumed the same positively unsent prepared action after verifying its state. The original worker and completed response were reused."
+  },
+  "passing_attempt": {
+    "first_saved_chat_id": "6afe5110-8f4c-83ec-b91d-e8ee36c272ce",
+    "consumed_response_id": "uia-turn-1-3db60c1271894d5eb644",
+    "prepare_started_utc": "2026-11-19T01:37:52.637959+00:00",
+    "pause_requested_utc": "2026-11-19T01:37:53.072177+00:00",
+    "prepare_exited_utc": "2026-11-19T01:38:01Z",
+    "prepare_exit_code": 0,
+    "hold_observed_utc": "2026-11-19T01:38:01Z",
+    "read_only_check_finished_utc": "2026-11-19T01:38:02.228360+00:00",
+    "operator_pause_marker_preserved": true,
+    "final_action": "HOLD",
+    "hold_reason": "Operator pause requested before Send",
+    "pending_action_phase": "prepared",
+    "saved_chat_count": 1,
+    "send_adapter_invocations": 0,
+    "successor_posts": 0,
+    "read_only_destination_has_saved_chat": false,
+    "read_only_destination_has_posted_message": false,
+    "fixture_valid": true,
+    "completed_steps": 1,
+    "total_steps": 2
+  }
+}

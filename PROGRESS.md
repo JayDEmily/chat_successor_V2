@@ -1,5 +1,15 @@
 # Progress
 
+## Astra bounded integration closeout — 19 November 2026
+
+**G0–G4 closed for the bounded test plan.** Runs A, B and F satisfy L13, with 15 distinct saved Project chats, 12 automatic successors and 15 independently validated published slices. Each controller reached `STOP_FINISHED` with no pending action. A/B ran on the earlier adapter. F repeated the five-chat chain on the polling and focus update. Run C remains assisted. Runs D and E remain preserved at 1/5 and 3/5.
+
+- **Response interpretation:** The unchanged reference parser retains its recorded offline results. In Run F the Windows adapter read back all five completed `TASK_COMPLETE` markers and routed each against current GitHub state. Semantic classification remains disabled and its shadow test was skipped.
+- **Live handoff:** [Run A](evidence/astra-l13-20261118-a/live_record.json), [Run B](evidence/astra-l13-20261118-b/live_record.json) and [Run F](evidence/astra-l13-20261119-f/live_record.json) each recorded four automatic successors and a terminal stop. Run F finished at 12:10:12 Sydney time after 36 minutes 41 seconds, with individual handoffs of 28–44 seconds from verified completion to confirmed Send. The passing runs record zero corrective prompts, manual handovers, duplicate posts or misroutes.
+- **Published work:** The five ordered slice commits for each passing run matched the saved controller identities and final fixture. The original fixture validator passed each run. Run F’s final publication receipt is `ab6aede1c367768f46799087fdc931b8fb950830`.
+- **Owner-pause regression:** `1610597ade9ef238698c22546b94916bf1e87f68` checks pause after Chrome preparation and at the pre-click boundary. All 25 integration tests passed. The [live L12 receipt](evidence/astra-l12-owner-pause-20261119/live_record.json) verifies a pause during successful Chrome preparation with a preserved action and zero successor posts. The first attempt held on Chrome focus. The passing retry reused the same worker and positively unsent action. The disposable test branch is retired at `9ae63a41e4f306705174f92c84077c1a59d9f642`.
+- **Handoff:** [Live results](evidence/live_test_results_20261118.csv) are current. G5 / L14 stays `NOT_RUN`. The Run F controller and the L12 test controller have stopped. This branch has no active test assignment. Use the normal repo and working-branch pointer for the next owner-assigned job. A real job still needs its published progress and next-task record connected to the fixture-scoped repository reader.
+
 ## L13 Run F fifth saved worker — terminal slice 5 of 5, 19 November 2026
 
 - **Scope:** Single final Run F fixture slice from remote `4f9f761b7adf7f4c49b794770fc6c5f5adca653b` in distinct saved Project chat `6afe4a7f-d920-83ec-8b4e-06b9426a1eae`. Existing controller PID 6684 showed five distinct saved IDs, four consumed `TASK_COMPLETE` replies and no pending action/halt; matching read-only Chrome UIA confirmed Project and this chat. No worker-side controller or browser Send.

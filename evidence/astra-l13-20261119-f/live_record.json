@@ -1,0 +1,95 @@
+{
+  "test_id": "L13",
+  "run_id": "astra-l13-20261119-f",
+  "scenario_type": "NATURAL_LIVE_EXISTING_CHROME_PROJECT",
+  "outcome": "PASS",
+  "repository": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "project_identity": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "implementation_revision": "743d35b0d233145e66df1c24073aaf307ec4a677",
+  "repository_head_verified": "ab6aede1c367768f46799087fdc931b8fb950830",
+  "start_utc": "2026-11-19T00:33:31Z",
+  "stop_utc": "2026-11-19T01:10:12Z",
+  "elapsed_seconds": 2201,
+  "bootstrap_type": "One assisted initial setup before autonomous handoffs",
+  "max_unique_chats": 5,
+  "observed_saved_chat_ids": [
+    "6afe4226-e4c8-83ec-b279-4716d52d1e56",
+    "6afe44f5-18cc-83ec-9c3c-0d19a51dcecb",
+    "6afe468d-80f8-83ec-9058-1b8aba066115",
+    "6afe4875-e7b8-83ec-bc8b-6a14169b58e5",
+    "6afe4a7f-d920-83ec-8b4e-06b9426a1eae"
+  ],
+  "observed_successor_launches": 4,
+  "recorded_continuation_actions": 0,
+  "controller_actions": {
+    "WAIT": 67,
+    "STOP_FINISHED": 1
+  },
+  "last_controller_action": "STOP_FINISHED",
+  "controller_halted": "programme_finished",
+  "pending_action_present": false,
+  "corrective_user_messages_observed": 0,
+  "manual_successor_launches_observed": 0,
+  "duplicate_sends_observed": 0,
+  "misroutes_observed": 0,
+  "controller_failure_holds_observed": 0,
+  "logs_reviewed_lines": 318,
+  "events": [
+    {
+      "slice": 1,
+      "saved_chat_id": "6afe4226-e4c8-83ec-b279-4716d52d1e56",
+      "processed_response_id": "uia-turn-1-a0505640de7e3f8bad34",
+      "interpretation": "Completed TASK_COMPLETE marker independently read back",
+      "publication_check_started_utc": "2026-11-19T00:37:45Z",
+      "publication_commit": "3c9fd2faa21be1dcba649abec0dd3432bef66444",
+      "outcome": "SUCCESSOR_CONFIRMED",
+      "successor_confirmed_utc": "2026-11-19T00:38:29Z",
+      "programme_complete": false
+    },
+    {
+      "slice": 2,
+      "saved_chat_id": "6afe44f5-18cc-83ec-9c3c-0d19a51dcecb",
+      "processed_response_id": "uia-turn-1-af922044dfc949f0ad86",
+      "interpretation": "Completed TASK_COMPLETE marker independently read back",
+      "publication_check_started_utc": "2026-11-19T00:44:33Z",
+      "publication_commit": "9ed4e2c0ae3cbf2222473b10e2294c5b63f5adfb",
+      "outcome": "SUCCESSOR_CONFIRMED",
+      "successor_confirmed_utc": "2026-11-19T00:45:07Z",
+      "programme_complete": false
+    },
+    {
+      "slice": 3,
+      "saved_chat_id": "6afe468d-80f8-83ec-9058-1b8aba066115",
+      "processed_response_id": "uia-turn-1-6d3e6c3750725247a334",
+      "interpretation": "Completed TASK_COMPLETE marker independently read back",
+      "publication_check_started_utc": "2026-11-19T00:52:34Z",
+      "publication_commit": "e88ad13f11f2b6a3ae96a95b95b7107fb69f0ff6",
+      "outcome": "SUCCESSOR_CONFIRMED",
+      "successor_confirmed_utc": "2026-11-19T00:53:14Z",
+      "programme_complete": false
+    },
+    {
+      "slice": 4,
+      "saved_chat_id": "6afe4875-e7b8-83ec-bc8b-6a14169b58e5",
+      "processed_response_id": "uia-turn-1-cb5c0114cc0557f005cc",
+      "interpretation": "Completed TASK_COMPLETE marker independently read back",
+      "publication_check_started_utc": "2026-11-19T01:01:28Z",
+      "publication_commit": "94ef1ea977cbb37e644566dbe75596536543bd0b",
+      "outcome": "SUCCESSOR_CONFIRMED",
+      "successor_confirmed_utc": "2026-11-19T01:01:56Z",
+      "programme_complete": false
+    },
+    {
+      "slice": 5,
+      "saved_chat_id": "6afe4a7f-d920-83ec-8b4e-06b9426a1eae",
+      "processed_response_id": "uia-turn-1-7c14192fdfab869215fd",
+      "interpretation": "Completed TASK_COMPLETE marker independently read back",
+      "publication_check_started_utc": "2026-11-19T01:10:09Z",
+      "publication_commit": "d26e4f621bafaeac5c5903a99d8fbf6e19a29632",
+      "outcome": "STOP_FINISHED",
+      "successor_confirmed_utc": null,
+      "programme_complete": true
+    }
+  ]
+}

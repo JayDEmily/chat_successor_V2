@@ -4,9 +4,7 @@ Explore continuing work through fresh ChatGPT conversations, with GitHub holding
 
 `Chat 1 → GitHub → Chat 2 → GitHub → Chat 3 → …`
 
-**Status:** Astra's continuing loop has an offline reference model and an implementation plan. Use the [Astra leaves and gates](docs/astra-succession/README.md) for the implementation handoff. Its live integration is pending.
-
-The owner has created a blank ChatGPT Project called **Chat Succession** (the supplied screenshot displays “Chat succession folder”). Its browser URL and tool configuration have not yet been verified.
+**Status:** Astra's bounded live integration is complete through G4. Runs A, B and F passed the five-chat repeatability check in the owner's existing Chat Succession Project. The optional 30-chat run remains open for selection. See the [closeout and handoff](PROGRESS.md) and the [Astra leaves and gates](docs/astra-succession/README.md).
 
 ## Read for your assignment
 
