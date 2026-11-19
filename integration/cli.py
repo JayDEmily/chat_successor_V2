@@ -19,7 +19,7 @@ import sys
 import time
 
 from runner import cycle, initialise, inspect_state
-from repo_reader import GitPublishedReader
+from repo_reader import GitPublishedReader, GitStoryReader, STORY_REPO, STORY_TURNS
 from windows_backend import WindowsUIA
 from succession.core import Action, Config, Controller
 
@@ -56,8 +56,8 @@ def exclusive_lock(state_path: Path):
 def load_config(path: Path) -> dict:
     cfg = json.loads(path.read_text(encoding="utf-8"))
     fields = {"project", "repo", "branch", "max_unique_chats",
-              "run_id", "fixture_path", "project_name", "repo_dir_wsl"}
-    optional = {"poll_seconds", "response_wait_minutes"}
+              "run_id", "project_name", "repo_dir_wsl"}
+    optional = {"poll_seconds", "response_wait_minutes", "fixture_path", "project_url"}
     if not isinstance(cfg, dict) or not fields <= cfg.keys() <= fields | optional:
         raise ValueError("Private run config requires the documented fields")
     poll_seconds = cfg.get("poll_seconds", DEFAULT_POLL_SECONDS)
@@ -67,8 +67,12 @@ def load_config(path: Path) -> dict:
     if wait_minutes is not None and (
             type(wait_minutes) not in (int, float) or not 0 < wait_minutes < float("inf") / 60):
         raise ValueError("response_wait_minutes must be a positive number or null")
-    if cfg["repo"] != "JayDEmily/chat_successor":
-        raise ValueError("This implementation is scoped to chat_successor")
+    if cfg["repo"] == STORY_REPO:
+        if (cfg["branch"] != "main" or cfg["max_unique_chats"] != len(STORY_TURNS)
+                or not cfg.get("project_url") or "fixture_path" in cfg):
+            raise ValueError("The four-turn story needs main and its verified Project URL")
+    elif cfg["repo"] != "JayDEmily/chat_successor" or not cfg.get("fixture_path"):
+        raise ValueError("The controller requires a supported workload and published-state reader")
     if not cfg["run_id"] or not cfg["project_name"]:
         raise ValueError("Run identity and Project name are required")
     Config(**{key: cfg[key] for key in
@@ -79,11 +83,15 @@ def load_config(path: Path) -> dict:
 def create_dependencies(cfg: dict, state_path: Path):
     browser = WindowsUIA(
         cfg["project"], cfg["project_name"],
-        Path(__file__).resolve().with_name("uia_adapter.ps1"), state_path)
-    reader = GitPublishedReader(
-        Path(cfg["repo_dir_wsl"]), cfg["repo"], cfg["branch"],
-        cfg["fixture_path"],
-        git_command=("wsl.exe", "-d", "Ubuntu", "--exec", "/usr/bin/git"))
+        Path(__file__).resolve().with_name("uia_adapter.ps1"), state_path,
+        project_url=cfg.get("project_url"))
+    checkout = Path(cfg["repo_dir_wsl"])
+    git_command = ("wsl.exe", "-d", "Ubuntu", "--exec", "/usr/bin/git")
+    if cfg["repo"] == STORY_REPO:
+        reader = GitStoryReader(checkout, git_command=git_command)
+    else:
+        reader = GitPublishedReader(checkout, cfg["repo"], cfg["branch"], cfg["fixture_path"],
+                                    git_command=git_command)
     return browser, reader
 
 

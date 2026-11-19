@@ -1,5 +1,18 @@
 # Progress
 
+## My Cat and Dog mobile-launch trial
+
+The personal startup workflow now opens one fresh desktop worker through the
+installed Windows launcher. The iPhone request chat stays outside the count.
+Remote Desktop Commander preflight verified the authenticated Project and an
+empty composer without posting. The first preflight held on a draft and left
+it intact. A later preflight passed.
+
+The four-turn story guide is published at `94eee8b6162520fc0f75f355bdac6e778310c50b`.
+Integration tests used real Git branch publication and a controlled browser
+adapter to verify three successors and the terminal stop. The live iPhone
+dispatch and first story worker are reserved for the owner's trial.
+
 ## Chat Succession startup template — 19 November 2026
 
 The tested Astra baseline is published on `main` at `cffdb253aa24c52cbfec59b08112742f18f7352e`. This separate working branch contains the owner quickstart and the personal plugin source for the two-step browser startup. The shared controller stays separate from the workload repository.

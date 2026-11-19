@@ -5,6 +5,7 @@ param(
  [Parameter(Mandatory=$true)][ValidateSet('Observe','Prepare','Send','Reconcile')][string]$Mode,
  [Parameter(Mandatory=$true)][string]$ProjectId,
  [Parameter(Mandatory=$true)][string]$ProjectName,
+ [string]$ProjectUrl = '',
  [string]$ChatId = '',
  [ValidateSet('CONTINUE_CURRENT','LAUNCH_SUCCESSOR')][string]$Kind = 'CONTINUE_CURRENT',
  [long]$WindowHandle = 0,
@@ -233,19 +234,27 @@ if($Mode -eq 'Prepare') {
   # In this Chrome installation the Project-specific sidebar control
   # was found but remained offscreen after ScrollIntoView. Reuse the observed
   # authenticated /project URL instead; never construct or guess a Project URL.
-  $projectPages=@()
-  foreach($existing in (Get-ChromeWindows)){
-   try{
-    $observedUrl=Get-Address $existing
-    if((Check-Project $observedUrl) -and $observedUrl -match '/project$'){
-     $projectPages+= $observedUrl
+   if($ProjectUrl){
+    if(-not (Check-Project $ProjectUrl) -or $ProjectUrl -cnotmatch '/project$'){
+     throw 'Configured Project URL does not match the nominated Project landing page'
     }
-   }catch{}
-  }
-  $uniquePages=@($projectPages | Select-Object -Unique)
-  if($uniquePages.Count -ne 1){throw 'No unique independently observed target Project URL'}
+    $projectPage=$ProjectUrl
+   }else{
+    $projectPages=@()
+    foreach($existing in (Get-ChromeWindows)){
+     try{
+      $observedUrl=Get-Address $existing
+      if((Check-Project $observedUrl) -and $observedUrl -match '/project$'){
+       $projectPages+= $observedUrl
+      }
+     }catch{}
+    }
+    $uniquePages=@($projectPages | Select-Object -Unique)
+    if($uniquePages.Count -ne 1){throw 'No unique independently observed target Project URL'}
+    $projectPage=$uniquePages[0]
+   }
   $before=@((Get-ChromeWindows) | ForEach-Object {$_.Current.NativeWindowHandle})
-  Start-Process -FilePath $ChromeExe -ArgumentList @('--new-window', $uniquePages[0])
+   Start-Process -FilePath $ChromeExe -ArgumentList @('--new-window', $projectPage)
   $new=$null
   for($i=0;$i -lt 50;$i++){
    Start-Sleep -Milliseconds 400

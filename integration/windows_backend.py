@@ -28,9 +28,10 @@ class BrowserObservationError(RuntimeError):
 
 class WindowsUIA(Browser):
     def __init__(self, project: str, project_name: str, script: Path,
-                 state_path: Path, *, powershell: str = "powershell.exe"):
+                 state_path: Path, *, powershell: str = "powershell.exe", project_url: str | None = None):
         self.project = project
         self.project_name = project_name
+        self.project_url = project_url
         self.script = Path(script)
         self.state_path = Path(state_path)
         self.target_path = self.state_path.with_suffix(".uia-target.json")
@@ -90,8 +91,8 @@ class WindowsUIA(Browser):
                         text=second["text"], complete=True,
                         role=second["role"], project=second["project"])
 
-    def prepare(self, kind: str, current_chat_id: str) -> Destination:
-        payload = self._invoke("Prepare", Kind=kind, ChatId=current_chat_id)
+    def prepare(self, kind: str, current_chat_id: str | None) -> Destination:
+        payload = self._invoke("Prepare", Kind=kind, ChatId=current_chat_id, ProjectUrl=self.project_url)
         if payload.get("project") != self.project:
             raise BrowserObservationError("Prepared wrong Project")
         if type(payload.get("private_window_handle")) is not int:

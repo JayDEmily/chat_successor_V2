@@ -2,6 +2,14 @@
 
 Chat Succession carries a GitHub-backed job through successive ChatGPT conversations in one Project. Each worker reads the current assignment from GitHub, publishes its work there, and leaves the next worker a short repo and branch pointer.
 
+## My Cat and Dog iPhone trial
+
+In the **My cat and dog** Project on your iPhone, choose the personal **Chat Succession** plugin and say:
+
+> Start the My Cat and Dog story from the GitHub instructions.
+
+The request chat starts the installed Windows launcher through Remote Desktop Commander. Chrome opens a fresh chat in the same Project. Once the exact first message and its saved chat ID are verified, that desktop chat becomes worker 1. Each worker publishes one new branch based on the preceding turn. The controller verifies the published line and the worker's Git commit trailer before starting a successor. After four turns the controller stops. [Story instructions](https://github.com/JayDEmily/my-cat-and-dog/blob/main/README.md)
+
 ## Start from a browser Project
 
 Once the owner’s GitHub and Remote Desktop Commander access is connected, the intended setup is two steps per run.
@@ -32,9 +40,9 @@ Use one status on its own final line. For `TASK_COMPLETE`, complete and verify t
 
 ## What works today
 
-Astra’s bounded Windows Chrome and GitHub integration is verified through G4. The current controller accepts the Chat Succession test repository and reads test-fixture state from `succession-tests/<run-id>/STATE.json`. The personal plugin supplies the reusable startup instructions and uses the owner’s existing tools.
+Astra’s bounded Windows Chrome and GitHub integration is verified through G4. The controller accepts Astra test fixtures and the bounded My Cat and Dog branch chain. The personal plugin supplies the startup instructions and uses the owner’s existing tools.
 
-**Stage C is still to be commissioned.** A different GitHub repo or an ordinary job needs a compatible repository reader. It must map the job’s existing published progress to the last worker, whether the overall job is complete, and the next assignment. Until that connection is available and verified, the starter reports the specific setup gap before starting an automatic handoff. The eventual real-job trial uses the job’s own workload and checks.
+**Stage C is still to be commissioned for ordinary workloads.** Each new workload needs a compatible repository reader. It must map the job’s published progress to the last worker, whether the overall job is complete, and the next assignment. The starter reports an unsupported workload before starting its controller.
 
 - [Astra gates and leaves](docs/astra-succession/README.md)
 - [Validation results and handoff](PROGRESS.md)

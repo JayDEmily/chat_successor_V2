@@ -1,5 +1,18 @@
 # Astra integration seam — implementation branch only
 
+The My Cat and Dog trial uses `launch_story.py` from the authorized Windows
+desktop. Its private config points at the verified Project landing page and an
+Ubuntu checkout of `JayDEmily/my-cat-and-dog`. The installed launcher accepts
+`--check` to verify a fresh composer and remote setup without a Send. A normal
+launch persists the first Send intent and verifies the new saved chat before
+initializing worker 1. A later request uses the existing state or reconciles an
+uncertain first Send read-only.
+
+The story reader verifies each published branch in order. It checks the parent,
+the single added dialogue line, and the saved worker ID in the commit trailer.
+The ordinary controller still sends the short pointer to `main`, where the
+next worker discovers its turn. Four published turns end the trial.
+
 The reference controller and its three statuses remain in
 `astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/succession/`.
 This directory is the minimal connection to the existing Windows 11/Chrome

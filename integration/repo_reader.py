@@ -21,6 +21,16 @@ _SAFE_REF = re.compile(r"^(?![-./])(?!.*(?:\\.\\.|//|\\.lock(?:/|$)))[A-Za-z0-9_
 _SAFE_PATH = re.compile(r"^(?![/\\\\])(?!.*(?:\\.\\.|//|\\\\))[A-Za-z0-9_./-]+$")
 
 
+STORY_REPO = "JayDEmily/my-cat-and-dog"
+STORY_TURNS = (
+    ("codex/story-01-scruffy", "Scruffy"),
+    ("codex/story-02-bluey", "Bluey"),
+    ("codex/story-03-scruffy", "Scruffy"),
+    ("codex/story-04-bluey", "Bluey"),
+)
+_SAVED_CHAT = re.compile(r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}")
+
+
 class PublishedStateError(RuntimeError):
     pass
 
@@ -31,23 +41,20 @@ class PublishedObservation:
     commit: str
     run_id: str
     fixture_path: str
+    completed_turns: int | None = None
 
 
-class GitPublishedReader:
+class PublishedGit:
     def __init__(self, repo_dir: Path, repo_name: str, branch: str,
-                 fixture_path: str, *, git_command: tuple[str, ...] = ("git",)):
+                 *, git_command: tuple[str, ...] = ("git",)):
         self.repo_dir = Path(repo_dir)
         self.repo_name = repo_name
         self.branch = branch
-        self.fixture_path = fixture_path.rstrip("/")
         self.git_command = git_command
         if (not _SAFE_REF.fullmatch(branch) or branch.endswith("/") or
                 branch.startswith("refs/") or branch.endswith(".") or
                 branch.endswith("-") or "@{" in branch):
             raise ValueError("Unsafe branch name")
-        if (not _SAFE_PATH.fullmatch(self.fixture_path) or
-                not self.fixture_path.startswith("succession-tests/")):
-            raise ValueError("Fixture path must be a scoped succession-tests subdirectory")
 
     def _git(self, *args: str) -> str:
         result = subprocess.run(
@@ -59,7 +66,7 @@ class GitPublishedReader:
             raise PublishedStateError(f"Git {args[0]} failed ({result.returncode}): {result.stderr.strip()[:400]}")
         return result.stdout.strip()
 
-    def read(self, expected_run_id: str) -> PublishedObservation:
+    def _verify_origin(self):
         # Verify that this local checkout really targets the nominated repository.
         remote_url = self._git("remote", "get-url", "origin")
         valid_https = f"github.com/{self.repo_name}.git"
@@ -68,6 +75,19 @@ class GitPublishedReader:
                 remote_url.rstrip("/").endswith(valid_https[:-4]) or
                 remote_url.rstrip("/").endswith(valid_ssh)):
             raise PublishedStateError("origin does not match nominated repository")
+
+
+class GitPublishedReader(PublishedGit):
+    def __init__(self, repo_dir: Path, repo_name: str, branch: str,
+                 fixture_path: str, *, git_command: tuple[str, ...] = ("git",)):
+        super().__init__(repo_dir, repo_name, branch, git_command=git_command)
+        self.fixture_path = fixture_path.rstrip("/")
+        if (not _SAFE_PATH.fullmatch(self.fixture_path) or
+                not self.fixture_path.startswith("succession-tests/")):
+            raise ValueError("Fixture path must be a scoped succession-tests subdirectory")
+
+    def read(self, expected_run_id: str) -> PublishedObservation:
+        self._verify_origin()
         ref = f"refs/remotes/origin/{self.branch}"
         self._git("fetch", "--no-tags", "origin",
                   f"+refs/heads/{self.branch}:{ref}")
@@ -94,3 +114,62 @@ class GitPublishedReader:
                         next_task=data.get("next_task"),
                         published=True, readable=True)
         return PublishedObservation(view, sha, expected_run_id, self.fixture_path)
+
+
+class GitStoryReader(PublishedGit):
+    """Read one bounded story through its published branch chain."""
+
+    def __init__(self, repo_dir: Path, *, git_command: tuple[str, ...] = ("git",)):
+        super().__init__(repo_dir, STORY_REPO, "main", git_command=git_command)
+
+    def heads(self) -> dict[str, str]:
+        self._verify_origin()
+        names = ["main", *(branch for branch, _ in STORY_TURNS)]
+        refs = [f"refs/heads/{name}" for name in names]
+        lines = self._git("ls-remote", "--refs", "origin", *refs).splitlines()
+        heads = {}
+        for line in lines:
+            sha, ref = line.split("\t")
+            heads[ref.removeprefix("refs/heads/")] = sha
+        if "main" not in heads:
+            raise PublishedStateError("Published story guide on main is missing")
+        return heads
+
+    def read(self, expected_run_id: str) -> PublishedObservation:
+        heads = self.heads()
+        turns = [(branch, speaker) for branch, speaker in STORY_TURNS if branch in heads]
+        if not turns or tuple(turns) != STORY_TURNS[:len(turns)]:
+            raise PublishedStateError("Published story branches must start at turn 1 without gaps")
+        refs = {name: f"refs/remotes/origin/{name}" for name in heads}
+        self._git("fetch", "--atomic", "--no-tags", "origin",
+                  *(f"+refs/heads/{name}:{ref}" for name, ref in refs.items()))
+        for name, ref in refs.items():
+            if self._git("rev-parse", "--verify", f"{ref}^{{commit}}") != heads[name]:
+                raise PublishedStateError(f"Published branch {name} changed during observation")
+
+        parent = heads["main"]
+        previous_lines = []
+        chat_ids = []
+        for branch, speaker in turns:
+            commit = heads[branch]
+            if self._git("rev-list", "--parents", "-n", "1", commit).split() != [commit, parent]:
+                raise PublishedStateError(f"{branch} must add one commit to the previous turn")
+            if self._git("diff-tree", "--no-commit-id", "--name-only", "-r", commit) != "STORY.md":
+                raise PublishedStateError(f"{branch} must change only STORY.md")
+            lines = self._git("show", f"{commit}:STORY.md").splitlines()
+            prefix = f"{speaker}: "
+            if (len(lines) != len(previous_lines) + 1 or lines[:-1] != previous_lines
+                    or not lines[-1].startswith(prefix) or not lines[-1][len(prefix):].strip()):
+                raise PublishedStateError(f"{branch} must append one line spoken by {speaker}")
+            chat_id = self._git("show", "-s", "--format=%(trailers:key=Chat-ID,valueonly)", commit)
+            if not _SAVED_CHAT.fullmatch(chat_id) or chat_id in chat_ids:
+                raise PublishedStateError(f"{branch} needs one distinct saved Chat-ID trailer")
+            chat_ids.append(chat_id)
+            parent, previous_lines = commit, lines
+
+        count = len(turns)
+        done = count == len(STORY_TURNS)
+        view = RepoView(repo=self.repo_name, branch=self.branch, last_chat_id=chat_ids[-1],
+                        programme_complete=done, next_task=None if done else STORY_TURNS[count][0],
+                        published=True, readable=True)
+        return PublishedObservation(view, parent, expected_run_id, "STORY.md", completed_turns=count)

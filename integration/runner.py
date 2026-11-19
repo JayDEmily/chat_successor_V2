@@ -19,7 +19,7 @@ if str(_KIT) not in sys.path:
 
 from succession.composer import ComposerObservation, ComposerState, classify_composer
 from succession.core import Action, Config, Controller, Response, RepoView, Status, interpret
-from repo_reader import GitPublishedReader, PublishedStateError
+from repo_reader import GitPublishedReader, GitStoryReader, PublishedStateError
 
 
 @dataclass(frozen=True)
@@ -115,7 +115,7 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
         return Action.HOLD
 
 
-def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader,
+def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader | GitStoryReader,
           run_id: str, state_path: Path, *, defer_dispatch: bool = False,
           response_deadline: float | None = None) -> Action:
     """One observation/dispatch cycle.
@@ -155,7 +155,11 @@ def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader,
             response.chat_id == controller.state.current_chat_id):
         logging.info("publication_check_start chat=%s", response.chat_id)
         try:
-            repo = reader.read(run_id).view
+            publication = reader.read(run_id)
+            if (isinstance(reader, GitStoryReader) and
+                    publication.completed_turns != controller.unique_count):
+                raise PublishedStateError("Published story turn does not match the current worker count")
+            repo = publication.view
         except (PublishedStateError, OSError, ValueError) as exc:
             # Hold without consuming: publication can be repaired and this
             # exact completed turn can then be processed once on resume.
