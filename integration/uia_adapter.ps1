@@ -47,6 +47,16 @@ function Get-ChromeWindows {
 }
 function Open-ChromeWindow([string]$url) {
  if(-not (Test-Path -LiteralPath $ChromeExe -PathType Leaf)){throw 'Chrome executable missing'}
+ $launchArgs=@('--new-window',$url)
+ if($env:CHAT_SUCCESSION_CHROME_PROFILE_PATH){
+  $chromeProfileDirectory=Get-Item -LiteralPath $env:CHAT_SUCCESSION_CHROME_PROFILE_PATH
+  if(-not $chromeProfileDirectory.PSIsContainer -or $null -eq $chromeProfileDirectory.Parent -or
+     -not (Test-Path -LiteralPath (Join-Path $chromeProfileDirectory.Parent.FullName 'Local State') -PathType Leaf)){
+   throw 'The nominated existing Chrome profile directory was not verified'
+  }
+  $launchArgs=@(('--user-data-dir="{0}"' -f $chromeProfileDirectory.Parent.FullName),
+                ('--profile-directory="{0}"' -f $chromeProfileDirectory.Name)) + $launchArgs
+ }
  # Each Chat Succession launch must observe its own new window handle.
  $mutex=[System.Threading.Mutex]::new($false,'Local\ChatSuccession.OpenChromeWindow')
  $acquired=$false
@@ -55,7 +65,7 @@ function Open-ChromeWindow([string]$url) {
   catch [System.Threading.AbandonedMutexException] {$acquired=$true}
   if(-not $acquired){throw 'Timed out waiting to open a Chrome window'}
   $before=@((Get-ChromeWindows) | ForEach-Object {$_.Current.NativeWindowHandle})
-  Start-Process -FilePath $ChromeExe -ArgumentList @('--new-window',$url)
+  Start-Process -FilePath $ChromeExe -ArgumentList $launchArgs
   for($i=0;$i -lt 50;$i++){
    Start-Sleep -Milliseconds 400
    $candidates=@((Get-ChromeWindows) | Where-Object {$before -notcontains $_.Current.NativeWindowHandle})

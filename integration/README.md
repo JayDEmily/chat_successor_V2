@@ -22,6 +22,11 @@ next-assignment Git trailers described in the [startup guide](../README.md).
 Each worker reads and applies its repository's own instructions before it
 works or publishes.
 
+When the connector's default Chrome profile differs from the signed-in
+desktop profile, an operator can set `CHAT_SUCCESSION_CHROME_PROFILE_PATH`
+to the verified existing profile directory for the launcher process. The
+controller inherits that setting for its later Chrome window launches.
+
 ## Existing story and Astra modes
 
 The My Cat and Dog trial uses `launch_story.py` from the authorized Windows
