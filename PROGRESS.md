@@ -1,5 +1,12 @@
 # Progress
 
+## L13 Run F third saved worker — slice 3 of 5, 19 November 2026
+
+- **Assignment and observed ID:** Run F `astra-l13-20261119-f`, third distinct saved Project worker `6afe468d-80f8-83ec-9058-1b8aba066115`. Read-only Windows Chrome UIA matched this exact chat ID, the nominated Project ID and this worker's in-progress assistant content. The pre-existing external controller (Windows PID 6684) recorded three distinct IDs, two consumed `TASK_COMPLETE` turns, no pending action and no halt; this worker neither operated nor duplicated it.
+- **One slice only:** from published source `99b7577e85a9b04c7dd14a62bb4078ff1ba8352b`, aggregated the unchanged Run F probe `fixture-34f40d483630871b`: alpha 2/22, beta 2/5, gamma 2/6, six rows and total value 33. Appended the third result; updated state to 3/5, `programme_complete=false`, next slice 4. All prior results and Run E remained unchanged.
+- **Verified publication:** substantive fixture and evidence commit `e88ad13f11f2b6a3ae96a95b95b7107fb69f0ff6` was pushed to the nominated branch, and `git ls-remote` returned this exact SHA. The original fixture validator returned `fixture_valid=true`, `completed_steps=3`, `total_steps=5`; staged `git diff --check` was clean. Independent GitHub pinned readback at `e88ad13` confirmed the three Run F results, state and `evidence/astra-l13-20261119-f/run_f_worker_slice3.md`. Run E state was also read back unchanged at 3/5.
+- **Next action:** the existing single external Run F controller consumes this worker's final `TASK_COMPLETE`, then launches exactly one distinct saved successor for **slice 4 of 5**. Do not manually launch, Send, resume or operate another controller. G4 repeatability remains open pending all five validated Run F slices, four handovers and terminal observation.
+
 ## L13 Run F second saved worker — slice 2 of 5, 19 November 2026
 
 - **Run and provenance:** `astra-l13-20261119-f` only; observed controller-recorded saved chat ID `6afe44f5-18cc-83ec-9c3c-0d19a51dcecb`, distinct from worker 1. Existing controller PID 6684 continues; this worker did not Send or start a controller. Starting published revision `e441598385e46d1c2809873732b8edb450a5227b`.
