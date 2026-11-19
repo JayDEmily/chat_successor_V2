@@ -1,0 +1,26 @@
+{
+  "test_id": "L13",
+  "run_id": "astra-l13-20261119-f",
+  "scope": "fresh independent five-chat run; Run E preserved",
+  "repo": "JayDEmily/chat_successor",
+  "branch": "work/astra-succession-implementation-20261118",
+  "fixture_path": "succession-tests/astra-l13-20261119-f",
+  "project_id": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "initial_chat_id": "6afe4226-e4c8-83ec-b279-4716d52d1e56",
+  "initial_chat_source": "Windows Chrome UIA read-only active address and Project ID",
+  "base_revision": "743d35b0d233145e66df1c24073aaf307ec4a677",
+  "run_e_observed_completed_steps": 3,
+  "run_e_observed_last_chat_id": "6afe37c3-efcc-83ec-8644-1f418f439259",
+  "run_e_modified": false,
+  "total_slices": 5,
+  "maximum_distinct_saved_chats": 5,
+  "required_automatic_successors": 4,
+  "bootstrap_type": "existing saved Project chat; assisted controller start",
+  "initial_fixture_validator": {
+    "fixture_valid": true,
+    "completed_steps": 0,
+    "total_steps": 5
+  },
+  "controller_initialized_at_setup": false,
+  "setup_status": "STAGED_FOR_CONTROLLER_BOOTSTRAP"
+}

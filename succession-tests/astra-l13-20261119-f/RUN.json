@@ -1,0 +1,157 @@
+{
+  "fixture_version": 1,
+  "purpose": "Synthetic repo-only continuity workload, not a production work-slice limit",
+  "run_id": "astra-l13-20261119-f",
+  "steps": [
+    {
+      "probe_nonce": "fixture-0ce0a7e09bb5cb1c",
+      "rows": [
+        {
+          "category": "Gamma",
+          "value": 7
+        },
+        {
+          "category": "BETA",
+          "value": 24
+        },
+        {
+          "category": " Alpha ",
+          "value": 21
+        },
+        {
+          "category": "alpha",
+          "value": 4
+        },
+        {
+          "category": " beta ",
+          "value": -8
+        },
+        {
+          "category": " gamma ",
+          "value": 27
+        }
+      ],
+      "step": 1
+    },
+    {
+      "probe_nonce": "fixture-39cc8fcf3b50ec81",
+      "rows": [
+        {
+          "category": " beta ",
+          "value": 29
+        },
+        {
+          "category": "Gamma",
+          "value": 22
+        },
+        {
+          "category": " Alpha ",
+          "value": 2
+        },
+        {
+          "category": "BETA",
+          "value": 9
+        },
+        {
+          "category": " gamma ",
+          "value": 23
+        },
+        {
+          "category": "alpha",
+          "value": -8
+        }
+      ],
+      "step": 2
+    },
+    {
+      "probe_nonce": "fixture-34f40d483630871b",
+      "rows": [
+        {
+          "category": "Gamma",
+          "value": 15
+        },
+        {
+          "category": " beta ",
+          "value": 11
+        },
+        {
+          "category": "alpha",
+          "value": 1
+        },
+        {
+          "category": "BETA",
+          "value": -6
+        },
+        {
+          "category": " Alpha ",
+          "value": 21
+        },
+        {
+          "category": " gamma ",
+          "value": -9
+        }
+      ],
+      "step": 3
+    },
+    {
+      "probe_nonce": "fixture-fa7d5b5a5a205b26",
+      "rows": [
+        {
+          "category": "BETA",
+          "value": 7
+        },
+        {
+          "category": " beta ",
+          "value": 18
+        },
+        {
+          "category": " gamma ",
+          "value": 5
+        },
+        {
+          "category": " Alpha ",
+          "value": 27
+        },
+        {
+          "category": "alpha",
+          "value": -4
+        },
+        {
+          "category": "Gamma",
+          "value": 19
+        }
+      ],
+      "step": 4
+    },
+    {
+      "probe_nonce": "fixture-964f687612d858eb",
+      "rows": [
+        {
+          "category": "Gamma",
+          "value": 2
+        },
+        {
+          "category": "alpha",
+          "value": -3
+        },
+        {
+          "category": "BETA",
+          "value": -4
+        },
+        {
+          "category": " Alpha ",
+          "value": -8
+        },
+        {
+          "category": " beta ",
+          "value": 20
+        },
+        {
+          "category": " gamma ",
+          "value": 17
+        }
+      ],
+      "step": 5
+    }
+  ]
+}
