@@ -144,7 +144,14 @@ class ReentryTests(unittest.TestCase):
         ) as launch:
             first = launch_request(path, self.base)
             run = self.base / "Runs" / first["run_id"] / "controller.json"
+            path.write_text(json.dumps({**args, "operation": "inspect"}))
+            self.assertEqual(launch_request(path, self.base)["run_stage"], "configured")
+            intent = run.with_name("bootstrap-intent.json")
+            intent.touch()
+            self.assertEqual(launch_request(path, self.base)["run_stage"], "initial_send_pending")
+            intent.unlink()
             c = initialise(run, Config(PROJECT, REPO, BRANCH, 5), CHAT)
+            self.assertEqual(launch_request(path, self.base)["run_stage"], "registered")
             moved = {**args, "branch": "work/other", "project_name": "Renamed"}
             path.write_text(json.dumps(moved))
             self.assertEqual(launch_request(path, self.base)["run_id"], first["run_id"])

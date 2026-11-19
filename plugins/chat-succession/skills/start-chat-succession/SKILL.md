@@ -41,8 +41,8 @@ Read the same process output if it returns a PID first. Once you have the inspec
 
 | Operation | When to use it |
 | --- | --- |
-| `start` | No run is registered and the work is authorized. Supply `branch`. |
-| `resume` | Use the selected `run_id` after the owner directs continuation. |
+| `start` | No run exists, or inspection reports `run_stage: configured` after a known pre-Send hold. Supply `branch` and reuse the existing run ID when present. |
+| `resume` | Use the selected `run_id` for a registered worker after the owner directs continuation. If inspection reports `initial_send_pending`, use resume without new context to reconcile the original Send. |
 | `new` | A genuinely new authorized job after the prior run finished or reached its cap. Supply `branch`, a stable 24-character lowercase alphanumeric `job_id`, and the prior `run_id` when needed to select it. |
 
 When the owner's current instruction is relevant and absent from the published work record, include `owner_context` with string fields `request_id` (24–64 lowercase alphanumeric characters), `instruction` (the actual current owner input), `scope`, and `pointer` (the project or proposal reference). For resume, add `worker_id` and `response_id` from the inspection's `response_anchor`. Reuse the same logical ID when retrying. Use observer-only resume for a positively identified worker that already received the input. When delivery is unclear, the launcher verifies the saved worker's turn before considering a Send. Set `release_pause` only when the owner explicitly releases a separate operator pause.

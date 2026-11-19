@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "chat-succession",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Start or continue bounded GitHub-backed work in a ChatGPT Project.",
   "repository": "https://github.com/JayDEmily/chat_successor",
   "extensions": {

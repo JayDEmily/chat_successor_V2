@@ -244,17 +244,23 @@ if($Mode -eq 'ResolveProject') {
 
 function Test-AssistantProse($element) {
  $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
- $prose=$false
+ $paragraph=$false
+ $renderer=$false
  for($i=0;$i -lt 24 -and $null -ne $element;$i++){
   $kind=$element.Current.LocalizedControlType
   $class=$element.Current.ClassName
-  if($kind -match 'code|quote|tool' -or $class -match '(?:^|\s)(?:code|pre|blockquote|tool-output)(?:\s|$)'){
+  if($kind -match 'code|quote|tool' -or $class -match 'codeblock|inlinecode|block.?quote|tool-output|(?:^|\s)(?:pre|code)(?:\s|$)'){
    return $false
   }
-  if($class -match '(?:^|\s)markdown(?:\s|$)'){$prose=$true;break}
+  if($kind -eq 'paragraph' -or
+     ($class -match '(?:^|\s)TextBase-\w+' -and $class -match '(?:^|\s)Text-\w+')){$paragraph=$true}
+  if($class -match '(?:^|\s)(?:markdown(?:\s|$)|Renderer-\w+)'){$renderer=$true}
+  if($kind -eq 'region' -and $class -match '(?:^|\s)thread-scroll-container(?:\s|$)'){
+   return ($paragraph -and $renderer)
+  }
   $element=$walker.GetParent($element)
  }
- return $prose
+ return $false
 }
 
 function Compare-OwnerTurn($turn,[string]$anchor) {

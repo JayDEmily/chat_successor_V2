@@ -108,16 +108,18 @@ def matching_runs(runs, project, repo):
         if cfg["run_id"] != path.parent.name or cfg.get("workflow") != HANDOFF_WORKFLOW:
             raise RuntimeError("Saved run configuration is inconsistent")
         state = path.with_name("controller.json")
-        summary = inspect_state(state) if state.exists() else {
-            "halted": "Initial Send requires reconciliation" if path.with_name("bootstrap-intent.json").exists() else None,
-            "event": "initial_send_pending" if path.with_name("bootstrap-intent.json").exists() else "configured",
+        stage = "registered" if state.exists() else (
+            "initial_send_pending" if path.with_name("bootstrap-intent.json").exists() else "configured"
+        )
+        summary = inspect_state(state) if stage == "registered" else {
+            "halted": "Initial Send requires reconciliation" if stage == "initial_send_pending" else None,
             "project": project, "repo": cfg["repo"], "branch": cfg["branch"],
             "initial_branch": cfg["branch"], "max_unique_chats": cfg["max_unique_chats"],
         }
         if any(summary[k] != cfg[v] for k, v in (("project", "project"), ("repo", "repo"),
                                                ("initial_branch", "branch"), ("max_unique_chats", "max_unique_chats"))):
             raise RuntimeError("Saved controller does not match its private configuration")
-        matches[cfg["run_id"]] = (path, {**summary, "run_id": cfg["run_id"]})
+        matches[cfg["run_id"]] = (path, {**summary, "run_id": cfg["run_id"], "run_stage": stage})
     return matches
 
 
