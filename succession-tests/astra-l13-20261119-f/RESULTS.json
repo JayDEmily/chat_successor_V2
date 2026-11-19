@@ -38,5 +38,25 @@
         "total": 45
       }
     }
+  },
+  {
+    "run_id": "astra-l13-20261119-f",
+    "step": 3,
+    "chat_id": "6afe468d-80f8-83ec-9058-1b8aba066115",
+    "probe_nonce": "fixture-34f40d483630871b",
+    "summary": {
+      "alpha": {
+        "count": 2,
+        "total": 22
+      },
+      "beta": {
+        "count": 2,
+        "total": 5
+      },
+      "gamma": {
+        "count": 2,
+        "total": 6
+      }
+    }
   }
 ]
