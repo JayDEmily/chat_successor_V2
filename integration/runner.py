@@ -9,7 +9,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 import json
+import logging
 import sys
+import time
 
 _KIT = Path(__file__).resolve().parents[1] / "astra/2026-11-17/unpacked/chat_succession_test_kit_20261117"
 if str(_KIT) not in sys.path:
@@ -100,7 +102,8 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
 
 
 def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader,
-          run_id: str, state_path: Path, *, defer_dispatch: bool = False) -> Action:
+          run_id: str, state_path: Path, *, defer_dispatch: bool = False,
+          response_deadline: float | None = None) -> Action:
     """One observation/dispatch cycle.
 
     The L06 one-shot preparation mode persists the reference controller's
@@ -117,10 +120,16 @@ def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader,
             return Action(controller.state.pending.kind)
         return dispatch_prepared(controller, browser, state_path)
 
+    response = None
     try:
-        response = browser.observe(controller.state.current_chat_id)
+        if response_deadline is None or time.monotonic() < response_deadline:
+            response = browser.observe(controller.state.current_chat_id)
     except Exception as exc:
         controller.pause(f"Desktop response observation unavailable: {exc}")
+        controller.save(state_path)
+        return Action.HOLD
+    if response_deadline is not None and time.monotonic() >= response_deadline:
+        controller.pause("Configured response wait expired")
         controller.save(state_path)
         return Action.HOLD
     if response is None:
@@ -130,6 +139,7 @@ def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader,
     if (response.role == "assistant" and parsed.status == Status.TASK_COMPLETE and
             response.project == controller.config.project and
             response.chat_id == controller.state.current_chat_id):
+        logging.info("publication_check_start chat=%s", response.chat_id)
         try:
             repo = reader.read(run_id).view
         except (PublishedStateError, OSError, ValueError) as exc:
@@ -138,6 +148,7 @@ def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader,
             controller.pause(f"Published Git state unavailable: {exc}")
             controller.save(state_path)
             return Action.HOLD
+        logging.info("publication_check_finished chat=%s", response.chat_id)
     decision = controller.consume(response, repo)
     controller.save(state_path)
     if decision.action in (Action.CONTINUE_CURRENT, Action.LAUNCH_SUCCESSOR):

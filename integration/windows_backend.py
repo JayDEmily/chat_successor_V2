@@ -8,6 +8,7 @@ from __future__ import annotations
 from dataclasses import asdict
 from pathlib import Path
 import json
+import logging
 import os
 import subprocess
 import tempfile
@@ -16,6 +17,9 @@ import time
 from runner import Browser, Destination, Submitted
 from succession.composer import ComposerObservation
 from succession.core import Controller, Response
+
+
+log = logging.getLogger(__name__)
 
 
 class BrowserObservationError(RuntimeError):
@@ -44,8 +48,13 @@ class WindowsUIA(Browser):
                     cmd.append(f"-{name}")
             elif value is not None:
                 cmd.extend([f"-{name}", str(value)])
+        chat = arguments.get("ChatId", "-")
+        log.info("uia_start mode=%s chat=%s", mode, chat)
+        started = time.monotonic()
         result = subprocess.run(cmd, text=True, capture_output=True,
                                 encoding="utf-8", errors="replace", timeout=90)
+        log.info("uia_exit mode=%s chat=%s seconds=%.2f code=%d",
+                 mode, chat, time.monotonic() - started, result.returncode)
         if result.returncode:
             raise BrowserObservationError(
                 f"Windows UIA {mode} failed ({result.returncode}): "
@@ -57,6 +66,9 @@ class WindowsUIA(Browser):
                 f"Windows UIA {mode} returned unparseable output") from exc
         if not isinstance(payload, dict):
             raise BrowserObservationError("Windows UIA output is not an object")
+        if mode == "Observe":
+            log.info("observation chat=%s ready=%s reason=%s",
+                     chat, payload.get("ready"), payload.get("reason"))
         return payload
 
     def observe(self, expected_chat_id: str) -> Response | None:
@@ -67,6 +79,7 @@ class WindowsUIA(Browser):
         time.sleep(1.2)
         second = self._invoke("Observe", ChatId=expected_chat_id)
         if not second.get("ready") or second != first:
+            log.info("response_readback_changed chat=%s", expected_chat_id)
             return None
         if (second.get("project") != self.project or
                 second.get("chat_id") != expected_chat_id or

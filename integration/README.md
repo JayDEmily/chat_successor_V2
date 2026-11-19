@@ -29,6 +29,26 @@ Windows `msvcrt.locking` on a `\\wsl.localhost` UNC path returned
 private config and the fixture repository wherever appropriate; do not
 put controller state into the Git branch or reset an existing run.
 
+In the existing private JSON config, `"poll_seconds": 20` sets the delay
+between response checks and defaults to 20 when omitted.
+`"response_wait_minutes": 40` gives the controller 40 minutes to observe
+each completed response. The time starts when `run` begins and starts again
+after each confirmed Send, including same-chat continuations. Omit the
+setting or use `null` for an unlimited wait. Expiry holds the saved controller
+before it consumes a late response or prepares a new Send. An observation
+already in progress can finish before the hold is recorded. An already
+prepared action follows the existing dispatch and recovery rules.
+Remove any old `--poll-seconds 5` from launchers to use the config value.
+
+`run` writes one final JSON result to stdout. Redirect stderr to a private log
+to retain UTC timestamps for UI Automation calls, observation outcomes,
+publication checks and confirmed submissions. The adapter logs the
+observation reason without response text.
+
+Only the clipboard check requests foreground focus. It briefly waits for the
+known Chrome window and checks editor focus before keyboard input. If Windows
+denies the request or focus changes during the probe, the adapter holds.
+
 The PowerShell `-AlreadyTyped` recovery switch is reserved for a manually
 verified, **not previously sent** exact test draft. It is not called by
 the automatic backend, which requires a genuinely empty composer. A

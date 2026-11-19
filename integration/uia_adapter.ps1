@@ -123,21 +123,36 @@ function Check-NoAttachments($window) {
  }
  return $true
 }
+function Assert-EditorFocus([IntPtr]$hwnd,$editor) {
+ if([AstraFocus]::GetForegroundWindow() -ne $hwnd -or -not $editor.Current.HasKeyboardFocus){
+  throw 'Nominated composer lost keyboard focus during clipboard probe'
+ }
+}
 function Safe-ClipboardEditorRead($window,$editor) {
  # UIA Value and TextPattern on Chrome expose the placeholder as text.
- # Use actual selected content without changing the draft, then restore clipboard.
+ # Only this clipboard read needs foreground keyboard input.
+ $hwnd=[IntPtr]$window.Current.NativeWindowHandle
+ for($i=0;$i -lt 10 -and [AstraFocus]::GetForegroundWindow() -ne $hwnd;$i++){
+  [void][AstraFocus]::SetForegroundWindow($hwnd)
+  Start-Sleep -Milliseconds 200
+ }
+ if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Could not focus nominated window'}
+ $editor.SetFocus()
+ for($i=0;$i -lt 5 -and -not $editor.Current.HasKeyboardFocus;$i++){
+  if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Nominated window lost focus before clipboard probe'}
+  Start-Sleep -Milliseconds 100
+ }
+ Assert-EditorFocus $hwnd $editor
  $original=[System.Windows.Forms.Clipboard]::GetDataObject()
  $sentinel='ASTRA_EDITOR_SENTINEL_' + [guid]::NewGuid().ToString('N')
- $hwnd=[IntPtr]$window.Current.NativeWindowHandle
  try {
   [System.Windows.Forms.Clipboard]::SetText($sentinel)
-  if(-not [AstraFocus]::SetForegroundWindow($hwnd)){throw 'Could not focus nominated window'}
-  $editor.SetFocus()
-  Start-Sleep -Milliseconds 300
-  if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw ('Foreground focus changed before clipboard probe; target=' + $hwnd + ', actual=' + [AstraFocus]::GetForegroundWindow())}
+  Assert-EditorFocus $hwnd $editor
   [System.Windows.Forms.SendKeys]::SendWait('^a')
+  Assert-EditorFocus $hwnd $editor
   [System.Windows.Forms.SendKeys]::SendWait('^c')
   Start-Sleep -Milliseconds 900
+  Assert-EditorFocus $hwnd $editor
   $actual=[System.Windows.Forms.Clipboard]::GetText()
   if($actual -ceq $sentinel){return ''}
   return $actual

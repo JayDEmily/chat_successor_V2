@@ -1,5 +1,12 @@
 # Progress
 
+## Controller polling, monitoring and composer focus — 19 November 2026
+
+- The owner requested a 20-second default poll, an optional response deadline in the existing private JSON, a monitor output fix and a bounded focus check for the composer. Each confirmed Send starts a fresh response budget. Expiry saves a hold, and the existing dispatch and reconciliation paths still own Send.
+- The CLI emits one final JSON result on stdout. UTC diagnostics on stderr record observation reasons, UI Automation and publication checks, and confirmed submissions. The private Run E launcher now uses the config and appends stderr to its local timing log. The optional deadline is unset in that launcher configuration pending an owner choice.
+- Run E evidence places the delay before slice 2. Worker footers show 08:50, 10:41 and 10:47 Sydney time. The monitor restarted at 08:58:37 and recorded its parse failure at 10:48:38. The first handover lacks a timestamped observation trace, so the cause of the gap remains open. The Run E controller is still held at 3/5 with the next action prepared.
+- Verification covered the existing integration suite, simulated polling, deadline and stdout behavior on Windows, and PowerShell parsing and simulated focus guards. Live Chrome focus and G4 repeatability remain open. Preserve the existing held run as evidence for future live verification.
+
 ## L13 Run E third saved worker — slice 3 of 5, 19 November 2026
 
 - **Observed saved Chat Succession worker:** `6afe37c3-efcc-83ec-8644-1f418f439259`, from connected-browser read-only tab inventory in the nominated Project. Page content and completed-turn status were not established by that read-only inventory.
