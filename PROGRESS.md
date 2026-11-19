@@ -13,9 +13,10 @@ identified recovery and browser identity issues that were addressed before
 publication. The private plugin is installed at 0.4.1. [Live L5
 evidence](evidence/astra-generic-entry-20261119/live-acceptance.md) verifies
 same-worker approval delivery and checkpoint rotation on two disposable
-projects. Both runs stopped at successor preparation with an unsent action.
-G2 remains open until Chrome can establish a fresh composer and the two
-successors complete their published assignments.
+projects. The original fresh-window failure was reproduced and the
+same-window successor path prepared both live composers successfully.
+Both clicks produced local-only conversation IDs. G2 remains open pending
+read-only reconciliation of those attempts and verified terminal work.
 
 ## Astra generic entry and re-entry proposal — 19 November 2026
 

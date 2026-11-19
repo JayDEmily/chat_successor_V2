@@ -11,6 +11,9 @@ param(
  [long]$WindowHandle = 0,
  [string]$Message = '',
  [string]$OwnerAnchor = '',
+ [string]$SourceResponse = '',
+ [string]$PrepareAction = '',
+ [string]$PrepareTargetPath = '',
  [string]$L09Fault = '',
  [string]$PausePath = '',
  [string]$ChromeExe = 'C:\Program Files\Google\Chrome\Application\chrome.exe',
@@ -100,22 +103,6 @@ function Find-Composer($window,$expectedName) {
  }
  if($editors.Count -ne 1){throw ('Project editor not uniquely observed, count=' + $editors.Count)}
  return $editors[0]
-}
-function Find-ProjectButton($window) {
- $matches=@()
- foreach($el in (Desc $window)){
-  try {
-   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
-      $el.Current.Name -ceq ('New chat in ' + $ProjectName) -and $el.Current.IsEnabled) {
-    $p=$null
-    if($el.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$p)) {
-     $matches+= $el
-    }
-   }
-  }catch{}
- }
- if($matches.Count -ne 1){throw ('Project New Chat button not unique, count=' + $matches.Count)}
- return $matches[0]
 }
 function Check-NoAttachments($window) {
  # Conservative: expose positive attachment controls; no file-selection action.
@@ -333,6 +320,46 @@ function Read-CurrentTurn($target) {
  }
 }
 
+function Get-ProjectNavigation($source) {
+ $links=@(foreach($el in (Desc $source.window)){
+  if($el.Current.ControlType -ne [System.Windows.Automation.ControlType]::Hyperlink -or
+     $el.Current.Name -cne $ProjectName -or $el.Current.IsOffscreen -or -not $el.Current.IsEnabled){continue}
+  $linkValue=$null
+  $invoke=$null
+  if($el.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern,[ref]$linkValue) -and
+     (Check-Project $linkValue.Current.Value) -and $linkValue.Current.Value -cmatch '/project$' -and
+     $el.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$invoke)){$invoke}
+ })
+ if($links.Count -eq 1){return $links[0]}
+ return $null
+}
+
+function Test-SourceComposerForNavigation($source) {
+ $turn=Read-CurrentTurn $source
+ if(-not $turn.ready -or $turn.response_id -cne $SourceResponse){
+  throw 'The saved worker no longer shows the verified completion for this successor'
+ }
+ $editor=Find-Composer $source.window 'Ask ChatGPT'
+ $value=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+ return ((Read-ComposerText $editor $value) -ceq '' -and (Check-NoAttachments $source.window) -and
+         @(Find-EnabledSendButtons $source.window).Count -eq 0)
+}
+
+function Save-NavigationTarget($source) {
+ $record=@{kind='LAUNCH_SUCCESSOR';source=$ChatId;handle=[long]$source.window.Current.NativeWindowHandle
+           action_id=$PrepareAction} | ConvertTo-Json -Compress
+ $temp=$PrepareTargetPath + '.' + [guid]::NewGuid().ToString('N') + '.tmp'
+ try {
+  $bytes=[Text.Encoding]::UTF8.GetBytes($record)
+  $stream=[IO.File]::Open($temp,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write)
+  try {$stream.Write($bytes,0,$bytes.Length);$stream.Flush($true)} finally {$stream.Dispose()}
+  if([IO.File]::Exists($PrepareTargetPath)){[IO.File]::Replace($temp,$PrepareTargetPath,[NullString]::Value)}
+  else{[IO.File]::Move($temp,$PrepareTargetPath)}
+ } finally {
+  if([IO.File]::Exists($temp)){[IO.File]::Delete($temp)}
+ }
+}
+
 if($Mode -eq 'Observe') {
  if(-not $ChatId){throw 'Observe needs a known saved chat ID'}
  Read-CurrentTurn (Get-TargetWindow $ChatId 0) | ConvertTo-Json -Compress -Depth 5
@@ -424,12 +451,36 @@ if($Mode -eq 'Prepare') {
     if($uniquePages.Count -ne 1){throw 'No unique independently observed target Project URL'}
     $projectPage=$uniquePages[0]
    }
-   $new=Open-ChromeWindow $projectPage
+  $new=$null
+  if($ChatId -and $WindowHandle -gt 0){
+   try {
+    $prepared=Get-TargetWindow '' $WindowHandle
+    if($null -eq $prepared.chat -and $prepared.url -cmatch '/project$'){
+     $new=$prepared.window
+    }
+   }catch{}
+  }
+  if($ChatId -and $SourceResponse -and $PrepareAction -and $PrepareTargetPath -and $null -eq $new){
+   $source=$null
+   $navigation=$null
+   try {
+    $source=Get-TargetWindow $ChatId 0
+    $navigation=Get-ProjectNavigation $source
+   }catch{}
+   if($null -ne $navigation -and (Test-SourceComposerForNavigation $source)){
+    # The prior worker is saved. Follow its verified Project link in-place
+    # so a new chat does not require a new Chrome renderer.
+    Save-NavigationTarget $source
+    $navigation.Invoke()
+    $new=$source.window
+   }
+  }
+  if($null -eq $new){$new=Open-ChromeWindow $projectPage}
   $target=$null
   for($i=0;$i -lt 50;$i++){
    Start-Sleep -Milliseconds 400
    $url=Get-Address $new
-   if((Check-Project $url) -and $null -eq (Chat-FromUrl $url)){
+   if((Check-Project $url) -and $url -cmatch '/project$'){
     try {$editor=Find-Composer $new ('New chat in ' + $ProjectName)
          $target=@{window=$new;url=$url;chat=$null};break}catch{}
    }

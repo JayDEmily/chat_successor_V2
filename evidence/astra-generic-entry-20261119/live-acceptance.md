@@ -18,4 +18,31 @@
 
 ## Verdict
 
-G1 offline implementation passed. G2 installed bounded acceptance remains open. The two trial checkpoints are valid and their pending successors are ready to retry once Chrome can establish a verified fresh composer. Both holds were before Send. A snapshot showed approximately 0.6 GiB of free physical memory, but the cause of the failed Chrome navigation was not established. Assisted recovery steps are recorded above.
+G1 offline implementation passed. In the first attempt at G2 both holds were
+before Send. A snapshot showed approximately 0.6 GiB of free physical memory,
+but it did not establish the cause of the failed Chrome navigation.
+
+## Successor composer follow-up
+
+- Cleanup closed several old Chrome windows and raised available RAM. The
+  default fresh-window retry still failed. The new window had the exact
+  Project URL in the address bar, but remained untitled with no accessibility
+  document or composer. A reload of a disposable no-document window did not
+  fix it.
+- A no-Send probe followed the verified Project link in the completed rotation
+  worker's existing window and verified the exact Project, no saved chat ID,
+  an empty composer and no attachments. The reviewed adapter now checks the
+  triggering saved response and records the window against the same pending
+  action before following that link. It reuses only a verified fresh composer.
+- The approval trial's existing pending action prepared successfully at
+  07:31:18 UTC. One Send attempt ended in an uncertain hold at 07:32:09 UTC.
+  The final reviewed path prepared the rotation trial at 07:36:59 UTC and
+  its one Send attempt ended in an uncertain hold at 07:38:06 UTC.
+- Read-only inspection matched both prepared windows, Project IDs and
+  successor prompts. Chrome showed provisional `local-chatgpt` addresses
+  in both. Neither showed a server-saved worker ID. Both controller counts
+  remain one and the two previously published Git checkpoint tips still
+  match. No uncertain attempt was repeated.
+- Independent review approved the adapter change. The 46 integration tests,
+  119 reference tests, PowerShell syntax and Windows atomic target replacement
+  passed. G2 remains open pending read-only reconciliation and terminal work.

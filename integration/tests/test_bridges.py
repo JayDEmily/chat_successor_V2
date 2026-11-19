@@ -79,6 +79,30 @@ class RepoReaderTests(unittest.TestCase):
 
 
 class WindowsBridgeTests(unittest.TestCase):
+    def test_reuse_only_the_same_actions_prepared_successor_window(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            state = Path(tmp) / "controller.json"
+            w = WindowsUIA("g-p-TEST", "Project", Path(tmp) / "uia_adapter.ps1", state)
+            w._invoke = Mock(return_value={"project": "g-p-TEST", "current_chat_id": None,
+                                          "private_window_handle": 34, "editable_text": "",
+                                          "attachments_present": False})
+            pending = {"kind": "LAUNCH_SUCCESSOR", "source_chat_id": "chat-first", "phase": "prepared",
+                       "response_id": "turn-one", "action_id": "action-one"}
+            state.write_text(json.dumps({"state": {"pending": pending}}))
+            w._atomic_target_write({"kind": "LAUNCH_SUCCESSOR", "source": "chat-first", "handle": 12,
+                                    "action_id": "action-one"})
+            w.prepare("LAUNCH_SUCCESSOR", "chat-first")
+            self.assertEqual(w._invoke.call_args.kwargs["WindowHandle"], 12)
+            self.assertEqual(w._invoke.call_args.kwargs["SourceResponse"], "turn-one")
+            pending["action_id"] = "action-two"
+            state.write_text(json.dumps({"state": {"pending": pending}}))
+            w.prepare("LAUNCH_SUCCESSOR", "chat-first")
+            self.assertNotIn("WindowHandle", w._invoke.call_args.kwargs)
+            w.prepare("LAUNCH_SUCCESSOR", "chat-second")
+            self.assertNotIn("WindowHandle", w._invoke.call_args.kwargs)
+            w.prepare("CONTINUE_CURRENT", "chat-second")
+            self.assertNotIn("WindowHandle", w._invoke.call_args.kwargs)
+
     def test_send_only_after_disk_recorded_sending(self):
         with tempfile.TemporaryDirectory() as tmp:
             state = Path(tmp) / "controller.json"

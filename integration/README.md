@@ -77,6 +77,14 @@ to retain UTC timestamps for UI Automation calls, observation outcomes,
 publication checks and confirmed submissions. The adapter logs the
 observation reason without response text.
 
+When a successor is due, the adapter can follow the verified Project link
+from the saved, completed worker in its current Chrome window. It checks the
+completed response and empty source composer first. It records the window
+against the pending action before navigating and verifies the fresh Project
+composer before Send. If the link is unavailable, the existing Chrome
+new-window path remains available. A local-only conversation ID cannot
+confirm a Send.
+
 The composer check reads Chrome's accessibility tree without selecting text
 or using the clipboard. It requires ProseMirror's empty-placeholder paragraph
 and its trailing break, in addition to the expected UIA value. A draft with

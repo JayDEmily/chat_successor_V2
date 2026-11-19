@@ -93,7 +93,24 @@ class WindowsUIA(Browser):
                         handoff_locator_verified=second.get("handoff_locator_verified") is True)
 
     def prepare(self, kind: str, current_chat_id: str | None) -> Destination:
-        payload = self._invoke("Prepare", Kind=kind, ChatId=current_chat_id, ProjectUrl=self.project_url)
+        navigation = {}
+        if kind == "LAUNCH_SUCCESSOR" and current_chat_id is not None and self.state_path.exists():
+            state = json.loads(self.state_path.read_text(encoding="utf-8"))["state"]
+            pending = state.get("pending")
+            if (pending and pending["kind"] == kind and pending["source_chat_id"] == current_chat_id
+                    and pending["phase"] == "prepared"):
+                navigation = {
+                    "SourceResponse": pending["response_id"], "PrepareAction": pending["action_id"],
+                    "PrepareTargetPath": self.target_path.resolve(),
+                }
+                if self.target_path.exists():
+                    previous = json.loads(self.target_path.read_text(encoding="utf-8"))
+                    if (previous.get("kind") == kind and previous.get("source") == current_chat_id
+                            and previous.get("action_id") == pending["action_id"]
+                            and type(previous.get("handle")) is int and previous["handle"] > 0):
+                        navigation["WindowHandle"] = previous["handle"]
+        payload = self._invoke("Prepare", Kind=kind, ChatId=current_chat_id, ProjectUrl=self.project_url,
+                               **navigation)
         if payload.get("project") != self.project:
             raise BrowserObservationError("Prepared wrong Project")
         if type(payload.get("private_window_handle")) is not int:
@@ -105,8 +122,10 @@ class WindowsUIA(Browser):
                                  uia_value=payload.get("uia_value"),
                                  attachments_present=payload.get("attachments_present", None)),
                              private_window_handle=payload["private_window_handle"])
-        self._atomic_target_write({"kind": kind, "source": current_chat_id,
-                                   "handle": target.private_window_handle})
+        record = {"kind": kind, "source": current_chat_id, "handle": target.private_window_handle}
+        if navigation:
+            record["action_id"] = navigation["PrepareAction"]
+        self._atomic_target_write(record)
         return target
 
     def reentry_disposition(self, chat_id: str, anchor: str) -> str:
