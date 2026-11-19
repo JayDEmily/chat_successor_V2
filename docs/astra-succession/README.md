@@ -1,5 +1,7 @@
 # Astra chat succession execution plan
 
+The current generic-entry increment follows the [19 November implementation plan](generic-entry-plan-20261119.md) and [ADR 0001](../adr/0001-generic-entry-and-re-entry.md). The sections below preserve the earlier bounded acceptance record.
+
 This is the entry point for implementing Astra's continuing loop. Follow the [source plan](../../astra/2026-11-17/artifacts/cfile_6afc507495a08191817cbc9fc1e77b63-chat_succession_test_plan_20261117.md), [adapter contract](../../astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/PROTOCOL_AND_ADAPTER.md) and [owner runbook](../../astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/OWNER_RUNBOOK.md) imported at `44c0d5948318e305c42fb0ac4f463e77f90531bc`. The [three-chat exploration](../superpowers/plans/2026-11-17-chat-succession.md) documents the earlier trial.
 
 ## Start here

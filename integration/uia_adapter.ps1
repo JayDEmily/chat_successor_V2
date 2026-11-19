@@ -2,7 +2,7 @@
 # reference-controller 'sending' state. No automatic retries or reset.
 [CmdletBinding()]
 param(
- [Parameter(Mandatory=$true)][ValidateSet('ResolveProject','Observe','Prepare','Send','Reconcile')][string]$Mode,
+ [Parameter(Mandatory=$true)][ValidateSet('ResolveProject','Observe','ObserveReentry','Prepare','Send','Reconcile')][string]$Mode,
  [string]$ProjectId = '',
  [Parameter(Mandatory=$true)][string]$ProjectName,
  [string]$ProjectUrl = '',
@@ -10,6 +10,7 @@ param(
  [ValidateSet('CONTINUE_CURRENT','LAUNCH_SUCCESSOR')][string]$Kind = 'CONTINUE_CURRENT',
  [long]$WindowHandle = 0,
  [string]$Message = '',
+ [string]$OwnerAnchor = '',
  [string]$L09Fault = '',
  [string]$PausePath = '',
  [string]$ChromeExe = 'C:\Program Files\Google\Chrome\Application\chrome.exe',
@@ -190,6 +191,8 @@ function Find-PostedMessage($window,$expected) {
 
 if($Mode -eq 'ResolveProject') {
  $window=Open-ChromeWindow 'https://chatgpt.com/'
+ $resolutionWindow=$window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
+ try {
  $link=$null
  $name=$null
  $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
@@ -236,13 +239,41 @@ if($Mode -eq 'ResolveProject') {
   }
  }
  throw 'The saved Project chat did not expose a verified desktop address'
+ } finally {$resolutionWindow.Close()}
 }
 
-if($Mode -eq 'Observe') {
- if(-not $ChatId){throw 'Observe needs a known saved chat ID'}
- $target=Get-TargetWindow $ChatId 0
+function Test-AssistantProse($element) {
+ $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
+ $prose=$false
+ for($i=0;$i -lt 24 -and $null -ne $element;$i++){
+  $kind=$element.Current.LocalizedControlType
+  $class=$element.Current.ClassName
+  if($kind -match 'code|quote|tool' -or $class -match '(?:^|\s)(?:code|pre|blockquote|tool-output)(?:\s|$)'){
+   return $false
+  }
+  if($class -match '(?:^|\s)markdown(?:\s|$)'){$prose=$true;break}
+  $element=$walker.GetParent($element)
+ }
+ return $prose
+}
+
+function Compare-OwnerTurn($turn,[string]$anchor) {
+ if($turn.stop_control -or $turn.user_after_assistant){return 'advanced'}
+ if(-not $turn.ready -or -not $turn.user_turn_seen){return 'unknown'}
+ if($turn.response_id -ceq $anchor){return 'idle'}
+ if($anchor -cmatch '^uia-turn-(\d+)-([a-f0-9]+)$'){
+  $count=[int]$Matches[1]
+  $digest=$Matches[2]
+  if($turn.response_id -cmatch '^uia-turn-(\d+)-([a-f0-9]+)$' -and
+     [int]$Matches[1] -gt $count -and $Matches[2] -cne $digest){return 'advanced'}
+ }
+ return 'unknown'
+}
+
+function Read-CurrentTurn($target) {
  $all=Desc $target.window
  $last=-1
+ $lastUser=-1
  $assistantCount=0
  $stop=$false
  for($i=0;$i -lt $all.Count;$i++){
@@ -250,15 +281,19 @@ if($Mode -eq 'Observe') {
   try{
    if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
       $el.Current.Name -ceq 'ChatGPT said:'){$assistantCount++;$last=$i}
+   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
+      $el.Current.Name -ceq 'You said:'){$lastUser=$i}
    if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
       $el.Current.Name -ceq 'Stop' -and $el.Current.IsEnabled){$stop=$true}
   }catch{}
  }
  if($last -lt 0){
-  @{ready=$false;reason='No assistant turn observed';chat_id=$ChatId} | ConvertTo-Json -Compress
-  exit 0
+  return @{ready=$false;reason='No assistant turn observed';chat_id=$target.chat
+           stop_control=$stop;user_after_assistant=$false;user_turn_seen=$false}
  }
  $parts=@()
+ $locatorProse=$false
+ $finalProse=$false
  for($i=$last+1;$i -lt $all.Count;$i++){
   $el=$all[$i]
   try {
@@ -267,7 +302,11 @@ if($Mode -eq 'Observe') {
     if($name -ceq 'You said:' -or $name -ceq 'ChatGPT said:' -or
        $name -ceq 'ChatGPT can make mistakes. Check important info.' -or
        $name -ceq 'Latest response' -or $name -ceq 'Ask ChatGPT'){break}
-    if($name){$parts+= $name}
+    if($name){
+     $parts+= $name
+     if($name -cmatch '^CHAT_HANDOFF_BRANCH: '){$locatorProse=Test-AssistantProse $el}
+     if($name -ceq 'CHAT_STATUS: TASK_COMPLETE'){$finalProse=Test-AssistantProse $el}
+    }
    }
   }catch{}
  }
@@ -277,13 +316,77 @@ if($Mode -eq 'Observe') {
  $final=if($parts.Count){$parts[-1]}else{''}
  # No automatic turn completion until a final status line and no active Stop.
  $terminal=($final -cmatch '^(?:CHAT_STATUS: )?(?:NEED_MORE_TIME|TASK_COMPLETE|ERROR)$')
- $ready=$terminal -and -not $stop
- @{
-  ready=$ready;chat_id=$ChatId;project=$ProjectId;role='assistant'
+ $ready=$terminal -and -not $stop -and $last -gt $lastUser
+ return @{
+  ready=$ready;chat_id=$target.chat;project=$ProjectId;role='assistant'
   response_id=('uia-turn-' + $assistantCount + '-' + $digest.Substring(0,20))
   text=$body;complete=$ready;reason=$(if($stop){'Streaming/Stop control present'}elseif(-not $terminal){'No final standalone status leaf'}else{'Completed marker candidate; UIA hierarchy validation pending'})
   method='UIA_ACCESSIBILITY_TEXT';stop_control=$stop
- } | ConvertTo-Json -Compress -Depth 5
+  user_after_assistant=($lastUser -gt $last);user_turn_seen=($lastUser -ge 0)
+  handoff_locator_verified=($locatorProse -and $finalProse)
+ }
+}
+
+if($Mode -eq 'Observe') {
+ if(-not $ChatId){throw 'Observe needs a known saved chat ID'}
+ Read-CurrentTurn (Get-TargetWindow $ChatId 0) | ConvertTo-Json -Compress -Depth 5
+ exit 0
+}
+
+if($Mode -eq 'ObserveReentry') {
+ if(-not $ChatId -or -not $OwnerAnchor){throw 'Owner re-entry needs a saved worker and hold anchor'}
+ $existing=Get-TargetWindow $ChatId 0
+ $turn=Read-CurrentTurn $existing
+ if($turn.stop_control -or $turn.user_after_assistant){
+  @{disposition='advanced';project=$ProjectId;chat_id=$ChatId} | ConvertTo-Json -Compress
+  exit 0
+ }
+ $editor=Find-Composer $existing.window 'Ask ChatGPT'
+ $value=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+ if((Read-ComposerText $editor $value) -cne '' -or -not (Check-NoAttachments $existing.window) -or
+    @(Find-EnabledSendButtons $existing.window).Count){throw 'Re-entry held to preserve the existing draft or attachments'}
+ $fresh=Open-ChromeWindow $existing.url
+ $freshHandle=$fresh.Current.NativeWindowHandle
+ $windowPattern=$fresh.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
+ $verdict=$null
+ try {
+  for($i=0;$i -lt 25;$i++){
+   Start-Sleep -Milliseconds 400
+   try {$target=Get-TargetWindow $ChatId $freshHandle} catch {continue}
+   $snapshot=Read-CurrentTurn $target
+   $comparison=Compare-OwnerTurn $snapshot $OwnerAnchor
+   if($comparison -eq 'advanced'){
+    $verdict='advanced'
+    break
+   }
+   if($comparison -eq 'idle'){
+    $freshEditor=Find-Composer $target.window 'Ask ChatGPT'
+    $freshValue=$freshEditor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+    if((Read-ComposerText $freshEditor $freshValue) -cne '' -or
+       -not (Check-NoAttachments $target.window) -or @(Find-EnabledSendButtons $target.window).Count){
+     throw 'Fresh re-entry view has an existing draft, attachments or unknown composer'
+    }
+    $verdict='idle'
+    break
+   }
+  }
+ } finally {$windowPattern.Close()}
+ if(-not $verdict){throw 'A fresh view of the exact held worker could not be verified'}
+ if($verdict -eq 'advanced'){
+  # Refresh only the same desktop view and only while its composer is empty.
+  $editor=Find-Composer $existing.window 'Ask ChatGPT'
+  $value=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+  if((Read-ComposerText $editor $value) -cne '' -or -not (Check-NoAttachments $existing.window)){
+   throw 'The current worker advanced but the desktop view contains a draft or attachment'
+  }
+  $reload=@((Desc $existing.window) | Where-Object {
+   $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
+   $_.Current.Name -cmatch '^Reload(?: this page)?$'
+  })
+  if($reload.Count -ne 1){throw 'The worker advanced but Chrome reload was not uniquely available'}
+  $reload[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+ }
+ @{disposition=$verdict;project=$ProjectId;chat_id=$ChatId} | ConvertTo-Json -Compress
  exit 0
 }
 
@@ -356,6 +459,17 @@ if($Mode -eq 'Send') {
  if($Message -cnotmatch '^[A-Za-z0-9 .,/_:-]+$'){throw 'Unsupported message characters'}
  if(-not $Message){throw 'Empty message'}
  $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
+ if($OwnerAnchor){
+  $turn=Read-CurrentTurn $target
+  $comparison=Compare-OwnerTurn $turn $OwnerAnchor
+  if($comparison -eq 'advanced'){
+   @{worker_advanced_before_click=$true} | ConvertTo-Json -Compress
+   exit 0
+  }
+  if($comparison -ne 'idle'){
+   throw 'Owner action hold could not be confirmed before typing'
+  }
+ }
  if($Kind -eq 'LAUNCH_SUCCESSOR' -and $null -ne $target.chat){throw 'Successor composer already saved before Send'}
  $editorName=if($Kind -eq 'CONTINUE_CURRENT'){'Ask ChatGPT'}else{'New chat in ' + $ProjectName}
  $editor=Find-Composer $target.window $editorName
@@ -391,6 +505,17 @@ if($Mode -eq 'Send') {
  # If acknowledgement is lost, reconcile; never click again automatically.
  $send = $sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
  Hold-IfOwnerPaused
+ if($OwnerAnchor){
+  $turn=Read-CurrentTurn $target
+  $comparison=Compare-OwnerTurn $turn $OwnerAnchor
+  if($comparison -eq 'advanced'){
+   @{worker_advanced_before_click=$true} | ConvertTo-Json -Compress
+   exit 0
+  }
+  if($comparison -ne 'idle'){
+   throw 'The held turn could not be verified after typing. Preserve the composer and reconcile.'
+  }
+ }
  $send.Invoke()
  if($L09Fault -eq 'after_click'){
   throw 'L09 injected after single click before acknowledgement; reconcile, never retry blindly'

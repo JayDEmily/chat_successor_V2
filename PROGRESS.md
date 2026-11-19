@@ -1,5 +1,18 @@
 # Progress
 
+## Astra generic entry implementation — 19 November 2026
+
+The working branch implements L1–L4 from ADR 0001. Entry resolves an existing
+run by verified Project and repository. Scoped approval uses the existing
+sender only when the saved worker is at the nominated hold. The effective
+checkpoint advances only after a published current-worker receipt.
+
+The 45 integration tests, 119 Astra reference tests, PowerShell parser, and
+installed no-run inspection passed. Independent OpenAI Exec Plans review
+identified recovery and browser identity issues that were addressed before
+publication. Two disposable repositories and ChatGPT Projects were seeded for
+L5. The installed live trial results determine G2.
+
 ## Astra generic entry and re-entry proposal — 19 November 2026
 
 [ADR 0001](docs/adr/0001-generic-entry-and-re-entry.md) records Astra's

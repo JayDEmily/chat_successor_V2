@@ -134,23 +134,39 @@ class GitPublishedReader(PublishedGit):
 class GitHandoffReader(PublishedGit):
     """Read routing metadata from the published tip without interpreting the workload."""
 
-    def instructions(self, run_id: str, worker_number: int) -> str:
+    def instructions(self, run_id: str, worker_number: int, owner_request_id: str | None = None) -> str:
+        owner = (
+            f" Read the scoped owner input for this turn through Remote Desktop Commander from "
+            f"LOCALAPPDATA ChatSuccession/Runs/{run_id}/owner-{owner_request_id}.json. "
+            "Apply that scope and record any required approval through the normal project process."
+            if owner_request_id else ""
+        )
         return (
             f" Chat Succession run {run_id}, worker {worker_number}. "
-            "Follow the published project rules and active assignment. "
+            "Read the published project rules and work record. "
+            "Do the authorized discovery, planning, review or implementation. "
+            "Reconcile published progress and respect explicit holds."
+            + owner + " "
             "If there is a prior handoff for this run, read Chat-Succession-Next on the published tip. "
             "Use Remote Desktop Commander on Windows to read your current_chat_id from "
             f"LOCALAPPDATA ChatSuccession/Runs/{run_id}/controller.json. "
             "Wait until unique_chat_ids contains your expected worker count before using the ID. "
-            "Before TASK_COMPLETE publish a final commit on the nominated branch with trailers "
+            "Before TASK_COMPLETE publish a final commit using the authorized project branch with trailers "
             f"Chat-Succession-Run: {run_id}, Chat-ID: your saved chat ID, and "
             "Chat-Succession-Next: the authorized next task or FINISHED. "
-            "End a verified handoff with CHAT_STATUS: TASK_COMPLETE. "
+            "End a verified handoff with CHAT_STATUS: TASK_COMPLETE. When handing off on a different "
+            "branch, put CHAT_HANDOFF_BRANCH: followed by its exact name on the preceding line. "
             "For more time in this chat use CHAT_STATUS: NEED_MORE_TIME. "
             "If the assignment is unclear, held, requires approval, or cannot be published "
             "under the project rules, report the blocker and end with CHAT_STATUS: ERROR. "
             "The controller owns successor launches."
         )
+
+    def read_checkpoint(self, expected_run_id: str, branch: str) -> PublishedObservation:
+        if branch == self.branch:
+            return self.read(expected_run_id)
+        return GitHandoffReader(self.repo_dir, self.repo_name, branch,
+                                git_command=self.git_command).read(expected_run_id)
 
     def read(self, expected_run_id: str) -> PublishedObservation:
         sha = self.published_tip(shallow=True)

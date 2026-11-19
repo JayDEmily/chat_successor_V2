@@ -19,14 +19,19 @@ Once the owner’s GitHub and Remote Desktop Commander access is connected, the 
 
 For example, you can say
 
-> Start Chat Succession for this Project and our current GitHub workload. Use the current published assignment.
+> Continue this project using Chat Succession.
+
+After the Project chat has identified a decision for you, select the same
+plugin and respond naturally, for example “I approve.” The plugin uses the
+conversation to carry that scoped decision to the saved run. If the current
+worker already received it, the controller resumes watching that worker.
 
 Include the repo and branch if they are unclear from the chat. The request chat uses Remote Desktop Commander to open authenticated desktop Chrome in the same Project. That fresh, saved chat is worker 1. Keep the Windows desktop session and its Ubuntu GitHub access available while the controller runs. If Chrome cannot find the Project by name in its sidebar, use its verified Project landing link.
 
 ## What the starter handles
 
 - **Find the work.** Each worker reads the nominated repository's instructions, progress and current assignment. The worker applies that project's own rules for approval, branching, verification and publishing.
-- **Connect the run.** The starter verifies the saved desktop chat in the chosen Project, then starts one Windows controller with private run state. It uses Ubuntu for the GitHub readback. Repeating the same launch request returns the existing run. For a new run after that one ends, nominate a new checkpoint branch authorized by the project.
+- **Connect the run.** The starter verifies the saved desktop chat in the chosen Project, then starts one Windows controller with private run state. It uses Ubuntu for the GitHub readback. An existing run retains its worker and chat cap if the Project name or checkpoint branch changes. A genuinely new job can reuse an earlier branch.
 - **Work and hand off.** After authorized verification and publication, the worker puts the handoff receipt at the tip of the nominated branch. The controller verifies the receipt and sends a repo and branch pointer to the next worker. The next worker reasons from the project's current instructions and agreement with the owner.
 - **Stop cleanly.** The controller honors the configured chat cap and owner pause. At the first setup, the existing defaults may be used when no job policy overrides them. A bounded starter cap of five is the template default, polling is every 20 seconds, and the optional response deadline is unset.
 
@@ -48,7 +53,7 @@ Chat-ID: <saved desktop chat ID>
 Chat-Succession-Next: <authorized next assignment or FINISHED>
 ```
 
-Use the repository's normal publication route to put the receipt on the nominated branch. If there is an owner hold, no authorized assignment, or no approved way to publish that receipt, the worker reports `CHAT_STATUS: ERROR` and the controller holds. The receipt supplies a common handoff for projects with different planning and governance rules.
+Use the repository's normal publication route. For a different authorized checkpoint branch, place `CHAT_HANDOFF_BRANCH: work/example` immediately before `CHAT_STATUS: TASK_COMPLETE`. The controller advances to that branch only after verifying the receipt. If there is an owner hold, no authorized assignment, or no approved way to publish, the worker reports `CHAT_STATUS: ERROR` and the controller holds.
 
 Astra is verified through G4. The My Cat and Dog iPhone trial finished four workers and three automatic handoffs. The generic launcher passed a desktop Chrome preflight and simulated handoffs against real Git commits. The first generic run on a live workload remains to be done.
 

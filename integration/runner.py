@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Protocol
 import json
 import logging
+import re
 import sys
 import time
 
@@ -44,6 +45,10 @@ class PausedBeforeClick(RuntimeError):
     """The browser adapter observed owner pause before invoking Send."""
 
 
+class WorkerAdvancedBeforeClick(RuntimeError):
+    """The prepared owner request was superseded before Send."""
+
+
 class Browser(Protocol):
     def observe(self, expected_chat_id: str) -> Response | None: ...
     def prepare(self, kind: str, current_chat_id: str) -> Destination: ...
@@ -62,6 +67,10 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
     if p.phase != "prepared" or controller.state.halted:
         return Action.HOLD
     try:
+        if p.owner_request_id and browser.reentry_disposition(p.source_chat_id, p.response_id) == "advanced":
+            controller.state.pending = None
+            controller.save(state_path)
+            return Action.IGNORE
         target = browser.prepare(p.kind, p.source_chat_id)
         expected = controller.config.project
         if target.project != expected or target.private_window_handle <= 0:
@@ -109,10 +118,25 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
         controller.pause(str(exc))
         controller.save(state_path)
         return Action.HOLD
+    except WorkerAdvancedBeforeClick:
+        controller.state.pending = None
+        controller.save(state_path)
+        return Action.IGNORE
     except Exception as exc:
         controller.uncertain(p.action_id, f"UI submission outcome uncertain: {exc}")
         controller.save(state_path)
         return Action.HOLD
+
+
+def checkpoint_from_response(text: str, current: str) -> str:
+    lines = [line for line in text.splitlines() if line.strip()]
+    candidates = [line for line in lines if re.search(r"\bCHAT_HANDOFF_BRANCH\b", line, re.I)]
+    if not candidates:
+        return current
+    match = re.fullmatch(r"CHAT_HANDOFF_BRANCH: ([A-Za-z0-9_./-]+)", candidates[0])
+    if (not match or candidates != lines[-2:-1] or lines[-1] != "CHAT_STATUS: TASK_COMPLETE"):
+        raise PublishedStateError("Malformed or conflicting handoff branch locator")
+    return match[1]
 
 
 def cycle(controller: Controller, browser: Browser,
@@ -153,10 +177,25 @@ def cycle(controller: Controller, browser: Browser,
     parsed = interpret(response.text, response.complete)
     if (response.role == "assistant" and parsed.status == Status.TASK_COMPLETE and
             response.project == controller.config.project and
-            response.chat_id == controller.state.current_chat_id):
+            response.chat_id == controller.state.current_chat_id and
+            isinstance(response.response_id, str) and response.response_id.strip() and
+            [response.chat_id, response.response_id] not in controller.state.consumed_responses):
         logging.info("publication_check_start chat=%s", response.chat_id)
         try:
-            publication = reader.read(run_id)
+            if isinstance(reader, GitHandoffReader):
+                branch = checkpoint_from_response(response.text, controller.checkpoint_branch)
+                if "CHAT_HANDOFF_BRANCH" in response.text.upper() and response.handoff_locator_verified is False:
+                    raise PublishedStateError("Browser did not verify the branch locator in the assistant's prose")
+                publication = reader.read_checkpoint(run_id, branch)
+                if (publication.view.last_chat_id != response.chat_id or
+                        publication.view.repo != controller.config.repo or publication.view.branch != branch):
+                    raise PublishedStateError("Published receipt is for a different worker or route")
+                if branch != controller.config.branch:
+                    controller.state.checkpoint_branch = branch
+                else:
+                    controller.state.checkpoint_branch = None
+            else:
+                publication = reader.read(run_id)
             if (isinstance(reader, GitStoryReader) and
                     publication.completed_turns != controller.unique_count):
                 raise PublishedStateError("Published story turn does not match the current worker count")
@@ -193,8 +232,11 @@ def inspect_state(state_path: Path) -> dict:
     return {
         "project": c.config.project,
         "repo": c.config.repo,
-        "branch": c.config.branch,
+        "branch": c.checkpoint_branch,
+        "initial_branch": c.config.branch,
+        "max_unique_chats": c.config.max_unique_chats,
         "current_chat_id": c.state.current_chat_id,
+        "response_anchor": c.state.consumed_responses[-1] if c.state.consumed_responses else None,
         "unique_chat_count": c.unique_count,
         "last_status": c.state.last_status,
         "pending_action": None if c.state.pending is None else {

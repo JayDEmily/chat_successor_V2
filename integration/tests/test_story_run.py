@@ -87,13 +87,13 @@ class StoryTests(unittest.TestCase):
         with self.assertRaisesRegex(PublishedStateError, "distinct saved Chat-ID"):
             self.reader.read("story")
 
-    def publish_handoff(self, chat_id, next_task, run="demo"):
+    def publish_handoff(self, chat_id, next_task, run="demo", branch="main"):
         with (self.writer / "NOTES.md").open("a") as notes:
             notes.write("Work verified by the worker.\n")
         git(self.writer, "add", "NOTES.md")
         git(self.writer, "commit", "-m", "Publish ordinary work",
             "-m", f"Chat-Succession-Run: {run}\nChat-ID: {chat_id}\nChat-Succession-Next: {next_task}")
-        git(self.writer, "push", "origin", "main")
+        git(self.writer, "push", "origin", branch)
 
     def test_generic_handoff_uses_only_trailers_and_project_reader(self):
         repo = "example-org/ordinary-project"
@@ -141,6 +141,33 @@ class StoryTests(unittest.TestCase):
             with self.assertRaisesRegex(PublishedStateError, "Git fetch did not finish"):
                 reader.read("demo")
 
+    def test_published_checkpoint_rotates_once_and_survives_restart(self):
+        repo = "example-org/ordinary-project"
+        reader = GitHandoffReader(self.root / "reader", repo, "main")
+        branch = "work/next"
+        git(self.writer, "switch", "-c", branch)
+        self.publish_handoff(CHATS[1], "Next task", branch=branch)
+        path = self.root / "controller.json"
+        controller = initialise(path, Config(PROJECT, repo, "main", 3), CHATS[0])
+        browser = Mock()
+        browser.observe.return_value = Response(
+            CHATS[0], "a", "CHAT_HANDOFF_BRANCH: work/next\nCHAT_STATUS: TASK_COMPLETE", project=PROJECT)
+        with patch("repo_reader.GitHandoffReader._verify_origin"):
+            self.assertEqual(cycle(controller, browser, reader, "demo", path), Action.HOLD)
+            self.assertEqual(controller.checkpoint_branch, "main")
+            self.assertEqual(controller.state.consumed_responses, [])
+            self.publish_handoff(CHATS[0], "Next task", branch=branch)
+            controller.resume_after_owner()
+            self.assertEqual(cycle(controller, browser, reader, "demo", path, defer_dispatch=True),
+                             Action.LAUNCH_SUCCESSOR)
+        from succession.core import Controller
+        restored = Controller.load(path)
+        self.assertEqual(restored.config.branch, "main")
+        self.assertEqual(restored.checkpoint_branch, branch)
+        self.assertEqual(restored.unique_count, 1)
+        self.assertIn(f"branch {branch}.", restored.state.pending.message)
+        browser.send_once.assert_not_called()
+
 
 class BootstrapTests(unittest.TestCase):
     def test_generic_request_reuses_the_same_private_configuration(self):
@@ -159,7 +186,7 @@ class BootstrapTests(unittest.TestCase):
                 launch_request(request, folder)
                 launch_request(request, folder)
             git_setup.assert_called_once()
-            resolver.assert_called_once()
+            self.assertEqual(resolver.call_count, 2)
             self.assertEqual(start.call_args_list[0].args, start.call_args_list[1].args)
             self.assertEqual(start.call_args_list[0].kwargs, start.call_args_list[1].kwargs)
 

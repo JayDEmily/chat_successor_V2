@@ -126,6 +126,7 @@ def main():
     ap.add_argument("--max-polls", type=int, default=0)
     ap.add_argument("--prepare-only", action="store_true",
                     help="L06: persist the observed prepared handover without Send (cycle only)")
+    ap.add_argument("--ready-file", type=Path, help=argparse.SUPPRESS)
     args = ap.parse_args()
     if args.prepare_only and args.command != "cycle":
         ap.error("--prepare-only is valid only with cycle")
@@ -140,6 +141,9 @@ def main():
     if args.config is None:
         ap.error("--config required for this command")
     cfg = load_config(args.config)
+    if cfg.get("workflow") == HANDOFF_WORKFLOW and (
+            path.parent.name != cfg["run_id"] or path.parent.resolve() != args.config.parent.resolve()):
+        raise ValueError("Private controller state and config must belong to the same run")
     if args.poll_seconds is not None and not 0 < args.poll_seconds < float("inf"):
         ap.error("--poll-seconds must be a positive finite number")
     poll_seconds = cfg.get("poll_seconds", DEFAULT_POLL_SECONDS)
@@ -165,6 +169,8 @@ def main():
     if args.command == "reconcile":
         with exclusive_lock(path):
             c = Controller.load(path)
+            if c.config != config:
+                raise ValueError("Persisted controller configuration does not match run")
             receipt = browser.reconcile_readonly()
             p = c.state.pending
             if (receipt.posted_message_observed and
@@ -178,6 +184,8 @@ def main():
     if args.command == "resume":
         with exclusive_lock(path):
             c = Controller.load(path)
+            if c.config != config:
+                raise ValueError("Persisted controller configuration does not match run")
             c.resume_after_owner()
             c.save(path)
             path.with_suffix(".pause").unlink(missing_ok=True)
@@ -188,6 +196,9 @@ def main():
         c = Controller.load(path)
         if c.config != config:
             raise ValueError("Persisted controller configuration does not match run")
+        if args.ready_file is not None:
+            with args.ready_file.open("x", encoding="ascii") as ready:
+                ready.write(str(os.getpid()))
         wait_seconds = None if wait_minutes is None else wait_minutes * 60
         deadline = None if wait_seconds is None else time.monotonic() + wait_seconds
         logging.info("run_started chat=%s poll_seconds=%s response_wait_minutes=%s",

@@ -8,6 +8,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+from uuid import uuid4
 
 from cli import create_dependencies, exclusive_lock, load_config
 from repo_reader import GitHandoffReader, HANDOFF_WORKFLOW, STORY_REPO
@@ -30,7 +31,7 @@ def prepare_first(browser, reader):
     return target
 
 
-def bootstrap(cfg: dict, state_path: Path, browser, reader) -> dict:
+def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=None) -> dict:
     """Persist intent once and use read-only reconciliation on uncertain retries."""
     intent_path = state_path.with_name("bootstrap-intent.json")
     pause_path = state_path.with_suffix(".pause").resolve()
@@ -39,11 +40,12 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader) -> dict:
         "Read the current instructions, progress and next task there."
     )
     if isinstance(reader, GitHandoffReader):
-        pointer += reader.instructions(cfg["run_id"], 1)
+        pointer += reader.instructions(cfg["run_id"], 1, owner_request_id)
     if intent_path.exists():
         intent = json.loads(intent_path.read_text(encoding="utf-8"))
-        if intent["project"] != cfg["project"] or intent["message"] != pointer:
+        if intent["project"] != cfg["project"]:
             raise RuntimeError("Existing initial Send intent belongs to a different run")
+        pointer = intent["message"]
         receipt = browser._invoke("Reconcile", Kind=Action.LAUNCH_SUCCESSOR.value,
                                   WindowHandle=intent["handle"], Message=pointer)
     else:
@@ -74,21 +76,32 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader) -> dict:
 
 
 def start_controller(config_path: Path, state_path: Path) -> int:
+    ready_file = state_path.with_name(f"startup-{uuid4().hex}.ready")
     command = [sys.executable, "-B", "-X", "utf8", str(Path(__file__).with_name("cli.py")),
-               "run", "--config", str(config_path), "--state", str(state_path)]
+               "run", "--config", str(config_path), "--state", str(state_path),
+               "--ready-file", str(ready_file)]
     with (state_path.with_name("controller-stdout.json").open("ab") as stdout,
           state_path.with_name("controller-timing.log").open("ab") as stderr):
         process = subprocess.Popen(
             command, stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr,
             creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
         )
-    time.sleep(0.5)
-    if process.poll() is not None:
-        raise RuntimeError("Windows controller exited at startup. Inspect its local timing log.")
-    return process.pid
+    try:
+        for _ in range(80):
+            if ready_file.exists() and ready_file.read_text(encoding="ascii") == str(process.pid):
+                return process.pid
+            if process.poll() is not None:
+                break
+            time.sleep(0.1)
+        if process.poll() is None:
+            process.terminate()
+            process.wait(timeout=5)
+        raise RuntimeError("Controller lock ownership was not confirmed. Inspect the existing run before retrying.")
+    finally:
+        ready_file.unlink(missing_ok=True)
 
 
-def launch(config_path: Path, state_path: Path, *, check_only: bool = False) -> dict:
+def launch(config_path: Path, state_path: Path, *, check_only: bool = False, owner_request_id=None) -> dict:
     cfg = load_config(config_path)
     if cfg["repo"] != STORY_REPO and cfg.get("workflow") != HANDOFF_WORKFLOW:
         raise ValueError("This launcher needs a supported desktop handoff")
@@ -103,7 +116,8 @@ def launch(config_path: Path, state_path: Path, *, check_only: bool = False) -> 
         if state_path.exists():
             summary = inspect_state(state_path)
             if (summary["project"] != cfg["project"] or summary["repo"] != cfg["repo"]
-                    or summary["branch"] != cfg["branch"]):
+                    or summary["initial_branch"] != cfg["branch"]
+                    or summary["max_unique_chats"] != cfg["max_unique_chats"]):
                 raise RuntimeError("The private controller state belongs to a different workload")
             if summary["halted"]:
                 return {**summary, "event": "existing_run"}
@@ -113,7 +127,8 @@ def launch(config_path: Path, state_path: Path, *, check_only: bool = False) -> 
             except OSError:
                 return {**summary, "event": "controller_already_running"}
         else:
-            summary = bootstrap(cfg, state_path, browser, reader)
+            kwargs = {"owner_request_id": owner_request_id} if owner_request_id else {}
+            summary = bootstrap(cfg, state_path, browser, reader, **kwargs)
         pid = start_controller(config_path, state_path)
         return {**summary, "event": "controller_started", "controller_pid": pid}
 

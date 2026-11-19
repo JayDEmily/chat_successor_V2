@@ -1,29 +1,19 @@
 ---
 name: start-chat-succession
-description: Use when the owner invokes Chat Succession from iPhone or desktop to launch a bounded GitHub workload in their existing ChatGPT Project.
+description: Use when the owner invokes Chat Succession from iPhone or desktop to start or continue GitHub-backed work in a ChatGPT Project.
 ---
 
 # Start Chat Succession
 
-## My Cat and Dog from iPhone
+## Enter or re-enter from iPhone or desktop
 
-When the owner asks to start the story in **My cat and dog** using the published `JayDEmily/my-cat-and-dog` guide, use this installed one-shot launcher. The request chat is the launcher. A new desktop chat in that Project will be worker 1. The launch uses no saved ID from the request chat.
+Interpret the owner's current instruction using the conversation and the project's published work record. Invoking the plugin may mean starting, resuming or inspecting existing work. Discovery, planning, review and implementation are all possible assignments. Preserve explicit holds and independent review requirements. Carry an unambiguous approval only for its identified scope. Ask one focused question when the authority, target, or active executor remains ambiguous.
 
-Use connected Remote Desktop Commander on the authorized Windows PC. Start this PowerShell command once:
-
-```powershell
-& (Join-Path $env:LOCALAPPDATA 'ChatSuccession\MyCatAndDog\start.cmd')
-```
-
-If Desktop Commander returns a process ID before the receipt, read that process's output. The launcher confirms the first posted message and obtains the new saved chat ID before it starts the controller. A repeated request can report an existing run. Preserve an uncertain launch for read-only reconciliation and report its actual outcome. Leave all story writing to the desktop workers. The controller watches the four published turn branches and stops after Bluey's last line.
-
-## Launch another GitHub workload
-
-The invocation chat is a launcher. The fresh desktop chat becomes worker 1. Use the exact Project name from the owner's context. The phone conversation ID is unnecessary.
+Use the exact Project name and GitHub repository. The phone conversation ID is unnecessary for a new job. Claim the current chat as the registered worker only when its saved identity is positively verified. If the invocation is elsewhere, route the instruction to the registered worker and leave execution to that worker. Account for other active executors and reconcile work published outside the run before proceeding.
 
 ### Resolve the launch target
 
-Resolve the exact owner-approved GitHub repository and branch from the chat context and repository. Use the nominated assignment or the published current assignment on the default branch when it is clear. Ask the owner only if the launch target remains ambiguous. The first desktop worker reads the repository's instructions, verifies what work the project currently authorizes, and reports any hold it finds.
+Resolve the exact owner-approved GitHub repository from the conversation and repository. Inspect the saved run before choosing an operation. The worker applies the repository's rules for approval, work, verification, and publication.
 
 ### Send the private launch request
 
@@ -36,10 +26,10 @@ Join-Path $env:LOCALAPPDATA ('ChatSuccession/Requests/' + [guid]::NewGuid().ToSt
 Use Remote Desktop Commander's file write tool to save JSON at that exact returned path. Substitute the confirmed values for this run:
 
 ```json
-{"repo":"OWNER/REPO","branch":"work/current","project_name":"Exact Project name"}
+{"operation":"inspect","repo":"OWNER/REPO","project_name":"Exact Project name"}
 ```
 
-Optional fields are `max_unique_chats` (default five, or use the owner’s cap) and `project_url` when a verified ChatGPT Project landing link is available. With a name alone, the desktop looks for a saved chat in the exact Project's sidebar list. If the list is unavailable, use the verified landing link. Report any unresolved or ambiguous Project.
+Use `project_url` when a verified ChatGPT Project landing link is available. Otherwise the desktop looks for the exact Project's sidebar list. Report unresolved or ambiguous identity. For starts, set the published entry `branch` and optionally `max_unique_chats` (default five).
 
 Start this PowerShell command once, substituting the actual absolute file path from the earlier command. Escape any apostrophe in the Windows path by doubling it inside the literal:
 
@@ -47,12 +37,30 @@ Start this PowerShell command once, substituting the actual absolute file path f
 & (Join-Path $env:LOCALAPPDATA 'ChatSuccession/start-project.cmd') --request 'ABSOLUTE_REQUEST_PATH'
 ```
 
-Read the same process's output if it returns a PID ahead of the result. Report the actual verified desktop worker receipt or specific hold. Keep credentials, config and logs private on Windows. Repeat requests for the same target report or resume the existing run. For a subsequent run after that one ends, use a new checkpoint branch authorized by the project. Preserve any uncertain initial Send for read-only reconciliation.
+Read the same process output if it returns a PID first. Once you have the inspection result, choose the applicable operation and write a new private request.
+
+| Operation | When to use it |
+| --- | --- |
+| `start` | No run is registered and the work is authorized. Supply `branch`. |
+| `resume` | Use the selected `run_id` after the owner directs continuation. |
+| `new` | A genuinely new authorized job after the prior run finished or reached its cap. Supply `branch`, a stable 24-character lowercase alphanumeric `job_id`, and the prior `run_id` when needed to select it. |
+
+When the owner's current instruction is relevant and absent from the published work record, include `owner_context` with string fields `request_id` (24–64 lowercase alphanumeric characters), `instruction` (the actual current owner input), `scope`, and `pointer` (the project or proposal reference). For resume, add `worker_id` and `response_id` from the inspection's `response_anchor`. Reuse the same logical ID when retrying. Use observer-only resume for a positively identified worker that already received the input. When delivery is unclear, the launcher verifies the saved worker's turn before considering a Send. Set `release_pause` only when the owner explicitly releases a separate operator pause.
+
+Use the controller receipt to report the outcome. Preserve uncertain sends and drafts. Keep credentials and private request data on Windows. A different branch or Project display name alone has no effect on which worker owns the run.
 
 ### What each desktop worker publishes
 
-The worker reads the nominated repo's own authority, chooses its authorized work and runs its normal verification. Its published work branch needs a tip commit with three trailers. `Chat-Succession-Run` identifies the private run, `Chat-ID` is the worker's saved ID from verified Windows state, and `Chat-Succession-Next` names the authorized next assignment or says `FINISHED`. This receipt belongs on the nominated branch using the repository's authorized write route.
+The worker follows the canonical handoff instructions it receives from the controller. It reads the project's actual authority, respects approvals and review roles, and verifies and publishes the scoped work through the project's normal route. Use any private owner-input pointer for this turn and record necessary authority in the project's own durable record. The receipt on the published branch uses `Chat-Succession-Run`, `Chat-ID`, and `Chat-Succession-Next`. On a different authorized branch, place `CHAT_HANDOFF_BRANCH: branch-name` immediately before the completion status.
 
 Use the final `CHAT_STATUS: TASK_COMPLETE` line only after verifying publication. Use `CHAT_STATUS: NEED_MORE_TIME` for same-chat continuation and `CHAT_STATUS: ERROR` for an unresolved requirement, authorization hold, or unsuitable publication route. Only the single Windows controller sends automatic continuations and successors.
+
+## Existing My Cat and Dog trial
+
+When explicitly asked to use the original four-turn fixture for `JayDEmily/my-cat-and-dog`, run its existing Windows command through Remote Desktop Commander and read back that process's result.
+
+```powershell
+& (Join-Path $env:LOCALAPPDATA 'ChatSuccession\MyCatAndDog\start.cmd')
+```
 
 For the maintained startup guide and verified Astra scope, see [the Chat Succession repository](https://github.com/JayDEmily/chat_successor).

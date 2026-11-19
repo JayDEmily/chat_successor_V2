@@ -1,21 +1,21 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "chat-succession",
-  "version": "0.3.0",
-  "description": "Private startup instructions for a bounded GitHub-backed Chat Succession run in a browser Project.",
+  "version": "0.4.0",
+  "description": "Start or continue bounded GitHub-backed work in a ChatGPT Project.",
   "repository": "https://github.com/JayDEmily/chat_successor",
   "extensions": {
     "com.openai": {
       "apps": "./.app.json",
       "interface": {
         "displayName": "Chat Succession",
-        "shortDescription": "Start GitHub-backed work",
-        "longDescription": "Start a bounded Chat Succession run from a Project chat on iPhone or desktop. Remote Desktop Commander opens the first worker in desktop Chrome, and each worker follows the nominated GitHub repository's own instructions.",
+        "shortDescription": "Start or continue GitHub-backed work",
+        "longDescription": "Start or continue a bounded Chat Succession run from iPhone or desktop. Keep the current worker across approvals and verified checkpoint changes. Each worker follows the nominated GitHub repository's instructions.",
         "category": "Developer Tools",
         "capabilities": [
           "Interactive"
         ],
-        "defaultPrompt": "Start Chat Succession for the GitHub repository or assignment I specify."
+        "defaultPrompt": "Continue this project using Chat Succession."
       }
     }
   }

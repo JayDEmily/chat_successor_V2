@@ -3,12 +3,15 @@
 ## Repo-neutral launcher
 
 `launch_project.py --request PATH` takes a private Windows JSON request with
-`repo`, `branch` and `project_name`. `max_unique_chats` defaults to five.
+`repo`, `project_name` and an `operation` of `inspect`, `start`, `resume`,
+or `new`. Supply `branch` for starts. `max_unique_chats` defaults to five.
 `project_url` is optional when a verified ChatGPT Project landing URL is
 available. With a name alone, desktop Chrome looks for a saved chat in the
 exact Project's sidebar list. Use the verified Project landing link if Chrome
-cannot find that list. The same repo, branch and Project name identify one
-saved run. Use a different authorized checkpoint branch for a subsequent run.
+cannot find that list. Inspection selects using the verified Project ID and
+normalized repo, or a matching explicit `run_id`. A genuine new job requires
+a stable `job_id`. An optional `owner_context` follows the [plugin request
+contract](../plugins/chat-succession/skills/start-chat-succession/SKILL.md).
 Adding `--check` verifies the GitHub branch and the browser composer without
 posting a message or starting a controller.
 

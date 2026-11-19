@@ -164,6 +164,7 @@ class Response:
     complete: bool = True
     role: str = "assistant"
     project: Optional[str] = None
+    handoff_locator_verified: Optional[bool] = None
 
 
 @dataclass
@@ -175,6 +176,7 @@ class Pending:
     message: str
     phase: str = "prepared"  # prepared -> sending -> observed, or uncertain
     detail: str = ""
+    owner_request_id: Optional[str] = None
 
 
 @dataclass
@@ -185,6 +187,8 @@ class State:
     last_status: Optional[str] = None
     pending: Optional[Pending] = None
     halted: Optional[str] = None
+    checkpoint_branch: Optional[str] = None
+    owner_requests: dict[str, list[str]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -206,6 +210,24 @@ class Controller:
     @property
     def unique_count(self) -> int:
         return len(self.state.unique_chat_ids)
+
+    @property
+    def checkpoint_branch(self) -> str:
+        return self.state.checkpoint_branch or self.config.branch
+
+    def continue_after_owner(self, request_id: str, anchor: str, message: str) -> None:
+        """Queue one explicit owner instruction without inventing an assistant turn."""
+        cid = self.state.current_chat_id
+        if request_id in self.state.owner_requests or [cid, anchor] in self.state.owner_requests.values():
+            raise ValueError("The owner action for this hold already exists")
+        if (not self.state.halted or self.state.pending is not None
+                or self.state.halted in ("programme_finished", "chat_cap")
+                or self.state.consumed_responses[-1:] != [[cid, anchor]]):
+            raise ValueError("The saved worker is no longer at the nominated hold")
+        self.state.owner_requests[request_id] = [cid, anchor]
+        self.state.pending = Pending(f"{cid}:owner:{request_id}", Action.CONTINUE_CURRENT.value,
+                                     cid, anchor, message, owner_request_id=request_id)
+        self.state.halted = None
 
     def _hold(self, reason: str) -> Decision:
         self.state.halted = reason
@@ -247,7 +269,7 @@ class Controller:
         # TASK_COMPLETE requires durable work, even when already at the cap.
         if (repo is None or repo.readable is not True or repo.published is not True):
             return self._hold("Handover publication or programme state is unavailable")
-        if repo.repo != self.config.repo or repo.branch != self.config.branch:
+        if repo.repo != self.config.repo or repo.branch != self.checkpoint_branch:
             return self._hold("Repo observation is for a different nominated target")
         try:
             handoff_id = conversation_id(repo.last_chat_id)
@@ -268,7 +290,7 @@ class Controller:
             self.state.halted = "chat_cap"
             return Decision(Action.STOP_CAP, "Configured distinct-chat cap reached")
         message = (
-            f"Continue the work in GitHub repo {self.config.repo}, branch {self.config.branch}. "
+            f"Continue the work in GitHub repo {self.config.repo}, branch {self.checkpoint_branch}. "
             "Read the current instructions, progress and next task there."
         )
         return self._prepare(Action.LAUNCH_SUCCESSOR, response, message)
@@ -362,7 +384,7 @@ class Controller:
         """Atomic local bookkeeping, not a launch approval or handover hash."""
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        payload = {"version": 1, "config": asdict(self.config), "state": asdict(self.state)}
+        payload = {"version": 2, "config": asdict(self.config), "state": asdict(self.state)}
         handle, temp = tempfile.mkstemp(prefix=path.name + ".", dir=path.parent)
         try:
             with os.fdopen(handle, "w", encoding="utf-8") as out:
@@ -385,7 +407,7 @@ class Controller:
     @classmethod
     def load(cls, path: Path) -> "Controller":
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
-        if payload.get("version") != 1:
+        if payload.get("version") not in (1, 2):
             raise ValueError("Unsupported state version; do not start with a reset count")
         config = Config(**payload["config"])
         raw = payload["state"]
@@ -404,12 +426,23 @@ class Controller:
             raise ValueError("Invalid consumed response history")
         if len({tuple(k) for k in state.consumed_responses}) != len(state.consumed_responses):
             raise ValueError("Duplicate consumed response history")
+        if (not isinstance(state.owner_requests, dict)
+                or any(not re.fullmatch(r"[a-z0-9]{24,64}", key) or value not in state.consumed_responses
+                       for key, value in state.owner_requests.items())
+                or len({tuple(value) for value in state.owner_requests.values()}) != len(state.owner_requests)):
+            raise ValueError("Invalid owner action history")
+        if state.checkpoint_branch is not None:
+            Config(config.project, config.repo, state.checkpoint_branch, config.max_unique_chats)
         p = state.pending
         if p is not None:
             if (p.kind not in (Action.LAUNCH_SUCCESSOR.value, Action.CONTINUE_CURRENT.value)
                     or p.phase not in ("prepared", "sending", "uncertain")
                     or p.source_chat_id != state.current_chat_id
-                    or [p.source_chat_id, p.response_id] not in state.consumed_responses):
+                    or [p.source_chat_id, p.response_id] not in state.consumed_responses
+                    or (p.owner_request_id is not None and
+                        (p.kind != Action.CONTINUE_CURRENT.value
+                         or p.action_id != f"{p.source_chat_id}:owner:{p.owner_request_id}"
+                         or state.owner_requests.get(p.owner_request_id) != [p.source_chat_id, p.response_id]))):
                 raise ValueError("Invalid pending action")
             if p.phase in ("sending", "uncertain"):
                 state.halted = "Restart with a possibly submitted message: reconcile without sending"

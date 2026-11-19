@@ -238,7 +238,7 @@ class ControllerTests(unittest.TestCase):
                     if change == "bad-count":
                         raw["state"]["unique_chat_ids"] = ["c1", "c1"]
                     elif change == "bad-version":
-                        raw["version"] = 2
+                        raw["version"] = 999
                     else:
                         raw["state"]["pending"] = dict(action_id="x",kind="SEND_ANYWHERE",
                             source_chat_id="c1",response_id="r1",message="x")

@@ -14,7 +14,7 @@ import subprocess
 import tempfile
 import time
 
-from runner import Browser, Destination, PausedBeforeClick, Submitted
+from runner import Browser, Destination, PausedBeforeClick, Submitted, WorkerAdvancedBeforeClick
 from succession.composer import ComposerObservation
 from succession.core import Controller, Response
 
@@ -89,7 +89,8 @@ class WindowsUIA(Browser):
             raise BrowserObservationError("Assistant identity/Project not established")
         return Response(chat_id=second["chat_id"], response_id=second["response_id"],
                         text=second["text"], complete=True,
-                        role=second["role"], project=second["project"])
+                        role=second["role"], project=second["project"],
+                        handoff_locator_verified=second.get("handoff_locator_verified") is True)
 
     def prepare(self, kind: str, current_chat_id: str | None) -> Destination:
         payload = self._invoke("Prepare", Kind=kind, ChatId=current_chat_id, ProjectUrl=self.project_url)
@@ -107,6 +108,15 @@ class WindowsUIA(Browser):
         self._atomic_target_write({"kind": kind, "source": current_chat_id,
                                    "handle": target.private_window_handle})
         return target
+
+    def reentry_disposition(self, chat_id: str, anchor: str) -> str:
+        observed = self._invoke("ObserveReentry", ChatId=chat_id, OwnerAnchor=anchor)
+        if observed.get("project") != self.project or observed.get("chat_id") != chat_id:
+            raise BrowserObservationError("Re-entry did not identify the saved worker")
+        disposition = observed.get("disposition")
+        if disposition not in ("idle", "advanced"):
+            raise BrowserObservationError("Re-entry could not establish the current worker's turn")
+        return disposition
 
     def _atomic_target_write(self, record: dict):
         self.target_path.parent.mkdir(parents=True, exist_ok=True)
@@ -149,9 +159,12 @@ class WindowsUIA(Browser):
             "Send", Kind=p["kind"], ChatId=p["source_chat_id"],
             WindowHandle=target.private_window_handle, Message=message,
             PausePath=self.state_path.with_suffix(".pause").resolve(),
+            OwnerAnchor=p["response_id"] if p.get("owner_request_id") else None,
             L09Fault="after_click" if fault == "after_click" else None)
         if result.get("paused_before_click") is True:
             raise PausedBeforeClick("Operator pause requested before Send")
+        if result.get("worker_advanced_before_click") is True:
+            raise WorkerAdvancedBeforeClick()
         return Submitted(project=result.get("project", ""),
                          chat_id=result.get("chat_id"),
                          submitted_text=result.get("submitted_text"),

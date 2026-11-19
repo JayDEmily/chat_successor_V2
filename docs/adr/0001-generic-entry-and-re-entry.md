@@ -1,6 +1,6 @@
 # ADR 0001 — Generic Chat Succession entry and re-entry
 
-- **Status** — Proposed for owner review
+- **Status** — Accepted for implementation by the owner
 - **Source date** — 19 November 2026
 - **Baseline reviewed by Astra** — `0bee12a1725fbb103d82c5d08365959b3bf8c173`, plugin `0.3.0`
 
