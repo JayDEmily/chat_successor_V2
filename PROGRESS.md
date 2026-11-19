@@ -1,5 +1,14 @@
 # Progress
 
+## Astra generic entry and re-entry proposal — 19 November 2026
+
+[ADR 0001](docs/adr/0001-generic-entry-and-re-entry.md) records Astra's
+proposed decision. The [complete plan](docs/astra-succession/generic-entry-plan-20261119.md)
+and [review evidence](evidence/astra-generic-entry-20261119/) preserve the
+five leaves, three gates, and offline reproduction for owner review. Astra
+reran 154 tests and six additional probes on the supplied baseline.
+Implementation and installed post-approval acceptance remain open.
+
 ## My Cat and Dog mobile-launch trial
 
 The personal startup workflow now opens one fresh desktop worker through the
