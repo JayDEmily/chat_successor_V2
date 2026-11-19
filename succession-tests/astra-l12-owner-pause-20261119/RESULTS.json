@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "run_id": "astra-l12-owner-pause-20261119",
+    "step": 1,
+    "chat_id": "6afe5110-8f4c-83ec-b91d-e8ee36c272ce",
+    "probe_nonce": "fixture-0dcbd917f4de1c14",
+    "summary": {
+      "alpha": {
+        "count": 2,
+        "total": 28
+      },
+      "beta": {
+        "count": 2,
+        "total": 29
+      },
+      "gamma": {
+        "count": 2,
+        "total": 21
+      }
+    }
+  }
+]

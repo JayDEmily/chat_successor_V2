@@ -4,6 +4,13 @@
 
 This branch is the isolated owner-pause regression test. The current saved Chat Succession worker processes only slice 1 under [the test fixture](succession-tests/astra-l12-owner-pause-20261119/INSTRUCTIONS.md), publishes the result on this branch and emits one final completion status. The outside controller and watcher own pause and Send. Run F and all earlier runs are historical evidence on this branch.
 
+### L12 first saved worker — slice 1 of 2, 19 November 2026
+
+- Controller state identified saved Project conversation `6afe5110-8f4c-83ec-b91d-e8ee36c272ce` and the nominated branch; the external watcher and controller were running separately. No worker browser Send, controller execution, or successor launch.
+- Processed exactly six first-probe rows: alpha count 2 / value 28, beta 2 / 29, gamma 2 / 21, total six rows / 78. Appended only result 1 and set fixture state to 1/2, `programme_complete=false`, next slice 2.
+- Existing fixture validator passed `fixture_valid=true`, 1/2; local `git diff --check` passed. Evidence: `evidence/astra-l12-owner-pause-20261119/worker_slice1.md`. Remote commit and readback are to be verified separately.
+- Next action: the external watcher/controller handles owner-pause and any subsequent routing; this worker does not assess the live pause outcome or process slice 2.
+
 ## L13 Run F fifth saved worker — terminal slice 5 of 5, 19 November 2026
 
 - **Scope:** Single final Run F fixture slice from remote `4f9f761b7adf7f4c49b794770fc6c5f5adca653b` in distinct saved Project chat `6afe4a7f-d920-83ec-8b4e-06b9426a1eae`. Existing controller PID 6684 showed five distinct saved IDs, four consumed `TASK_COMPLETE` replies and no pending action/halt; matching read-only Chrome UIA confirmed Project and this chat. No worker-side controller or browser Send.
