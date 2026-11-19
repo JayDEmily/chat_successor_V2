@@ -1,5 +1,13 @@
 # Progress
 
+## L13 Run F fifth saved worker — terminal slice 5 of 5, 19 November 2026
+
+- **Scope:** Single final Run F fixture slice from remote `4f9f761b7adf7f4c49b794770fc6c5f5adca653b` in distinct saved Project chat `6afe4a7f-d920-83ec-8b4e-06b9426a1eae`. Existing controller PID 6684 showed five distinct saved IDs, four consumed `TASK_COMPLETE` replies and no pending action/halt; matching read-only Chrome UIA confirmed Project and this chat. No worker-side controller or browser Send.
+- **Result:** probe `fixture-964f687612d858eb`: alpha 2/-11, beta 2/16, gamma 2/19; six rows and combined total 24. Added only step 5; `STATE.json` is 5/5 with `programme_complete=true` and `next_task=null`. Earlier Run F and Run E results retained.
+- **Validation and publication:** fresh initial fixture verified 4/5. The unchanged validator, Git checks, push and independent GitHub readback must be recorded below when observed. Evidence: `evidence/astra-l13-20261119-f/run_f_worker_slice5.md`.
+- **Next action:** the pre-existing single external Run F controller consumes this final `TASK_COMPLETE` and should terminally stop with `STOP_FINISHED`, no sixth chat. A separate terminal readback and three-run G4 assessment are still required; this worker does not assert terminal observation.
+
+
 ## L13 Run F fourth saved worker — slice 4 of 5, 19 November 2026
 
 - **Scope and provenance:** Run F `astra-l13-20261119-f`, fourth distinct saved Project worker `6afe4875-e7b8-83ec-bc8b-6a14169b58e5`. Read-only UIA matched this chat and correct Project. The already-running controller had four distinct IDs, three consumed completed turns, no pending action/halt; this worker did not operate its controller or Send.
