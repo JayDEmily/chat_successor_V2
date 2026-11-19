@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "chat-succession",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Private startup instructions for a bounded GitHub-backed Chat Succession run in a browser Project.",
   "repository": "https://github.com/JayDEmily/chat_successor",
   "extensions": {
@@ -10,7 +10,7 @@
       "interface": {
         "displayName": "Chat Succession",
         "shortDescription": "Start GitHub-backed work",
-        "longDescription": "Start a bounded Chat Succession run from the first browser Project chat using the existing GitHub, Ubuntu and Remote Desktop Commander workflow. Check workload compatibility before starting the controller.",
+        "longDescription": "Start a bounded Chat Succession run from a Project chat on iPhone or desktop. Remote Desktop Commander opens the first worker in desktop Chrome, and each worker follows the nominated GitHub repository's own instructions.",
         "category": "Developer Tools",
         "capabilities": [
           "Interactive"

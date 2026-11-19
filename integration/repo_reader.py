@@ -1,4 +1,4 @@
-"""Read *published* succession fixture state from the nominated remote branch.
+"""Read *published* succession state from the nominated remote branch.
 
 This adapter never treats the working tree, an unpushed commit or a worker's
 claim as publication. It reads the fetched remote-tracking commit object.
@@ -29,6 +29,14 @@ STORY_TURNS = (
     ("codex/story-04-bluey", "Bluey"),
 )
 _SAVED_CHAT = re.compile(r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}")
+HANDOFF_WORKFLOW = "git-handoff"
+_GITHUB_REPO = re.compile(r"[A-Za-z0-9-]+/[A-Za-z0-9_.-]+")
+
+
+def validate_github_repo(repo: str):
+    if (not isinstance(repo, str) or not _GITHUB_REPO.fullmatch(repo)
+            or ".." in repo or repo.split("/")[1] in (".", "-", ".git")):
+        raise ValueError("Use an exact GitHub owner/repository")
 
 
 class PublishedStateError(RuntimeError):
@@ -57,11 +65,14 @@ class PublishedGit:
             raise ValueError("Unsafe branch name")
 
     def _git(self, *args: str) -> str:
-        result = subprocess.run(
-            [*self.git_command, "-C", self.repo_dir.as_posix(), *args],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=45, check=False,
-        )
+        try:
+            result = subprocess.run(
+                [*self.git_command, "-C", self.repo_dir.as_posix(), *args],
+                capture_output=True, text=True, encoding="utf-8", errors="replace",
+                timeout=45, check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise PublishedStateError(f"Git {args[0]} did not finish within {exc.timeout:g} seconds") from exc
         if result.returncode != 0:
             raise PublishedStateError(f"Git {args[0]} failed ({result.returncode}): {result.stderr.strip()[:400]}")
         return result.stdout.strip()
@@ -69,12 +80,20 @@ class PublishedGit:
     def _verify_origin(self):
         # Verify that this local checkout really targets the nominated repository.
         remote_url = self._git("remote", "get-url", "origin")
-        valid_https = f"github.com/{self.repo_name}.git"
-        valid_ssh = f"github.com:{self.repo_name}.git"
-        if not (remote_url.rstrip("/").endswith(valid_https) or
-                remote_url.rstrip("/").endswith(valid_https[:-4]) or
-                remote_url.rstrip("/").endswith(valid_ssh)):
+        expected = (
+            f"https://github.com/{self.repo_name}",
+            f"ssh://git@github.com/{self.repo_name}",
+            f"git@github.com:{self.repo_name}",
+        )
+        if remote_url.rstrip("/").removesuffix(".git").lower() not in {x.lower() for x in expected}:
             raise PublishedStateError("origin does not match nominated repository")
+
+    def published_tip(self, *, shallow: bool = False) -> str:
+        self._verify_origin()
+        ref = f"refs/remotes/origin/{self.branch}"
+        depth = ["--depth=1", "--filter=blob:none"] if shallow else []
+        self._git("fetch", "--no-tags", *depth, "origin", f"+refs/heads/{self.branch}:{ref}")
+        return self._git("rev-parse", "--verify", f"{ref}^{{commit}}")
 
 
 class GitPublishedReader(PublishedGit):
@@ -87,11 +106,7 @@ class GitPublishedReader(PublishedGit):
             raise ValueError("Fixture path must be a scoped succession-tests subdirectory")
 
     def read(self, expected_run_id: str) -> PublishedObservation:
-        self._verify_origin()
-        ref = f"refs/remotes/origin/{self.branch}"
-        self._git("fetch", "--no-tags", "origin",
-                  f"+refs/heads/{self.branch}:{ref}")
-        sha = self._git("rev-parse", "--verify", f"{ref}^{{commit}}")
+        sha = self.published_tip()
         raw = self._git("show", f"{sha}:{self.fixture_path}/STATE.json")
         try:
             data = json.loads(raw)
@@ -114,6 +129,54 @@ class GitPublishedReader(PublishedGit):
                         next_task=data.get("next_task"),
                         published=True, readable=True)
         return PublishedObservation(view, sha, expected_run_id, self.fixture_path)
+
+
+class GitHandoffReader(PublishedGit):
+    """Read routing metadata from the published tip without interpreting the workload."""
+
+    def instructions(self, run_id: str, worker_number: int) -> str:
+        return (
+            f" Chat Succession run {run_id}, worker {worker_number}. "
+            "Follow the published project rules and active assignment. "
+            "If there is a prior handoff for this run, read Chat-Succession-Next on the published tip. "
+            "Use Remote Desktop Commander on Windows to read your current_chat_id from "
+            f"LOCALAPPDATA ChatSuccession/Runs/{run_id}/controller.json. "
+            "Wait until unique_chat_ids contains your expected worker count before using the ID. "
+            "Before TASK_COMPLETE publish a final commit on the nominated branch with trailers "
+            f"Chat-Succession-Run: {run_id}, Chat-ID: your saved chat ID, and "
+            "Chat-Succession-Next: the authorized next task or FINISHED. "
+            "End a verified handoff with CHAT_STATUS: TASK_COMPLETE. "
+            "For more time in this chat use CHAT_STATUS: NEED_MORE_TIME. "
+            "If the assignment is unclear, held, requires approval, or cannot be published "
+            "under the project rules, report the blocker and end with CHAT_STATUS: ERROR. "
+            "The controller owns successor launches."
+        )
+
+    def read(self, expected_run_id: str) -> PublishedObservation:
+        sha = self.published_tip(shallow=True)
+
+        def trailer(key: str) -> str:
+            lines = self._git("show", "-s", f"--format=%(trailers:key={key})", sha).splitlines()
+            if len(lines) != 1:
+                raise PublishedStateError(f"Published tip needs one {key} trailer")
+            name, _, value = lines[0].partition(":")
+            if name.casefold() != key.casefold() or not value.strip():
+                raise PublishedStateError(f"Published tip needs a nonempty {key} trailer")
+            return value.strip()
+
+        if trailer("Chat-Succession-Run") != expected_run_id:
+            raise PublishedStateError("Published handoff belongs to a different run")
+        chat_id = trailer("Chat-ID")
+        if not _SAVED_CHAT.fullmatch(chat_id):
+            raise PublishedStateError("Published handoff needs a saved Chat-ID")
+        next_task = trailer("Chat-Succession-Next")
+        if next_task.upper() == "HOLD":
+            raise PublishedStateError("Published handoff is on hold")
+        done = next_task == "FINISHED"
+        view = RepoView(repo=self.repo_name, branch=self.branch, last_chat_id=chat_id,
+                        programme_complete=done, next_task=None if done else next_task,
+                        published=True, readable=True)
+        return PublishedObservation(view, sha, expected_run_id, "")
 
 
 class GitStoryReader(PublishedGit):

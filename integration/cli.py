@@ -19,7 +19,10 @@ import sys
 import time
 
 from runner import cycle, initialise, inspect_state
-from repo_reader import GitPublishedReader, GitStoryReader, STORY_REPO, STORY_TURNS
+from repo_reader import (
+    GitHandoffReader, GitPublishedReader, GitStoryReader, HANDOFF_WORKFLOW, STORY_REPO, STORY_TURNS,
+    validate_github_repo,
+)
 from windows_backend import WindowsUIA
 from succession.core import Action, Config, Controller
 
@@ -57,7 +60,7 @@ def load_config(path: Path) -> dict:
     cfg = json.loads(path.read_text(encoding="utf-8"))
     fields = {"project", "repo", "branch", "max_unique_chats",
               "run_id", "project_name", "repo_dir_wsl"}
-    optional = {"poll_seconds", "response_wait_minutes", "fixture_path", "project_url"}
+    optional = {"poll_seconds", "response_wait_minutes", "fixture_path", "project_url", "workflow"}
     if not isinstance(cfg, dict) or not fields <= cfg.keys() <= fields | optional:
         raise ValueError("Private run config requires the documented fields")
     poll_seconds = cfg.get("poll_seconds", DEFAULT_POLL_SECONDS)
@@ -67,7 +70,13 @@ def load_config(path: Path) -> dict:
     if wait_minutes is not None and (
             type(wait_minutes) not in (int, float) or not 0 < wait_minutes < float("inf") / 60):
         raise ValueError("response_wait_minutes must be a positive number or null")
-    if cfg["repo"] == STORY_REPO:
+    if cfg.get("workflow") == HANDOFF_WORKFLOW:
+        validate_github_repo(cfg["repo"])
+        if not cfg.get("project_url") or "fixture_path" in cfg:
+            raise ValueError("A generic handoff needs a verified Project URL")
+    elif "workflow" in cfg:
+        raise ValueError("Unknown workload kind")
+    elif cfg["repo"] == STORY_REPO:
         if (cfg["branch"] != "main" or cfg["max_unique_chats"] != len(STORY_TURNS)
                 or not cfg.get("project_url") or "fixture_path" in cfg):
             raise ValueError("The four-turn story needs main and its verified Project URL")
@@ -87,7 +96,9 @@ def create_dependencies(cfg: dict, state_path: Path):
         project_url=cfg.get("project_url"))
     checkout = Path(cfg["repo_dir_wsl"])
     git_command = ("wsl.exe", "-d", "Ubuntu", "--exec", "/usr/bin/git")
-    if cfg["repo"] == STORY_REPO:
+    if cfg.get("workflow") == HANDOFF_WORKFLOW:
+        reader = GitHandoffReader(checkout, cfg["repo"], cfg["branch"], git_command=git_command)
+    elif cfg["repo"] == STORY_REPO:
         reader = GitStoryReader(checkout, git_command=git_command)
     else:
         reader = GitPublishedReader(checkout, cfg["repo"], cfg["branch"], cfg["fixture_path"],

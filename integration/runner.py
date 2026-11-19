@@ -19,7 +19,7 @@ if str(_KIT) not in sys.path:
 
 from succession.composer import ComposerObservation, ComposerState, classify_composer
 from succession.core import Action, Config, Controller, Response, RepoView, Status, interpret
-from repo_reader import GitPublishedReader, GitStoryReader, PublishedStateError
+from repo_reader import GitHandoffReader, GitPublishedReader, GitStoryReader, PublishedStateError
 
 
 @dataclass(frozen=True)
@@ -115,7 +115,8 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
         return Action.HOLD
 
 
-def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader | GitStoryReader,
+def cycle(controller: Controller, browser: Browser,
+          reader: GitPublishedReader | GitStoryReader | GitHandoffReader,
           run_id: str, state_path: Path, *, defer_dispatch: bool = False,
           response_deadline: float | None = None) -> Action:
     """One observation/dispatch cycle.
@@ -168,6 +169,8 @@ def cycle(controller: Controller, browser: Browser, reader: GitPublishedReader |
             return Action.HOLD
         logging.info("publication_check_finished chat=%s", response.chat_id)
     decision = controller.consume(response, repo)
+    if decision.action == Action.LAUNCH_SUCCESSOR and isinstance(reader, GitHandoffReader):
+        controller.state.pending.message += reader.instructions(run_id, controller.unique_count + 1)
     controller.save(state_path)
     if decision.action in (Action.CONTINUE_CURRENT, Action.LAUNCH_SUCCESSOR):
         if defer_dispatch:

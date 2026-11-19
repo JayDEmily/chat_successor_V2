@@ -1,6 +1,6 @@
 ---
 name: start-chat-succession
-description: Use when the owner invokes Chat Succession to start a bounded GitHub workload in a ChatGPT Project, including the My Cat and Dog iPhone launch.
+description: Use when the owner invokes Chat Succession from iPhone or desktop to launch a bounded GitHub workload in their existing ChatGPT Project.
 ---
 
 # Start Chat Succession
@@ -17,29 +17,42 @@ Use connected Remote Desktop Commander on the authorized Windows PC. Start this 
 
 If Desktop Commander returns a process ID before the receipt, read that process's output. The launcher confirms the first posted message and obtains the new saved chat ID before it starts the controller. A repeated request can report an existing run. Preserve an uncertain launch for read-only reconciliation and report its actual outcome. Leave all story writing to the desktop workers. The controller watches the four published turn branches and stops after Bluey's last line.
 
-## Other workloads
+## Launch another GitHub workload
 
-For a supported workload with a verified desktop chat, treat that saved chat as worker 1. The owner points the plugin to the GitHub workload from the intended Project. Handle routine setup through the existing tools.
+The invocation chat is a launcher. The fresh desktop chat becomes worker 1. Use the exact Project name from the owner's context. The phone conversation ID is unnecessary.
 
-## Establish the workload and browser context
+### Resolve the launch target
 
-1. Resolve the exact owner-approved GitHub repository and branch. Use the nominated assignment or the published current assignment on the default branch when it is clear. Ask about the workload only if the repository leaves it ambiguous.
-2. Read the repository's current instructions, applicable plan, verification commands and work boundaries. Treat the repository as the durable authority for progress, completion and the next task.
-3. Positively observe the existing authenticated Chrome Project and this saved chat's identity. Obtain the actual Project ID and displayed name from the owner’s browser. Use Remote Desktop Commander when needed to reach the Windows desktop or owner-authorized Ubuntu environment. Use existing authenticated GitHub access and Ubuntu Git for repo operations. Preserve authentication, existing drafts and unrelated sessions.
+Resolve the exact owner-approved GitHub repository and branch from the chat context and repository. Use the nominated assignment or the published current assignment on the default branch when it is clear. Ask the owner only if the launch target remains ambiguous. The first desktop worker reads the repository's instructions, verifies what work the project currently authorizes, and reports any hold it finds.
 
-## Start one controller when the workload is supported
+### Send the private launch request
 
-Keep the controller checkout separate from the workload checkout. Verify that the installed controller accepts the nominated repo and branch and can read the job's published progress, last worker identity, completion flag and next task. The Astra fixture entry point uses `JayDEmily/chat_successor` and its published fixture state. When the target job needs the Stage C reader, identify the missing mapping before starting a controller or claiming automatic succession is ready.
+Use Remote Desktop Commander on the authorized Windows PC. Run this PowerShell expression to allocate a private request path:
 
-If the context and published-state reader are supported, read the installed controller's integration README and CLI usage. On the tested Windows entry point the setup sequence is `init --config <private-json> --state <private-state> --initial-chat-id <observed-id>`, followed by `run --config <private-json> --state <private-state>`. Use the Windows Python runtime for the controller. Create a fresh run identity and private Windows configuration and state, unless inspection shows a matching controller is already running. Initialize against this saved worker, confirm count one and no pending action, then start one controller and verify that it is observing this chat. Prefer the owner's job policy. With no other cap, start with five distinct saved chats. Use the existing 20-second polling default and leave the response deadline unset unless configured.
+```powershell
+Join-Path $env:LOCALAPPDATA ('ChatSuccession/Requests/' + [guid]::NewGuid().ToString('N') + '.json')
+```
 
-Keep controller state in a private native Windows location. Log locally through the controller. Keep credentials, local paths and raw account transcripts out of the GitHub work record.
+Use Remote Desktop Commander's file write tool to save JSON at that exact returned path. Substitute the confirmed values for this run:
 
-## Worker and successor contract
+```json
+{"repo":"OWNER/REPO","branch":"work/current","project_name":"Exact Project name"}
+```
 
-- Deliver the published assignment using the repository's normal checks. Commit and push through the authorized write route. Verify the publication from GitHub. Record actual work, the worker attribution and the next assignment or overall completion.
-- End a verified published handoff with exactly one final line `CHAT_STATUS: TASK_COMPLETE`. Use `CHAT_STATUS: NEED_MORE_TIME` when another turn in this same saved chat is needed. Use `CHAT_STATUS: ERROR` and explain a blocker.
-- The controller is the sole automatic sender. It uses the ordinary short repo and branch pointer for each successor. Successors read GitHub and continue that run. Only an explicit fresh owner start can initialize a new run.
-- Keep pause, chat cap and terminal completion in force. For uncertain submissions, preserve the prepared or in-flight action and reconcile read-only. If a required tool, Project identity or published-state reader is missing, report the exact blocker and the last verified state before carrying out succession. Continue as a standalone worker only when the owner separately requests it.
+Optional fields are `max_unique_chats` (default five, or use the owner’s cap) and `project_url` when a verified ChatGPT Project landing link is available. With a name alone, the desktop looks for a saved chat in the exact Project's sidebar list. If the list is unavailable, use the verified landing link. Report any unresolved or ambiguous Project.
+
+Start this PowerShell command once, substituting the actual absolute file path from the earlier command. Escape any apostrophe in the Windows path by doubling it inside the literal:
+
+```powershell
+& (Join-Path $env:LOCALAPPDATA 'ChatSuccession/start-project.cmd') --request 'ABSOLUTE_REQUEST_PATH'
+```
+
+Read the same process's output if it returns a PID ahead of the result. Report the actual verified desktop worker receipt or specific hold. Keep credentials, config and logs private on Windows. Repeat requests for the same target report or resume the existing run. For a subsequent run after that one ends, use a new checkpoint branch authorized by the project. Preserve any uncertain initial Send for read-only reconciliation.
+
+### What each desktop worker publishes
+
+The worker reads the nominated repo's own authority, chooses its authorized work and runs its normal verification. Its published work branch needs a tip commit with three trailers. `Chat-Succession-Run` identifies the private run, `Chat-ID` is the worker's saved ID from verified Windows state, and `Chat-Succession-Next` names the authorized next assignment or says `FINISHED`. This receipt belongs on the nominated branch using the repository's authorized write route.
+
+Use the final `CHAT_STATUS: TASK_COMPLETE` line only after verifying publication. Use `CHAT_STATUS: NEED_MORE_TIME` for same-chat continuation and `CHAT_STATUS: ERROR` for an unresolved requirement, authorization hold, or unsuitable publication route. Only the single Windows controller sends automatic continuations and successors.
 
 For the maintained startup guide and verified Astra scope, see [the Chat Succession repository](https://github.com/JayDEmily/chat_successor).

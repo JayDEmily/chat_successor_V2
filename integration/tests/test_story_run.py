@@ -1,13 +1,15 @@
 from pathlib import Path
+import json
 import subprocess
 import sys
 from tempfile import TemporaryDirectory
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from launch_story import bootstrap
-from repo_reader import GitStoryReader, PublishedStateError, STORY_REPO, STORY_TURNS
+from launch_project import launch_request
+from repo_reader import GitHandoffReader, GitStoryReader, PublishedStateError, STORY_REPO, STORY_TURNS
 from runner import Destination, Submitted, cycle, initialise
 from succession.composer import ComposerObservation
 from succession.core import Action, Config, Response
@@ -85,12 +87,86 @@ class StoryTests(unittest.TestCase):
         with self.assertRaisesRegex(PublishedStateError, "distinct saved Chat-ID"):
             self.reader.read("story")
 
+    def publish_handoff(self, chat_id, next_task, run="demo"):
+        with (self.writer / "NOTES.md").open("a") as notes:
+            notes.write("Work verified by the worker.\n")
+        git(self.writer, "add", "NOTES.md")
+        git(self.writer, "commit", "-m", "Publish ordinary work",
+            "-m", f"Chat-Succession-Run: {run}\nChat-ID: {chat_id}\nChat-Succession-Next: {next_task}")
+        git(self.writer, "push", "origin", "main")
+
+    def test_generic_handoff_uses_only_trailers_and_project_reader(self):
+        repo = "example-org/ordinary-project"
+        reader = GitHandoffReader(self.root / "reader", repo, "main")
+        reader._verify_origin = Mock()
+        path = self.root / "controller.json"
+        controller = initialise(path, Config(PROJECT, repo, "main", 3), CHATS[0])
+        browser = Mock()
+        browser.prepare.return_value = Destination(
+            PROJECT, None, ComposerObservation(editable_text="", attachments_present=False), 10)
+        expected = (
+            f"Continue the work in GitHub repo {repo}, branch main. "
+            "Read the current instructions, progress and next task there."
+        ) + reader.instructions("demo", 2)
+        browser.send_once.return_value = Submitted(PROJECT, CHATS[1], expected, True)
+        self.publish_handoff(CHATS[0], "Read the next authorized item")
+        browser.observe.return_value = Response(CHATS[0], "a", "CHAT_STATUS: TASK_COMPLETE", project=PROJECT)
+        self.assertEqual(cycle(controller, browser, reader, "demo", path), Action.WAIT)
+        self.assertEqual(browser.send_once.call_args.args[1], expected)
+        self.publish_handoff(CHATS[1], "FINISHED")
+        browser.observe.return_value = Response(CHATS[1], "b", "CHAT_STATUS: TASK_COMPLETE", project=PROJECT)
+        self.assertEqual(cycle(controller, browser, reader, "demo", path), Action.STOP_FINISHED)
+        self.assertEqual(browser.send_once.call_count, 1)
+
+    def test_generic_stale_run_and_published_hold_are_refused(self):
+        reader = GitHandoffReader(self.root / "reader", "example-org/ordinary-project", "main")
+        reader._verify_origin = Mock()
+        self.publish_handoff(CHATS[0], "HOLD", run="old")
+        with self.assertRaisesRegex(PublishedStateError, "different run"):
+            reader.read("demo")
+        with self.assertRaisesRegex(PublishedStateError, "on hold"):
+            reader.read("old")
+
+    def test_generic_empty_duplicate_trailer_holds(self):
+        reader = GitHandoffReader(self.root / "reader", "example-org/ordinary-project", "main")
+        reader._verify_origin = Mock()
+        self.publish_handoff(CHATS[0], "\nChat-Succession-Next: FINISHED")
+        with self.assertRaisesRegex(PublishedStateError, "one Chat-Succession-Next trailer"):
+            reader.read("demo")
+
+    def test_git_timeout_is_a_publication_error(self):
+        reader = GitHandoffReader(self.root / "reader", "example-org/ordinary-project", "main")
+        reader._verify_origin = Mock()
+        with patch("repo_reader.subprocess.run", side_effect=subprocess.TimeoutExpired("git", 45)):
+            with self.assertRaisesRegex(PublishedStateError, "Git fetch did not finish"):
+                reader.read("demo")
+
 
 class BootstrapTests(unittest.TestCase):
+    def test_generic_request_reuses_the_same_private_configuration(self):
+        with TemporaryDirectory() as temp:
+            folder = Path(temp)
+            request = folder / "request.json"
+            request.write_text(json.dumps({
+                "repo": "example-org/ordinary-project", "branch": "work/active",
+                "project_name": "Ordinary Project",
+            }))
+            with (patch("launch_project.provision_reader", return_value="/tmp/repo") as git_setup,
+                  patch("launch_project.resolve_project",
+                        return_value=("g-p-abc123","Ordinary Project",
+                                      "https://chatgpt.com/g/g-p-abc123/project")) as resolver,
+                  patch("launch_project.launch", return_value={"event": "controller_started"}) as start):
+                launch_request(request, folder)
+                launch_request(request, folder)
+            git_setup.assert_called_once()
+            resolver.assert_called_once()
+            self.assertEqual(start.call_args_list[0].args, start.call_args_list[1].args)
+            self.assertEqual(start.call_args_list[0].kwargs, start.call_args_list[1].kwargs)
+
     def test_lost_initial_acknowledgement_reconciles_without_resending(self):
         with TemporaryDirectory() as temp:
             path = Path(temp) / "controller.json"
-            cfg = {"project": PROJECT, "max_unique_chats": 4}
+            cfg = {"project": PROJECT, "max_unique_chats": 4, "repo": STORY_REPO, "branch": "main"}
             reader, browser = Mock(), Mock()
             reader.heads.return_value = {"main": "seed"}
             browser.project = PROJECT
@@ -108,3 +184,30 @@ class BootstrapTests(unittest.TestCase):
             self.assertEqual([call.args[0] for call in browser._invoke.call_args_list], ["Send", "Reconcile"])
             self.assertEqual(result["current_chat_id"], CHATS[0])
             self.assertEqual(result["unique_chat_count"], 1)
+
+    def test_verified_initial_pause_does_not_require_reconciliation(self):
+        with TemporaryDirectory() as temp:
+            path = Path(temp) / "controller.json"
+            cfg = {"project": PROJECT, "max_unique_chats": 4, "repo": STORY_REPO, "branch": "main"}
+            reader, browser = Mock(), Mock()
+            reader.heads.return_value = {"main": "seed"}
+            browser.project = PROJECT
+            browser.prepare.return_value = Destination(
+                PROJECT, None, ComposerObservation(editable_text="", attachments_present=False), 10)
+            browser._invoke.return_value = {"paused_before_click": True}
+            with self.assertRaisesRegex(RuntimeError, "Owner paused before the initial Send"):
+                bootstrap(cfg, path, browser, reader)
+            self.assertFalse(path.with_name("bootstrap-intent.json").exists())
+            pointer = browser._invoke.call_args.kwargs["Message"]
+            path.with_suffix(".pause").touch()
+            with self.assertRaisesRegex(RuntimeError, "Owner paused before the initial Send"):
+                bootstrap(cfg, path, browser, reader)
+            self.assertEqual(browser.prepare.call_count, 1)
+            path.with_suffix(".pause").unlink()
+            browser._invoke.return_value = {
+                "posted_message_observed": True, "project": PROJECT,
+                "chat_id": CHATS[0], "submitted_text": pointer,
+            }
+            result = bootstrap(cfg, path, browser, reader)
+            self.assertEqual([call.args[0] for call in browser._invoke.call_args_list], ["Send", "Send"])
+            self.assertEqual(result["current_chat_id"], CHATS[0])

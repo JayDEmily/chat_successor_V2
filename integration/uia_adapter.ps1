@@ -2,8 +2,8 @@
 # reference-controller 'sending' state. No automatic retries or reset.
 [CmdletBinding()]
 param(
- [Parameter(Mandatory=$true)][ValidateSet('Observe','Prepare','Send','Reconcile')][string]$Mode,
- [Parameter(Mandatory=$true)][string]$ProjectId,
+ [Parameter(Mandatory=$true)][ValidateSet('ResolveProject','Observe','Prepare','Send','Reconcile')][string]$Mode,
+ [string]$ProjectId = '',
  [Parameter(Mandatory=$true)][string]$ProjectName,
  [string]$ProjectUrl = '',
  [string]$ChatId = '',
@@ -19,6 +19,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+if($Mode -ne 'ResolveProject' -and -not $ProjectId){throw 'Nominated Project ID required'}
 
 function Desc($element) {
  return $element.FindAll([System.Windows.Automation.TreeScope]::Descendants,
@@ -38,13 +39,25 @@ function Get-ChromeWindows {
  }
  return $found
 }
+function Open-ChromeWindow([string]$url) {
+ if(-not (Test-Path -LiteralPath $ChromeExe -PathType Leaf)){throw 'Chrome executable missing'}
+ $before=@((Get-ChromeWindows) | ForEach-Object {$_.Current.NativeWindowHandle})
+ Start-Process -FilePath $ChromeExe -ArgumentList @('--new-window',$url)
+ for($i=0;$i -lt 50;$i++){
+  Start-Sleep -Milliseconds 400
+  $candidates=@((Get-ChromeWindows) | Where-Object {$before -notcontains $_.Current.NativeWindowHandle})
+  if($candidates.Count -gt 1){throw 'Ambiguous new Chrome windows'}
+  if($candidates.Count -eq 1){return $candidates[0]}
+ }
+ throw 'Fresh Chrome window was not uniquely observed'
+}
 function Get-Address($window) {
  foreach($el in (Desc $window)) {
   try {
    if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit -and
       $el.Current.Name -eq 'Address and search bar') {
     $v=$el.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
-    if($v -match '^chatgpt[.]com/') {return 'https://' + $v}
+    if($v -match '^chatgpt[.]com(?:/|$)') {return 'https://' + $v}
     return $v
    }
   }catch{}
@@ -175,6 +188,56 @@ function Find-PostedMessage($window,$expected) {
  return $latestUserMatches
 }
 
+if($Mode -eq 'ResolveProject') {
+ $window=Open-ChromeWindow 'https://chatgpt.com/'
+ $link=$null
+ $name=$null
+ $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
+ for($i=0;$i -lt 25;$i++){
+  if((Get-Address $window) -match '^https://chatgpt[.]com(?:/|$)'){
+   $lists=@((Desc $window) | Where-Object {
+    $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::List -and
+    $_.Current.Name -ieq ('Chats in ' + $ProjectName)
+   })
+   if($lists.Count -gt 1){throw 'The Project name matched multiple sidebar lists'}
+   if($lists.Count -eq 1){
+    $list=$lists[0]
+    $name=$list.Current.Name.Substring(9)
+    if($list.Current.IsOffscreen){
+     $row=$walker.GetParent($walker.GetParent($list))
+     $scroll=$null
+     if($null -ne $row -and $row.TryGetCurrentPattern(
+        [System.Windows.Automation.ScrollItemPattern]::Pattern,[ref]$scroll)){$scroll.ScrollIntoView()}
+    }
+    # A saved chat in the exact Project list proves the Project address.
+    # The launch opens a different fresh window from the verified landing URL.
+    foreach($item in (Desc $list)){
+     $candidate=$null
+     if($item.Current.ControlType -eq [System.Windows.Automation.ControlType]::Hyperlink -and
+        $item.Current.IsEnabled -and -not $item.Current.IsOffscreen -and
+        $item.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$candidate)){
+      $link=$candidate
+      break
+     }
+    }
+    if($null -ne $link){break}
+   }
+  }
+  Start-Sleep -Milliseconds 400
+ }
+ if($null -eq $link){throw 'Could not resolve a saved chat in the exact Project sidebar list'}
+ $link.Invoke()
+ for($i=0;$i -lt 25;$i++){
+  Start-Sleep -Milliseconds 400
+  $url=Get-Address $window
+  if($url -match '^(https://chatgpt[.]com/g/(g-p-[a-f0-9]+)(?:-[A-Za-z0-9-]+)?)/c/[A-Za-z0-9_-]+(?:[/?#]|$)'){
+   @{project=$Matches[2];project_name=$name;project_url=($Matches[1]+'/project')} | ConvertTo-Json -Compress
+   exit 0
+  }
+ }
+ throw 'The saved Project chat did not expose a verified desktop address'
+}
+
 if($Mode -eq 'Observe') {
  if(-not $ChatId){throw 'Observe needs a known saved chat ID'}
  $target=Get-TargetWindow $ChatId 0
@@ -230,7 +293,6 @@ if($Mode -eq 'Prepare') {
   $target=Get-TargetWindow $ChatId 0
   $editor=Find-Composer $target.window 'Ask ChatGPT'
  }else{
-  if(-not (Test-Path -LiteralPath $ChromeExe -PathType Leaf)){throw 'Chrome executable missing'}
   # In this Chrome installation the Project-specific sidebar control
   # was found but remained offscreen after ScrollIntoView. Reuse the observed
   # authenticated /project URL instead; never construct or guess a Project URL.
@@ -253,16 +315,7 @@ if($Mode -eq 'Prepare') {
     if($uniquePages.Count -ne 1){throw 'No unique independently observed target Project URL'}
     $projectPage=$uniquePages[0]
    }
-  $before=@((Get-ChromeWindows) | ForEach-Object {$_.Current.NativeWindowHandle})
-   Start-Process -FilePath $ChromeExe -ArgumentList @('--new-window', $projectPage)
-  $new=$null
-  for($i=0;$i -lt 50;$i++){
-   Start-Sleep -Milliseconds 400
-   $candidates=@((Get-ChromeWindows) | Where-Object {$before -notcontains $_.Current.NativeWindowHandle})
-   if($candidates.Count -gt 1){throw 'Ambiguous new Chrome windows'}
-   if($candidates.Count -eq 1){$new=$candidates[0];break}
-  }
-  if($null -eq $new){throw 'Fresh Chrome window was not uniquely observed'}
+   $new=Open-ChromeWindow $projectPage
   $target=$null
   for($i=0;$i -lt 50;$i++){
    Start-Sleep -Milliseconds 400

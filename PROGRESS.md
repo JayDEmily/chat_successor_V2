@@ -9,15 +9,31 @@ empty composer without posting. The first preflight held on a draft and left
 it intact. A later preflight passed.
 
 The four-turn story guide is published at `94eee8b6162520fc0f75f355bdac6e778310c50b`.
-Integration tests used real Git branch publication and a controlled browser
-adapter to verify three successors and the terminal stop. The live iPhone
-dispatch and first story worker are reserved for the owner's trial.
+The owner's live iPhone launch started its Windows controller at 14:26:32
+Sydney time on 19 November. The timing log records three confirmed successor
+sends and `STOP_FINISHED` at 14:36:20. The saved controller has four distinct
+chat IDs and no pending action. Each ID matches its Git commit trailer, and
+each turn's published commit descends directly from the preceding turn.
+[The completed story](https://github.com/JayDEmily/my-cat-and-dog/blob/9b0180354fc1a6e127c9982dd44fb4b17f5716a9/STORY.md)
+contains four dialogue lines.
+
+## Repo-neutral launcher and handoff
+
+The generic launcher accepts the nominated GitHub repo, branch and ChatGPT
+Project. Workers reason from their own repository's instructions and use three
+Git trailers to publish a common handoff receipt. On Windows, Chrome found
+the trial Project by name, and Remote Desktop Commander ran the installed
+Windows launcher successfully in no-Send mode against its GitHub branch.
+Real-Git tests with simulated browser handoffs cover successor launch,
+terminal stop, stale receipts and holds. Independent review cleared the
+changes after 35 integration tests and 119 Astra reference tests passed.
+A live generic workload is the next acceptance step.
 
 ## Chat Succession startup template — 19 November 2026
 
 The tested Astra baseline is published on `main` at `cffdb253aa24c52cbfec59b08112742f18f7352e`. This separate working branch contains the owner quickstart and the personal plugin source for the two-step browser startup. The shared controller stays separate from the workload repository.
 
-Stage C still needs the job-state reader connected to an ordinary workload's published progress before an automatic real-job run. The startup skill checks that boundary before it starts a controller. This branch has no active test assignment.
+An ordinary workload still needs a live Stage C run under its own authority. This branch has no active test assignment.
 
 ## Chrome composer focus dependency removed — 19 November 2026
 

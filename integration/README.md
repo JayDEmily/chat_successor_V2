@@ -1,4 +1,25 @@
-# Astra integration seam — implementation branch only
+# Chat Succession integration
+
+## Repo-neutral launcher
+
+`launch_project.py --request PATH` takes a private Windows JSON request with
+`repo`, `branch` and `project_name`. `max_unique_chats` defaults to five.
+`project_url` is optional when a verified ChatGPT Project landing URL is
+available. With a name alone, desktop Chrome looks for a saved chat in the
+exact Project's sidebar list. Use the verified Project landing link if Chrome
+cannot find that list. The same repo, branch and Project name identify one
+saved run. Use a different authorized checkpoint branch for a subsequent run.
+Adding `--check` verifies the GitHub branch and the browser composer without
+posting a message or starting a controller.
+
+The launcher keeps controller files in `%LOCALAPPDATA%\ChatSuccession\Runs`
+and makes an Ubuntu bare readback repository for each run. `GitHandoffReader`
+fetches the nominated branch tip and checks the run ID, saved chat ID and
+next-assignment Git trailers described in the [startup guide](../README.md).
+Each worker reads and applies its repository's own instructions before it
+works or publishes.
+
+## Existing story and Astra modes
 
 The My Cat and Dog trial uses `launch_story.py` from the authorized Windows
 desktop. Its private config points at the verified Project landing page and an
@@ -20,20 +41,15 @@ UI Automation method and Git/WSL publication route, **not another controller**.
 
 - `runner.py` calls Astra's `Controller.consume`, persists state before Send,
   and delegates observation/prepare/one Send/reconciliation.
-- `repo_reader.py` reads the nominated, freshly fetched remote-branch
-  `succession-tests/<run-id>/STATE.json`, never local-only state.
+- `repo_reader.py` reads the nominated, freshly fetched remote branch. Astra
+  uses `succession-tests/<run-id>/STATE.json` on that branch.
 - `windows_backend.py` calls `uia_adapter.ps1` for Chrome observations and
   the existing Project-specific navigation/Send mechanism.
 - `cli.py` exposes run status and pause/resume/reconcile, using the same
   controller state file. It does not launch additional controllers.
 - `tests/` covers these connections with simulated browser/Git observations.
 
-**Validation to date (18 November):** reference 119/119 offline and
-16/16 new simulated integration tests passed independently. Chrome UIA
-placeholder/draft, exact Project URL navigation, and initial authenticated
-message Send were exercised on Windows. The **first** L01 test worker is an
-assisted bootstrap. The controller has not yet demonstrated an autonomous
-successor or completed L01; L02-L15 remain unproven.
+See [project progress](../PROGRESS.md) for live Astra and story results.
 
 **Windows state placement:** Use a private native NTFS file path for the
 controller state and its lock (for example under the user's LocalAppData).
