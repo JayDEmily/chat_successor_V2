@@ -1,5 +1,11 @@
 # Progress
 
+## James Student release handoff
+
+Resume from this branch and [the approved finish plan](docs/astra-succession/finish-chat-succession.md). The audit baseline is `8345978`. The previous iPhone approval, overlapping desktop runs, and two-worker cap are verified below. The pending release work is automatic recovery of an already-saved Chrome view, reliable wrapper discovery, the existing James Student private plugin update, and the three candidate trials.
+
+Use the Windows PC through Desktop Commander and its Ubuntu Git credentials. The installed launcher was previously verified at `C:\Users\james\AppData\Local\ChatSuccession\start-project.cmd`, with the source checkout at `/home/jds/chat_successor_usage_template_20261119`. Continue under the verified James Chrome profile. The plugin list visible to the implementation conversation did not contain the James Student Chat Succession release. Resolve the original private plugin link or backend ID before publication. Keep code preparation and Windows evidence separate from the live plugin and iPhone acceptance results.
+
 ## Takeover audit — 20 November 2026
 
 The Windows launcher uses the Ubuntu checkout of this branch. Its starting
