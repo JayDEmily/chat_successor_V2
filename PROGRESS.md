@@ -1,5 +1,11 @@
 # Progress
 
+## Chat Succession startup template — 19 November 2026
+
+The tested Astra baseline is published on `main` at `cffdb253aa24c52cbfec59b08112742f18f7352e`. This separate working branch contains the owner quickstart and the personal plugin source for the two-step browser startup. The shared controller stays separate from the workload repository.
+
+Stage C still needs the job-state reader connected to an ordinary workload's published progress before an automatic real-job run. The startup skill checks that boundary before it starts a controller. This branch has no active test assignment.
+
 ## Chrome composer focus dependency removed — 19 November 2026
 
 The L12 test's first attempt exposed a remaining Windows foreground failure in the composer clipboard read. The existing Windows adapter now observes Chrome's empty-placeholder structure through UI Automation. The same read runs at Prepare and before typing. Exact-placeholder drafts, attachments and ambiguous composer states still hold the action.
