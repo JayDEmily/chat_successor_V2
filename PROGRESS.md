@@ -1,5 +1,90 @@
 # Progress
 
+## Takeover audit — 20 November 2026
+
+The Windows launcher uses the Ubuntu checkout of this branch. Its starting
+revision matched `179a4b9`. Followed the actual path from the plugin request
+through Project and run selection, Windows observation and Send, GitHub
+receipt verification, and the next saved worker. The current implementation
+resolves runs by stable Project and repository and retains the configured cap
+across an authorized checkpoint branch change. [ADR 0001](docs/adr/0001-generic-entry-and-re-entry.md)
+
+- **Requested iPhone trial.** The selected branch already held both expected
+  commits. The Windows journal independently confirmed run `8f8bb228a19625f450959aaa`,
+  a cap of two, two distinct saved workers, one scoped approval delivery to the
+  original worker, one automatic successor and `STOP_FINISHED` with no pending
+  action. The Git commit trailers matched the journal. The completed fixture
+  was reconciled. [Published notes](https://github.com/JayDEmily/chat-succession-trial-approval/blob/1590c45af104e34cdcd5c2820e9ce30c9da35e80/NOTES.md)
+- **Previous concurrency.** Both Windows journals confirmed the 3m09s overlap
+  of Cat/Dog and Bird/Pig, one automatic successor per run and two saved workers
+  per terminal run. The original approval and its Cat/Dog companion also
+  overlapped for 94 seconds before the approval hold. The companion needed a
+  format-only response correction. Bird/Pig had its own GitHub repository.
+  [Prior evidence](evidence/astra-generic-entry-20261119/live-acceptance.md)
+- **Controller corrections.** `6f3a255` binds the Send button to the verified
+  editor's document, checks the active address and draft before invoking it,
+  and requires a same-chat posted turn after the exact triggering assistant
+  response. An operator pause preserves terminal `chat_cap` and
+  `programme_finished`. A prior timing log with a missing controller journal
+  now holds for recovery before any bootstrap. A worker prompt places
+  commentary and timestamps above the standalone status line. Independent
+  review and 50 integration tests passed. Windows PowerShell parsing and
+  receipt probes accepted the exact new post and rejected the older identical
+  post and a post after another assistant turn.
+- **Windows and Chrome.** Both first live attempts held before Send. The
+  connected tool had a different LocalAppData path and one fresh Chrome
+  window showed sign-in. A no-Send probe using the verified existing signed-in
+  profile found the exact Project, an empty composer, and its UI Automation
+  document. `07c8a64` adds a launcher-process profile override, inherited by
+  the controller. Used that setting and the verified existing run directory
+  for the desktop replays. The fixture route updates and this audit entry were
+  published from Ubuntu.
+
+- **Parallel desktop replays.** On 20 November Melbourne time, Cat/Dog
+  registered at 00:13:58 and Bird/Pig at 00:14:25, each in its own Project
+  with a cap of two. Cat/Dog confirmed its automatic successor at 00:19:07
+  and reached `STOP_FINISHED` at 00:23:59. Both published story commits
+  matched its two saved worker IDs. [Cat/Dog branch result](https://github.com/JayDEmily/chat-succession-cat-dog-pair/blob/3105b8d6af3bc4c37ecbd79c127e14d0312b375e/STORY.md)
+- **Bird/Pig pause and continuation.** Paused the observer and resumed the
+  same worker with its count still one at 00:16:40. It overlapped with the
+  Cat/Dog controller for another 7m19s. The two identical `NEED_MORE_TIME`
+  continuations were separately confirmed in the same saved chat at 00:16:53
+  and 00:17:49. The first worker published only the expected opening line.
+  [Opening commit](https://github.com/JayDEmily/chat-succession-bird-pig/commit/8c2bf709570ab3ce6333d5ae7afda9cf45b8b387)
+- **Stale view recovery.** After the Bird/Pig publication, the original view
+  continued to show a partial answer and a Stop control. A separate read-only
+  view of the same saved chat showed a complete response and no Stop control.
+  With the observer paused, closed the temporary view, reloaded the original
+  view after verifying its composer was empty, and resumed the saved run. The controller
+  confirmed the one automatic successor at 00:31:19. This replay required
+  operator-assisted view recovery. At 00:35:27 it reached `STOP_CAP`, with
+  two distinct saved workers and no pending action. The verified second
+  story commit leaves the third review task eligible. [Bird/Pig branch result](https://github.com/JayDEmily/chat-succession-bird-pig/blob/e940ee5381f32bdb8fa5a85a12a174aeb5a8c2a4/STORY.md)
+
+The Send method supports a background Chrome window. The target still has to
+be the selected tab in exactly one accessible Chrome window. Closing the
+registered chat, leaving it behind another tab, or opening duplicate views
+can still hold observer recovery. A read-only probe of a closed historical
+worker returned zero eligible targets. A Project with no saved sidebar chat needs
+its verified landing URL. The owner supplies an existing Project and an
+authorized GitHub publication route for each workload.
+
+The original Rowing hold was consistent with the published project authority.
+The later scoped release and work branch are real. That checkpoint lacks the
+succession trailers needed for a controller handoff. The Windows journal still
+shows one worker, the original branch, and no publication check or successor.
+The checkpoint's ownership note
+documents the seven preserved raw-stdout blank lines and the separate scoped
+whitespace checks. The sources do not establish which ChatGPT conversation
+received the original instruction or confirm concurrent writers. [Rowing checkpoint](https://github.com/JayDEmily/rowing2026/commit/ff2876dc3c3b0d739df1e5e08de0626233c7ffa9)
+
+The SolidWorks request resolved `JayDEmily/sw_v1` and its actual working branch.
+The run directory has configuration and no initial Send intent, controller
+journal or timing log. GitHub has project commits without succession trailers.
+There is no saved evidence identifying the precise pre-registration failure.
+An ordinary-project replay remains outstanding for both cases. Each workload
+keeps its own native-tool, approval, artifact and publication rules. [SolidWorks project checkpoint](https://github.com/JayDEmily/sw_v1/commit/bb258b66d311f3a5a8c2d5eea83310d41dfdce6a)
+
 ## iPhone approval and Cat and Dog overlap — 19 November 2026
 
 The owner launched a disposable approval run from the iPhone with Chat
