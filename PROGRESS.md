@@ -1,5 +1,16 @@
 # Progress
 
+## Desktop approval and branch-rotation closeout — 19 November 2026
+
+The bounded desktop replays delivered one scoped approval to the original
+worker and handed off once on a verified rotated branch. Each run stopped at
+two saved workers. The identical approval request returned an existing
+receipt. The replay uncovered two Windows adapter faults, both fixed and
+reviewed. [Replay evidence](evidence/astra-generic-entry-20261119/live-acceptance.md#desktop-closeout-replays)
+
+The personal plugin's 0.4.2 source points to the maintained usage guide. The
+iPhone approval replay and the owner's Stage C workload remain open.
+
 ## Concurrent Chrome window startup — 19 November 2026
 
 Two near-simultaneous Project lookups reproduced an ambiguous Chrome window
@@ -39,8 +50,8 @@ evidence](evidence/astra-generic-entry-20261119/live-acceptance.md) verifies
 same-worker approval delivery and checkpoint rotation on two disposable
 projects. The original fresh-window failure was reproduced and the
 same-window successor path prepared both live composers successfully.
-Both clicks produced local-only conversation IDs. G2 remains open pending
-read-only reconciliation of those attempts and verified terminal work.
+Both original clicks produced local-only conversation IDs and remain
+unconfirmed. The desktop closeout above records the results of the new runs.
 
 ## Astra generic entry and re-entry proposal — 19 November 2026
 

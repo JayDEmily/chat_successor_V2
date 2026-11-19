@@ -21,6 +21,8 @@ param(
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+# The detached Python controller reads JSON as UTF-8.
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
 if($Mode -ne 'ResolveProject' -and -not $ProjectId){throw 'Nominated Project ID required'}
@@ -191,9 +193,6 @@ if($Mode -eq 'ResolveProject') {
  $window=Open-ChromeWindow 'https://chatgpt.com/'
  $resolutionWindow=$window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
  try {
- $link=$null
- $name=$null
- $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
  for($i=0;$i -lt 25;$i++){
   if((Get-Address $window) -match '^https://chatgpt[.]com(?:/|$)'){
    $items=Desc $window
@@ -217,39 +216,22 @@ if($Mode -eq 'ResolveProject') {
    if($lists.Count -eq 1){
     $list=$lists[0]
     $name=$list.Current.Name.Substring(9)
-    if($list.Current.IsOffscreen){
-     $row=$walker.GetParent($walker.GetParent($list))
-     $scroll=$null
-     if($null -ne $row -and $row.TryGetCurrentPattern(
-        [System.Windows.Automation.ScrollItemPattern]::Pattern,[ref]$scroll)){$scroll.ScrollIntoView()}
-    }
-    # A saved chat in the exact Project list proves the Project address.
-    # The launch opens a different fresh window from the verified landing URL.
+    # Read the link address so a status lookup cannot open a second worker view.
     foreach($item in (Desc $list)){
-     $candidate=$null
+     $address=$null
      if($item.Current.ControlType -eq [System.Windows.Automation.ControlType]::Hyperlink -and
-        $item.Current.IsEnabled -and -not $item.Current.IsOffscreen -and
-        $item.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$candidate)){
-      $link=$candidate
-      break
+        $item.Current.IsEnabled -and
+        $item.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern,[ref]$address) -and
+        $address.Current.Value -match '^(https://chatgpt[.]com/g/(g-p-[a-f0-9]+)(?:-[A-Za-z0-9-]+)?)/c/[A-Za-z0-9_-]+(?:[/?#]|$)'){
+      @{project=$Matches[2];project_name=$name;project_url=($Matches[1]+'/project')} | ConvertTo-Json -Compress
+      exit 0
      }
     }
-    if($null -ne $link){break}
    }
   }
   Start-Sleep -Milliseconds 400
  }
- if($null -eq $link){throw 'Could not resolve a saved chat in the exact Project sidebar list'}
- $link.Invoke()
- for($i=0;$i -lt 25;$i++){
-  Start-Sleep -Milliseconds 400
-  $url=Get-Address $window
-  if($url -match '^(https://chatgpt[.]com/g/(g-p-[a-f0-9]+)(?:-[A-Za-z0-9-]+)?)/c/[A-Za-z0-9_-]+(?:[/?#]|$)'){
-   @{project=$Matches[2];project_name=$name;project_url=($Matches[1]+'/project')} | ConvertTo-Json -Compress
-   exit 0
-  }
- }
- throw 'The saved Project chat did not expose a verified desktop address'
+ throw 'Could not read a saved chat address in the exact Project sidebar list'
  } finally {$resolutionWindow.Close()}
 }
 

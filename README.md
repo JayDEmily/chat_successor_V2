@@ -55,7 +55,11 @@ Chat-Succession-Next: <authorized next assignment or FINISHED>
 
 Use the repository's normal publication route. For a different authorized checkpoint branch, place `CHAT_HANDOFF_BRANCH: work/example` immediately before `CHAT_STATUS: TASK_COMPLETE`. The controller advances to that branch only after verifying the receipt. If there is an owner hold, no authorized assignment, or no approved way to publish, the worker reports `CHAT_STATUS: ERROR` and the controller holds.
 
-Astra is verified through G4. The My Cat and Dog iPhone trial finished four workers and three automatic handoffs. The generic launcher passed a desktop Chrome preflight and simulated handoffs against real Git commits. The first generic run on a live workload remains to be done.
+Astra's original bounded integration is verified through G4. The My Cat and
+Dog iPhone trial finished four workers and three automatic handoffs. Live
+generic desktop trials verified hidden Project lookup, overlapping runs, and
+terminal stops. See the [live evidence](evidence/astra-generic-entry-20261119/live-acceptance.md)
+for current approval and branch-rotation results.
 
 - [Astra gates and leaves](docs/astra-succession/README.md)
 - [Validation results and handoff](PROGRESS.md)

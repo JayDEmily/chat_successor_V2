@@ -63,4 +63,4 @@ When explicitly asked to use the original four-turn fixture for `JayDEmily/my-ca
 & (Join-Path $env:LOCALAPPDATA 'ChatSuccession\MyCatAndDog\start.cmd')
 ```
 
-For the maintained startup guide and verified Astra scope, see [the Chat Succession repository](https://github.com/JayDEmily/chat_successor).
+For startup instructions and verified trial results, see the [Chat Succession usage guide](https://github.com/JayDEmily/chat_successor/blob/codex/chat-succession-template/README.md).

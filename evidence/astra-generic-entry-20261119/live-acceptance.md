@@ -118,3 +118,44 @@ but it did not establish the cause of the failed Chrome navigation.
   windows closed, returning the console to one Chrome window. PowerShell
   parsing and all 48 integration and 119 reference tests passed. Independent
   OpenAI Exec Plans review verified the lock scope and release paths.
+
+## Desktop closeout replays
+
+- The installed plugin was 0.4.1 and its Windows wrapper used this working
+  checkout. Two pre-existing disposable repositories received new fixture
+  branches for the replays. Each fresh run had a cap of two saved workers.
+- The detached Windows PowerShell process used code page 437. The live
+  rotation worker's smart quotes became unescaped ASCII quotes in JSON,
+  which failed both observation attempts. Explicit UTF-8 corrected the same
+  live read through the detached controller. In the approval run, a name-only
+  lookup temporarily opened a second view of the registered worker and
+  caused an ambiguity hold. The resolver now reads the named sidebar list's
+  link address without opening it. A name-only inspection of the same Project
+  succeeded alongside the worker observation.
+- **Desktop approval.** Run `8afddd010cff7063675be63b` registered worker 1
+  `6afede76-db24-83ec-b269-0e6034ceaa69` on
+  `codex/g2-approval-closeout-20261119`. One operator observation restart
+  consumed the worker's original approval hold. A plain `I approve` in the
+  same desktop plugin chat then routed one scoped input to the original
+  worker at 11:44:04 UTC. The count was still one. That worker published the
+  approved line at `750c3981528ee1888c41279aebabf0fee408e9cb`. The controller
+  confirmed its one successor at 11:45:55 UTC and recorded `STOP_FINISHED` at
+  11:48:13 UTC. Both GitHub receipts matched the saved workers. Replaying the
+  identical launcher request from a second temporary path returned
+  `owner_request_already_recorded`. The count was two and the controller
+  journal and timing log matched their pre-replay hashes.
+  [Published notes](https://github.com/JayDEmily/chat-succession-trial-approval/blob/2114f567cfa6fbd5fa257ff666aaf49f794214cc/NOTES.md)
+- **Branch rotation.** Run `989f529771afe7baa4c48594` started on
+  `codex/g2-rotation-entry-20261119`. After UTF-8 recovery an operator
+  restarted observation in the original worker `6afedde3-aec8-83ec-ac30-363b359536fe`.
+  The controller verified the receipt and moved the checkpoint to
+  `codex/g2-rotation-review-20261119`. It confirmed one successor at 11:40:50
+  UTC. The review correctly built on checklist commit
+  `58eecd7c3d7644f1a1370ac4f8b7b47a9a12d6bc`. The successor's commit had the
+  expected identity and `FINISHED` trailer. The controller recorded
+  `STOP_FINISHED` at 11:43:34 UTC with two saved workers.
+  [Published review](https://github.com/JayDEmily/chat-succession-trial-rotation/blob/ddff24374d82fe243cc9b8dcb9579acaed7ec497/REVIEW.md)
+- The 48 integration tests, 119 reference tests, PowerShell parser, and
+  independent OpenAI Exec Plans review passed. The phone-specific approval
+  replay and direct-to-worker approval are `NOT_RUN` in this replay. The
+  owner's ordinary Stage C workload remains to be exercised.
