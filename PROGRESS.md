@@ -1,5 +1,12 @@
 # Progress
 
+## L13 Run F first saved worker — slice 1 of 5, 19 November 2026
+
+- **New independent five-chat run:** `astra-l13-20261119-f` was seeded from branch revision `743d35b0d233145e66df1c24073aaf307ec4a677`, with five distinct test inputs and initial fixture validation `fixture_valid=true`, 0/5. Setup publication `2f47a37e5f67c3ad88098213c2c4499fe7e7f156` was independently read back from GitHub. Existing Run E remains 3/5 and was not reset, resumed or modified.
+- **Current worker and active controller:** saved Chat Succession Project ID `6afe4226-e4c8-83ec-b279-4716d52d1e56` positively observed via read-only Windows Chrome UIA. A separate fresh private Run F controller state was initialised with this chat, one distinct ID, cap five and no pending action/halt. The existing controller CLI was launched on Windows as PID 6684, polling every 20 seconds with no response deadline. Its initial logged UIA observation of this chat returned `WAIT` during the streaming response; no Send was attempted by this worker.
+- **Substantive one-slice publication:** from first Run F probe, independently aggregated alpha 2/25, beta 2/16 and gamma 2/34; six rows, total value 75. Updated only Run F `RESULTS.json` and `STATE.json` to 1/5, `programme_complete=false`, next slice 2. Unchanged fixture validator returned valid 1/5 and staged whitespace check passed. Fixture/evidence commit `3c9fd2faa21be1dcba649abec0dd3432bef66444` was pushed, matching `git ls-remote`; independent pinned GitHub readback confirmed result, state and worker evidence.
+- **Next action:** this first worker ends with one canonical completion marker only after publication. The already-running single external controller consumes that completed turn, verifies the remote result, and launches one distinct successor for slice 2. Complete all remaining slices and terminal stop before assessing Run F or G4. No manual successor is authorised from this worker.
+
 ## Controller polling, monitoring and composer focus — 19 November 2026
 
 - The owner requested a 20-second default poll, an optional response deadline in the existing private JSON, a monitor output fix and a bounded focus check for the composer. Each confirmed Send starts a fresh response budget. Expiry saves a hold, and the existing dispatch and reconciliation paths still own Send.
