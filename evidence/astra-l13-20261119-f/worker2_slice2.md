@@ -1,0 +1,7 @@
+# L13 Run F — second saved worker, slice 2 of 5
+
+- **Assignment:** Run `astra-l13-20261119-f` on `work/astra-succession-implementation-20261118`. Starting published revision `e441598385e46d1c2809873732b8edb450a5227b`; this worker processed exactly the second uncompleted slice.
+- **Saved chat ID:** `6afe44f5-18cc-83ec-9c3c-0d19a51dcecb`, from the existing private Windows Run F controller's persisted `state.current_chat_id`. It also records two distinct saved IDs, first worker `6afe4226-e4c8-83ec-b279-4716d52d1e56`, and one consumed first-worker response. The existing controller was running as PID 6684 with no pending action or halt. This is controller-recorded live identity, not an independently validated GitHub result or end-of-turn observation.
+- **Substantive calculation, not simulation:** the second published RUN.json probe was used unchanged. Lowercase/trim aggregation yields alpha: 2 rows, 2 + (-8) = -6; beta: 2 rows, 29 + 9 = 38; gamma: 2 rows, 22 + 23 = 45. Six rows; combined value **77**.
+- **New state:** 2/5, `programme_complete=false`, `last_chat_id` is this worker, next task slice 3/5. First slice retained, Run E untouched.
+- **Boundary:** Worker only publishes its single slice; the existing external controller alone observes the final status and launches a successor. Four automatically launched successors and five validated published slices plus `STOP_FINISHED` remain the G4 acceptance criteria. No controller operation or browser Send was attempted by this worker.
