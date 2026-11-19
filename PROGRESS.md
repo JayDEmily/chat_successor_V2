@@ -1,5 +1,9 @@
 # Progress
 
+## Active disposable L12 browser test — owner pause during preparation
+
+This branch is the isolated owner-pause regression test. The current saved Chat Succession worker processes only slice 1 under [the test fixture](succession-tests/astra-l12-owner-pause-20261119/INSTRUCTIONS.md), publishes the result on this branch and emits one final completion status. The outside controller and watcher own pause and Send. Run F and all earlier runs are historical evidence on this branch.
+
 ## L13 Run F fifth saved worker — terminal slice 5 of 5, 19 November 2026
 
 - **Scope:** Single final Run F fixture slice from remote `4f9f761b7adf7f4c49b794770fc6c5f5adca653b` in distinct saved Project chat `6afe4a7f-d920-83ec-8b4e-06b9426a1eae`. Existing controller PID 6684 showed five distinct saved IDs, four consumed `TASK_COMPLETE` replies and no pending action/halt; matching read-only Chrome UIA confirmed Project and this chat. No worker-side controller or browser Send.

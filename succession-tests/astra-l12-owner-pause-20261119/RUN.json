@@ -1,0 +1,67 @@
+{
+  "fixture_version": 1,
+  "purpose": "Synthetic repo-only continuity workload, not a production work-slice limit",
+  "run_id": "astra-l12-owner-pause-20261119",
+  "steps": [
+    {
+      "probe_nonce": "fixture-0dcbd917f4de1c14",
+      "rows": [
+        {
+          "category": " gamma ",
+          "value": -4
+        },
+        {
+          "category": " beta ",
+          "value": 14
+        },
+        {
+          "category": "alpha",
+          "value": 4
+        },
+        {
+          "category": " Alpha ",
+          "value": 24
+        },
+        {
+          "category": "Gamma",
+          "value": 25
+        },
+        {
+          "category": "BETA",
+          "value": 15
+        }
+      ],
+      "step": 1
+    },
+    {
+      "probe_nonce": "fixture-730c222cf6adde53",
+      "rows": [
+        {
+          "category": " gamma ",
+          "value": -3
+        },
+        {
+          "category": "BETA",
+          "value": 7
+        },
+        {
+          "category": " Alpha ",
+          "value": 28
+        },
+        {
+          "category": "Gamma",
+          "value": 16
+        },
+        {
+          "category": "alpha",
+          "value": 3
+        },
+        {
+          "category": " beta ",
+          "value": -1
+        }
+      ],
+      "step": 2
+    }
+  ]
+}
