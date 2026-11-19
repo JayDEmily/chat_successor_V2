@@ -50,21 +50,27 @@ class WindowsUIA(Browser):
             elif value is not None:
                 cmd.extend([f"-{name}", str(value)])
         chat = arguments.get("ChatId", "-")
-        log.info("uia_start mode=%s chat=%s", mode, chat)
-        started = time.monotonic()
-        result = subprocess.run(cmd, text=True, capture_output=True,
-                                encoding="utf-8", errors="replace", timeout=90)
-        log.info("uia_exit mode=%s chat=%s seconds=%.2f code=%d",
-                 mode, chat, time.monotonic() - started, result.returncode)
-        if result.returncode:
-            raise BrowserObservationError(
-                f"Windows UIA {mode} failed ({result.returncode}): "
-                + result.stderr.strip()[-600:])
-        try:
-            payload = json.loads(result.stdout.strip())
-        except json.JSONDecodeError as exc:
-            raise BrowserObservationError(
-                f"Windows UIA {mode} returned unparseable output") from exc
+        for attempt in range(2):
+            log.info("uia_start mode=%s chat=%s", mode, chat)
+            started = time.monotonic()
+            result = subprocess.run(cmd, text=True, capture_output=True,
+                                    encoding="utf-8", errors="replace", timeout=90)
+            log.info("uia_exit mode=%s chat=%s seconds=%.2f code=%d",
+                     mode, chat, time.monotonic() - started, result.returncode)
+            if result.returncode:
+                raise BrowserObservationError(
+                    f"Windows UIA {mode} failed ({result.returncode}): "
+                    + result.stderr.strip()[-600:])
+            try:
+                payload = json.loads(result.stdout.strip())
+            except json.JSONDecodeError as exc:
+                if mode != "Observe" or attempt:
+                    raise BrowserObservationError(
+                        f"Windows UIA {mode} returned unparseable output") from exc
+                log.warning("uia_observation_retry chat=%s position=%d error=%s",
+                            chat, exc.pos, exc.msg)
+            else:
+                break
         if not isinstance(payload, dict):
             raise BrowserObservationError("Windows UIA output is not an object")
         if mode == "Observe":

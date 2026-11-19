@@ -46,3 +46,26 @@ but it did not establish the cause of the failed Chrome navigation.
 - Independent review approved the adapter change. The 46 integration tests,
   119 reference tests, PowerShell syntax and Windows atomic target replacement
   passed. G2 remains open pending read-only reconciliation and terminal work.
+
+## Bird and Pig clean Chrome trial
+
+- A complete Chrome shutdown on Windows raised available physical memory from
+  about 1.4 to 6.3 GiB. The James profile reopened with one blank tab. The
+  desktop kickoff used plugin 0.4.1 and the verified landing link for the new
+  Bird and Pig Trial Project. Run `9c9a07c8f8eb7c2ac7b34adb` used `main` with a
+  cap of two saved workers.
+- The controller registered Bird (`6afed064-9f0c-83ec-bff0-36d3321ec3fe`).
+  GitHub verified the [first story commit](https://github.com/JayDEmily/chat-succession-bird-pig/commit/eeba425d61918e17f7c8ab7ff9e9561e1d6943bb)
+  with the matching worker and run trailers. At 10:34:22 UTC the controller
+  confirmed its successor Send to Pig (`6afed0a8-1420-83ec-b7dc-9215bda97834`).
+- Pig published the [final story commit](https://github.com/JayDEmily/chat-succession-bird-pig/commit/b7d083d88874f2c410d1901819fbb7c17ba4fdb9)
+  with matching trailers and `Chat-Succession-Next: FINISHED`. At 10:35:06 UTC
+  the controller held after one malformed browser observation. Two subsequent
+  read-only observations found the completed response. A manual `resume` and
+  one `cycle --prepare-only` on the same run recorded `STOP_FINISHED`, two
+  saved workers and no pending action.
+- The bridge now retries once after a JSON parse error in read-only `Observe`.
+  The exact cause of the original malformed output is unknown. A Windows
+  probe injected the bad first read and recovered through two fresh reads of
+  Pig's saved response. The 48 integration tests and 119 reference tests
+  passed. Independent OpenAI Exec Plans review approved the code change.

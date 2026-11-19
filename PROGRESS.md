@@ -1,5 +1,14 @@
 # Progress
 
+## Bird and Pig clean Chrome trial — 19 November 2026
+
+The installed plugin started a disposable two-worker run after a complete
+Chrome shutdown and restart. Both workers published verified Git receipts,
+and the controller launched the second worker automatically. One malformed
+browser read briefly held the run. A no-Send observation cycle verified
+`STOP_FINISHED` with two saved workers. The controller now retries a malformed
+read once. [Trial evidence](evidence/astra-generic-entry-20261119/live-acceptance.md#bird-and-pig-clean-chrome-trial)
+
 ## Astra generic entry implementation — 19 November 2026
 
 The working branch implements L1–L4 from ADR 0001. Entry resolves an existing

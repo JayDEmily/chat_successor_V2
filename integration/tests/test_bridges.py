@@ -6,7 +6,7 @@ import json
 import sys
 import tempfile
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from repo_reader import GitPublishedReader, PublishedStateError
@@ -79,6 +79,28 @@ class RepoReaderTests(unittest.TestCase):
 
 
 class WindowsBridgeTests(unittest.TestCase):
+    def test_malformed_observation_recovers_on_one_retry(self):
+        bridge = WindowsUIA("g-p-TEST", "Project", Path("adapter.ps1"), Path("controller.json"))
+        malformed = Mock(returncode=0, stdout="{")
+        recovered = Mock(returncode=0, stdout='{"ready": false}')
+        with patch("windows_backend.subprocess.run", side_effect=[malformed, recovered]) as run:
+            with self.assertLogs("windows_backend", level="WARNING"):
+                self.assertEqual(bridge._invoke("Observe", ChatId="chat-first"), {"ready": False})
+            self.assertEqual(run.call_count, 2)
+
+    def test_persistent_malformed_observation_holds_and_send_never_retries(self):
+        bridge = WindowsUIA("g-p-TEST", "Project", Path("adapter.ps1"), Path("controller.json"))
+        malformed = Mock(returncode=0, stdout="{")
+        with patch("windows_backend.subprocess.run", return_value=malformed) as run:
+            with self.assertLogs("windows_backend", level="WARNING"):
+                with self.assertRaisesRegex(BrowserObservationError, "Observe returned unparseable"):
+                    bridge._invoke("Observe", ChatId="chat-first")
+            self.assertEqual(run.call_count, 2)
+            run.reset_mock()
+            with self.assertRaisesRegex(BrowserObservationError, "Send returned unparseable"):
+                bridge._invoke("Send")
+            self.assertEqual(run.call_count, 1)
+
     def test_reuse_only_the_same_actions_prepared_successor_window(self):
         with tempfile.TemporaryDirectory() as tmp:
             state = Path(tmp) / "controller.json"
