@@ -8,7 +8,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from runner import (
-    Destination, Submitted, cycle, dispatch_prepared, initialise, inspect_state,
+    Destination, PausedBeforeClick, Submitted, cycle, dispatch_prepared, initialise, inspect_state,
 )
 from succession.composer import ComposerObservation
 from succession.core import Action, Config, Controller, Response, RepoView
@@ -95,6 +95,36 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(b.calls, ["observe", "prepare", "send"])
         self.assertEqual(r.calls, 1)
         self.assertEqual(Controller.load(self.path).unique_count, 2)
+
+    def test_pause_requested_during_prepare_prevents_send(self):
+        state_path = self.path
+
+        class PausingBrowser(SyntheticBrowser):
+            def prepare(self, kind, current_chat_id):
+                target = super().prepare(kind, current_chat_id)
+                state_path.with_suffix(".pause").write_text("Operator pause", encoding="utf-8")
+                return target
+
+        browser = PausingBrowser()
+        browser.response = self.response()
+        self.assertEqual(cycle(self.controller, browser, Reader(), "test", self.path), Action.HOLD)
+        self.assertEqual(browser.calls, ["observe", "prepare"])
+        saved = Controller.load(self.path)
+        self.assertEqual(saved.state.pending.phase, "prepared")
+        self.assertEqual(saved.unique_count, 1)
+
+    def test_adapter_pause_receipt_preserves_prepared_action(self):
+        class PausingBrowser(SyntheticBrowser):
+            def send_once(self, target, message):
+                raise PausedBeforeClick("Operator pause requested before Send")
+
+        browser = PausingBrowser()
+        browser.response = self.response()
+        self.assertEqual(cycle(self.controller, browser, Reader(), "test", self.path), Action.HOLD)
+        saved = Controller.load(self.path)
+        self.assertEqual(saved.state.pending.phase, "prepared")
+        self.assertEqual(saved.state.halted, "Operator pause requested before Send")
+        self.assertEqual(saved.unique_count, 1)
 
     def test_l06_prepare_only_persists_unsent_handover_then_dispatches_once(self):
         b = SyntheticBrowser()

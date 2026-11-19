@@ -10,6 +10,7 @@ param(
  [long]$WindowHandle = 0,
  [string]$Message = '',
  [string]$L09Fault = '',
+ [string]$PausePath = '',
  [string]$ChromeExe = 'C:\Program Files\Google\Chrome\Application\chrome.exe',
  [switch]$AlreadyTyped
 )
@@ -291,7 +292,15 @@ if($Mode -eq 'Prepare') {
  exit 0
 }
 
+function Hold-IfOwnerPaused {
+ if($PausePath -and (Test-Path -LiteralPath $PausePath)) {
+  @{paused_before_click=$true} | ConvertTo-Json -Compress
+  exit 0
+ }
+}
+
 if($Mode -eq 'Send') {
+ Hold-IfOwnerPaused
  if($WindowHandle -le 0){throw 'Saved prepared window handle required'}
  if($Message -cnotmatch '^[A-Za-z0-9 .,/_:-]+$'){throw 'Unsupported SendKeys message characters'}
  if(-not $Message){throw 'Empty message'}
@@ -309,6 +318,7 @@ if($Mode -eq 'Send') {
  }else{
   $actual=Safe-ClipboardEditorRead $target.window $editor
   if($actual -cne ''){throw 'Draft exists; hold before typing'}
+  Hold-IfOwnerPaused
   # The exact saved Project window/editor is already identified. Native
   # ValuePattern writes to that editor without requiring foreground focus.
   $editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($Message)
@@ -332,7 +342,9 @@ if($Mode -eq 'Send') {
  # ONE and only one UIA Send. Native Invoke acts on the already verified
  # target control and does not depend on whichever window is in foreground.
  # If acknowledgement is lost, reconcile; never click again automatically.
- $sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+ $send = $sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+ Hold-IfOwnerPaused
+ $send.Invoke()
  if($L09Fault -eq 'after_click'){
   throw 'L09 injected after single click before acknowledgement; reconcile, never retry blindly'
  }

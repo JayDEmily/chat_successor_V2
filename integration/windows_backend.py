@@ -14,7 +14,7 @@ import subprocess
 import tempfile
 import time
 
-from runner import Browser, Destination, Submitted
+from runner import Browser, Destination, PausedBeforeClick, Submitted
 from succession.composer import ComposerObservation
 from succession.core import Controller, Response
 
@@ -147,7 +147,10 @@ class WindowsUIA(Browser):
         result = self._invoke(
             "Send", Kind=p["kind"], ChatId=p["source_chat_id"],
             WindowHandle=target.private_window_handle, Message=message,
+            PausePath=self.state_path.with_suffix(".pause").resolve(),
             L09Fault="after_click" if fault == "after_click" else None)
+        if result.get("paused_before_click") is True:
+            raise PausedBeforeClick("Operator pause requested before Send")
         return Submitted(project=result.get("project", ""),
                          chat_id=result.get("chat_id"),
                          submitted_text=result.get("submitted_text"),

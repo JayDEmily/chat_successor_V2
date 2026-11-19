@@ -60,6 +60,11 @@ the matching `sending` phase (except the separately recorded *initial*
 bootstrap). Never retry a possibly submitted message. Read the unchanged
 original `docs/astra-succession/leaves/` for the test gates.
 
+The controller checks the existing owner pause marker after composer preparation.
+The Windows adapter checks it again before typing and immediately before invoking
+Send. An explicit pre-click pause preserves the prepared action, including any
+draft already typed. Missing or ambiguous receipts still require reconciliation.
+
 **L06 prepared-handover test seam:** CLI cycle --prepare-only observes the
 completed current worker, validates published handover state, and saves the
 reference controller's prepared action without touching the composer or sending.

@@ -40,6 +40,10 @@ class Submitted:
     posted_message_observed: bool
 
 
+class PausedBeforeClick(RuntimeError):
+    """The browser adapter observed owner pause before invoking Send."""
+
+
 class Browser(Protocol):
     def observe(self, expected_chat_id: str) -> Response | None: ...
     def prepare(self, kind: str, current_chat_id: str) -> Destination: ...
@@ -49,8 +53,8 @@ class Browser(Protocol):
 def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path) -> Action:
     """Serialized prepare -> persist sending -> one click -> read-back.
 
-    An exception after begin_send is indistinguishable from lost acknowledgement,
-    even if the adapter believes the click never happened. Never retry blindly.
+    After begin_send, only an explicit adapter receipt can establish no click.
+    Other failures enter read-only reconciliation.
     """
     p = controller.state.pending
     if p is None:
@@ -83,6 +87,11 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
         controller.save(state_path)
         return Action.HOLD
 
+    if state_path.with_suffix(".pause").exists():
+        controller.pause("Operator pause requested before Send")
+        controller.save(state_path)
+        return Action.HOLD
+
     controller.begin_send(p.action_id)
     controller.save(state_path)  # durable before the first possible keystroke
     try:
@@ -95,6 +104,11 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
                                       receipt.project, message_observed=True)
         controller.save(state_path)
         return decision.action
+    except PausedBeforeClick as exc:
+        controller.confirm_not_sent(p.action_id, str(exc))
+        controller.pause(str(exc))
+        controller.save(state_path)
+        return Action.HOLD
     except Exception as exc:
         controller.uncertain(p.action_id, f"UI submission outcome uncertain: {exc}")
         controller.save(state_path)
