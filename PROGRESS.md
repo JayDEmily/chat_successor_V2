@@ -4,7 +4,8 @@
 
 - **Run and provenance:** `astra-l13-20261119-f` only; observed controller-recorded saved chat ID `6afe44f5-18cc-83ec-9c3c-0d19a51dcecb`, distinct from worker 1. Existing controller PID 6684 continues; this worker did not Send or start a controller. Starting published revision `e441598385e46d1c2809873732b8edb450a5227b`.
 - **Computed result:** alpha 2/-6, beta 2/38, gamma 2/45; six rows and value total 77 from the unchanged second Run F probe. One appended result and updated state to 2/5, `programme_complete=false` and next slice 3; Run E and other tests unchanged.
-- **Next action:** after independent publication check, the **single existing external Run F controller** consumes this worker's final `TASK_COMPLETE` and launches exactly one saved successor for slice 3. Do not manually post or operate a second controller. G4 verdict remains open.
+- **Publication verified:** fixture and worker-evidence commit `9ed4e2c0ae3cbf2222473b10e2294c5b63f5adfb` was pushed, with matching `git ls-remote`. Independent pinned GitHub readback confirmed Run F `RESULTS.json` (two entries), `STATE.json` (2/5), this worker's evidence and `PROGRESS.md`. The unchanged fixture validator returned `fixture_valid=true`, 2/5; staged `git diff --check` passed after removing a trailing blank line in the new evidence.
+- **Next action:** the **single existing external Run F controller** consumes this worker's final `TASK_COMPLETE` and launches exactly one saved successor for slice 3. Do not manually post or operate a second controller. G4 verdict remains open.
 
 ## L13 Run F first saved worker — slice 1 of 5, 19 November 2026
 
