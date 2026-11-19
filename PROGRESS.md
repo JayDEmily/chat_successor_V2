@@ -1,5 +1,13 @@
 # Progress
 
+## Hidden Project lookup and overlapping story runs — 19 November 2026
+
+The Windows launcher resolved the Cat and Dog Project by name with the Projects
+section collapsed. Cat and Dog and Bird and Pig then ran concurrently in one
+Chrome profile. Each verified one successor and reached `STOP_FINISHED` with
+two saved workers. The console peaked at three Chrome windows and returned to
+one after cleanup. [Trial evidence](evidence/astra-generic-entry-20261119/live-acceptance.md#hidden-project-lookup-and-overlapping-story-runs)
+
 ## Bird and Pig clean Chrome trial — 19 November 2026
 
 The installed plugin started a disposable two-worker run after a complete

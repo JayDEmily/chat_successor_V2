@@ -185,11 +185,24 @@ if($Mode -eq 'ResolveProject') {
  $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
  for($i=0;$i -lt 25;$i++){
   if((Get-Address $window) -match '^https://chatgpt[.]com(?:/|$)'){
-   $lists=@((Desc $window) | Where-Object {
+   $items=Desc $window
+   $lists=@($items | Where-Object {
     $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::List -and
     $_.Current.Name -ieq ('Chats in ' + $ProjectName)
    })
    if($lists.Count -gt 1){throw 'The Project name matched multiple sidebar lists'}
+   if($lists.Count -eq 0){
+    $sections=@($items | Where-Object {
+     $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
+     $_.Current.Name -ceq 'Projects'
+    })
+    $expand=$null
+    if($sections.Count -eq 1 -and $sections[0].TryGetCurrentPattern(
+       [System.Windows.Automation.ExpandCollapsePattern]::Pattern,[ref]$expand) -and
+       $expand.Current.ExpandCollapseState -eq [System.Windows.Automation.ExpandCollapseState]::Collapsed){
+     $expand.Expand()
+    }
+   }
    if($lists.Count -eq 1){
     $list=$lists[0]
     $name=$list.Current.Name.Substring(9)

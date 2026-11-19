@@ -69,3 +69,37 @@ but it did not establish the cause of the failed Chrome navigation.
   probe injected the bad first read and recovered through two fresh reads of
   Pig's saved response. The 48 integration tests and 119 reference tests
   passed. Independent OpenAI Exec Plans review approved the code change.
+
+## Hidden Project lookup and overlapping story runs
+
+- The installed launcher received a name-only `inspect` request for **My cat
+  and dog**. The existing lookup succeeded when the Project was below the
+  fold. It failed when the Projects section was collapsed and the Project row
+  was absent. Windows UI Automation exposed the exact Projects button as
+  collapsed. The adapter now expands that button in its temporary lookup
+  window. The same request then resolved `g-p-6afe677ff69c81919764c224a992a7ec`
+  and the lookup window closed.
+- After that check, the installed Windows launcher opened the two story runs
+  from their verified Project links. It staggered startup by 23 seconds. Both
+  controllers were active together for 3 minutes and 9 seconds. They used
+  separate run journals and Ubuntu Git readers and confirmed four distinct
+  saved workers across the two Projects.
+
+| Story | Run ID | Controller start (UTC) | Confirmed successor (UTC) | `STOP_FINISHED` (UTC) | Published story |
+| --- | --- | --- | --- | --- | --- |
+| Cat and Dog | `665ea3264e8d8c70d63adead` | 10:53:14 | 10:55:10 | 10:56:46 | [Cat and Dog](https://github.com/JayDEmily/chat-succession-cat-dog-pair/blob/61c609a3391b1adbb0bb462beab71e4cff39a21c/STORY.md) |
+| Bird and Pig | `3a1bc9fa7d591d0030d5389d` | 10:53:37 | 10:59:11 | 11:01:08 | [Bird and Pig](https://github.com/JayDEmily/chat-succession-bird-pig/blob/5c3da4ee0d3edea355f229d8f73e7d15c4f3b95a/STORY.md) |
+
+- GitHub readback verified both lines, the parent of each final commit, and
+  each commit's run and saved-worker trailers. Both final trailers said
+  `FINISHED`. Both journals recorded one confirmed successor, exactly two
+  saved workers, and no pending action at terminal stop.
+- Bird's opening line was published at 10:54:47 UTC. Windows still reported a
+  Stop control at 10:58:28 UTC and first confirmed the marker at 10:58:50 UTC.
+  A read-only Chrome inspection saw the final marker before the controller
+  acted. The observed publish-to-handoff gap was 4 minutes and 24 seconds.
+- The desktop started with one Chrome window and peaked at three. Both
+  successors reused their respective worker windows. Closing the two finished
+  test workers returned the console to one Chrome window. The 48 integration
+  tests, 119 reference tests, PowerShell parser and independent OpenAI Exec
+  Plans source review passed.
