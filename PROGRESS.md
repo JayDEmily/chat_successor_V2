@@ -10,8 +10,12 @@ checkpoint advances only after a published current-worker receipt.
 The 45 integration tests, 119 Astra reference tests, PowerShell parser, and
 installed no-run inspection passed. Independent OpenAI Exec Plans review
 identified recovery and browser identity issues that were addressed before
-publication. Two disposable repositories and ChatGPT Projects were seeded for
-L5. The installed live trial results determine G2.
+publication. The private plugin is installed at 0.4.1. [Live L5
+evidence](evidence/astra-generic-entry-20261119/live-acceptance.md) verifies
+same-worker approval delivery and checkpoint rotation on two disposable
+projects. Both runs stopped at successor preparation with an unsent action.
+G2 remains open until Chrome can establish a fresh composer and the two
+successors complete their published assignments.
 
 ## Astra generic entry and re-entry proposal — 19 November 2026
 
