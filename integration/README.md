@@ -45,9 +45,11 @@ to retain UTC timestamps for UI Automation calls, observation outcomes,
 publication checks and confirmed submissions. The adapter logs the
 observation reason without response text.
 
-Only the clipboard check requests foreground focus. It briefly waits for the
-known Chrome window and checks editor focus before keyboard input. If Windows
-denies the request or focus changes during the probe, the adapter holds.
+The composer check reads Chrome's accessibility tree without selecting text
+or using the clipboard. It requires ProseMirror's empty-placeholder paragraph
+and its trailing break, in addition to the expected UIA value. A draft with
+the same words as the placeholder still blocks Send. Unknown composer
+structure or attachment evidence holds the action.
 
 The PowerShell `-AlreadyTyped` recovery switch is reserved for a manually
 verified, **not previously sent** exact test draft. It is not called by

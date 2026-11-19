@@ -1,0 +1,43 @@
+{
+  "test_id": "L07",
+  "run_id": "astra-l07-20261119-background-composer",
+  "scenario_type": "LIVE_EXISTING_CHROME_PROFILE_BACKGROUND_COMPOSER",
+  "outcome": "PASS",
+  "working_branch": "work/astra-succession-implementation-20261118",
+  "baseline_revision": "0d6f446986721d8c1c530bbfc535924e788c1fd3",
+  "project": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+  "observations": [
+    {
+      "case": "background_saved_chat_prepare",
+      "outcome": "PASS",
+      "verified_empty": true,
+      "target_remained_background": true,
+      "foreground_window_unchanged": true
+    },
+    {
+      "case": "ordinary_draft",
+      "outcome": "PASS",
+      "draft_preserved": true,
+      "post_attempted": false
+    },
+    {
+      "case": "placeholder_identical_draft",
+      "outcome": "PASS",
+      "draft_preserved": true,
+      "post_attempted": false
+    },
+    {
+      "posted_message_observed": true,
+      "case": "real_send_from_background",
+      "saved_chat_id": "6afe55b5-e434-83ec-9a2c-21f645a39c2c",
+      "project": "g-p-6afbfc5e59248191a8c690296b24c8ef",
+      "at_utc": "2026-11-19T01:49:45.6036134Z",
+      "outcome": "PASS",
+      "prepared_target_was_background_at_dispatch": true,
+      "send_count": 1
+    }
+  ],
+  "scope": "Read-only Prepare and one disposable adapter Send in the existing authenticated Chrome Project. Chrome can activate a target itself during UIA ValuePattern.SetValue. The adapter uses no Windows foreground request, clipboard or keyboard shortcut for the composer check.",
+  "original_documented_attachment_case": "evidence/astra-l07-20261118-a/live_record.json",
+  "owner_pause_case_preserved": "evidence/astra-l12-owner-pause-20261119/live_record.json"
+}

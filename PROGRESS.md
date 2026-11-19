@@ -1,5 +1,11 @@
 # Progress
 
+## Chrome composer focus dependency removed — 19 November 2026
+
+The L12 test's first attempt exposed a remaining Windows foreground failure in the composer clipboard read. The existing Windows adapter now observes Chrome's empty-placeholder structure through UI Automation. The same read runs at Prepare and before typing. Exact-placeholder drafts, attachments and ambiguous composer states still hold the action.
+
+[Live background-composer evidence](evidence/astra-l07-20261119-background-composer/live_record.json) records an empty composer inspected while another Chrome window remained foreground, preservation of both ordinary and exact-placeholder drafts, and one verified disposable Send whose target was in the background at dispatch. The ordinary Project and saved chat checks, owner pause and single-Send receipt still apply. The completed Astra gate records and earlier run fixtures remain intact. This branch has no active test assignment.
+
 ## Astra bounded integration closeout — 19 November 2026
 
 **G0–G4 closed for the bounded test plan.** Runs A, B and F satisfy L13, with 15 distinct saved Project chats, 12 automatic successors and 15 independently validated published slices. Each controller reached `STOP_FINISHED` with no pending action. A/B ran on the earlier adapter. F repeated the five-chat chain on the polling and focus update. Run C remains assisted. Runs D and E remain preserved at 1/5 and 3/5.

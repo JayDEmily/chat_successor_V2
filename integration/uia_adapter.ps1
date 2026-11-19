@@ -18,15 +18,6 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -TypeDefinition @'
-using System;
-using System.Runtime.InteropServices;
-public static class AstraFocus {
- [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
- [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
-}
-'@
 
 function Desc($element) {
  return $element.FindAll([System.Windows.Automation.TreeScope]::Descendants,
@@ -117,53 +108,47 @@ function Check-NoAttachments($window) {
   try {
    if($el.Current.IsOffscreen){continue}
    if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
-      $el.Current.Name -match '^(Remove attachment|Remove file|Delete attachment|Remove uploaded file)') {
+      $el.Current.Name -match '^(Remove(?: |$)|Delete attachment)') {
     return $false
    }
   }catch{}
  }
  return $true
 }
-function Assert-EditorFocus([IntPtr]$hwnd,$editor) {
- if([AstraFocus]::GetForegroundWindow() -ne $hwnd -or -not $editor.Current.HasKeyboardFocus){
-  throw 'Nominated composer lost keyboard focus during clipboard probe'
+function Read-ComposerText($editor,[string]$value) {
+ # ProseMirror marks its empty paragraph independently of the UIA Value.
+ # Unknown structure stays unknown. A real draft may match the placeholder text.
+ if(($editor.Current.ClassName -csplit '\s+') -cnotcontains 'ProseMirror'){return $null}
+ $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
+ $paragraph=$walker.GetFirstChild($editor)
+ if($null -eq $paragraph){return $null}
+ if(($paragraph.Current.ClassName -csplit '\s+') -cnotcontains 'before:composer-placeholder'){
+  if($value){return $value}
+  return $null
  }
+ if($null -ne $walker.GetNextSibling($paragraph) -or
+    $value -cne ($editor.Current.Name + [char]10)){return $null}
+ $placeholder=$walker.GetFirstChild($paragraph)
+ if($null -eq $placeholder){return $null}
+ $text=$walker.GetFirstChild($placeholder)
+ $trailingBreak=$walker.GetNextSibling($placeholder)
+ if($null -ne $text -and $null -ne $trailingBreak -and
+    $text.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
+    $text.Current.Name -ceq $editor.Current.Name -and
+    $null -eq $walker.GetNextSibling($text) -and
+    $trailingBreak.Current.ClassName -ceq 'ProseMirror-trailingBreak' -and
+    $null -eq $walker.GetNextSibling($trailingBreak)){
+  return ''
+ }
+ return $null
 }
-function Safe-ClipboardEditorRead($window,$editor) {
- # UIA Value and TextPattern on Chrome expose the placeholder as text.
- # Only this clipboard read needs foreground keyboard input.
- $hwnd=[IntPtr]$window.Current.NativeWindowHandle
- for($i=0;$i -lt 10 -and [AstraFocus]::GetForegroundWindow() -ne $hwnd;$i++){
-  [void][AstraFocus]::SetForegroundWindow($hwnd)
-  Start-Sleep -Milliseconds 200
- }
- if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Could not focus nominated window'}
- $editor.SetFocus()
- for($i=0;$i -lt 5 -and -not $editor.Current.HasKeyboardFocus;$i++){
-  if([AstraFocus]::GetForegroundWindow() -ne $hwnd){throw 'Nominated window lost focus before clipboard probe'}
-  Start-Sleep -Milliseconds 100
- }
- Assert-EditorFocus $hwnd $editor
- $original=[System.Windows.Forms.Clipboard]::GetDataObject()
- $sentinel='ASTRA_EDITOR_SENTINEL_' + [guid]::NewGuid().ToString('N')
- try {
-  [System.Windows.Forms.Clipboard]::SetText($sentinel)
-  Assert-EditorFocus $hwnd $editor
-  [System.Windows.Forms.SendKeys]::SendWait('^a')
-  Assert-EditorFocus $hwnd $editor
-  [System.Windows.Forms.SendKeys]::SendWait('^c')
-  Start-Sleep -Milliseconds 900
-  Assert-EditorFocus $hwnd $editor
-  $actual=[System.Windows.Forms.Clipboard]::GetText()
-  if($actual -ceq $sentinel){return ''}
-  return $actual
- }
- finally {
-  if($null -ne $original) {
-   [System.Windows.Forms.Clipboard]::SetDataObject($original,$true)
-  }else {
-   [System.Windows.Forms.Clipboard]::Clear()
-  }
+function Find-EnabledSendButtons($window) {
+ foreach($el in (Desc $window)){
+  try {
+   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
+      $el.Current.Name -ceq 'Send' -and $el.Current.IsEnabled -and
+      -not $el.Current.IsOffscreen){$el}
+  }catch{}
  }
 }
 function Find-PostedMessage($window,$expected) {
@@ -280,13 +265,17 @@ if($Mode -eq 'Prepare') {
   }
   if($null -eq $target){throw 'Fresh Project composer not established'}
  }
- $actual=Safe-ClipboardEditorRead $target.window $editor
- $attachFree=Check-NoAttachments $target.window
+ $value=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+ $actual=Read-ComposerText $editor $value
+ $attachments=-not (Check-NoAttachments $target.window)
+ if(-not $attachments -and $actual -ceq '' -and @(Find-EnabledSendButtons $target.window).Count){
+  $attachments=$null
+ }
  @{
   project=$ProjectId;current_chat_id=$target.chat
   private_window_handle=[long]$target.window.Current.NativeWindowHandle
-  editable_text=$actual;uia_value=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
-  attachments_present=(-not $attachFree)
+  editable_text=$actual;uia_value=$value
+  attachments_present=$attachments
   observed_url=$target.url
  } | ConvertTo-Json -Compress -Depth 5
  exit 0
@@ -302,7 +291,7 @@ function Hold-IfOwnerPaused {
 if($Mode -eq 'Send') {
  Hold-IfOwnerPaused
  if($WindowHandle -le 0){throw 'Saved prepared window handle required'}
- if($Message -cnotmatch '^[A-Za-z0-9 .,/_:-]+$'){throw 'Unsupported SendKeys message characters'}
+ if($Message -cnotmatch '^[A-Za-z0-9 .,/_:-]+$'){throw 'Unsupported message characters'}
  if(-not $Message){throw 'Empty message'}
  $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
  if($Kind -eq 'LAUNCH_SUCCESSOR' -and $null -ne $target.chat){throw 'Successor composer already saved before Send'}
@@ -316,12 +305,13 @@ if($Mode -eq 'Send') {
   $actual=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value.TrimEnd([char]13,[char]10)
   if($actual -cne $Message){throw 'Pretyped draft does not exactly match expected message'}
  }else{
-  $actual=Safe-ClipboardEditorRead $target.window $editor
-  if($actual -cne ''){throw 'Draft exists; hold before typing'}
+  $pattern=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+  $actual=Read-ComposerText $editor $pattern.Current.Value
+  if($actual -cne '' -or @(Find-EnabledSendButtons $target.window).Count){
+   throw 'Composer is not verified empty; hold before typing'
+  }
   Hold-IfOwnerPaused
-  # The exact saved Project window/editor is already identified. Native
-  # ValuePattern writes to that editor without requiring foreground focus.
-  $editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($Message)
+  $pattern.SetValue($Message)
  }
  $typed=''
  for($i=0;$i -lt 25;$i++){
@@ -332,12 +322,7 @@ if($Mode -eq 'Send') {
  if($typed.TrimEnd([char]13,[char]10) -cne $Message){
   throw ('Exact typed prompt readback failed; observed_len=' + $typed.Length + ', expected_len=' + $Message.Length + '; do not Send')
  }
- $sendButtons=@()
- foreach($el in (Desc $target.window)){
-  try{if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
-       $el.Current.Name -ceq 'Send' -and $el.Current.IsEnabled -and
-       -not $el.Current.IsOffscreen){$sendButtons+= $el}}catch{}
- }
+ $sendButtons=@(Find-EnabledSendButtons $target.window)
  if($sendButtons.Count -ne 1){throw 'Send button not unique and enabled'}
  # ONE and only one UIA Send. Native Invoke acts on the already verified
  # target control and does not depend on whichever window is in foreground.
