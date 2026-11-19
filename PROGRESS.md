@@ -1,5 +1,12 @@
 # Progress
 
+## Concurrent Chrome window startup — 19 November 2026
+
+Two near-simultaneous Project lookups reproduced an ambiguous Chrome window
+error. The adapter now lets one run at a time open and identify its new window.
+Both live lookups passed when repeated one millisecond apart. Their temporary
+windows closed. [Trial evidence](evidence/astra-generic-entry-20261119/live-acceptance.md#concurrent-window-startup-follow-up)
+
 ## Hidden Project lookup and overlapping story runs — 19 November 2026
 
 The Windows launcher resolved the Cat and Dog Project by name with the Projects

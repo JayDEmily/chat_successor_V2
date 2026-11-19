@@ -103,3 +103,18 @@ but it did not establish the cause of the failed Chrome navigation.
   test workers returned the console to one Chrome window. The 48 integration
   tests, 119 reference tests, PowerShell parser and independent OpenAI Exec
   Plans source review passed.
+
+### Concurrent window startup follow-up
+
+- Two installed name-only `inspect` requests started at 11:07:41.573 and
+  11:07:41.574 UTC. Bird and Pig resolved its Project. My Cat and Dog held
+  with `Ambiguous new Chrome windows`. The probe's remaining temporary window
+  was closed.
+- The adapter now uses a Windows session mutex while it opens Chrome and
+  identifies the new window. A waiting process acquired an abandoned test
+  mutex and released it successfully.
+- The same requests started at 11:09:46.355 and 11:09:46.356 UTC with the fix.
+  Both returned `inspected` with their expected Project IDs. Both lookup
+  windows closed, returning the console to one Chrome window. PowerShell
+  parsing and all 48 integration and 119 reference tests passed. Independent
+  OpenAI Exec Plans review verified the lock scope and release paths.

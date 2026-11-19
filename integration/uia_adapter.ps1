@@ -45,15 +45,26 @@ function Get-ChromeWindows {
 }
 function Open-ChromeWindow([string]$url) {
  if(-not (Test-Path -LiteralPath $ChromeExe -PathType Leaf)){throw 'Chrome executable missing'}
- $before=@((Get-ChromeWindows) | ForEach-Object {$_.Current.NativeWindowHandle})
- Start-Process -FilePath $ChromeExe -ArgumentList @('--new-window',$url)
- for($i=0;$i -lt 50;$i++){
-  Start-Sleep -Milliseconds 400
-  $candidates=@((Get-ChromeWindows) | Where-Object {$before -notcontains $_.Current.NativeWindowHandle})
-  if($candidates.Count -gt 1){throw 'Ambiguous new Chrome windows'}
-  if($candidates.Count -eq 1){return $candidates[0]}
+ # Each Chat Succession launch must observe its own new window handle.
+ $mutex=[System.Threading.Mutex]::new($false,'Local\ChatSuccession.OpenChromeWindow')
+ $acquired=$false
+ try {
+  try {$acquired=$mutex.WaitOne(30000)}
+  catch [System.Threading.AbandonedMutexException] {$acquired=$true}
+  if(-not $acquired){throw 'Timed out waiting to open a Chrome window'}
+  $before=@((Get-ChromeWindows) | ForEach-Object {$_.Current.NativeWindowHandle})
+  Start-Process -FilePath $ChromeExe -ArgumentList @('--new-window',$url)
+  for($i=0;$i -lt 50;$i++){
+   Start-Sleep -Milliseconds 400
+   $candidates=@((Get-ChromeWindows) | Where-Object {$before -notcontains $_.Current.NativeWindowHandle})
+   if($candidates.Count -gt 1){throw 'Ambiguous new Chrome windows'}
+   if($candidates.Count -eq 1){return $candidates[0]}
+  }
+  throw 'Fresh Chrome window was not uniquely observed'
+ } finally {
+  if($acquired){$mutex.ReleaseMutex()}
+  $mutex.Dispose()
  }
- throw 'Fresh Chrome window was not uniquely observed'
 }
 function Get-Address($window) {
  foreach($el in (Desc $window)) {
