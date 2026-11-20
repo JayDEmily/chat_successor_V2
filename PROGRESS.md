@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G1 independent re-review — 20 November 2026
+
+**A2-G1 OFFLINE HOLD** on corrective candidate `66f4b94dc6fa94c708b42c11d2681da291dd9d99`. The [independent 24-case review and raw evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-66f4b94/REPORT.md) reproduce 111 integration and 119 reference passes on each of Windows and Ubuntu and three native PowerShell passes. New local-Git, journal and native helper probes hold seven cases involving pause acknowledgement, actionable non-prose status, publication repair, exact posted-turn acknowledgement and replaced owner scope.
+
+**Next eligible work** is targeted repair of these findings and independent re-review of the resulting source pin. A2-G2–G6 are NOT_RUN.
+
 ## ADR 0002 A2-G1 corrective candidate — 20 November 2026
 
 Corrected L02–L05 at `66f4b94dc6fa94c708b42c11d2681da291dd9d99` against the independent hold below. [Source-pinned corrections and raw checks](evidence/astra-adr-0002-20261120/implementation/G1_20261120/corrective/RESULT.md) record 111 integration and 119 reference passes with zero skips on both Windows and Ubuntu, plus three native Windows PowerShell helper tests. The account, browser, publication and owner-input regressions cover the nine held cases.

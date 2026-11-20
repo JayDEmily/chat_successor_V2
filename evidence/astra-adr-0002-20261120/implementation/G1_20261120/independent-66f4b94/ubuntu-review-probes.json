@@ -1,0 +1,29 @@
+{
+  "S02_blank_published_continuation": {
+    "bad_commit": "2f61da55ac9ea0fce7d3d89612c1722104ffee75",
+    "repair_commit": "31fa44986dfea933e76a620d860cd9dd7cd1d1da",
+    "invalid_result": "HOLD",
+    "consumed_before_repair": [
+      [
+        "00000000-0000-0000-0000-000000000001",
+        "uia-turn-1-aaaaaaaaaaaaaaaaaaaa"
+      ]
+    ],
+    "retry_same_response_result": "IGNORE",
+    "prepare_calls": 0,
+    "send_calls": 0
+  },
+  "O05_changed_owner_input_after_restart": {
+    "entry_event": "controller_resumed",
+    "dispatch_result": "HOLD",
+    "pending_action_id_preserved": true,
+    "phase_after": "uncertain",
+    "prepare_calls": 1,
+    "send_calls": 1
+  },
+  "R04_new_pause_generation": {
+    "first_acknowledged": true,
+    "fresh_generation_before_observer_acknowledged": true,
+    "marker_preserved": true
+  }
+}
