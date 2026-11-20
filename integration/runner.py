@@ -178,6 +178,7 @@ def cycle(controller: Controller, browser: Browser,
     if response is None:
         return Action.WAIT
     repo: RepoView | None = None
+    accepted_publication = None
     parsed = interpret(response.text, response.complete)
     if (response.role == "assistant" and parsed.status == Status.TASK_COMPLETE and
             response.project == controller.config.project and
@@ -204,9 +205,15 @@ def cycle(controller: Controller, browser: Browser,
                     publication.completed_turns != controller.unique_count):
                 raise PublishedStateError("Published story turn does not match the current worker count")
             repo = publication.view
+            accepted_publication = publication
+            logging.info("publication_receipt_verified run=%s chat=%s response=%s ref=refs/heads/%s sha=%s result=IDENTITY_MATCH",
+                         run_id, response.chat_id, response.response_id,
+                         repo.branch, publication.commit)
         except (PublishedStateError, OSError, ValueError) as exc:
             # Hold without consuming: publication can be repaired and this
             # exact completed turn can then be processed once on resume.
+            logging.warning("publication_receipt_rejected run=%s chat=%s response=%s result=HOLD reason=%s",
+                            run_id, response.chat_id, response.response_id, exc)
             controller.pause(f"Published Git state unavailable: {exc}")
             controller.save(state_path)
             return Action.HOLD
@@ -215,6 +222,11 @@ def cycle(controller: Controller, browser: Browser,
     if decision.action == Action.LAUNCH_SUCCESSOR and isinstance(reader, GitHandoffReader):
         controller.state.pending.message += reader.instructions(run_id, controller.unique_count + 1)
     controller.save(state_path)
+    if accepted_publication is not None:
+        logging.info("publication_receipt_adopted run=%s chat=%s response=%s ref=refs/heads/%s sha=%s decision=%s",
+                     run_id, response.chat_id, response.response_id,
+                     accepted_publication.view.branch, accepted_publication.commit,
+                     decision.action.value)
     if decision.action in (Action.CONTINUE_CURRENT, Action.LAUNCH_SUCCESSOR):
         if defer_dispatch:
             return decision.action

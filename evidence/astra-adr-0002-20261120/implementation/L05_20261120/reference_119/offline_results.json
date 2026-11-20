@@ -1,0 +1,514 @@
+{
+  "report_reference_date": "2026-11-17",
+  "mode": "OFFLINE_ONLY",
+  "outcome": "PASS",
+  "counts": {
+    "tests_run": 119,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "parser_fixtures": 36,
+    "composer_fixtures": 10,
+    "sequence_fixtures": 16,
+    "controller_methods": 36,
+    "fixture_methods": 9,
+    "local_git_methods": 8,
+    "archive_inspection_methods": 4,
+    "seeded_model_runs_inside_one_controller_test": 300
+  },
+  "elapsed_seconds": 0.725,
+  "environment": {
+    "python": "3.14.4",
+    "git": "git version 2.53.0",
+    "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.43"
+  },
+  "records": [
+    {
+      "test": "test_archive_inspection.ArchiveTests.test_I01_all_original_members_accounted_for",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_archive_inspection.ArchiveTests.test_I02_git_objects_are_exactly_document_snapshot",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_archive_inspection.ArchiveTests.test_I03_no_launcher_checkout_or_remote_heads_in_snapshot",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_archive_inspection.ArchiveTests.test_I04_inspector_rejects_traversal_and_links",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C01_exactly_three_worker_statuses",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C02_config_rejects_invalid_cap",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C03_config_requires_single_line_nomination",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C04_ignore_tools_and_user_messages",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C05_ignore_other_chat",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C06_unknown_or_wrong_project_holds",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C07_stable_response_identity_required",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C08_missing_repo_state_not_success",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C09_unpublished_unreadable_and_wrong_bool_hold",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C10_same_repo_branch_and_current_worker",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C11_inconsistent_overall_state_holds",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C12_overall_finish_precedes_cap",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C13_initial_chat_is_in_cap",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C14_thirty_unique_chats_no_thirty_first",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C15_same_chat_continuations_do_not_consume_cap",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C16_pending_action_serializes_responses",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C17_duplicate_completed_response_after_restart_ignored",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C18_response_ids_namespaced_by_chat",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C19_new_chat_observation_required",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C20_missing_readback_does_not_count_new_chat",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C21_continuation_must_stay_in_current_chat",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C22_url_aliases_normalize_one_identity",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C23_error_repair_never_resets_count_or_replays_old_event",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C24_uncertain_send_cannot_be_automatically_retried",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C25_duplicate_acknowledgement_has_no_effect",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C26_wrong_project_observation_halts",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C27_prepared_but_not_attempted_survives_restart",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C28_bad_state_does_not_silently_reset_counter",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C29_explicit_status_not_overridden_by_semantic_guess",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C30_owner_silence_timeout_pause_does_not_send",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C31_terminal_states_not_an_error_retry",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C32_model_trace_invariants_300_seeded_runs",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C33_uncertain_semantic_completion_never_launches",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C34_rearm_requires_reason_and_possible_attempt",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C35_rejected_empty_saved_chat_id",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_controller.ControllerTests.test_C36_existing_draft_causes_zero_sends",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_fixture.FixtureTests.test_F01_independent_expected_aggregation",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_fixture.FixtureTests.test_F02_four_slices_programme_complete",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_fixture.FixtureTests.test_F03_fresh_probe_not_disclosed_to_prompt",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_fixture.FixtureTests.test_F04_stale_nonce_fails_verification",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_fixture.FixtureTests.test_F05_duplicate_slice_fails",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_fixture.FixtureTests.test_F06_nonempty_output_not_overwritten",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_fixture.FixtureTests.test_F07_thirty_one_slice_fixture_leaves_work_at_cap",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_fixture.FixtureTests.test_F08_wrong_result_cannot_pass_on_status_alone",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_fixture.FixtureTests.test_F09_wrong_completion_type_rejected",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_git_handoff.LocalGitTests.test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_git_handoff.LocalGitTests.test_G02_local_commit_without_push_is_not_a_handover",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_git_handoff.LocalGitTests.test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_git_handoff.LocalGitTests.test_G04_rejected_push_is_not_completion",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_git_handoff.LocalGitTests.test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_git_handoff.LocalGitTests.test_G06_three_mock_workers_continue_using_only_repository",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_git_handoff.LocalGitTests.test_G07_remote_unavailable_does_not_trigger_next_chat",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_git_handoff.LocalGitTests.test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ComposerFixtures.test_D01",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ComposerFixtures.test_D02",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ComposerFixtures.test_D03",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ComposerFixtures.test_D04",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ComposerFixtures.test_D05",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ComposerFixtures.test_D06",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ComposerFixtures.test_D07",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ComposerFixtures.test_D08",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ComposerFixtures.test_D09",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ComposerFixtures.test_D10",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P01",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P02",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P03",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P04",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P05",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P06",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P07",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P08",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P09",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P10",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P11",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P12",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P13",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P14",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P15",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P16",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P17",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P18",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P19",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P20",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P21",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P22",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P23",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P24",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P25",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P26",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P27",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P28",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P29",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P30",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P31",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P32",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P33",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P34",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P35",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.ParserFixtures.test_P36",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S01",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S02",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S03",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S04",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S05",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S06",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S07",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S08",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S09",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S10",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S11",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S12",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S13",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S14",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S15",
+      "outcome": "PASS"
+    },
+    {
+      "test": "test_tables.SequenceFixtures.test_S16",
+      "outcome": "PASS"
+    }
+  ],
+  "replay_error": null,
+  "live_ChatGPT_tests_performed": 0,
+  "live_GitHub_tests_performed": 0,
+  "semantic_model_tests_performed": 0,
+  "limitations": [
+    "This tests a new reference model, not the absent historical launcher source.",
+    "Browser, UIA, ChatGPT and authenticated GitHub behavior were not exercised.",
+    "Semantic verdicts are injected fixtures, not verified classifier performance.",
+    "Local Git repositories are stand-ins, with only file transport permitted.",
+    "No guarantee of exactly-once browser delivery or long-run reliability is claimed."
+  ]
+}

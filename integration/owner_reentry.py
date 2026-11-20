@@ -108,6 +108,10 @@ def resume_request(cfg_path, state_path, request, name, dependencies, start):
                            + reader.instructions(cfg["run_id"], c.unique_count, request_id))
                 c.continue_after_owner(request_id, anchor, pointer)
             else:
+                # Observation showed the saved worker advanced, but did not
+                # establish that this owner decision was delivered. Resume
+                # observation only; do not claim an approval receipt or Send.
+                event = "worker_advanced_owner_input_unverified"
                 c.resume_after_owner()
         else:
             c.resume_after_owner()

@@ -72,10 +72,10 @@ class ReentryTests(unittest.TestCase):
         self.assertEqual(Controller.load(self.state).unique_count, 1)
         self.browser.send_once.assert_called_once()
 
-    def test_already_delivered_approval_resumes_observation(self):
+    def test_advanced_worker_resumes_observation_without_delivery_claim(self):
         self.browser.reentry_disposition.return_value = "advanced"
-        self.assertIn(self.resume(owner_context=self.context)["event"],
-                      ("controller_resumed", "owner_request_already_recorded"))
+        self.assertEqual(self.resume(owner_context=self.context)["event"],
+                         "worker_advanced_owner_input_unverified")
         self.assertIsNone(Controller.load(self.state).state.pending)
         self.browser.send_once.assert_not_called()
 

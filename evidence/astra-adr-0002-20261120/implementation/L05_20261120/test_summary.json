@@ -1,0 +1,15 @@
+{
+  "source_parent_commit": "f20f1b14080c58f80a6e4e646d7ba5173d8791a9",
+  "tests_integration": 106,
+  "integration": "PASS",
+  "tests_reference": 119,
+  "reference": "PASS",
+  "new_l05_targeted_tests": 3,
+  "windows_powershell_action_gate": "PASS",
+  "windows_powershell_view_helpers": "PASS",
+  "git_diff_check": "PASS",
+  "live_browser": "NOT_RUN",
+  "installed_candidate": "UNCHANGED",
+  "g1_independent_acceptance": "NOT_RUN",
+  "elapsed_seconds": 5.05
+}

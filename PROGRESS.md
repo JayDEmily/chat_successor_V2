@@ -1,5 +1,10 @@
 # Progress
 
+## ADR 0002 L05 scoped approval and publication — 20 November 2026
+
+[L05 implementation and test matrix](evidence/astra-adr-0002-20261120/implementation/L05_20261120/L05_RESULT.md): distinguish worker advancement from verified owner approval delivery, and log the exact published Git SHA/ref before and after adoption. **106/106 integration + 119/119 reference PASS**, plus two Windows PowerShell helper tests; no installed, browser or iPhone tests. L02–L05 offline implementation is ready for separate **A2-G1 independent review**, not yet released. Active Rowing and SolidWorks runs remain paused.
+
+
 ## ADR 0002 L03 safety repair on post-L04 baseline — 20 November 2026
 
 An independently reproduced [L03 negative review](evidence/astra-adr-0002-20261120/implementation/L03_20261120/review_20261120/NEGATIVE_REVIEW.md) corrected wrong-destination adapter entry, changed account-route bootstrap adoption and lost initial intent on pre-click pause. Full post-repair offline checks: 103 integration and 119 reference PASS, native Windows PowerShell action-check PASS. No desktop install or live Send. G1 remains in progress with L05 pending; G2–G6 remain NOT_RUN.

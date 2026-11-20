@@ -7,7 +7,7 @@ The owner has accepted the [bounded ADR 0002 implementation](../../adr/0002-acco
 | Gate | Current disposition | Evidence and next action |
 | --- | --- | --- |
 | A2-G0 / L01 | **PASS — offline evidence and scoped authority** | [Fresh baseline](../../../evidence/astra-adr-0002-20261120/implementation/G0_20261120/BASELINE.md); continue A2-L02 |
-| A2-G1 / L02–L05 | **IN PROGRESS — L02–L04 offline candidates PASS; L05 NOT_RUN** | [L02](../../../evidence/astra-adr-0002-20261120/implementation/L02_20261120/L02_RESULT.md) and [L03](../../../evidence/astra-adr-0002-20261120/implementation/L03_20261120/L03_RESULT.md): 98/98 integration plus native PowerShell view and action mock checks; unchanged reference 119 PASS; continue L05 before G1 exit |
+| A2-G1 / L02–L05 | **IN PROGRESS — L02–L05 offline cases pass, independent G1 review pending** | [L05 106+119 and private diagnostic evidence](../../../evidence/astra-adr-0002-20261120/implementation/L05_20261120/L05_RESULT.md); do not install until independent gate clearance |
 | A2-G2 / L06 | **NOT_RUN** | Windows installation/account route verification after G1 |
 | A2-G3 / L07 | **NOT_RUN** | Two independent disposable mock Projects/repos, proven stale recovery |
 | A2-G4 / L08 | **NOT_RUN** | Actual Shoco iPhone approval and account re-entry |
@@ -18,7 +18,11 @@ The owner has accepted the [bounded ADR 0002 implementation](../../adr/0002-acco
 
 [Three negative contract gaps and targeted correction](../../../evidence/astra-adr-0002-20261120/implementation/L02_20261120/review_20261120/NEGATIVE_REVIEW.md) were reproduced after the original 79-test candidate. Post-repair offline suites: 82 integration and 119 reference PASS; independent final acceptance and installation remain open. No change to A2-G1 or A2-G2 NOT_RUN dispositions.
 
-## L03 independent negative review and corrective checkpoint\n\nA separate pinned-base review found changed-route bootstrap adoption, deleted initial intent on a pre-click pause, and wrong destination object reaching the adapter. [Before/after reproduction and 103+119 tests](../../../evidence/astra-adr-0002-20261120/implementation/L03_20261120/review_20261120/NEGATIVE_REVIEW.md). The corrections are an offline candidate only; G1/G2 and live fault checks remain open. Post-L04 integration cases continue to pass.\n\n## Management commitments
+## L03 independent negative review and corrective checkpoint\n\nA separate pinned-base review found changed-route bootstrap adoption, deleted initial intent on a pre-click pause, and wrong destination object reaching the adapter. [Before/after reproduction and 103+119 tests](../../../evidence/astra-adr-0002-20261120/implementation/L03_20261120/review_20261120/NEGATIVE_REVIEW.md). The corrections are an offline candidate only; G1/G2 and live fault checks remain open. Post-L04 integration cases continue to pass.\n\n## L05 scoped owner and published-receipt checkpoint
+
+[The L05 implementation and exact case matrix](../../../evidence/astra-adr-0002-20261120/implementation/L05_20261120/L05_RESULT.md) distinguish an advanced worker from an approval receipt, and record a validated Git SHA/ref in private logs. 106 integration and 119 reference cases PASS; independent A2-G1 signoff and all installed/live tests remain open.
+
+## Management commitments
 
 Keep a single approved development branch rather than one branch per leaf. Commit exact leaf evidence and source as distinct reviewable checkpoints. Apply independent review at appropriate gates. Capture candidate SHA, test runs, raw outputs, observed Windows readbacks, run/fixture IDs, pending actions and real limitations. Do not substitute a model's claim or offline proxy for actual Windows acceptance. Confirm all remote pushes and final Git readbacks.
 
