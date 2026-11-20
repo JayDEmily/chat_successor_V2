@@ -190,6 +190,9 @@ class WindowsUIA(Browser):
 
     def observe(self, expected_chat_id: str) -> Response | None:
         first = self._read_or_restore_worker("Observe", expected_chat_id)
+        if (first.get("method") == "UIA_VIRTUALIZED_UNQUALIFIED"
+                and first.get("stop_control") is not True):
+            raise self._worker_error(expected_chat_id, "Current-turn reader is unqualified.")
         ready = first.get("ready") is True
         if not ready or self._response_was_consumed(expected_chat_id, first.get("response_id")):
             if self._probe_stale_view(expected_chat_id, first) or not ready:

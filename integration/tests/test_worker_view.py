@@ -6,6 +6,8 @@ import unittest
 from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from runner import cycle, initialise
+from succession.core import Action, Config, Controller
 from windows_backend import BrowserObservationError, WindowsUIA
 
 
@@ -55,6 +57,31 @@ class WorkerViewTests(unittest.TestCase):
                     self.bridge.observe(self.chat)
                 self.assertIn(self.worker_url, str(hold.exception))
                 self.adapter.assert_called_once_with("Observe", ChatId=self.chat)
+
+    def test_unqualified_view_waits_for_streaming_then_saves_hold(self):
+        state = self.bridge.state_path
+        controller = initialise(state, Config(self.project, "example/fixture", "work/test", 2), self.chat)
+        reader = Mock()
+        observation = {**self.identity, "ready": False, "stop_control": True,
+                       "method": "UIA_VIRTUALIZED_UNQUALIFIED"}
+        self.adapter.return_value = observation
+        before = state.read_bytes()
+        self.assertEqual(cycle(controller, self.bridge, reader, "test", state), Action.WAIT)
+        self.assertEqual(state.read_bytes(), before)
+        self.adapter.assert_called_once_with("Observe", ChatId=self.chat)
+
+        self.adapter.reset_mock()
+        self.adapter.return_value = {**observation, "stop_control": False}
+        self.assertEqual(cycle(controller, self.bridge, reader, "test", state), Action.HOLD)
+        saved = Controller.load(state)
+        self.assertIn("unqualified", saved.state.halted)
+        self.assertIn(self.worker_url, saved.state.halted)
+        self.assertIsNone(saved.state.pending)
+        self.assertEqual(saved.state.consumed_responses, [])
+        self.assertEqual(saved.unique_count, 1)
+        self.assertEqual(cycle(saved, self.bridge, reader, "test", state), Action.HOLD)
+        self.adapter.assert_called_once_with("Observe", ChatId=self.chat)
+        reader.read.assert_not_called()
 
     def test_missing_recovery_requires_verified_landing_and_single_attempt(self):
         self.bridge.project_url = "https://chatgpt.com/g/g-p-ffff/project"

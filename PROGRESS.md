@@ -1,5 +1,13 @@
 # Progress
 
+## Lean ADR 0002 L03 — Durable unsupported-reader hold (21 November 2026)
+
+- **Base and candidate:** `1eafce8` to Windows backend blob `b351141db970d18176cb463748e99c1a3ec00fd1`.
+- **Behavior:** an explicit `UIA_VIRTUALIZED_UNQUALIFIED` observation holds the saved run with its chat link once streaming stops. A verified Stop control still waits. The test reuses `test_worker_view.py`.
+- **Windows `test_worker_view.py`:** before the fix 8/9, with the new case returning `WAIT` after streaming stopped. After the fix 9/9, exit 0. The hold preserved the count and consumed history with no publication, preparation, reload, or Send.
+- **Limit:** mocked bridge observations. The hold does not qualify a virtualized response.
+- **Next:** L04, check the pause marker before browser preparation.
+
 ## Lean ADR 0002 L02 — Mixed transcript containment (21 November 2026)
 
 - **Base and candidate:** `a46b492` to adapter blob `82778debdb69bd2738e4dc3626137ac3e5d3b1c1`.
