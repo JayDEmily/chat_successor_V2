@@ -1,5 +1,13 @@
 # Progress
 
+## ADR 0002 A2-G2 source-pinned Windows read-only recovery follow-up — 20 November 2026
+
+**A2-G2 PASS for installed Windows account routing, no-Send preflight and read-only saved-view recovery on `5c86ad6d735b4c0626c49aedfdb93aeb95e6199b`.** The prior W01 and W02 observations and the new W03 read-only recovery are reconciled in [the exact-candidate receipt](evidence/astra-adr-0002-20261120/implementation/G2_20261120/RECOVERY_RECONCILIATION_5C86AD6.md). The separate [independent OFFLINE ACCEPT](evidence/astra-adr-0002-20261120/implementation/G2_20261120/recovery-review-5c86ad6/REPORT.md) covered 114 integration and 119 reference tests per host, three native PowerShell suites and fail-closed virtualized-view negatives. W02's two-window/mutex live evidence was carried forward from the unchanged code path on the preceding installed candidate; it was not freshly repeated on `5c86ad6`.
+
+Codex published and installed the exact source revision and recorded no-Send installed checks for both accounts. A real Windows cold-open restored the completed disposable saved chat on the exact candidate in a temporary root, then a fresh **installed** verification on the canonical root reused that same already-open saved chat with two stable read-only observations. Protected files were unchanged, both original project pause markers remained present, and no controller or Send action was performed. In particular, the latest assistant turn still cannot be qualified as actionable in Chrome's virtualized UI; identity-only recovery must not be used as a completion, stale-response, approval or Send receipt.
+
+**Next:** A2-L07 / A2-G3 starts with safe read-only qualification of virtualized latest-turn boundaries using a disposable fixture. Independent negative checks are required before live advancement; real positive stale reload and paired-run criteria remain NOT_RUN. G4–G6 are NOT_RUN. Keep Rowing/SolidWorks paused and `main` unchanged.
+
 ## ADR 0002 A2-G2 installed Windows routes and recovery hold — 20 November 2026
 
 A2-G1 remains independently accepted for `0b6bfa3`. Both separate Remote Desktop Commander accounts read the same `codex/chat-succession-finish` tip at `8f33cc5`. The installed Windows launcher now uses the two verified `USERPROFILE` selectors. **Both installed no-Send preflights and the concurrent-window/mutex checks passed.** The installed [A2-G2 evidence](evidence/astra-adr-0002-20261120/implementation/G2_20261120/PREFLIGHT.md) records the pin, rollback hash, both route receipts, exact fixture SHA `b91b00f`, and matching before/after state.
