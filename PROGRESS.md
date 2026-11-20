@@ -1,5 +1,13 @@
 # Progress
 
+## Lean ADR 0002 L05 — Shoko Yumi read-only qualification (21 November 2026)
+
+- **Source and fixture:** `7fc7a7a4f4ac2103625c6394a82de997634c9cbb`. Created the dedicated **Chat Succession — Shoko Yumi Qualification** Project and posted two owner-authorized identical manual prompts to one saved fixture chat. The controller stayed idle.
+- **Observed:** the fresh Chrome page grouped each exact user body with its exact completed assistant reply. Two distinct `data-turn-key` values, message IDs and order remained stable after reload once the bodies finished rendering. The existing `Observe` found the exact saved chat but returned `UIA_VIRTUALIZED_UNQUALIFIED` with no response ID, user anchor, or body. The older disposable chat produced the same native hold.
+- **Windows checks:** 116/116 integration, 119/119 reference, five native PowerShell suites including 28/28 transcript assertions. The integration rerun removed an inherited counted Git override for that test process after missing Git config values broke disposable repository setup. An earlier attempt also saw one temporary-file replacement denial. [Independent offline review](evidence/astra-adr-0002-20261120/implementation/G3_20261120/LEAN_L02_L04_REVIEW.md).
+- **Limit:** positive DOM feasibility on the fresh fixture. The standalone Windows controller still has no access to those DOM fields, so its current-turn and posted-message paths are unqualified. LEAN-G1 and worker dispatch remain held. Account transcripts and locators remain private.
+- **Next:** decide on one read-only DOM access path for the existing controller before L06–L07. Keep the existing UI Automation Send path.
+
 ## Lean ADR 0002 L04 — Pause before preparation (21 November 2026)
 
 - **Base and candidate:** `7258fff` to runner blob `5a5252b70ab961a6b6d95a11f86874e71590f399`.
