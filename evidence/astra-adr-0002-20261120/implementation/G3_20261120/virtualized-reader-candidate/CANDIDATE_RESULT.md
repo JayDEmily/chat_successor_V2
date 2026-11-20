@@ -20,6 +20,12 @@
 | Native PowerShell action, view, legacy recovery and new virtualized suite | **4/4 PASS** | [action](native-action.log), [view](native-view.log), [legacy](native-legacy-recovery.log), [virtualized](native-virtualized.log) |
 | Existing completed disposable saved chat (James Student profile) | **PASS**, two stable reads, non-actionable; no Send, navigation or protected-file change | [redacted real readback](real-readonly-acceptance.json) |
 
+## Published exact-source readback
+
+The candidate source was published as `e33ae7ad49e3510bf3021c552184cbb9d0e05758` and read back from GitHub. A **separate clean shallow GitHub clone** in the Windows temporary workspace matched this SHA, had empty status, and completed `git fsck --full` successfully. The implementing worker separately reproduced **114/114 Windows integration PASS**, native action PASS and native virtualized-turn PASS on that exact Git tree. See [fresh-clone integration](fresh-clone-integration.log), [native action](fresh-clone-native-action.log), [native virtualized](fresh-clone-native-virtualized.log) and [fsck output](fresh-clone-fsck.log). This is source-pin replication by the implementing worker, not the separately required independent reviewer acceptance.
+
+The [exact-SHA independent review commission](../../../../../docs/astra-succession/adr-0002/G3_VIRTUALIZED_REVIEW_COMMISSION.md) identifies the mandatory challenge cases. Installation and live work remain held.
+
 ## Safety and acceptance disposition
 
 **A2-G3 stays NOT_RUN.** This is a fail-closed code candidate, not a successful unattended positive turn, live stale reload, paired-run D01–D03, owner approval or release. A complete absolute latest-turn identity still cannot be proved solely by Chrome's virtualized accessibility body groups. The earlier evidence of a visible terminal text node and a response-digest mismatch remains unresolved.

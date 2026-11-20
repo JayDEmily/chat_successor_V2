@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-L07 published exact-SHA candidate and review commission — 20 November 2026
+
+The fail-closed virtualized-turn reader and raw test evidence are now published at **`e33ae7ad49e3510bf3021c552184cbb9d0e05758`**, with an exact [source and evidence report](evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/CANDIDATE_RESULT.md). A fresh clean GitHub clone matched the SHA, passed `git fsck --full`, 114/114 Windows integration tests and both targeted native action/virtualized suites. The implementing worker's fresh-clone tests do **not** substitute for the separate reviewer. The [independent exact-source commission](docs/astra-succession/adr-0002/G3_VIRTUALIZED_REVIEW_COMMISSION.md) is prepared.
+
+**Status:** separate source review pending; A2-G3 live D01–D03, positive stale response V03 and later gates remain NOT_RUN. The installed Windows backend stays at `5c86ad6`. The virtualized reader deliberately yields no Send receipt or actionable response, and the original Rowing/SolidWorks pauses are retained. The next review must challenge the immutable `e33ae7a` source and either record OFFLINE ACCEPT for the narrow safety change or identify corrective work, then independently qualify positive absolute turn attribution before any live worker dispatch.
+
 ## ADR 0002 A2-L07 fail-closed virtualized-turn reader candidate — 20 November 2026
 
 A bounded [source and native-test candidate](evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/CANDIDATE_RESULT.md) now recognises the verified virtualized user/assistant heading/body structure without treating visible terminal text as an authenticated latest-turn receipt. Mixed article/virtualized layouts, missing or duplicate headings, changed body classes, nested labels, streaming and posted-message acknowledgements hold safely. **No response ID, absolute count, owner input anchor, stale reload or Send receipt is issued by this fallback.** The existing article-based path is preserved.
