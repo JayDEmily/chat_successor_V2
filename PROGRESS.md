@@ -1,5 +1,13 @@
 # Progress
 
+## Lean ADR 0002 L07 — Exact Chrome posted-message receipt (21 November 2026)
+
+- **Base:** `e42d67d`.
+- **Implementation:** the existing Send and reconcile paths read the exact posted user body in the saved destination. A continuation must directly follow the verified triggering reply. The snapshot carries just that preceding reply’s identity.
+- **Offline evidence:** sixteen Windows Chrome-reader assertions, seven headless Chrome checks, the 28-case transcript regression, and three existing native guard suites passed. Earlier identical text, a wrong anchor, fragments, and a temporary chat URL stay unacknowledged.
+- **Limit:** offline code and receipt tests. Live Windows readback and independent gate approval are pending.
+- **Next:** L08 cold-read and prior-state compatibility before the desktop trial.
+
 ## Lean ADR 0002 L06 — Chrome turn reader (21 November 2026)
 
 - **Base:** `3a1cf0d`. The owner approved a read-only DOM path before the Shoko Yumi desktop chain.

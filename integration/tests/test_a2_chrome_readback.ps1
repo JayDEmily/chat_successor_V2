@@ -8,7 +8,7 @@ $tokens = $null
 $script = Join-Path $PSScriptRoot '..\uia_adapter.ps1'
 $tree = [Management.Automation.Language.Parser]::ParseFile($script,[ref]$tokens,[ref]$parserErrors)
 if($parserErrors.Count){throw 'Windows adapter did not parse'}
-foreach($name in @('Read-ChromeTurnSnapshot','Get-ChromeResponseId','Read-CurrentTurn')){
+foreach($name in @('Check-Project','Chat-FromUrl','Read-ChromeTurnSnapshot','Get-ChromeResponseId','Read-CurrentTurn','Find-PostedMessage')){
  $nodes=@($tree.FindAll({
   param($node)
   $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name
@@ -32,6 +32,8 @@ $element | Add-Member ScriptMethod GetCurrentPattern {
 }
 $script:elements=@($element)
 function Desc($window){$script:elements}
+function Get-Address($window){$target.url}
+function Test-WindowProfile($window){$true}
 
 function Check([bool]$condition,[string]$description){
  if(-not $condition){throw "FAIL: $description"}
@@ -45,7 +47,7 @@ function Expect-Hold([scriptblock]$read,[string]$reason){
 
 $snapshot=@{
  project=$ProjectId;chat=$chat;phase='observed';observedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
- key='22222222-2222-2222-2222-222222222222';user='Exact submitted text';userAfterAssistant=$false
+ key='22222222-2222-2222-2222-222222222222';user='Exact submitted text';userAfterAssistant=$false;previous=$null
  reply=@{id='33333333-3333-3333-3333-333333333333';text="Full reply.`nCHAT_STATUS: NEED_MORE_TIME";final=$true;handoff=$false}
 }
 $element.Payload=$snapshot | ConvertTo-Json -Compress
@@ -78,3 +80,19 @@ $element.Payload=$snapshot | ConvertTo-Json -Compress
 Expect-Hold {Read-CurrentTurn $target} 'sample has expired'
 $script:elements=@($element,$element)
 Expect-Hold {Read-CurrentTurn $target} 'ambiguous or has no verified saved destination'
+
+$script:elements=@($element)
+$snapshot.observedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+$snapshot.phase='observed'
+$snapshot.userAfterAssistant=$true
+$snapshot.previous=@{key='22222222-2222-2222-2222-222222222222'
+                     reply=@{id='33333333-3333-3333-3333-333333333333'}}
+$element.Payload=$snapshot | ConvertTo-Json -Depth 4 -Compress
+Check (Find-PostedMessage $target.window $snapshot.user $first.response_id $target.url) 'exact continuation immediately after its verified reply'
+Check (-not (Find-PostedMessage $target.window $snapshot.user $repeat.response_id $target.url)) 'identical text with a different reply anchor does not acknowledge'
+Check (-not (Find-PostedMessage $target.window 'Exact submitted' $first.response_id $target.url)) 'matching fragment does not acknowledge'
+Check (-not (Find-PostedMessage $target.window $snapshot.user $first.response_id "https://chatgpt.com/g/$ProjectId/c/local-chatgpt%3Afixture")) 'provisional URL does not acknowledge'
+Check (Find-PostedMessage $target.window $snapshot.user '' $target.url) 'exact initial post has a saved destination'
+$snapshot.previous=$null
+$element.Payload=$snapshot | ConvertTo-Json -Compress
+Check (-not (Find-PostedMessage $target.window $snapshot.user $first.response_id $target.url)) 'a missing preceding turn does not acknowledge a continuation'

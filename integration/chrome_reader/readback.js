@@ -86,7 +86,10 @@
             [...turn.querySelectorAll("[data-turn-key]")].some(node => node.getAttribute("data-turn-key") === current.key))) {
             return {phase: "unqualified"};
         }
-        return current;
+        const previous = turns.length > 1 ? readTurn(turns.at(-2)) : null;
+        return {...current, previous: previous?.reply?.final ? {
+            key: previous.key, reply: {id: previous.reply.id}
+        } : null};
     }
 
     function refresh() {

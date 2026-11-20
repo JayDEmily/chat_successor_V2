@@ -386,16 +386,28 @@ function Get-ConversationTurns($all) {
  }
 }
 
-function Find-PostedMessage($window,$expected,[string]$afterResponse='') {
+function Find-PostedMessage($window,$expected,[string]$afterResponse='',[string]$url='') {
  # The complete latest user turn must match. For continuation, also bind
  # the immediately preceding assistant turn to the triggering response.
- $afterOrdinal=0
- if($afterResponse){
-  if($afterResponse -cnotmatch '^uia-turn-([1-9][0-9]*)-[a-f0-9]{20}$'){return $false}
-  $afterOrdinal=[int]$Matches[1]
- }
  try{
-  $turns=@(Get-ConversationTurns (Desc $window))
+  $all=Desc $window
+  if($url){
+   $chat=Chat-FromUrl $url
+   if(-not $chat -or -not (Check-Project $url)){return $false}
+   $snapshot=Read-ChromeTurnSnapshot $all $chat
+   if($null -ne $snapshot){
+    if($snapshot.phase -cne 'observed' -or $snapshot.user -cne $expected){return $false}
+    if($afterResponse -and ($null -eq $snapshot.previous -or
+       (Get-ChromeResponseId $snapshot.previous) -cne $afterResponse)){return $false}
+    return ((Get-Address $window) -ceq $url -and (Test-WindowProfile $window))
+   }
+  }
+  $afterOrdinal=0
+  if($afterResponse){
+   if($afterResponse -cnotmatch '^uia-turn-([1-9][0-9]*)-[a-f0-9]{20}$'){return $false}
+   $afterOrdinal=[int]$Matches[1]
+  }
+  $turns=@(Get-ConversationTurns $all)
   $lastUser=-1
   $assistantCount=0
   $userAnchorOrdinal=0
@@ -484,6 +496,7 @@ function Compare-OwnerTurn($turn,[string]$anchor) {
  if($turn.stop_control -or $turn.user_after_assistant){return 'advanced'}
  if(-not $turn.ready -or -not $turn.user_turn_seen){return 'unknown'}
  if($turn.response_id -ceq $anchor){return 'idle'}
+ if($anchor -and $turn['previous_response_id'] -ceq $anchor){return 'advanced'}
  if($anchor -cmatch '^uia-turn-(\d+)-([a-f0-9]+)$'){
   $count=[int]$Matches[1]
   $digest=$Matches[2]
@@ -540,6 +553,10 @@ function Read-ChromeTurnSnapshot($all,[string]$expectedChat) {
  if($snapshot.observedAt -isnot [long]){throw 'Chrome readback has no valid sample time'}
  $age=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds() - $snapshot.observedAt
  if($age -lt 0 -or $age -gt 5000){throw 'Chrome readback sample has expired'}
+ if($snapshot.phase -ceq 'observed' -and ($snapshot.user -isnot [string] -or -not $snapshot.user -or
+    $snapshot.key -cnotmatch '^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$')){
+  throw 'Chrome readback has no verified user turn'
+ }
  return $snapshot
 }
 
@@ -578,6 +595,7 @@ function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
     text=$(if($null -ne $reply){$reply.text}else{''})
     handoff_locator_verified=($ready -and $reply.handoff -is [bool] -and $reply.handoff)
     user_turn_seen=$observed;user_after_assistant=($observed -and $snapshot.userAfterAssistant -eq $true)
+    previous_response_id=$(if($observed -and $null -ne $snapshot.previous){Get-ChromeResponseId $snapshot.previous})
    }
    if($IncludeUserAnchor){$result['assistant_turn_count']=$null;$result['user_turn_count']=$null}
    return $result
@@ -1142,7 +1160,8 @@ if($Mode -eq 'Send') {
  if($Message -cnotmatch '^[A-Za-z0-9 .,/_:-]+$'){throw 'Unsupported message characters'}
  if(-not $Message){throw 'Empty message'}
  if($Kind -eq 'CONTINUE_CURRENT' -and
-    (-not $ChatId -or $SourceResponse -cnotmatch '^uia-turn-[1-9][0-9]*-[a-f0-9]{20}$')){
+    (-not $ChatId -or ($SourceResponse -cnotmatch '^uia-turn-[1-9][0-9]*-[a-f0-9]{20}$' -and
+                       $SourceResponse -cnotmatch '^chrome-turn-[a-f0-9-]{73}$'))){
   throw 'Continuation needs the saved chat and triggering response'
  }
  $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
@@ -1232,7 +1251,7 @@ if($Mode -eq 'Send') {
   $url=Get-Address $target.window
   $chat=Chat-FromUrl $url
   if($chat -and (Check-Project $url) -and ($Kind -ne 'CONTINUE_CURRENT' -or $chat -ceq $ChatId) -and
-     (Find-PostedMessage $target.window $Message $SourceResponse)){
+     (Find-PostedMessage $target.window $Message $SourceResponse $url)){
    @{project=$ProjectId;chat_id=$chat;submitted_text=$Message;posted_message_observed=$true;window_handle=$WindowHandle} | ConvertTo-Json -Compress
    exit 0
   }
@@ -1245,9 +1264,10 @@ if($Mode -eq 'Reconcile') {
   throw 'Reconcile needs the saved chat and triggering response'
  }
  $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
- $chat=Chat-FromUrl (Get-Address $target.window)
+ $url=Get-Address $target.window
+ $chat=Chat-FromUrl $url
  $posted= $chat -and ($Kind -ne 'CONTINUE_CURRENT' -or $chat -ceq $ChatId) -and
-          (Find-PostedMessage $target.window $Message $SourceResponse)
+          (Find-PostedMessage $target.window $Message $SourceResponse $url)
  @{project=$ProjectId;chat_id=$chat;submitted_text=$(if($posted){$Message}else{$null});posted_message_observed=[bool]$posted} | ConvertTo-Json -Compress
  exit 0
 }
