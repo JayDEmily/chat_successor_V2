@@ -1,0 +1,18 @@
+[
+  {
+    "suite": "integration",
+    "returncode": 0,
+    "tests": 63,
+    "expected_tests": 63,
+    "passed_without_skips": true,
+    "elapsed_seconds": 1.1
+  },
+  {
+    "suite": "reference",
+    "returncode": 0,
+    "tests": 119,
+    "expected_tests": 119,
+    "passed_without_skips": true,
+    "elapsed_seconds": 0.869
+  }
+]

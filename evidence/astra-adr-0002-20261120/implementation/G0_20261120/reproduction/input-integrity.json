@@ -1,0 +1,1778 @@
+{
+  "files": 296,
+  "manifest_entries": 295,
+  "mismatches": [],
+  "unlisted": [],
+  "checks": [
+    {
+      "path": "ASTRA_BRIEF.md",
+      "expected": "1f68d720de6a7ae0cb6ffc304d917cbb1dbcbe6c2fc7484a5436337f874c3716",
+      "actual": "1f68d720de6a7ae0cb6ffc304d917cbb1dbcbe6c2fc7484a5436337f874c3716",
+      "matches": true
+    },
+    {
+      "path": "evidence/historical/Chat-Succession-Astra-Handoff-2026-11-19.tar.gz",
+      "expected": "3b76acba923c1e7d00718ff82799a5d20785df6a530a162eb4d908a0d62e1c08",
+      "actual": "3b76acba923c1e7d00718ff82799a5d20785df6a530a162eb4d908a0d62e1c08",
+      "matches": true
+    },
+    {
+      "path": "evidence/pause-2026-11-20/astra-reference-tests-windows-default-encoding.log",
+      "expected": "14955735cc307e5af582cb93daf82f5d36f97f09e74e9cb4535c693b2b7fc3ba",
+      "actual": "14955735cc307e5af582cb93daf82f5d36f97f09e74e9cb4535c693b2b7fc3ba",
+      "matches": true
+    },
+    {
+      "path": "evidence/pause-2026-11-20/astra-reference-tests.log",
+      "expected": "3f03b8c8b8199b489f1d8536e5aea012f4aa46321cc647ceddcf8ed69f89080b",
+      "actual": "3f03b8c8b8199b489f1d8536e5aea012f4aa46321cc647ceddcf8ed69f89080b",
+      "matches": true
+    },
+    {
+      "path": "evidence/pause-2026-11-20/git-receipt-readback.json",
+      "expected": "44b235133695ebf7799411538856fa490ddba080036b3369cf4235c613695df8",
+      "actual": "44b235133695ebf7799411538856fa490ddba080036b3369cf4235c613695df8",
+      "matches": true
+    },
+    {
+      "path": "evidence/pause-2026-11-20/integration-tests.log",
+      "expected": "42a1e2eb26ab1c2452b4439718f3129da19b98fad458bca8a4a10768daf0eae7",
+      "actual": "42a1e2eb26ab1c2452b4439718f3129da19b98fad458bca8a4a10768daf0eae7",
+      "matches": true
+    },
+    {
+      "path": "evidence/pause-2026-11-20/LIVE_PAUSE.md",
+      "expected": "81e6a0e00d4d0ef82408cb587669caf37e505918b0f2747412c481eb89a2fff5",
+      "actual": "81e6a0e00d4d0ef82408cb587669caf37e505918b0f2747412c481eb89a2fff5",
+      "matches": true
+    },
+    {
+      "path": "evidence/pause-2026-11-20/paused-runs.json",
+      "expected": "0d736241f71b90c1df59361334ff5bd8f6cd35b675abc53411cf9749dd900430",
+      "actual": "0d736241f71b90c1df59361334ff5bd8f6cd35b675abc53411cf9749dd900430",
+      "matches": true
+    },
+    {
+      "path": "evidence/pause-2026-11-20/rowing-controller-events.utc.log",
+      "expected": "9274fdb0b4fdb0b31a93e3876db145ff3090d628e45fcf59a5a3ba44ba83693d",
+      "actual": "9274fdb0b4fdb0b31a93e3876db145ff3090d628e45fcf59a5a3ba44ba83693d",
+      "matches": true
+    },
+    {
+      "path": "evidence/pause-2026-11-20/solidworks-controller-events.utc.log",
+      "expected": "00e9e5d3912a3f52cc0313fb47cf3bcbc9069664456c60eb4bc61f7e42231d4a",
+      "actual": "00e9e5d3912a3f52cc0313fb47cf3bcbc9069664456c60eb4bc61f7e42231d4a",
+      "matches": true
+    },
+    {
+      "path": "evidence/pause-2026-11-20/windows-launcher.redacted.txt",
+      "expected": "c2679927f21eb7b18929e31e4fb484ae092d2cd7b1f8801df9ee9ba7e3197086",
+      "actual": "c2679927f21eb7b18929e31e4fb484ae092d2cd7b1f8801df9ee9ba7e3197086",
+      "matches": true
+    },
+    {
+      "path": "evidence/pause-2026-11-20/windows-recovery-tests.log",
+      "expected": "1b6fcb3494783c6f13061f24f96810699e90af44d7da58896ce0beaa8a51b6e0",
+      "actual": "1b6fcb3494783c6f13061f24f96810699e90af44d7da58896ce0beaa8a51b6e0",
+      "matches": true
+    },
+    {
+      "path": "history/chat_successor.bundle",
+      "expected": "38200f7063e208a92b21d157e28e6e8906586ef9ae9c0dd0e76c65ab6aaa5a21",
+      "actual": "38200f7063e208a92b21d157e28e6e8906586ef9ae9c0dd0e76c65ab6aaa5a21",
+      "matches": true
+    },
+    {
+      "path": "history/fixtures/chat-succession-bird-pig.bundle",
+      "expected": "76c79f0e0e2c6807c4b29d8486a03436d111a0e6412c3ba729cd62fce0511487",
+      "actual": "76c79f0e0e2c6807c4b29d8486a03436d111a0e6412c3ba729cd62fce0511487",
+      "matches": true
+    },
+    {
+      "path": "history/fixtures/chat-succession-bird-pig.refs.tsv",
+      "expected": "1698143f1d1333fedbddea142f685447b3e4f2f2b1da2fb33de447ea3d42b779",
+      "actual": "1698143f1d1333fedbddea142f685447b3e4f2f2b1da2fb33de447ea3d42b779",
+      "matches": true
+    },
+    {
+      "path": "history/fixtures/chat-succession-cat-dog-pair.bundle",
+      "expected": "70a8ec46168b26d5b594fecb2236e5b7ef0baa90c4ab279788ca9412c69d068e",
+      "actual": "70a8ec46168b26d5b594fecb2236e5b7ef0baa90c4ab279788ca9412c69d068e",
+      "matches": true
+    },
+    {
+      "path": "history/fixtures/chat-succession-cat-dog-pair.refs.tsv",
+      "expected": "f7ad6f76161c747b889d09e0bbf7a010c9e6865b470408931f10fd90beb91505",
+      "actual": "f7ad6f76161c747b889d09e0bbf7a010c9e6865b470408931f10fd90beb91505",
+      "matches": true
+    },
+    {
+      "path": "history/fixtures/chat-succession-trial-approval.bundle",
+      "expected": "725367e9a738fb9871e23621ab7b6b1c03b53ee57578e399c23056ada8ba29ba",
+      "actual": "725367e9a738fb9871e23621ab7b6b1c03b53ee57578e399c23056ada8ba29ba",
+      "matches": true
+    },
+    {
+      "path": "history/fixtures/chat-succession-trial-approval.refs.tsv",
+      "expected": "bf2dec624ce71a53b69272073ff9bfa924f74bc5b4cc7c4001f04d457e464723",
+      "actual": "bf2dec624ce71a53b69272073ff9bfa924f74bc5b4cc7c4001f04d457e464723",
+      "matches": true
+    },
+    {
+      "path": "history/fixtures/chat-succession-trial-rotation.bundle",
+      "expected": "078456e28c79d4a98e962706eedc1b35c50695e46f3feea55b352f4259bfb298",
+      "actual": "078456e28c79d4a98e962706eedc1b35c50695e46f3feea55b352f4259bfb298",
+      "matches": true
+    },
+    {
+      "path": "history/fixtures/chat-succession-trial-rotation.refs.tsv",
+      "expected": "3044383c9bd157abe887906cf33550ada71301fd35c0a13019af561398d39d37",
+      "actual": "3044383c9bd157abe887906cf33550ada71301fd35c0a13019af561398d39d37",
+      "matches": true
+    },
+    {
+      "path": "history/fixtures/my-cat-and-dog.bundle",
+      "expected": "ae3fce595507b87f67da63a046794529cbf6f2434f39d921b4832d51901cd835",
+      "actual": "ae3fce595507b87f67da63a046794529cbf6f2434f39d921b4832d51901cd835",
+      "matches": true
+    },
+    {
+      "path": "history/fixtures/my-cat-and-dog.refs.tsv",
+      "expected": "9c184ec4015ec2954e80aff5a09b6dffad2947ab6f681f4b2a69c0aaa3ccdf03",
+      "actual": "9c184ec4015ec2954e80aff5a09b6dffad2947ab6f681f4b2a69c0aaa3ccdf03",
+      "matches": true
+    },
+    {
+      "path": "history/refs.tsv",
+      "expected": "d2b4ee72d017696c0a37fe19a447af13131597ea00958a0ac6f687b93ebbf28d",
+      "actual": "d2b4ee72d017696c0a37fe19a447af13131597ea00958a0ac6f687b93ebbf28d",
+      "matches": true
+    },
+    {
+      "path": "history/VERIFICATION.md",
+      "expected": "56cea83b65758755871e0c2a36dcebcd67c0eba56ab20a9d196b575bbc2260a5",
+      "actual": "56cea83b65758755871e0c2a36dcebcd67c0eba56ab20a9d196b575bbc2260a5",
+      "matches": true
+    },
+    {
+      "path": "README.md",
+      "expected": "468a02bfbe39af799da2b38e576d85e725b593ed212ebfe10d57056dcd3e9bb9",
+      "actual": "468a02bfbe39af799da2b38e576d85e725b593ed212ebfe10d57056dcd3e9bb9",
+      "matches": true
+    },
+    {
+      "path": "release/chat-succession-0.4.3.zip",
+      "expected": "184b3032b156fb2a5e9779a7f8464462c06acca10e2ea6bb3cadb73f0134aeca",
+      "actual": "184b3032b156fb2a5e9779a7f8464462c06acca10e2ea6bb3cadb73f0134aeca",
+      "matches": true
+    },
+    {
+      "path": "source/AGENTS.md",
+      "expected": "092d95715966bb8e958c079588aa6686e900f47668378108afc7c1baba8c36af",
+      "actual": "092d95715966bb8e958c079588aa6686e900f47668378108afc7c1baba8c36af",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/artifacts/cfile_6afc5049ed648191beab0c6350b53f23-offline_results.json",
+      "expected": "d91a198f6d49570b28fad698801daec158d633fdc5d91f58f4cc50d08d62c56d",
+      "actual": "d91a198f6d49570b28fad698801daec158d633fdc5d91f58f4cc50d08d62c56d",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/artifacts/cfile_6afc50749588819195c6f6427506f0e3-chat_succession_test_kit_20261117.tar.gz",
+      "expected": "2aff3c1644393d48faede54a9f1c59e55bcd8c89c2ef2c1777a81d77340da07b",
+      "actual": "2aff3c1644393d48faede54a9f1c59e55bcd8c89c2ef2c1777a81d77340da07b",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/artifacts/cfile_6afc507495a08191817cbc9fc1e77b63-chat_succession_test_plan_20261117.md",
+      "expected": "a27d50df8d26ae8bf878a1f89f3da42081515a24319a83d2ea6db6b887c33668",
+      "actual": "a27d50df8d26ae8bf878a1f89f3da42081515a24319a83d2ea6db6b887c33668",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/IMPORT_PROVENANCE.md",
+      "expected": "03804dce9e22752e6874533180698e97bb0f4455ce798766c334c8ca346f7931",
+      "actual": "03804dce9e22752e6874533180698e97bb0f4455ce798766c334c8ca346f7931",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/response.json",
+      "expected": "959f8b2fd3221a242ca386687cce97582e56ff76b0c254b1a57b26f690f04b23",
+      "actual": "959f8b2fd3221a242ca386687cce97582e56ff76b0c254b1a57b26f690f04b23",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/response.md",
+      "expected": "db53f3e2bdd4c9e701f899443a14947c2340226e68a03ae6cdee24c9e8cd7e6d",
+      "actual": "db53f3e2bdd4c9e701f899443a14947c2340226e68a03ae6cdee24c9e8cd7e6d",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/config.example.json",
+      "expected": "74af088cb8f43423edf3c0b61fb08ee032b58d6f193d939bc081209796e781f2",
+      "actual": "74af088cb8f43423edf3c0b61fb08ee032b58d6f193d939bc081209796e781f2",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/ASSESSMENT.md",
+      "expected": "1f2e685e5529ac589d786fb474e6690966d702390e5bb9b2c79aa26cd651d7d3",
+      "actual": "1f2e685e5529ac589d786fb474e6690966d702390e5bb9b2c79aa26cd651d7d3",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/OWNER_RUNBOOK.md",
+      "expected": "ffd2c8535a760ceab854116ff27c49754b40844d0d5dff410c8c1999e08d4ab7",
+      "actual": "ffd2c8535a760ceab854116ff27c49754b40844d0d5dff410c8c1999e08d4ab7",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/PROTOCOL_AND_ADAPTER.md",
+      "expected": "c58801cfd1b082e92c9f5de290688e0f5f8b76af090032184db6e13a4292d21d",
+      "actual": "c58801cfd1b082e92c9f5de290688e0f5f8b76af090032184db6e13a4292d21d",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/SOURCES.md",
+      "expected": "5ca43bc15fb5bd8eb42566b15048e0f7708b373fbd47aaf269d7623473ff23b4",
+      "actual": "5ca43bc15fb5bd8eb42566b15048e0f7708b373fbd47aaf269d7623473ff23b4",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/TEST_PLAN.md",
+      "expected": "f64b9cdb5fca29699aacec5e00d2051c34310920a520809c1d0615e524ab09e3",
+      "actual": "f64b9cdb5fca29699aacec5e00d2051c34310920a520809c1d0615e524ab09e3",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/fixtures/composer_cases.json",
+      "expected": "b9e339847b0a90a7931641fe5f2a21bb21766c3ed63cefbd33e1ee9f7ba4f075",
+      "actual": "b9e339847b0a90a7931641fe5f2a21bb21766c3ed63cefbd33e1ee9f7ba4f075",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/fixtures/live_record.template.json",
+      "expected": "4e864ded3ae275b2aac7b60b657d1f25e0c7b6bb58b01658c500eed9e95bce56",
+      "actual": "4e864ded3ae275b2aac7b60b657d1f25e0c7b6bb58b01658c500eed9e95bce56",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/fixtures/live_test_results.csv",
+      "expected": "8da8cb4bc18fccbe67a92783caeecd3a9e096e55946b03a97a0f20eb23072aeb",
+      "actual": "8da8cb4bc18fccbe67a92783caeecd3a9e096e55946b03a97a0f20eb23072aeb",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/fixtures/parser_cases.json",
+      "expected": "b929ea097f7b128c938917268ae033eee5fd103dd59c3583a4669524a1016905",
+      "actual": "b929ea097f7b128c938917268ae033eee5fd103dd59c3583a4669524a1016905",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/fixtures/repo_seed/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/fixtures/repo_seed/INSTRUCTIONS.md",
+      "expected": "3c45555a1fda89191eec044ca65a806ebb85ef9e536ea096172aad3721a3be34",
+      "actual": "3c45555a1fda89191eec044ca65a806ebb85ef9e536ea096172aad3721a3be34",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/fixtures/repo_seed/RESULTS.json",
+      "expected": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
+      "actual": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/fixtures/repo_seed/RUN.json",
+      "expected": "918315636c5e2e2c43df94c2221672a81d87c4147b6166e51079faaa15cdce33",
+      "actual": "918315636c5e2e2c43df94c2221672a81d87c4147b6166e51079faaa15cdce33",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/fixtures/repo_seed/STATE.json",
+      "expected": "9bc29d2f2cdacf73b0aa655c98eaccada1cd248d0449a3ec90f8167397488ab2",
+      "actual": "9bc29d2f2cdacf73b0aa655c98eaccada1cd248d0449a3ec90f8167397488ab2",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/fixtures/sequence_cases.json",
+      "expected": "a504a3283414fcfcc4915950bb4ffe67025cbc6d2766e392e20cf30b29def1ab",
+      "actual": "a504a3283414fcfcc4915950bb4ffe67025cbc6d2766e392e20cf30b29def1ab",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/MANIFEST.sha256",
+      "expected": "2e5a8bb0fd794e46dbba118fe0f5e6bf9383cf3e3ede85fe4648d95ee70ec9f9",
+      "actual": "2e5a8bb0fd794e46dbba118fe0f5e6bf9383cf3e3ede85fe4648d95ee70ec9f9",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/OWNER_INSTRUCTIONS.txt",
+      "expected": "021e2af035e62137d67aad6256d325d61cb8ada68c995b8fcb2bd824a6873e32",
+      "actual": "021e2af035e62137d67aad6256d325d61cb8ada68c995b8fcb2bd824a6873e32",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/prompts/project_instructions.txt",
+      "expected": "99dafc531c2f15aa9d62a8399307501a315af1af868bee1b084852634f9f6920",
+      "actual": "99dafc531c2f15aa9d62a8399307501a315af1af868bee1b084852634f9f6920",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/prompts/successor_message.txt",
+      "expected": "7c8a020e27ca276c7c1901f860889db03a5e1b41499201fea52272d60b7f5198",
+      "actual": "7c8a020e27ca276c7c1901f860889db03a5e1b41499201fea52272d60b7f5198",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/README.md",
+      "expected": "407fae79b85687f6e73d44fd8d7f44600ada5719db8b8f59eab02a578cb66394",
+      "actual": "407fae79b85687f6e73d44fd8d7f44600ada5719db8b8f59eab02a578cb66394",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/reports/archive_audit.json",
+      "expected": "c2373253b7192ebccc5077204c66cbb601d0069ea080d36c97dc7253470a16d3",
+      "actual": "c2373253b7192ebccc5077204c66cbb601d0069ea080d36c97dc7253470a16d3",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/reports/executed/local_git_operations.json",
+      "expected": "af437c1c936e2231288aa7586d0733f422c0447260ecc3bab11a48a2fc919e60",
+      "actual": "af437c1c936e2231288aa7586d0733f422c0447260ecc3bab11a48a2fc919e60",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/reports/executed/offline_results.json",
+      "expected": "d91a198f6d49570b28fad698801daec158d633fdc5d91f58f4cc50d08d62c56d",
+      "actual": "d91a198f6d49570b28fad698801daec158d633fdc5d91f58f4cc50d08d62c56d",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/reports/executed/replay_trace.json",
+      "expected": "369debe4e649db7fe2baddefc851990aabb3e094772c0378df3ccea73f440472",
+      "actual": "369debe4e649db7fe2baddefc851990aabb3e094772c0378df3ccea73f440472",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/reports/executed/RESULTS.md",
+      "expected": "f4252d10bf42fa45862ba15e77009b7bb515b308c4b8bb089e61ccb8401a990e",
+      "actual": "f4252d10bf42fa45862ba15e77009b7bb515b308c4b8bb089e61ccb8401a990e",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/reports/executed/test_output.txt",
+      "expected": "bdcc26d1b6eeb05ac91ba10009655c4fe9d8a9f0a17214c8c25ff4cc0729ed28",
+      "actual": "bdcc26d1b6eeb05ac91ba10009655c4fe9d8a9f0a17214c8c25ff4cc0729ed28",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/reports/git_snapshot_audit.json",
+      "expected": "63bbdb9454068922b956413990abf06bd6fe3dc2970962d7df49688e0f0fce08",
+      "actual": "63bbdb9454068922b956413990abf06bd6fe3dc2970962d7df49688e0f0fce08",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/run_offline.py",
+      "expected": "8d26ee33588eaa2ce743ae5bd4559974185e2b74a25e2245249d3404ae3b71b0",
+      "actual": "8d26ee33588eaa2ce743ae5bd4559974185e2b74a25e2245249d3404ae3b71b0",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/archive_text/docs/ARCHIVE_README.md",
+      "expected": "67b6d57d26b1e2035aa9b206b9e814f65e7fece9c3a0b0116072460fbf7cc233",
+      "actual": "67b6d57d26b1e2035aa9b206b9e814f65e7fece9c3a0b0116072460fbf7cc233",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/archive_text/docs/CONVERSATION_RECORD.md",
+      "expected": "e741c0b8f2af8a10e308cb30ee2bfd3d99db722457dc6e97acc62661673a67bf",
+      "actual": "e741c0b8f2af8a10e308cb30ee2bfd3d99db722457dc6e97acc62661673a67bf",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/archive_text/docs/LIGHTWEIGHT_PROTOCOL.md",
+      "expected": "c38bba6b4ad88486b7b97fb1156d44685c476bb5b37380738bc0bc213162f2d8",
+      "actual": "c38bba6b4ad88486b7b97fb1156d44685c476bb5b37380738bc0bc213162f2d8",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/archive_text/docs/ORIGINAL_VISION.md",
+      "expected": "2e860f0bf753cab30a0b6814106aa87fe731371d0607fafc58628498143163da",
+      "actual": "2e860f0bf753cab30a0b6814106aa87fe731371d0607fafc58628498143163da",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/archive_text/docs/PREVIOUS_AGGREGATED_STATEMENT.md",
+      "expected": "11f497850772ec85c8a5924d7c923d1b6ee63b59cf43ca7bb63192631af5ca29",
+      "actual": "11f497850772ec85c8a5924d7c923d1b6ee63b59cf43ca7bb63192631af5ca29",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/archive_text/docs/SOURCE_INVENTORY.md",
+      "expected": "5edc8d9070744f49677e8bbd982a6b53751cba5703b5744b4cb3cebb0ad665b9",
+      "actual": "5edc8d9070744f49677e8bbd982a6b53751cba5703b5744b4cb3cebb0ad665b9",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/archive_text/docs/TECHNOLOGY_AND_ORIGINAL_EXPERIMENT.md",
+      "expected": "0487e72536b4030b3ab095a0096afeade462dd08e8d9a22723df9904c8a4940b",
+      "actual": "0487e72536b4030b3ab095a0096afeade462dd08e8d9a22723df9904c8a4940b",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/archive_text/evidence/UNKNOWN_AND_NOT_FOUND.md",
+      "expected": "8e8da7b3655b95530061d5bb2cdbe060563bfcbb4e6b9397be2b39d3c07b0cfd",
+      "actual": "8e8da7b3655b95530061d5bb2cdbe060563bfcbb4e6b9397be2b39d3c07b0cfd",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/archive_text/evidence/VERIFIED_FINDINGS.md",
+      "expected": "841e76f0aaba2a85ed5d27962fe16ac57336bfa287814c1175781725aef52bda",
+      "actual": "841e76f0aaba2a85ed5d27962fe16ac57336bfa287814c1175781725aef52bda",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/archive_text/README.md",
+      "expected": "7993786d98354ec88e11c543348b857b48c2bb1f34f1c0a080e24e4c074e85d3",
+      "actual": "7993786d98354ec88e11c543348b857b48c2bb1f34f1c0a080e24e4c074e85d3",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/sources/original_archive.tar.gz",
+      "expected": "8f137bdba31465f149b29df39f0e97cd1f764a2746ecdff8bf39c9f976e2100a",
+      "actual": "8f137bdba31465f149b29df39f0e97cd1f764a2746ecdff8bf39c9f976e2100a",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/succession/__init__.py",
+      "expected": "d2f34c84ea0922d61a989288897516daba7b0f29905fed5c75d7c2d1e95b3266",
+      "actual": "d2f34c84ea0922d61a989288897516daba7b0f29905fed5c75d7c2d1e95b3266",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/succession/composer.py",
+      "expected": "cd53d1c4c92ecd6c6a0cc0c8b9c9990fd0dffccc53432a8f8c5c3a6b737d51f8",
+      "actual": "cd53d1c4c92ecd6c6a0cc0c8b9c9990fd0dffccc53432a8f8c5c3a6b737d51f8",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/succession/core.py",
+      "expected": "b3e66b6c83dcab3dc1a5820573172fe7e7963a76ba1b7ceb0b9a370f03fbd658",
+      "actual": "b3e66b6c83dcab3dc1a5820573172fe7e7963a76ba1b7ceb0b9a370f03fbd658",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/succession/mock.py",
+      "expected": "5df9ed2d3ad2e40d7f8ecd9099711d82de080d62a937dd107525c404e7018b1d",
+      "actual": "5df9ed2d3ad2e40d7f8ecd9099711d82de080d62a937dd107525c404e7018b1d",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/succession/replay.py",
+      "expected": "443d470425106d5d7d373482ad7238528d3bc69461849a84aa5f93c623de2674",
+      "actual": "443d470425106d5d7d373482ad7238528d3bc69461849a84aa5f93c623de2674",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/tests/__init__.py",
+      "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/tests/test_archive_inspection.py",
+      "expected": "b03c71c3aa4cc1ff991f07c5769b67f2f263a7da556acc75f644888becd1eaf0",
+      "actual": "b03c71c3aa4cc1ff991f07c5769b67f2f263a7da556acc75f644888becd1eaf0",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/tests/test_controller.py",
+      "expected": "889596ca2d274abea9a874ea625f1ab9aadcae3e099de591b910219e3059f31d",
+      "actual": "889596ca2d274abea9a874ea625f1ab9aadcae3e099de591b910219e3059f31d",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/tests/test_fixture.py",
+      "expected": "6122b6befd0ad6aa6e2cde9d664f0a90930902966c7983639bc9ea8e0ecca464",
+      "actual": "6122b6befd0ad6aa6e2cde9d664f0a90930902966c7983639bc9ea8e0ecca464",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/tests/test_git_handoff.py",
+      "expected": "ce9568c6c8ce31ce54313961e95359c12378d624efe2ecb11c5e871edebb6477",
+      "actual": "ce9568c6c8ce31ce54313961e95359c12378d624efe2ecb11c5e871edebb6477",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/tests/test_tables.py",
+      "expected": "7ed0222c428d6c12598fb5f9348fd7c7898fba757030948da838ab4e9d188c74",
+      "actual": "7ed0222c428d6c12598fb5f9348fd7c7898fba757030948da838ab4e9d188c74",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/tools/__init__.py",
+      "expected": "d7456d1daddee9a4d9beb461519faa6cf13460f28129f524ff64e88cbbc80b05",
+      "actual": "d7456d1daddee9a4d9beb461519faa6cf13460f28129f524ff64e88cbbc80b05",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/tools/inspect_archive.py",
+      "expected": "b8075eb5b2a494a8e4c0fa6ed385d0ccd9d23824b059e5d69c345341d962c273",
+      "actual": "b8075eb5b2a494a8e4c0fa6ed385d0ccd9d23824b059e5d69c345341d962c273",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/tools/repo_fixture.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/astra/2026-11-17/usage.json",
+      "expected": "46f3f6391279a1296fbb0a80b32e7424faf597ff297c6aff2ed4dc3bc10a2dd3",
+      "actual": "46f3f6391279a1296fbb0a80b32e7424faf597ff297c6aff2ed4dc3bc10a2dd3",
+      "matches": true
+    },
+    {
+      "path": "source/docs/adr/0001-generic-entry-and-re-entry.md",
+      "expected": "a0526801e5dda382c0b45f49f9fec2b2f4d060e4d5895726a4ea9b407c8ef210",
+      "actual": "a0526801e5dda382c0b45f49f9fec2b2f4d060e4d5895726a4ea9b407c8ef210",
+      "matches": true
+    },
+    {
+      "path": "source/docs/astra-succession/finish-chat-succession.md",
+      "expected": "1c07ac7b9230cc055df67c2820a25067d669c03221aee70cae0a1f2730e75469",
+      "actual": "1c07ac7b9230cc055df67c2820a25067d669c03221aee70cae0a1f2730e75469",
+      "matches": true
+    },
+    {
+      "path": "source/docs/astra-succession/generic-entry-plan-20261119.md",
+      "expected": "30084be5d69a191c70814804b32bd036bb896967f89007466930ea19fcd63370",
+      "actual": "30084be5d69a191c70814804b32bd036bb896967f89007466930ea19fcd63370",
+      "matches": true
+    },
+    {
+      "path": "source/docs/astra-succession/leaves/01-controller.md",
+      "expected": "37174cf02005dfe7eb7ff4d79607b5976faf95cf016a017f3d71d99dea66f915",
+      "actual": "37174cf02005dfe7eb7ff4d79607b5976faf95cf016a017f3d71d99dea66f915",
+      "matches": true
+    },
+    {
+      "path": "source/docs/astra-succession/leaves/02-repository.md",
+      "expected": "c410a9a903fd78970c78a491772cb37fdd1841931a513b7d24762caeb5755f9a",
+      "actual": "c410a9a903fd78970c78a491772cb37fdd1841931a513b7d24762caeb5755f9a",
+      "matches": true
+    },
+    {
+      "path": "source/docs/astra-succession/leaves/03-desktop.md",
+      "expected": "7f868da9bce900ef81b11f0111b4e9bc6e5ac0804288f342db15335c31353e46",
+      "actual": "7f868da9bce900ef81b11f0111b4e9bc6e5ac0804288f342db15335c31353e46",
+      "matches": true
+    },
+    {
+      "path": "source/docs/astra-succession/leaves/04-dispatch.md",
+      "expected": "0e7171928390d3460aff7bc281ab1b58704b76b4e168068ba277addf010444b8",
+      "actual": "0e7171928390d3460aff7bc281ab1b58704b76b4e168068ba277addf010444b8",
+      "matches": true
+    },
+    {
+      "path": "source/docs/astra-succession/leaves/05-preflight.md",
+      "expected": "7b027b61bfebea354861a149081e4c95a2075065af489ab971693ffecf138149",
+      "actual": "7b027b61bfebea354861a149081e4c95a2075065af489ab971693ffecf138149",
+      "matches": true
+    },
+    {
+      "path": "source/docs/astra-succession/leaves/06-bounded-live.md",
+      "expected": "afd9952e4f528817a2862e46e8c0da332a04e5c1faf16c8f229404a9d6bf21a8",
+      "actual": "afd9952e4f528817a2862e46e8c0da332a04e5c1faf16c8f229404a9d6bf21a8",
+      "matches": true
+    },
+    {
+      "path": "source/docs/astra-succession/leaves/07-repeat-and-report.md",
+      "expected": "a697dfa95328b5df69fb9362de532a0dd4951215d8ddf39e6927e85127fa9d6e",
+      "actual": "a697dfa95328b5df69fb9362de532a0dd4951215d8ddf39e6927e85127fa9d6e",
+      "matches": true
+    },
+    {
+      "path": "source/docs/astra-succession/README.md",
+      "expected": "35ebfab52c4236f60f07bd8642081f52ffc7d95054ad1f7051217cc438053273",
+      "actual": "35ebfab52c4236f60f07bd8642081f52ffc7d95054ad1f7051217cc438053273",
+      "matches": true
+    },
+    {
+      "path": "source/docs/PROJECT_INSTRUCTIONS.md",
+      "expected": "862f19eac2bda7a77aaddef291b306b6071fd51088544cd09f32076aac0791f9",
+      "actual": "862f19eac2bda7a77aaddef291b306b6071fd51088544cd09f32076aac0791f9",
+      "matches": true
+    },
+    {
+      "path": "source/docs/PROVENANCE.md",
+      "expected": "e2551c17d3cf6f77f83ec177ca07d5b7f6d9312c1a1f79a7f3815a8f40d9fb2c",
+      "actual": "e2551c17d3cf6f77f83ec177ca07d5b7f6d9312c1a1f79a7f3815a8f40d9fb2c",
+      "matches": true
+    },
+    {
+      "path": "source/docs/superpowers/plans/2026-11-17-chat-succession.md",
+      "expected": "0a582f1280564b6dcc9a89c08d86e4b4bc58da921d416e222c58883b1917e39a",
+      "actual": "0a582f1280564b6dcc9a89c08d86e4b4bc58da921d416e222c58883b1917e39a",
+      "matches": true
+    },
+    {
+      "path": "source/docs/superpowers/specs/2026-11-17-chat-succession-design.md",
+      "expected": "42c6bba161e99353da64630efd854d0d3c30253a2ff4f1ef561c8802253b6bda",
+      "actual": "42c6bba161e99353da64630efd854d0d3c30253a2ff4f1ef561c8802253b6bda",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-generic-entry-20261119/Chat_Succession_Review_Evidence_2026-11-19.zip",
+      "expected": "190a887b6fdaa6769a64698fa7f6df14fd9985153666daed47a0547c6f3f747c",
+      "actual": "190a887b6fdaa6769a64698fa7f6df14fd9985153666daed47a0547c6f3f747c",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-generic-entry-20261119/live-acceptance.md",
+      "expected": "615add8fa169ca28235fd74f365ab97934081430166bab214528b3e32dfd673b",
+      "actual": "615add8fa169ca28235fd74f365ab97934081430166bab214528b3e32dfd673b",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-generic-entry-20261119/response.md",
+      "expected": "26b2a1aca636fb52fbc6b147d13bc5bd37bc9953c664bc8b55aa9f9147cc70a7",
+      "actual": "26b2a1aca636fb52fbc6b147d13bc5bd37bc9953c664bc8b55aa9f9147cc70a7",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-generic-entry-20261119/usage.json",
+      "expected": "27047834d80659e9708cd59ee4291bc1efdd4931476175ffa55e4204761297b5",
+      "actual": "27047834d80659e9708cd59ee4291bc1efdd4931476175ffa55e4204761297b5",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l01-20261118-a/live_record.json",
+      "expected": "1f597bc9298ad69d6cea3d1edfaf68615f08e5d5a893473afd3919598bef6bd5",
+      "actual": "1f597bc9298ad69d6cea3d1edfaf68615f08e5d5a893473afd3919598bef6bd5",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l01-20261118-a/live_test_results.csv",
+      "expected": "3bb31bf2ccd1d78d28ceea08330688f0c88a7f07d8cccab6bcaebe6262d39c70",
+      "actual": "3bb31bf2ccd1d78d28ceea08330688f0c88a7f07d8cccab6bcaebe6262d39c70",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l02-20261118-a/first_worker_slice1.md",
+      "expected": "9b9be8a7274b165c4424ebf10063cb503a9a5854f391c829a7a3260a2b866942",
+      "actual": "9b9be8a7274b165c4424ebf10063cb503a9a5854f391c829a7a3260a2b866942",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l02-20261118-a/live_record.json",
+      "expected": "27e2158d481e89f0c2ce3ba69f5b3c414a4c9049f56264f6bd4e23181f0cd0de",
+      "actual": "27e2158d481e89f0c2ce3ba69f5b3c414a4c9049f56264f6bd4e23181f0cd0de",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l02-20261118-a/second_worker_slice2.md",
+      "expected": "bcc84b6cc77a617cbe32dbc7c2520f81b894ebabfebfab832042f432bb318878",
+      "actual": "bcc84b6cc77a617cbe32dbc7c2520f81b894ebabfebfab832042f432bb318878",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l03-20261118-a/live_record.json",
+      "expected": "181f2105cc381e401f2a9c032de4d8d8e4c963bcdc4f3645c2a5b9d6eab2e6d3",
+      "actual": "181f2105cc381e401f2a9c032de4d8d8e4c963bcdc4f3645c2a5b9d6eab2e6d3",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l03-20261118-a/worker_recovery.md",
+      "expected": "848bee318bcb570279828095c6001313908c4d523cbd15b5e0b782ce298b9813",
+      "actual": "848bee318bcb570279828095c6001313908c4d523cbd15b5e0b782ce298b9813",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l04-20261118-a/first_worker_slice1.md",
+      "expected": "ca81a510920489d1904029f5cbacc47cfcc10b9fa3af49e656e817ab9148d760",
+      "actual": "ca81a510920489d1904029f5cbacc47cfcc10b9fa3af49e656e817ab9148d760",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l04-20261118-a/live_record.json",
+      "expected": "fd351ddce312deff73a143f61cd824f2a7b23202b3540f09bab431dfa4aff41d",
+      "actual": "fd351ddce312deff73a143f61cd824f2a7b23202b3540f09bab431dfa4aff41d",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l05-20261118-a/first_worker_slice1.md",
+      "expected": "c8636e7d1a613f1aee4eff9d93ef2c4f298e287cebcedebbb320995a6e8dd8db",
+      "actual": "c8636e7d1a613f1aee4eff9d93ef2c4f298e287cebcedebbb320995a6e8dd8db",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l05-20261118-a/live_record.json",
+      "expected": "ae3b1bab784423d28be2a1d4587ac485c9137fb9251192201585daab0f9abd1a",
+      "actual": "ae3b1bab784423d28be2a1d4587ac485c9137fb9251192201585daab0f9abd1a",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l05-20261118-a/second_worker_slice2.md",
+      "expected": "ede2de1828efd7c7b6a6683ace0d03986b7ba6fb49b5852151bb7c7d9e4b5566",
+      "actual": "ede2de1828efd7c7b6a6683ace0d03986b7ba6fb49b5852151bb7c7d9e4b5566",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l06-20261118-a/first_worker_slice1.md",
+      "expected": "266683df542d37d7e29a29074bd60fd5e4566365771c419ee8552772496bea07",
+      "actual": "266683df542d37d7e29a29074bd60fd5e4566365771c419ee8552772496bea07",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l06-20261118-a/live_record.json",
+      "expected": "21cf3184d75c1a86d8186e050946b16ab663a98ae7cedfba723fe53bc340bdec",
+      "actual": "21cf3184d75c1a86d8186e050946b16ab663a98ae7cedfba723fe53bc340bdec",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l06-20261118-a/operator_sequence.json",
+      "expected": "148733c79f13437081a2cb2d50c7dae968922814a812963363d4bce2d3a2332b",
+      "actual": "148733c79f13437081a2cb2d50c7dae968922814a812963363d4bce2d3a2332b",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l06-20261118-a/second_worker_slice2.md",
+      "expected": "f040106c944a9037a8d73656e343355c2cbb3f052f5e77e3d53e7afcfde79160",
+      "actual": "f040106c944a9037a8d73656e343355c2cbb3f052f5e77e3d53e7afcfde79160",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l06-20261118-a/setup.md",
+      "expected": "b8ac61aad7f7187366a302a9ce350bd0f33cf4503e0c04e0cbed1198bb774cee",
+      "actual": "b8ac61aad7f7187366a302a9ce350bd0f33cf4503e0c04e0cbed1198bb774cee",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/attachment_menu_cropped.png",
+      "expected": "e064f90e881cd0c38c82e8a1a1c0f33364ddbcb072c035f9b9117636f7011d0a",
+      "actual": "e064f90e881cd0c38c82e8a1a1c0f33364ddbcb072c035f9b9117636f7011d0a",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/attempt2.json",
+      "expected": "e71008cb716056fec6050ffe8b72ead1bd5fe3fc9a51eb2deb586cccbcbe1ca6",
+      "actual": "e71008cb716056fec6050ffe8b72ead1bd5fe3fc9a51eb2deb586cccbcbe1ca6",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/attempt3.json",
+      "expected": "94201483212d423bc856ec7388aaf2412fbba67048a1cc9894c2556914b98563",
+      "actual": "94201483212d423bc856ec7388aaf2412fbba67048a1cc9894c2556914b98563",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/attempt4.json",
+      "expected": "638672274d65d917bf7729b714c0c8dc2f69c4fc5c1f08347eadf0fdd9246479",
+      "actual": "638672274d65d917bf7729b714c0c8dc2f69c4fc5c1f08347eadf0fdd9246479",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/empty.png",
+      "expected": "7245894d038f5bcd9d0d8194935476fd0031774c91c57d36f7df7b2be8edc9d5",
+      "actual": "7245894d038f5bcd9d0d8194935476fd0031774c91c57d36f7df7b2be8edc9d5",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/l07_attachment_only_printwindow.png",
+      "expected": "299c4a5fa19be9d31aba939d455e2f5134f45809be164e8c1649e105ea0b028a",
+      "actual": "299c4a5fa19be9d31aba939d455e2f5134f45809be164e8c1649e105ea0b028a",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/l07_composer_probe.ps1",
+      "expected": "4a1c5bd5d2216ac82227db709cb7ea3e17124c177b69aa1397420fd87f0f59e6",
+      "actual": "4a1c5bd5d2216ac82227db709cb7ea3e17124c177b69aa1397420fd87f0f59e6",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/live_record.json",
+      "expected": "e4b2b9b3f96944792742d8e107db28c0f057a0576f272d69e61009099419648f",
+      "actual": "e4b2b9b3f96944792742d8e107db28c0f057a0576f272d69e61009099419648f",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/real_draft.png",
+      "expected": "5ec91ad319b278cafbfa1d1d14cd2fa0d9545c5e4ab57987f2b7dd69c0cf8325",
+      "actual": "5ec91ad319b278cafbfa1d1d14cd2fa0d9545c5e4ab57987f2b7dd69c0cf8325",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/same_as_placeholder.png",
+      "expected": "09a0046c0048bb13dc94e62b9776c18f7b7dd03fd1d974ec5c98dc3a99ee2344",
+      "actual": "09a0046c0048bb13dc94e62b9776c18f7b7dd03fd1d974ec5c98dc3a99ee2344",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261118-a/validate_observations.py",
+      "expected": "3752577a8eb431e7117ed0f84997b76b770b315e6f200f94c618003c13cd21fb",
+      "actual": "3752577a8eb431e7117ed0f84997b76b770b315e6f200f94c618003c13cd21fb",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l07-20261119-background-composer/live_record.json",
+      "expected": "fac9e009997d17e0c44c1ae26ab88876bd371edd2dde738e6a8ba033f0412cf7",
+      "actual": "fac9e009997d17e0c44c1ae26ab88876bd371edd2dde738e6a8ba033f0412cf7",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l08-20261118-a/live_record.json",
+      "expected": "0d69a8ea24b469667a0251cdee179b170fa71f5db8b79239aa722924179ed7c6",
+      "actual": "0d69a8ea24b469667a0251cdee179b170fa71f5db8b79239aa722924179ed7c6",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l08-20261118-a/validate_observations.py",
+      "expected": "59a2074e60381104f8e8687fe384a134287a6994c35e136ed28431adf3b819f4",
+      "actual": "59a2074e60381104f8e8687fe384a134287a6994c35e136ed28431adf3b819f4",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/after_click_successor_observation.json",
+      "expected": "abf60c825d59cd3e32f3861f709a2db2de601360f5161248d3708cf664279a1d",
+      "actual": "abf60c825d59cd3e32f3861f709a2db2de601360f5161248d3708cf664279a1d",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/before_click_observation.json",
+      "expected": "f486bbd4c42530624fe2ebef351f8cd5a636c5eed22f078c0c0fb1ed829e1eaf",
+      "actual": "f486bbd4c42530624fe2ebef351f8cd5a636c5eed22f078c0c0fb1ed829e1eaf",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/live_record.json",
+      "expected": "7c4be30be96791917c77d4f6ab66aa73cebe66f6c0d0791dc04b04adfb2fdaf4",
+      "actual": "7c4be30be96791917c77d4f6ab66aa73cebe66f6c0d0791dc04b04adfb2fdaf4",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/manual_recover_pretyped.py",
+      "expected": "21f608776a9995a7372423f7d502fdbc2c1f51c36f4aaa164ed8890e467febce",
+      "actual": "21f608776a9995a7372423f7d502fdbc2c1f51c36f4aaa164ed8890e467febce",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/operator_corrective_reply.py",
+      "expected": "1ad1f0ebafc35924ca5b66fb6d4747e65ad84002e9dc021eae1725774f5c9996",
+      "actual": "1ad1f0ebafc35924ca5b66fb6d4747e65ad84002e9dc021eae1725774f5c9996",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/operator_recovery_result.json",
+      "expected": "6ae369a1ccb182dfcc18e5e79e01454878929ad43011462dccbee193d90699a6",
+      "actual": "6ae369a1ccb182dfcc18e5e79e01454878929ad43011462dccbee193d90699a6",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/rearm_successor_preclick.py",
+      "expected": "d94e304dffffe3c5b1669d9826ac56d516b871bb8efa444ccf008a9307e550d7",
+      "actual": "d94e304dffffe3c5b1669d9826ac56d516b871bb8efa444ccf008a9307e550d7",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/repair_false_readback.py",
+      "expected": "1c53fba98af439c1f01ad53c4aed1cbfb6fe9c35734724d7c2963b4afa5fc8a9",
+      "actual": "1c53fba98af439c1f01ad53c4aed1cbfb6fe9c35734724d7c2963b4afa5fc8a9",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/setup.md",
+      "expected": "fa3c1e5c7397c3618d892cb06a453ee132ac6239fafa15576a209101313dd30e",
+      "actual": "fa3c1e5c7397c3618d892cb06a453ee132ac6239fafa15576a209101313dd30e",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/successor_first_turn_ambiguity.json",
+      "expected": "b9b45222d431d44420d5038bcb61c18ad97edeea8bf758fa525d67038fd7ef28",
+      "actual": "b9b45222d431d44420d5038bcb61c18ad97edeea8bf758fa525d67038fd7ef28",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/successor_worker_slice2.md",
+      "expected": "bc18b4918b346296ef3a7a9314e3ec5e1a6a7115f45d053d728dd248633c08ff",
+      "actual": "bc18b4918b346296ef3a7a9314e3ec5e1a6a7115f45d053d728dd248633c08ff",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l09-20261118-a/validate_observations.py",
+      "expected": "18e59721dfebb9d5d2f1b30c5cd65744311e10625143779e3f80df6081c35811",
+      "actual": "18e59721dfebb9d5d2f1b30c5cd65744311e10625143779e3f80df6081c35811",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l10-20261118-a/injection_record.json",
+      "expected": "877c0664aecce2e8d6a862635d0eb58a03e8a03fad6f5fc0188bb16eea2cefc8",
+      "actual": "877c0664aecce2e8d6a862635d0eb58a03e8a03fad6f5fc0188bb16eea2cefc8",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l10-20261118-a/observations.json",
+      "expected": "f4d3b74d93c1a9362181d89fbfd2954c9e8483eea7c952c892248909d6fcc633",
+      "actual": "f4d3b74d93c1a9362181d89fbfd2954c9e8483eea7c952c892248909d6fcc633",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l10-20261118-a/run_injection.py",
+      "expected": "57fe4a7215f3d828ec1a14bddd00b16d022d1a1e080a9f03d929dc9a36324a27",
+      "actual": "57fe4a7215f3d828ec1a14bddd00b16d022d1a1e080a9f03d929dc9a36324a27",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l10-20261118-a/validate_observations.py",
+      "expected": "c23086928652d7a4ffd7fd612234fd527bb1b534961f381a52048ab8f60434ee",
+      "actual": "c23086928652d7a4ffd7fd612234fd527bb1b534961f381a52048ab8f60434ee",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l11-20261118-a/injection_record.json",
+      "expected": "a77d716cde22abb193a4bdb1ede94d64e80f7a2f16d4b2c5f073ab4b341d3e78",
+      "actual": "a77d716cde22abb193a4bdb1ede94d64e80f7a2f16d4b2c5f073ab4b341d3e78",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l11-20261118-a/observations.json",
+      "expected": "7dc2da8845b87b0ec6bce500aab96807fafefa0bdd20424665b21b225369dadb",
+      "actual": "7dc2da8845b87b0ec6bce500aab96807fafefa0bdd20424665b21b225369dadb",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l11-20261118-a/run_failure.py",
+      "expected": "bbc2f428c1518c1b5371b6318eb149f70db867cceb96b999a9b7a924e20eb39e",
+      "actual": "bbc2f428c1518c1b5371b6318eb149f70db867cceb96b999a9b7a924e20eb39e",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l11-20261118-a/validate_observations.py",
+      "expected": "0784cdc9103055dfd8835227900f03c91b7fdca6b7048085371f814976f7acf9",
+      "actual": "0784cdc9103055dfd8835227900f03c91b7fdca6b7048085371f814976f7acf9",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l12-20261118-a/blocker.json",
+      "expected": "90fa96070ea85defd8faf01516d470661887150bad9c27fffd2b99e1f119e54b",
+      "actual": "90fa96070ea85defd8faf01516d470661887150bad9c27fffd2b99e1f119e54b",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l12-20261118-a/injection_record.json",
+      "expected": "a494ddd5e39e321afac512f3ab5370d695e128dbe2e581412e740986f715ce08",
+      "actual": "a494ddd5e39e321afac512f3ab5370d695e128dbe2e581412e740986f715ce08",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l12-20261118-a/observations.json",
+      "expected": "7b97d2e1c06328289b301901a571836d340a741752f96fd346f131990bb70afd",
+      "actual": "7b97d2e1c06328289b301901a571836d340a741752f96fd346f131990bb70afd",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l12-20261118-a/PUBLICATION_BLOCKER.md",
+      "expected": "b4ec90fac1f3ab88bf150fa30bb133f04f084705c87542e24b1c300970b0218e",
+      "actual": "b4ec90fac1f3ab88bf150fa30bb133f04f084705c87542e24b1c300970b0218e",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l12-20261118-a/run_pause.py",
+      "expected": "0fa9fb4a0f0dafec5f6a37db4e2183f17d71ad4d5c43f039fb0453bff35c97f4",
+      "actual": "0fa9fb4a0f0dafec5f6a37db4e2183f17d71ad4d5c43f039fb0453bff35c97f4",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l12-20261118-a/validate_observations.py",
+      "expected": "927985abf4815e13d390966cd8b77336a7e7a3e2e3774bc36b24f078f7adcaa1",
+      "actual": "927985abf4815e13d390966cd8b77336a7e7a3e2e3774bc36b24f078f7adcaa1",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l12-owner-pause-20261119/live_record.json",
+      "expected": "5996a6be7f6f1d0f7bb3b07825f8883bba84b77f6691bd8d6f6c8d4aaa0d625f",
+      "actual": "5996a6be7f6f1d0f7bb3b07825f8883bba84b77f6691bd8d6f6c8d4aaa0d625f",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-a/live_record.json",
+      "expected": "2ab686842455c0a4dde8ebf1f6dc57a9da9728e5b844f2505f118e19ec85a512",
+      "actual": "2ab686842455c0a4dde8ebf1f6dc57a9da9728e5b844f2505f118e19ec85a512",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-a/run_a_worker_slice1.md",
+      "expected": "088c47ec6563d42f6a9ba180d5e1d472ed7598087e744e8ff77a94af58f98ae3",
+      "actual": "088c47ec6563d42f6a9ba180d5e1d472ed7598087e744e8ff77a94af58f98ae3",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-a/run_a_worker_slice2.md",
+      "expected": "ddd1e7d70811a09468b4f14270f7c7481defe2483c018d965fab2ce12d351feb",
+      "actual": "ddd1e7d70811a09468b4f14270f7c7481defe2483c018d965fab2ce12d351feb",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-a/run_a_worker_slice3.md",
+      "expected": "0e6a325c0abbc45f562789624e70a0c15871e15428b3d3be8bb8862d5936424f",
+      "actual": "0e6a325c0abbc45f562789624e70a0c15871e15428b3d3be8bb8862d5936424f",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-a/run_a_worker_slice4.md",
+      "expected": "4b4411d2c4b94d955fe146ba177e3ce2c9b8039146149225c6990610b6c1e2ff",
+      "actual": "4b4411d2c4b94d955fe146ba177e3ce2c9b8039146149225c6990610b6c1e2ff",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-a/run_a_worker_slice5.md",
+      "expected": "68322826f933fb368c081235f2446ca5d86ac912f685cffc2871b5317dbe99f0",
+      "actual": "68322826f933fb368c081235f2446ca5d86ac912f685cffc2871b5317dbe99f0",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-b/live_record.json",
+      "expected": "9a21916ff0505da0606caabca9cdf6a4657b3111319a81c1c473bae4c74ca471",
+      "actual": "9a21916ff0505da0606caabca9cdf6a4657b3111319a81c1c473bae4c74ca471",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-b/run_b_worker_slice1.md",
+      "expected": "c6752a5fa365155a527a8740f914f7c1d53da8b3382caf6ee981188205a9c85d",
+      "actual": "c6752a5fa365155a527a8740f914f7c1d53da8b3382caf6ee981188205a9c85d",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-b/run_b_worker_slice2.md",
+      "expected": "33ab2a9d50707017f66335e4489451a3f2c81e369ca266c2a65890ab09056760",
+      "actual": "33ab2a9d50707017f66335e4489451a3f2c81e369ca266c2a65890ab09056760",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-b/run_b_worker_slice3.md",
+      "expected": "a1125a1180faf9b1f138a2c8d0fecf14583fd3a4807b104cc756f118efec352a",
+      "actual": "a1125a1180faf9b1f138a2c8d0fecf14583fd3a4807b104cc756f118efec352a",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-b/run_b_worker_slice4.md",
+      "expected": "896f53a7ffeeec5e26cbdce8134574cd19faf32b51132ccd550e4fa1cec28488",
+      "actual": "896f53a7ffeeec5e26cbdce8134574cd19faf32b51132ccd550e4fa1cec28488",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-b/run_b_worker_slice5.md",
+      "expected": "9e981ec202f46f992b08d076661ac3931504200acab2e6a7f101ba63eeebad7a",
+      "actual": "9e981ec202f46f992b08d076661ac3931504200acab2e6a7f101ba63eeebad7a",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-c/live_record.json",
+      "expected": "39bc61c8f6ab673d902254f7ecc31734278468a8485dccca38a551a0e7bc5e40",
+      "actual": "39bc61c8f6ab673d902254f7ecc31734278468a8485dccca38a551a0e7bc5e40",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-c/run_c_worker_slice1.md",
+      "expected": "dfaf8c7c89176de7c05641cd3e3a9c222071a555cb2bcb4cf2bfff61b7f23839",
+      "actual": "dfaf8c7c89176de7c05641cd3e3a9c222071a555cb2bcb4cf2bfff61b7f23839",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-c/run_c_worker_slice2.md",
+      "expected": "bf69739e608aac75cbeae97cd3907cdaaee0a6298196d6503c12a6f8f56cfe69",
+      "actual": "bf69739e608aac75cbeae97cd3907cdaaee0a6298196d6503c12a6f8f56cfe69",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-c/run_c_worker_slice3.md",
+      "expected": "d7054fe7d7a14a145e07b0f458b30d0be9840499cb58b22bb01db666389090a7",
+      "actual": "d7054fe7d7a14a145e07b0f458b30d0be9840499cb58b22bb01db666389090a7",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-c/run_c_worker_slice4.md",
+      "expected": "03bd4008ab92a34dcd0279cd68817390177a2451a5741f6f2b50a7f8be19b456",
+      "actual": "03bd4008ab92a34dcd0279cd68817390177a2451a5741f6f2b50a7f8be19b456",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-c/run_c_worker_slice5.md",
+      "expected": "57498da38ec24358c954a57c4cc310d21f0a7885cd7bf268698b7b72f3ba96ff",
+      "actual": "57498da38ec24358c954a57c4cc310d21f0a7885cd7bf268698b7b72f3ba96ff",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-d/run_d_worker_slice1.md",
+      "expected": "f66fe1f25000ef66ef7d7ec9a3c97dc6c3e0509090be8d41b945ff4bccb34e70",
+      "actual": "f66fe1f25000ef66ef7d7ec9a3c97dc6c3e0509090be8d41b945ff4bccb34e70",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118-d/waiting_observation.json",
+      "expected": "84acbece710ef32fd168a8cb108b15cdcdcdd6ac3577361882c64bb75bac4369",
+      "actual": "84acbece710ef32fd168a8cb108b15cdcdcdd6ac3577361882c64bb75bac4369",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118/bootstrap_recovery.json",
+      "expected": "db88f33f65225a2b958215ecaa6935417a8c224c6c2372656b6385a9df0b5b8c",
+      "actual": "db88f33f65225a2b958215ecaa6935417a8c224c6c2372656b6385a9df0b5b8c",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118/prebootstrap_hold.json",
+      "expected": "954f5d4a7c7545711517312d228d9cf772b7bee3fd04a29cfe49d6de20b0ee9b",
+      "actual": "954f5d4a7c7545711517312d228d9cf772b7bee3fd04a29cfe49d6de20b0ee9b",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261118/setup.json",
+      "expected": "555d274ff26e08db098787980d3c6d6c79d5494884d91b9426feef950c804a9c",
+      "actual": "555d274ff26e08db098787980d3c6d6c79d5494884d91b9426feef950c804a9c",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-e/controller_observer_timeout.json",
+      "expected": "ae95d57c7215e218216f6b00744b1314e88aa4fc10ff80403ccc0272aa111edc",
+      "actual": "ae95d57c7215e218216f6b00744b1314e88aa4fc10ff80403ccc0272aa111edc",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-e/run_e_worker_slice1.md",
+      "expected": "9b4a133c471a0c92e8dfa9f460dd36c01360af1a830b78c2c10d7e18b392ea3a",
+      "actual": "9b4a133c471a0c92e8dfa9f460dd36c01360af1a830b78c2c10d7e18b392ea3a",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-e/run_e_worker_slice2.md",
+      "expected": "7fc25bbe62b352a8ad0c44ab2fa3e0794d1a0299a8f2ac1bcc26ba539af958f5",
+      "actual": "7fc25bbe62b352a8ad0c44ab2fa3e0794d1a0299a8f2ac1bcc26ba539af958f5",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-e/run_e_worker_slice3.md",
+      "expected": "0639b19b2500ca622c05cb59b0d72925ab7ae424e133635dd47d5362a9a46fff",
+      "actual": "0639b19b2500ca622c05cb59b0d72925ab7ae424e133635dd47d5362a9a46fff",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-e/setup.json",
+      "expected": "9a880e1196dfda5255b5ed2d50d5b5b9bd6d168caa6810efcebd029de3cf66db",
+      "actual": "9a880e1196dfda5255b5ed2d50d5b5b9bd6d168caa6810efcebd029de3cf66db",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-f/live_record.json",
+      "expected": "145ebbc0fe43d84a0a394e9de3e0adf3e091466c9dbe4b678973536d7f698e28",
+      "actual": "145ebbc0fe43d84a0a394e9de3e0adf3e091466c9dbe4b678973536d7f698e28",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-f/run_f_worker_slice3.md",
+      "expected": "34efb3b629b8b63e8618cae2eadfdd1c5eecbc987b8acd77fef3a6db4eefe72a",
+      "actual": "34efb3b629b8b63e8618cae2eadfdd1c5eecbc987b8acd77fef3a6db4eefe72a",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-f/run_f_worker_slice4.md",
+      "expected": "d545a1b16d0cea7f723a91dcf752fad29efeea9f2db2d5984ff6e25453a1a4a1",
+      "actual": "d545a1b16d0cea7f723a91dcf752fad29efeea9f2db2d5984ff6e25453a1a4a1",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-f/run_f_worker_slice5.md",
+      "expected": "a735dde78d221bffad066a693b434ab9d6ac84102bb550639849166268b9885d",
+      "actual": "a735dde78d221bffad066a693b434ab9d6ac84102bb550639849166268b9885d",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-f/setup.json",
+      "expected": "de229943e02d189c2db17e10d0c05592f2eaae78cf57ba27b8bd7776b5bca340",
+      "actual": "de229943e02d189c2db17e10d0c05592f2eaae78cf57ba27b8bd7776b5bca340",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-f/worker1_slice1.md",
+      "expected": "f9c7d33b04d7880b0d70e4caa20169c1fd2223c546b4ee9d8c5ab6c1788bffec",
+      "actual": "f9c7d33b04d7880b0d70e4caa20169c1fd2223c546b4ee9d8c5ab6c1788bffec",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l13-20261119-f/worker2_slice2.md",
+      "expected": "264d51359d02175e21e344b5db329f7d00eebe919d462ff490cffdadaf791f00",
+      "actual": "264d51359d02175e21e344b5db329f7d00eebe919d462ff490cffdadaf791f00",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l15-20261118-a/injection_record.json",
+      "expected": "974ccccda9ea19f9b70a131596090f17539916f67cf4ada83570edae754812a5",
+      "actual": "974ccccda9ea19f9b70a131596090f17539916f67cf4ada83570edae754812a5",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l15-20261118-a/observations.json",
+      "expected": "579570076d6c2958e3736cf2dba8842457936b2a234e97414ccd00e1e782b94b",
+      "actual": "579570076d6c2958e3736cf2dba8842457936b2a234e97414ccd00e1e782b94b",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l15-20261118-a/run_corruption.py",
+      "expected": "8d2fb45ea43540f546dc9dd5da92f771d2f3cd56a4e0a7fc1d5c5a92bf73506f",
+      "actual": "8d2fb45ea43540f546dc9dd5da92f771d2f3cd56a4e0a7fc1d5c5a92bf73506f",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/astra-l15-20261118-a/validate_observations.py",
+      "expected": "79fc85bbd48d213cf637f0d3329a5bf5f6ca4404217a25cb49789c7adc34574d",
+      "actual": "79fc85bbd48d213cf637f0d3329a5bf5f6ca4404217a25cb49789c7adc34574d",
+      "matches": true
+    },
+    {
+      "path": "source/evidence/live_test_results_20261118.csv",
+      "expected": "5a95303550f419b811aaa9ca305aad43e6f9d0e15624d15f127e80e3d41f9e5e",
+      "actual": "5a95303550f419b811aaa9ca305aad43e6f9d0e15624d15f127e80e3d41f9e5e",
+      "matches": true
+    },
+    {
+      "path": "source/integration/cli.py",
+      "expected": "464a38bd7f569fd19f12a2b94d540f2b15c3a24fc9b129e39217d3039ca7ec4b",
+      "actual": "464a38bd7f569fd19f12a2b94d540f2b15c3a24fc9b129e39217d3039ca7ec4b",
+      "matches": true
+    },
+    {
+      "path": "source/integration/launch_project.py",
+      "expected": "3afb70494110527c6127c14770735a71caed15c8c4dae09ab5183845420f575d",
+      "actual": "3afb70494110527c6127c14770735a71caed15c8c4dae09ab5183845420f575d",
+      "matches": true
+    },
+    {
+      "path": "source/integration/launch_story.py",
+      "expected": "8694c848b4526fdc37cc311b514762aaab3f6e66895b02b23f2c4c963df1de3d",
+      "actual": "8694c848b4526fdc37cc311b514762aaab3f6e66895b02b23f2c4c963df1de3d",
+      "matches": true
+    },
+    {
+      "path": "source/integration/owner_reentry.py",
+      "expected": "1a5760578968fddb69eb68be68248ec6a9a9696c602e04c878e0dca51615cbe9",
+      "actual": "1a5760578968fddb69eb68be68248ec6a9a9696c602e04c878e0dca51615cbe9",
+      "matches": true
+    },
+    {
+      "path": "source/integration/README.md",
+      "expected": "66c68f9705c628de307366b027b7e1c3c4a82a48f9dcf7f6d992170c2cdf5327",
+      "actual": "66c68f9705c628de307366b027b7e1c3c4a82a48f9dcf7f6d992170c2cdf5327",
+      "matches": true
+    },
+    {
+      "path": "source/integration/repo_reader.py",
+      "expected": "05dfc911ea3d161a9a36818cd404afa2d819d58dab9df7aec595827de744164d",
+      "actual": "05dfc911ea3d161a9a36818cd404afa2d819d58dab9df7aec595827de744164d",
+      "matches": true
+    },
+    {
+      "path": "source/integration/runner.py",
+      "expected": "951ba49a6ed053fe0707a0b4af150923b960523342452970d431632340988003",
+      "actual": "951ba49a6ed053fe0707a0b4af150923b960523342452970d431632340988003",
+      "matches": true
+    },
+    {
+      "path": "source/integration/tests/test_bridges.py",
+      "expected": "c5d944e6839b58681f967b7eebce3ac7e5f6de84d2610ed8e1ae578620d0d6a8",
+      "actual": "c5d944e6839b58681f967b7eebce3ac7e5f6de84d2610ed8e1ae578620d0d6a8",
+      "matches": true
+    },
+    {
+      "path": "source/integration/tests/test_l09_faults.py",
+      "expected": "7369e49bbc179f84174fe768af579f27af2381f5e66659658dce238f6bfb1bde",
+      "actual": "7369e49bbc179f84174fe768af579f27af2381f5e66659658dce238f6bfb1bde",
+      "matches": true
+    },
+    {
+      "path": "source/integration/tests/test_launch_project.py",
+      "expected": "11aa890cf2373ab7a6728a38f79629a1b78e295ed634b2d3e231b6cd2acc8ea5",
+      "actual": "11aa890cf2373ab7a6728a38f79629a1b78e295ed634b2d3e231b6cd2acc8ea5",
+      "matches": true
+    },
+    {
+      "path": "source/integration/tests/test_owner_reentry.py",
+      "expected": "954fb06dc4f382fd49d67946b422717499d7bd95e6afb69eae3d35f16987640f",
+      "actual": "954fb06dc4f382fd49d67946b422717499d7bd95e6afb69eae3d35f16987640f",
+      "matches": true
+    },
+    {
+      "path": "source/integration/tests/test_runner.py",
+      "expected": "6f9c0c9a5fbfbd8c6bf2b868fb5c77fe13985936ad388e03826663c79aea647c",
+      "actual": "6f9c0c9a5fbfbd8c6bf2b868fb5c77fe13985936ad388e03826663c79aea647c",
+      "matches": true
+    },
+    {
+      "path": "source/integration/tests/test_story_run.py",
+      "expected": "34fbe84b034c4a76971a14325cd9e031300e92beece0460574490b8607a7d270",
+      "actual": "34fbe84b034c4a76971a14325cd9e031300e92beece0460574490b8607a7d270",
+      "matches": true
+    },
+    {
+      "path": "source/integration/tests/test_worker_view_recovery.ps1",
+      "expected": "150a7c131fe3afa26e87020b84d433c0fc3cc3ea738e6616539ad39480c722f0",
+      "actual": "150a7c131fe3afa26e87020b84d433c0fc3cc3ea738e6616539ad39480c722f0",
+      "matches": true
+    },
+    {
+      "path": "source/integration/tests/test_worker_view.py",
+      "expected": "52e89580c221300768d0909fc44daae08c1b70120fef0af4aafca34485c779c4",
+      "actual": "52e89580c221300768d0909fc44daae08c1b70120fef0af4aafca34485c779c4",
+      "matches": true
+    },
+    {
+      "path": "source/integration/uia_adapter.ps1",
+      "expected": "d4128d318c6a096071d16ca77f8b38e4e59aefdc059f20d6915e8c3acb86b29f",
+      "actual": "d4128d318c6a096071d16ca77f8b38e4e59aefdc059f20d6915e8c3acb86b29f",
+      "matches": true
+    },
+    {
+      "path": "source/integration/windows_backend.py",
+      "expected": "1a836c54e73dee03a7b0e9dcd85d2e47e37141ce289c7d66605d26118b5dd9b0",
+      "actual": "1a836c54e73dee03a7b0e9dcd85d2e47e37141ce289c7d66605d26118b5dd9b0",
+      "matches": true
+    },
+    {
+      "path": "source/plugins/chat-succession/.app.json",
+      "expected": "e88cf292449d38a23c00c8359cf728d423a88d5283b8fa70807ae0e4f9b3ce38",
+      "actual": "e88cf292449d38a23c00c8359cf728d423a88d5283b8fa70807ae0e4f9b3ce38",
+      "matches": true
+    },
+    {
+      "path": "source/plugins/chat-succession/plugin.json",
+      "expected": "b138fda8f9c437391f1b5913c113f18d06d4f5e5c06246f69a9e3ad4462c4487",
+      "actual": "b138fda8f9c437391f1b5913c113f18d06d4f5e5c06246f69a9e3ad4462c4487",
+      "matches": true
+    },
+    {
+      "path": "source/plugins/chat-succession/skills/start-chat-succession/agents/openai.yaml",
+      "expected": "63136e0cff9d2b9d61dc567045ddcc5f76cca66c4f35a323f24d3a41877e785a",
+      "actual": "63136e0cff9d2b9d61dc567045ddcc5f76cca66c4f35a323f24d3a41877e785a",
+      "matches": true
+    },
+    {
+      "path": "source/plugins/chat-succession/skills/start-chat-succession/SKILL.md",
+      "expected": "ee33ecfb9d56ec2bcc30ca44733969198e4318f6a2df97eeab14e6d063d859ab",
+      "actual": "ee33ecfb9d56ec2bcc30ca44733969198e4318f6a2df97eeab14e6d063d859ab",
+      "matches": true
+    },
+    {
+      "path": "source/PROGRESS.md",
+      "expected": "4813f62e8ad85973e5ad06d709ce201d13dafd6ef6add7fb25c1d38a212d9a7c",
+      "actual": "4813f62e8ad85973e5ad06d709ce201d13dafd6ef6add7fb25c1d38a212d9a7c",
+      "matches": true
+    },
+    {
+      "path": "source/README.md",
+      "expected": "ea540d3fbf8f93a63e5bb5aff6c89ffec62da06b82d38144b7a5b9e0b05ea149",
+      "actual": "ea540d3fbf8f93a63e5bb5aff6c89ffec62da06b82d38144b7a5b9e0b05ea149",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l01-20261118-a/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l01-20261118-a/INSTRUCTIONS.md",
+      "expected": "3c45555a1fda89191eec044ca65a806ebb85ef9e536ea096172aad3721a3be34",
+      "actual": "3c45555a1fda89191eec044ca65a806ebb85ef9e536ea096172aad3721a3be34",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l01-20261118-a/RESULTS.json",
+      "expected": "03550ab6b454a258770590a80477a6a68ccb581057065ba4a7851ab974a71b59",
+      "actual": "03550ab6b454a258770590a80477a6a68ccb581057065ba4a7851ab974a71b59",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l01-20261118-a/RUN.json",
+      "expected": "123910b5e5acd4cb4bcdb06cee368dd30eaa4516611657f784a0bb41a9f42311",
+      "actual": "123910b5e5acd4cb4bcdb06cee368dd30eaa4516611657f784a0bb41a9f42311",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l01-20261118-a/STATE.json",
+      "expected": "98e94012a3608504b1174c9dd7a368af6ae2e936949835d80f76682704d4d7f3",
+      "actual": "98e94012a3608504b1174c9dd7a368af6ae2e936949835d80f76682704d4d7f3",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l02-20261118-a/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l02-20261118-a/INSTRUCTIONS.md",
+      "expected": "496fec7428c3f468f75a0afc2b51abe7c5830ddf830c7ed53e70b311c8f442ff",
+      "actual": "496fec7428c3f468f75a0afc2b51abe7c5830ddf830c7ed53e70b311c8f442ff",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l02-20261118-a/RESULTS.json",
+      "expected": "4241a6bc5407875dca441488af952074287b0ea01e52d47cbb81a9c4b24d9a86",
+      "actual": "4241a6bc5407875dca441488af952074287b0ea01e52d47cbb81a9c4b24d9a86",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l02-20261118-a/RUN.json",
+      "expected": "52c23990c4a5df247bd2b109664622ff1506ee978bc2ff48ee1db23a418ec77f",
+      "actual": "52c23990c4a5df247bd2b109664622ff1506ee978bc2ff48ee1db23a418ec77f",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l02-20261118-a/STATE.json",
+      "expected": "41fae35e15d7fb99e8e8904191f9802146f17c502bf93c8af4df88660c024cdc",
+      "actual": "41fae35e15d7fb99e8e8904191f9802146f17c502bf93c8af4df88660c024cdc",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l03-20261118-a/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l03-20261118-a/INSTRUCTIONS.md",
+      "expected": "51ad555309e7039029be32d0f11d32399bf469da82f8d2b03f8fc431bf0c43b1",
+      "actual": "51ad555309e7039029be32d0f11d32399bf469da82f8d2b03f8fc431bf0c43b1",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l03-20261118-a/RECOVERY_INPUT.json",
+      "expected": "de1cb8ceae6e91769b2b60d673fa3d6d42cf0d0c09e150289cacc2d636ab84cd",
+      "actual": "de1cb8ceae6e91769b2b60d673fa3d6d42cf0d0c09e150289cacc2d636ab84cd",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l03-20261118-a/RESULTS.json",
+      "expected": "79606cee0606200dd20b17e226c272b95bac7b5570e32451dade4ebb4d8152bd",
+      "actual": "79606cee0606200dd20b17e226c272b95bac7b5570e32451dade4ebb4d8152bd",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l03-20261118-a/RUN.json",
+      "expected": "fd9f74affe5c9cad5cee8c4c5f758b8a0794a9b338421abcb56ae84a297fd459",
+      "actual": "fd9f74affe5c9cad5cee8c4c5f758b8a0794a9b338421abcb56ae84a297fd459",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l03-20261118-a/STATE.json",
+      "expected": "bc9f054b340c77ca13ec98267a83bfc16eab28c9e7d512bdb86c493cfb796510",
+      "actual": "bc9f054b340c77ca13ec98267a83bfc16eab28c9e7d512bdb86c493cfb796510",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l04-20261118-a/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l04-20261118-a/INSTRUCTIONS.md",
+      "expected": "3c45555a1fda89191eec044ca65a806ebb85ef9e536ea096172aad3721a3be34",
+      "actual": "3c45555a1fda89191eec044ca65a806ebb85ef9e536ea096172aad3721a3be34",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l04-20261118-a/RESULTS.json",
+      "expected": "3898bfa2fb8ab0b73866da8193e5b4ba5ee8712456e3aa067f91446753f0583f",
+      "actual": "3898bfa2fb8ab0b73866da8193e5b4ba5ee8712456e3aa067f91446753f0583f",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l04-20261118-a/RUN.json",
+      "expected": "4a2bc67b62331e4e383b5d2bb908d935ad34c9ae20b2811686d93b0721fa7aa8",
+      "actual": "4a2bc67b62331e4e383b5d2bb908d935ad34c9ae20b2811686d93b0721fa7aa8",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l04-20261118-a/STATE.json",
+      "expected": "1d9bf1c6023bc17ab11f3da145335cda3941e35cdb0a762961f1853cd17e00ef",
+      "actual": "1d9bf1c6023bc17ab11f3da145335cda3941e35cdb0a762961f1853cd17e00ef",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l05-20261118-a/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l05-20261118-a/INSTRUCTIONS.md",
+      "expected": "9b721cc02db5ed53568a25e8787a74c471963d3be7fe73f1e4419c1de0afc9b2",
+      "actual": "9b721cc02db5ed53568a25e8787a74c471963d3be7fe73f1e4419c1de0afc9b2",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l05-20261118-a/RESULTS.json",
+      "expected": "3fd8b3e5ad404506d231cdb2c35e274995bbcf5e01c496a9381e651923277d43",
+      "actual": "3fd8b3e5ad404506d231cdb2c35e274995bbcf5e01c496a9381e651923277d43",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l05-20261118-a/RUN.json",
+      "expected": "131314c13cdc508c886b664974e2787be11233ba92057d51b51792d7dc8a0615",
+      "actual": "131314c13cdc508c886b664974e2787be11233ba92057d51b51792d7dc8a0615",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l05-20261118-a/STATE.json",
+      "expected": "48dcb3f71489ec805853c5eb9b342287fa409853a49b37525225bf7d60d5fec6",
+      "actual": "48dcb3f71489ec805853c5eb9b342287fa409853a49b37525225bf7d60d5fec6",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l06-20261118-a/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l06-20261118-a/INSTRUCTIONS.md",
+      "expected": "1f82fb3bdb0ae7af4fe5ea0647268c9e53a57e14de9b99b7462aae0c09d23668",
+      "actual": "1f82fb3bdb0ae7af4fe5ea0647268c9e53a57e14de9b99b7462aae0c09d23668",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l06-20261118-a/RESULTS.json",
+      "expected": "3090aa9ed388d6627cd7a538a7140de4fb1ea4f52be3e6337ce7303e1942aa28",
+      "actual": "3090aa9ed388d6627cd7a538a7140de4fb1ea4f52be3e6337ce7303e1942aa28",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l06-20261118-a/RUN.json",
+      "expected": "410dd74cdb0b3b61d4dcb2846faf138abeea93e715505030d4ad88689ac36bd4",
+      "actual": "410dd74cdb0b3b61d4dcb2846faf138abeea93e715505030d4ad88689ac36bd4",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l06-20261118-a/STATE.json",
+      "expected": "369ca9f267675c206e7b3ffe3d94e235eb91a284cb6035af44bb8ebf69b742ff",
+      "actual": "369ca9f267675c206e7b3ffe3d94e235eb91a284cb6035af44bb8ebf69b742ff",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l09-20261118-a/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l09-20261118-a/INSTRUCTIONS.md",
+      "expected": "3fbef067f02ca8cabd13c346d5e7e0f34b195004f13353ec97643299e4329d27",
+      "actual": "3fbef067f02ca8cabd13c346d5e7e0f34b195004f13353ec97643299e4329d27",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l09-20261118-a/RESULTS.json",
+      "expected": "46e86c128c06a544bf1339357a75006ff41cb27123843593d68b2c570689a607",
+      "actual": "46e86c128c06a544bf1339357a75006ff41cb27123843593d68b2c570689a607",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l09-20261118-a/RUN.json",
+      "expected": "8a065556e0df2450702a56bda18857a33aa2156b8b6221d63734b52569027851",
+      "actual": "8a065556e0df2450702a56bda18857a33aa2156b8b6221d63734b52569027851",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l09-20261118-a/STATE.json",
+      "expected": "c0df72a3130bec8d017091c1897e4b240fd81dfab2972bc7d0b0a5a3d8b58f29",
+      "actual": "c0df72a3130bec8d017091c1897e4b240fd81dfab2972bc7d0b0a5a3d8b58f29",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-a/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-a/INSTRUCTIONS.md",
+      "expected": "f06730ba9d627243c831093653fed23329a1e0efdad247a3fa3ecd95e8b5f2f2",
+      "actual": "f06730ba9d627243c831093653fed23329a1e0efdad247a3fa3ecd95e8b5f2f2",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-a/RESULTS.json",
+      "expected": "0d1370e27415450a3044ec8e6653e1609433ee7ac40a5f76a4d155c524086ec2",
+      "actual": "0d1370e27415450a3044ec8e6653e1609433ee7ac40a5f76a4d155c524086ec2",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-a/RUN.json",
+      "expected": "420719de01e2f4ea11089ca6009b9f0c2c4293af8ff43082c131cc6ae5b212a2",
+      "actual": "420719de01e2f4ea11089ca6009b9f0c2c4293af8ff43082c131cc6ae5b212a2",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-a/STATE.json",
+      "expected": "6c1cdc7f4d55f5d0bbf0700950a4c04f4fd88a2956996761d0d5a3a80504e524",
+      "actual": "6c1cdc7f4d55f5d0bbf0700950a4c04f4fd88a2956996761d0d5a3a80504e524",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-b/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-b/INSTRUCTIONS.md",
+      "expected": "ae8b431c0724e25cca2023489d053b8a46726ca9597ff53650a1cb674a6b8d9b",
+      "actual": "ae8b431c0724e25cca2023489d053b8a46726ca9597ff53650a1cb674a6b8d9b",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-b/RESULTS.json",
+      "expected": "029e1d841a77ab3c65d13af32ea713120daa6245ddd320fdda7a063dba61105d",
+      "actual": "029e1d841a77ab3c65d13af32ea713120daa6245ddd320fdda7a063dba61105d",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-b/RUN.json",
+      "expected": "58d124b0e8e836ef58ca4da7157158a14dd5478a9b830816bfe3e60b4061c7c4",
+      "actual": "58d124b0e8e836ef58ca4da7157158a14dd5478a9b830816bfe3e60b4061c7c4",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-b/STATE.json",
+      "expected": "db6ebe143774363f154259489550443632e8d4b5998cc5365fad8b067af9b3d4",
+      "actual": "db6ebe143774363f154259489550443632e8d4b5998cc5365fad8b067af9b3d4",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-c/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-c/INSTRUCTIONS.md",
+      "expected": "987873074d3a0d005b90e54cb4943bb345db7aa2064c29be902b0ae5202238ee",
+      "actual": "987873074d3a0d005b90e54cb4943bb345db7aa2064c29be902b0ae5202238ee",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-c/RESULTS.json",
+      "expected": "79f5223ed07e7a031de54f4a5a6819f3dafdc4c9dd42c574bca83871fe08d3e1",
+      "actual": "79f5223ed07e7a031de54f4a5a6819f3dafdc4c9dd42c574bca83871fe08d3e1",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-c/RUN.json",
+      "expected": "0fecf1aee64a89c55b22e2ba002dbc95ad451346ae77a11398e1ce78aeff2486",
+      "actual": "0fecf1aee64a89c55b22e2ba002dbc95ad451346ae77a11398e1ce78aeff2486",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-c/STATE.json",
+      "expected": "a5cba47f9dbce486b06c063f24f04944a41f489a2cd3fce91a9d03daf8799074",
+      "actual": "a5cba47f9dbce486b06c063f24f04944a41f489a2cd3fce91a9d03daf8799074",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-d/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-d/INSTRUCTIONS.md",
+      "expected": "2cdb37d0d7b69c6ecc74d48e42be9924ed68afd2c6fa7d0b373fe098cd1cdf90",
+      "actual": "2cdb37d0d7b69c6ecc74d48e42be9924ed68afd2c6fa7d0b373fe098cd1cdf90",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-d/RESULTS.json",
+      "expected": "170ad644f4e0282765a41bcd69e7ffb7fc681eb2890fe189808ce238c9581161",
+      "actual": "170ad644f4e0282765a41bcd69e7ffb7fc681eb2890fe189808ce238c9581161",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-d/RUN.json",
+      "expected": "c7ba0dc6ce1dd0b1e9393eeb6bcc7647fc26cd55175a970cf38c3d95300ca78b",
+      "actual": "c7ba0dc6ce1dd0b1e9393eeb6bcc7647fc26cd55175a970cf38c3d95300ca78b",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261118-d/STATE.json",
+      "expected": "96f9c93281cc3561f290bd39a51214f9f2ee17bf684fa275de03b1bd30b07b0e",
+      "actual": "96f9c93281cc3561f290bd39a51214f9f2ee17bf684fa275de03b1bd30b07b0e",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261119-e/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261119-e/INSTRUCTIONS.md",
+      "expected": "358efa21283bf6b7709cfeb696ab0cad14de53e8b02ab9ee17f74b86a657c359",
+      "actual": "358efa21283bf6b7709cfeb696ab0cad14de53e8b02ab9ee17f74b86a657c359",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261119-e/RESULTS.json",
+      "expected": "074c2dfa2dfaf035979c9b6f171566cc96eacd283e9a8a642329c9edc2524523",
+      "actual": "074c2dfa2dfaf035979c9b6f171566cc96eacd283e9a8a642329c9edc2524523",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261119-e/RUN.json",
+      "expected": "6a8b1bdef7f3d0c5127748a6256f1ceac7883828f0fd7f3bd5c05c2066c4a7b0",
+      "actual": "6a8b1bdef7f3d0c5127748a6256f1ceac7883828f0fd7f3bd5c05c2066c4a7b0",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261119-e/STATE.json",
+      "expected": "4f45ca48c64f60868830f7edc551f7d4490ad545edd2ab41061e807764738d3c",
+      "actual": "4f45ca48c64f60868830f7edc551f7d4490ad545edd2ab41061e807764738d3c",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261119-f/fixture_tools.py",
+      "expected": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "actual": "efee074355581326bb8f69bdbd0a7d50383a61e1545b1106262c3b87f02f6b72",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261119-f/INSTRUCTIONS.md",
+      "expected": "fd246e39fd568a433bdeb354879f2f0f74fab8418269bbed71af5b14fdef9a9e",
+      "actual": "fd246e39fd568a433bdeb354879f2f0f74fab8418269bbed71af5b14fdef9a9e",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261119-f/RESULTS.json",
+      "expected": "2e127e5fb7930ae275671a94410ae29a5536fff4ba8e2fe7b2e6d66f4cebd454",
+      "actual": "2e127e5fb7930ae275671a94410ae29a5536fff4ba8e2fe7b2e6d66f4cebd454",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261119-f/RUN.json",
+      "expected": "d517fb95d0c5b192531e5dc12b7ecff8a7fded06b23d494d2868cf3f12c48f53",
+      "actual": "d517fb95d0c5b192531e5dc12b7ecff8a7fded06b23d494d2868cf3f12c48f53",
+      "matches": true
+    },
+    {
+      "path": "source/succession-tests/astra-l13-20261119-f/STATE.json",
+      "expected": "ebfb3f2998c3c2dec067ed41528318aba0ec980e5b0728b9d71465e6d856efc6",
+      "actual": "ebfb3f2998c3c2dec067ed41528318aba0ec980e5b0728b9d71465e6d856efc6",
+      "matches": true
+    }
+  ]
+}

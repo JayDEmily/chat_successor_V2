@@ -1,0 +1,521 @@
+{
+  "chat-succession-bird-pig": {
+    "refs": {
+      "refs/heads/codex/parallel-story-20261119": "5c3da4ee0d3edea355f229d8f73e7d15c4f3b95a",
+      "refs/heads/codex/takeover-audit-bird-pig-20261119": "e940ee5381f32bdb8fa5a85a12a174aeb5a8c2a4",
+      "refs/heads/main": "b7d083d88874f2c410d1901819fbb7c17ba4fdb9"
+    },
+    "commits": [
+      {
+        "sha": "219aa3ba448cb338dc70b2abfb737f1a98d1edc9",
+        "parents": [],
+        "message": "Seed the two-worker bird and pig story\n\n",
+        "changes": "8\t0\tREADME.md\n"
+      },
+      {
+        "sha": "eeba425d61918e17f7c8ab7ff9e9561e1d6943bb",
+        "parents": [
+          "219aa3ba448cb338dc70b2abfb737f1a98d1edc9"
+        ],
+        "message": "Add Bird opening line for succession trial\n\nChat-Succession-Run: 9c9a07c8f8eb7c2ac7b34adb\nChat-ID: 6afed064-9f0c-83ec-bff0-36d3321ec3fe\nChat-Succession-Next: Reply as Pig and finish the story\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "b7d083d88874f2c410d1901819fbb7c17ba4fdb9",
+        "parents": [
+          "eeba425d61918e17f7c8ab7ff9e9561e1d6943bb"
+        ],
+        "message": "Finish Bird and Pig story for succession trial\n\nChat-Succession-Run: 9c9a07c8f8eb7c2ac7b34adb\nChat-ID: 6afed0a8-1420-83ec-b7dc-9215bda97834\nChat-Succession-Next: FINISHED\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "1e40039736658bcac25d87a0a3d8125cfc3072e0",
+        "parents": [
+          "219aa3ba448cb338dc70b2abfb737f1a98d1edc9"
+        ],
+        "message": "Set up Bird and Pig paired trial\n",
+        "changes": "5\t5\tREADME.md\n"
+      },
+      {
+        "sha": "abe2a5127c87800e9ad1ca2e3fd7e93e4efb3570",
+        "parents": [
+          "1e40039736658bcac25d87a0a3d8125cfc3072e0"
+        ],
+        "message": "Start Bird and Pig picnic story\n\nChat-Succession-Run: 3a1bc9fa7d591d0030d5389d\nChat-ID: 6afed52a-9fc8-83ec-9053-112ca7a332fc\nChat-Succession-Next: Reply as Pig and finish the story\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "5c3da4ee0d3edea355f229d8f73e7d15c4f3b95a",
+        "parents": [
+          "abe2a5127c87800e9ad1ca2e3fd7e93e4efb3570"
+        ],
+        "message": "Finish Bird and Pig picnic story\n\nChat-Succession-Run: 3a1bc9fa7d591d0030d5389d\nChat-ID: 6afed67a-8a18-83ec-a693-94ebfd6ec465\nChat-Succession-Next: FINISHED\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "bfddcf2a05e6863a38d169eb3a57d940a0a36020",
+        "parents": [
+          "1e40039736658bcac25d87a0a3d8125cfc3072e0"
+        ],
+        "message": "Prepare a bounded takeover audit fixture\n\n",
+        "changes": "26\t5\tREADME.md\n"
+      },
+      {
+        "sha": "5f43b42123c2ffdc3521285f866c31a60c2b3710",
+        "parents": [
+          "bfddcf2a05e6863a38d169eb3a57d940a0a36020"
+        ],
+        "message": "Specify the Ubuntu publication route for this trial\n\n",
+        "changes": "2\t0\tREADME.md\n"
+      },
+      {
+        "sha": "8c2bf709570ab3ce6333d5ae7afda9cf45b8b387",
+        "parents": [
+          "5f43b42123c2ffdc3521285f866c31a60c2b3710"
+        ],
+        "message": "Start Bird and Pig picnic story\n\nChat-Succession-Run: 779158bad86635df9761a799\nChat-ID: 6afef629-c0c4-83ec-a9a7-2ffd6a463b5e\nChat-Succession-Next: Reply as Pig and complete the two-line story\n\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "e940ee5381f32bdb8fa5a85a12a174aeb5a8c2a4",
+        "parents": [
+          "8c2bf709570ab3ce6333d5ae7afda9cf45b8b387"
+        ],
+        "message": "Complete Bird and Pig picnic story\n\nChat-Succession-Run: 779158bad86635df9761a799\nChat-ID: 6afefa1d-b6b8-83ec-bb84-f0992c41e758\nChat-Succession-Next: Review the two published lines\n\n",
+        "changes": "1\t0\tSTORY.md\n"
+      }
+    ],
+    "branch_files": {
+      "refs/heads/codex/parallel-story-20261119": {
+        "commit": "5c3da4ee0d3edea355f229d8f73e7d15c4f3b95a",
+        "files": {
+          "README.md": "# Bird and Pig Paired Trial\n\nThis disposable Chat Succession trial has two workers. The owner authorized one story line per worker on `codex/parallel-story-20261119`. Use the save identity and run ID from this worker's controller instructions. Verify the publication on GitHub before reporting completion.\n\n1. If `STORY.md` is absent, create it with exactly one line, `Bird: Pig, what should we take on our picnic?`. Change only `STORY.md` and publish one commit to `codex/parallel-story-20261119`. Use the three controller trailers. Set `Chat-Succession-Next: Reply as Pig and finish the story`.\n2. If the published story contains exactly the opening line, append `Pig: Apples, and a spare one for the ducks.`. Change only `STORY.md` and publish one commit to `codex/parallel-story-20261119`. Use the three controller trailers and set `Chat-Succession-Next: FINISHED`.\n\nEach worker completes only its own turn. End the verified handoff with the plain final line `CHAT_STATUS: TASK_COMPLETE`. The controller sends the successor prompt.\n",
+          "STORY.md": "Bird: Pig, what should we take on our picnic?\nPig: Apples, and a spare one for the ducks.\n"
+        }
+      },
+      "refs/heads/codex/takeover-audit-bird-pig-20261119": {
+        "commit": "e940ee5381f32bdb8fa5a85a12a174aeb5a8c2a4",
+        "files": {
+          "README.md": "# Bird and Pig controller audit\n\nThis disposable story trial runs on `codex/takeover-audit-bird-pig-20261119`\nwith a cap of two saved workers. Use the saved identity and run ID from the\ncontroller instructions. Verify every publication on GitHub.\n\nWorker 1 starts when `STORY.md` is absent. In the initial response, state the\nplanned opening line without editing. End with the plain final line\nCHAT_STATUS: NEED_MORE_TIME. After the first controller message\n`Okay, continue working.`, verify the branch and opening, still without\nediting. Again end with the plain final line CHAT_STATUS: NEED_MORE_TIME.\nAfter the second such controller message, create only `STORY.md` with this\none line.\n\n> Bird: Pig, what should we take on our picnic?\n\nPublish one commit on the audit branch with the three controller trailers\nand `Chat-Succession-Next: Reply as Pig and complete the two-line story`.\n\nWorker 2 must append only this line and publish one commit on the audit\nbranch with the three controller trailers.\n\n> Pig: Apples, and a spare one for the ducks.\n\nUse `Chat-Succession-Next: Review the two published lines` to record eligible\nwork still available after the cap. That review is outside this two-worker\nrun. Each worker publishes only its own slice. Put all commentary and\ntimestamps before the plain final line CHAT_STATUS: TASK_COMPLETE. The\ncontroller owns all continuation and successor messages.\n\nUse Git in Windows Ubuntu for verification and publication.\n",
+          "STORY.md": "Bird: Pig, what should we take on our picnic?\nPig: Apples, and a spare one for the ducks.\n"
+        }
+      },
+      "refs/heads/main": {
+        "commit": "b7d083d88874f2c410d1901819fbb7c17ba4fdb9",
+        "files": {
+          "README.md": "# Bird and Pig Trial\n\nThis is a disposable two-worker Chat Succession story exercise. The owner has authorized these two small edits on main. Use the GitHub connector or the existing Windows Remote Desktop Commander and Ubuntu Git when necessary. Follow the ordinary controller instructions for saved identity and publication verification.\n\n1. If STORY.md is absent, create it with exactly one line, `Bird: Pig, what shall we plant today?` Publish to main and verify the remote commit. Use the three trailers from the controller instructions, with `Chat-Succession-Next: Reply as Pig and finish the story`. End with a plain final line `CHAT_STATUS: TASK_COMPLETE`.\n2. If STORY.md has exactly that first line, append exactly one line, `Pig: Peas, so we can share them at supper.` Publish to main and verify the remote commit. Use the three trailers, with `Chat-Succession-Next: FINISHED`. End with a plain final line `CHAT_STATUS: TASK_COMPLETE`.\n\nIf both lines are already published, reconcile the published result. Only the controller sends successor prompts. There is no work beyond this two-line story.\n",
+          "STORY.md": "Bird: Pig, what shall we plant today?\nPig: Peas, so we can share them at supper.\n"
+        }
+      }
+    }
+  },
+  "chat-succession-cat-dog-pair": {
+    "refs": {
+      "refs/heads/codex/parallel-phone-cat-dog-20261119": "2523cfe54a1c339b0906617c33494cc09a6fd98e",
+      "refs/heads/codex/takeover-audit-cat-dog-20261119": "3105b8d6af3bc4c37ecbd79c127e14d0312b375e",
+      "refs/heads/main": "61c609a3391b1adbb0bb462beab71e4cff39a21c"
+    },
+    "commits": [
+      {
+        "sha": "55c96773855a4a33927d1759bdc51e845e5da899",
+        "parents": [],
+        "message": "Initial commit\n",
+        "changes": "2\t0\tREADME.md\n"
+      },
+      {
+        "sha": "77fd3ea82a3ce3548f6d25267bbaa310436e89d7",
+        "parents": [
+          "55c96773855a4a33927d1759bdc51e845e5da899"
+        ],
+        "message": "Set up Cat and Dog paired trial\n",
+        "changes": "8\t2\tREADME.md\n"
+      },
+      {
+        "sha": "6e89084b7b96f7c980aad07b568bd206300c5836",
+        "parents": [
+          "77fd3ea82a3ce3548f6d25267bbaa310436e89d7"
+        ],
+        "message": "Open Cat and Dog paired story\n\nChat-Succession-Run: 665ea3264e8d8c70d63adead\nChat-ID: 6afed513-3cfc-83ec-b885-06b98698c4fe\nChat-Succession-Next: Reply as Bluey and finish the story\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "61c609a3391b1adbb0bb462beab71e4cff39a21c",
+        "parents": [
+          "6e89084b7b96f7c980aad07b568bd206300c5836"
+        ],
+        "message": "Complete Cat and Dog paired story\n\nChat-Succession-Run: 665ea3264e8d8c70d63adead\nChat-ID: 6afed586-9e58-83ec-8134-17a7df9f1234\nChat-Succession-Next: FINISHED\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "fc0c15baadd9ef74ac9ddfa22f1a0e9c919b6acc",
+        "parents": [
+          "77fd3ea82a3ce3548f6d25267bbaa310436e89d7"
+        ],
+        "message": "Prepare Cat and Dog alongside the iPhone trial\n",
+        "changes": "3\t3\tREADME.md\n"
+      },
+      {
+        "sha": "850d96c5f27e2f19912322982ea0b0b45f5d0ccb",
+        "parents": [
+          "fc0c15baadd9ef74ac9ddfa22f1a0e9c919b6acc"
+        ],
+        "message": "Start Cat and Dog story (worker 1)\n\nChat-Succession-Run: 5a766a5d366b70c0f482e7aa\nChat-ID: 6afee5a0-0020-83ec-9c7b-88b6ba826e60\nChat-Succession-Next: Reply as Bluey and finish the story\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "2523cfe54a1c339b0906617c33494cc09a6fd98e",
+        "parents": [
+          "850d96c5f27e2f19912322982ea0b0b45f5d0ccb"
+        ],
+        "message": "Finish Cat and Dog story (worker 2)\n\nChat-Succession-Run: 5a766a5d366b70c0f482e7aa\nChat-ID: 6afee63c-dc38-83ec-8dc8-228b0b25dd93\nChat-Succession-Next: FINISHED\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "a1c03fcb7672d5526abdaee7f99ff4b95bca45ba",
+        "parents": [
+          "77fd3ea82a3ce3548f6d25267bbaa310436e89d7"
+        ],
+        "message": "Prepare a bounded takeover audit fixture\n\n",
+        "changes": "4\t4\tREADME.md\n"
+      },
+      {
+        "sha": "6d844f19f3a81752fe2c1bbb02caccb6f8a097f7",
+        "parents": [
+          "a1c03fcb7672d5526abdaee7f99ff4b95bca45ba"
+        ],
+        "message": "Specify the Ubuntu publication route for this trial\n\n",
+        "changes": "2\t0\tREADME.md\n"
+      },
+      {
+        "sha": "8da07c510bd9b713ab5767931e703f72de71a6f1",
+        "parents": [
+          "6d844f19f3a81752fe2c1bbb02caccb6f8a097f7"
+        ],
+        "message": "Start Cat and Dog story\n\nChat-Succession-Run: 1a6459bfd9c95893ee137b05\nChat-ID: 6afef60c-40bc-83ec-8847-af94e770c69a\nChat-Succession-Next: Reply as Bluey and finish the story\n\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "3105b8d6af3bc4c37ecbd79c127e14d0312b375e",
+        "parents": [
+          "8da07c510bd9b713ab5767931e703f72de71a6f1"
+        ],
+        "message": "Finish Cat and Dog story\n\nChat-Succession-Run: 1a6459bfd9c95893ee137b05\nChat-ID: 6afef745-7154-83ec-8476-584ef0811dcc\nChat-Succession-Next: FINISHED\n\n",
+        "changes": "1\t0\tSTORY.md\n"
+      }
+    ],
+    "branch_files": {
+      "refs/heads/codex/parallel-phone-cat-dog-20261119": {
+        "commit": "2523cfe54a1c339b0906617c33494cc09a6fd98e",
+        "files": {
+          "README.md": "# Cat and Dog Paired Trial\n\nThis disposable Chat Succession trial has two workers. The owner authorized one story line per worker on `codex/parallel-phone-cat-dog-20261119`. Use the save identity and run ID from this worker's controller instructions. Verify the publication on GitHub before reporting completion.\n\n1. If `STORY.md` is absent, create it with exactly one line, `Scruffy: Bluey, shall we take a walk after the rain?`. Change only `STORY.md` and publish one commit to `codex/parallel-phone-cat-dog-20261119`. Use the three controller trailers. Set `Chat-Succession-Next: Reply as Bluey and finish the story`.\n2. If the published story contains exactly the opening line, append `Bluey: Yes, Scruffy. I'll meet you by the porch.`. Change only `STORY.md` and publish one commit to `codex/parallel-phone-cat-dog-20261119`. Use the three controller trailers and set `Chat-Succession-Next: FINISHED`.\n\nEach worker completes only its own turn. End the verified handoff with the plain final line `CHAT_STATUS: TASK_COMPLETE`. The controller sends the successor prompt.\n",
+          "STORY.md": "Scruffy: Bluey, shall we take a walk after the rain?\nBluey: Yes, Scruffy. I'll meet you by the porch.\n"
+        }
+      },
+      "refs/heads/codex/takeover-audit-cat-dog-20261119": {
+        "commit": "3105b8d6af3bc4c37ecbd79c127e14d0312b375e",
+        "files": {
+          "README.md": "# Cat and Dog Paired Trial\n\nThis disposable Chat Succession trial has two workers. The owner authorized one story line per worker on `codex/takeover-audit-cat-dog-20261119`. Use the save identity and run ID from this worker's controller instructions. Verify the publication on GitHub before reporting completion.\n\n1. If `STORY.md` is absent, create it with exactly one line, `Scruffy: Bluey, shall we take a walk after the rain?`. Change only `STORY.md` and publish one commit to `codex/takeover-audit-cat-dog-20261119`. Use the three controller trailers. Set `Chat-Succession-Next: Reply as Bluey and finish the story`.\n2. If the published story contains exactly the opening line, append `Bluey: Yes, Scruffy. I'll meet you by the porch.`. Change only `STORY.md` and publish one commit to `codex/takeover-audit-cat-dog-20261119`. Use the three controller trailers and set `Chat-Succession-Next: FINISHED`.\n\nEach worker completes only its own turn. Put all content and timestamps above the verified handoff's plain final line `CHAT_STATUS: TASK_COMPLETE`. The controller sends the successor prompt.\n\nUse Git in Windows Ubuntu for verification and publication.\n",
+          "STORY.md": "Scruffy: Bluey, shall we take a walk after the rain?\nBluey: Yes, Scruffy. I'll meet you by the porch.\n"
+        }
+      },
+      "refs/heads/main": {
+        "commit": "61c609a3391b1adbb0bb462beab71e4cff39a21c",
+        "files": {
+          "README.md": "# Cat and Dog Paired Trial\n\nThis disposable Chat Succession trial has two workers. The owner authorized one story line per worker on `main`. Use the save identity and run ID from this worker's controller instructions. Verify the publication on GitHub before reporting completion.\n\n1. If `STORY.md` is absent, create it with exactly one line, `Scruffy: Bluey, shall we take a walk after the rain?`. Change only `STORY.md` and publish one commit to `main`. Use the three controller trailers. Set `Chat-Succession-Next: Reply as Bluey and finish the story`.\n2. If the published story contains exactly the opening line, append `Bluey: Yes, Scruffy. I'll meet you by the porch.`. Change only `STORY.md` and publish one commit to `main`. Use the three controller trailers and set `Chat-Succession-Next: FINISHED`.\n\nEach worker completes only its own turn. End the verified handoff with the plain final line `CHAT_STATUS: TASK_COMPLETE`. The controller sends the successor prompt.\n",
+          "STORY.md": "Scruffy: Bluey, shall we take a walk after the rain?\nBluey: Yes, Scruffy. I'll meet you by the porch.\n"
+        }
+      }
+    }
+  },
+  "chat-succession-trial-approval": {
+    "refs": {
+      "refs/heads/codex/g2-approval-closeout-20261119": "2114f567cfa6fbd5fa257ff666aaf49f794214cc",
+      "refs/heads/codex/g2-iphone-approval-20261119": "1590c45af104e34cdcd5c2820e9ce30c9da35e80",
+      "refs/heads/codex/g2-iphone-approval-shoco-20261120": "b91b00fe75be2ca011eac1ad1cc0d668ffd8d8bf",
+      "refs/heads/main": "10e5aac1a2a11842aa72ccd4a1dd28cd3151a976"
+    },
+    "commits": [
+      {
+        "sha": "ee65071df4c2c1b096cbabdbd57c5232cc5dbeb3",
+        "parents": [],
+        "message": "Seed disposable bounded trial\n\n",
+        "changes": "7\t0\tREADME.md\n"
+      },
+      {
+        "sha": "10e5aac1a2a11842aa72ccd4a1dd28cd3151a976",
+        "parents": [
+          "ee65071df4c2c1b096cbabdbd57c5232cc5dbeb3"
+        ],
+        "message": "Trial: publish explicitly approved first NOTES.md line\n\nScoped owner approval request: fc2cee8c845d40429aa4a4fb0bd5822d\n\nChat-Succession-Run: 493f1052a969ff495c41afae\nChat-ID: 6afe9cba-0704-83ec-9468-fb09cb209902\nChat-Succession-Next: Append verification line to NOTES.md\n",
+        "changes": "1\t0\tNOTES.md\n"
+      },
+      {
+        "sha": "9f5437d69e42fd45242a57461119c89c1a417f43",
+        "parents": [
+          "ee65071df4c2c1b096cbabdbd57c5232cc5dbeb3"
+        ],
+        "message": "Prepare disposable approval closeout replay\n",
+        "changes": "1\t1\tREADME.md\n"
+      },
+      {
+        "sha": "750c3981528ee1888c41279aebabf0fee408e9cb",
+        "parents": [
+          "9f5437d69e42fd45242a57461119c89c1a417f43"
+        ],
+        "message": "Add approved Pebble note for disposable approval fixture\n\nScoped owner approval: 6b905880082a4da69474dc7f279a262d\n\nChat-Succession-Run: 8afddd010cff7063675be63b\nChat-ID: 6afede76-db24-83ec-b269-0e6034ceaa69\nChat-Succession-Next: Append verification line to NOTES.md\n",
+        "changes": "1\t0\tNOTES.md\n"
+      },
+      {
+        "sha": "2114f567cfa6fbd5fa257ff666aaf49f794214cc",
+        "parents": [
+          "750c3981528ee1888c41279aebabf0fee408e9cb"
+        ],
+        "message": "Complete successor verification for disposable approval trial\n\nChat-Succession-Run: 8afddd010cff7063675be63b\nChat-ID: 6afee16b-de44-83ec-b3c9-f464fcf91ec6\nChat-Succession-Next: FINISHED\n",
+        "changes": "1\t0\tNOTES.md\n"
+      },
+      {
+        "sha": "a89d15100b7dba60e472738018ac4a6b5e8dce85",
+        "parents": [
+          "ee65071df4c2c1b096cbabdbd57c5232cc5dbeb3"
+        ],
+        "message": "Prepare the disposable iPhone approval trial\n",
+        "changes": "1\t1\tREADME.md\n"
+      },
+      {
+        "sha": "cba98805faec9cbc57bcba8737dd9347b99e0d3d",
+        "parents": [
+          "a89d15100b7dba60e472738018ac4a6b5e8dce85"
+        ],
+        "message": "Add approved Pebble checkpoint\n\nOwner approval: 18d8a2775cd247fb91e41891256d2d8e (scoped to NOTES.md on codex/g2-iphone-approval-20261119).\n\nChat-Succession-Run: 8f8bb228a19625f450959aaa\nChat-ID: 6afee5b0-9464-83ec-93ba-67c233409e6d\nChat-Succession-Next: Append verification line to NOTES.md\n",
+        "changes": "1\t0\tNOTES.md\n"
+      },
+      {
+        "sha": "1590c45af104e34cdcd5c2820e9ce30c9da35e80",
+        "parents": [
+          "cba98805faec9cbc57bcba8737dd9347b99e0d3d"
+        ],
+        "message": "Complete successor verification checkpoint\n\nChat-Succession-Run: 8f8bb228a19625f450959aaa\nChat-ID: 6afee7d1-a62c-83ec-9624-023f3c6ca5a7\nChat-Succession-Next: FINISHED\n",
+        "changes": "1\t0\tNOTES.md\n"
+      },
+      {
+        "sha": "b91b00fe75be2ca011eac1ad1cc0d668ffd8d8bf",
+        "parents": [
+          "ee65071df4c2c1b096cbabdbd57c5232cc5dbeb3"
+        ],
+        "message": "Prepare a clean Shoco iPhone approval trial\n\n",
+        "changes": "1\t1\tREADME.md\n"
+      }
+    ],
+    "branch_files": {
+      "refs/heads/codex/g2-approval-closeout-20261119": {
+        "commit": "2114f567cfa6fbd5fa257ff666aaf49f794214cc",
+        "files": {
+          "NOTES.md": "Pebble approved\nVerified by the successor\n",
+          "README.md": "# Approval trial\n\nThis is a disposable Chat Succession acceptance fixture. Use the authorized Windows Remote Desktop Commander tool and Ubuntu Git if the GitHub connector cannot see this private repository. The only allowed work is the two short text edits below, on codex/g2-approval-closeout-20261119. Independently verify each push by reading the published commit. No industry or project-specific checks apply.\n\nA proposal to add the line Pebble approved to NOTES.md is deliberately on owner hold. If NOTES.md does not exist and you have not received a scoped owner instruction approving that proposal in this run, say you are waiting for that explicit approval and put CHAT_STATUS: ERROR alone on the last line. Make no edit. The owner can approve with a plain I approve from the Project request chat. The same registered worker executes the first edit once after the controller delivers that approval. Publish NOTES.md with exactly one line, Pebble approved. Use the three Chat Succession trailers from your prompt and set Chat-Succession-Next to Append verification line to NOTES.md. End with CHAT_STATUS: TASK_COMPLETE alone.\n\nA successor finding that single published line must append exactly one line, Verified by the successor. Publish with the three trailers and FINISHED. End with CHAT_STATUS: TASK_COMPLETE alone. The current saved chat ID must be read from private controller state for your worker number. If the two published lines already exist, reconcile rather than edit again.\n"
+        }
+      },
+      "refs/heads/codex/g2-iphone-approval-20261119": {
+        "commit": "1590c45af104e34cdcd5c2820e9ce30c9da35e80",
+        "files": {
+          "NOTES.md": "Pebble approved\nVerified by the successor\n",
+          "README.md": "# Approval trial\n\nThis is a disposable Chat Succession acceptance fixture. Use the authorized Windows Remote Desktop Commander tool and Ubuntu Git if the GitHub connector cannot see this private repository. The only allowed work is the two short text edits below, on codex/g2-iphone-approval-20261119. Independently verify each push by reading the published commit. No industry or project-specific checks apply.\n\nA proposal to add the line Pebble approved to NOTES.md is deliberately on owner hold. If NOTES.md does not exist and you have not received a scoped owner instruction approving that proposal in this run, say you are waiting for that explicit approval and put CHAT_STATUS: ERROR alone on the last line. Make no edit. The owner can approve with a plain I approve from the Project request chat. The same registered worker executes the first edit once after the controller delivers that approval. Publish NOTES.md with exactly one line, Pebble approved. Use the three Chat Succession trailers from your prompt and set Chat-Succession-Next to Append verification line to NOTES.md. End with CHAT_STATUS: TASK_COMPLETE alone.\n\nA successor finding that single published line must append exactly one line, Verified by the successor. Publish with the three trailers and FINISHED. End with CHAT_STATUS: TASK_COMPLETE alone. The current saved chat ID must be read from private controller state for your worker number. If the two published lines already exist, reconcile rather than edit again.\n"
+        }
+      },
+      "refs/heads/codex/g2-iphone-approval-shoco-20261120": {
+        "commit": "b91b00fe75be2ca011eac1ad1cc0d668ffd8d8bf",
+        "files": {
+          "README.md": "# Approval trial\n\nThis is a disposable Chat Succession acceptance fixture. Use the authorized Windows Remote Desktop Commander tool and Ubuntu Git if the GitHub connector cannot see this private repository. The only allowed work is the two short text edits below, on codex/g2-iphone-approval-shoco-20261120. Independently verify each push by reading the published commit. No industry or project-specific checks apply.\n\nA proposal to add the line Pebble approved to NOTES.md is deliberately on owner hold. If NOTES.md does not exist and you have not received a scoped owner instruction approving that proposal in this run, say you are waiting for that explicit approval and put CHAT_STATUS: ERROR alone on the last line. Make no edit. The owner can approve with a plain I approve from the Project request chat. The same registered worker executes the first edit once after the controller delivers that approval. Publish NOTES.md with exactly one line, Pebble approved. Use the three Chat Succession trailers from your prompt and set Chat-Succession-Next to Append verification line to NOTES.md. End with CHAT_STATUS: TASK_COMPLETE alone.\n\nA successor finding that single published line must append exactly one line, Verified by the successor. Publish with the three trailers and FINISHED. End with CHAT_STATUS: TASK_COMPLETE alone. The current saved chat ID must be read from private controller state for your worker number. If the two published lines already exist, reconcile rather than edit again.\n"
+        }
+      },
+      "refs/heads/main": {
+        "commit": "10e5aac1a2a11842aa72ccd4a1dd28cd3151a976",
+        "files": {
+          "NOTES.md": "Pebble approved\n",
+          "README.md": "# Approval trial\n\nThis is a disposable Chat Succession acceptance fixture. Use the authorized Windows Remote Desktop Commander tool and Ubuntu Git if the GitHub connector cannot see this private repository. The only allowed work is the two short text edits below, on main. Independently verify each push by reading the published commit. No industry or project-specific checks apply.\n\nA proposal to add the line Pebble approved to NOTES.md is deliberately on owner hold. If NOTES.md does not exist and you have not received a scoped owner instruction approving that proposal in this run, say you are waiting for that explicit approval and put CHAT_STATUS: ERROR alone on the last line. Make no edit. The owner can approve with a plain I approve from the Project request chat. The same registered worker executes the first edit once after the controller delivers that approval. Publish NOTES.md with exactly one line, Pebble approved. Use the three Chat Succession trailers from your prompt and set Chat-Succession-Next to Append verification line to NOTES.md. End with CHAT_STATUS: TASK_COMPLETE alone.\n\nA successor finding that single published line must append exactly one line, Verified by the successor. Publish with the three trailers and FINISHED. End with CHAT_STATUS: TASK_COMPLETE alone. The current saved chat ID must be read from private controller state for your worker number. If the two published lines already exist, reconcile rather than edit again.\n"
+        }
+      }
+    }
+  },
+  "chat-succession-trial-rotation": {
+    "refs": {
+      "refs/heads/codex/g2-rotation-entry-20261119": "75e5d27480e5b0d01fd07d6a11efe05e52498697",
+      "refs/heads/codex/g2-rotation-review-20261119": "ddff24374d82fe243cc9b8dcb9579acaed7ec497",
+      "refs/heads/main": "4b72be0dde70689856669edc14d65545e8ec544c",
+      "refs/heads/work/checklist": "793d5361e3c37b8da88a192d31da40aedf418faa"
+    },
+    "commits": [
+      {
+        "sha": "4b72be0dde70689856669edc14d65545e8ec544c",
+        "parents": [],
+        "message": "Seed disposable bounded trial\n\n",
+        "changes": "5\t0\tMISSION.txt\n3\t0\tREADME.md\n"
+      },
+      {
+        "sha": "793d5361e3c37b8da88a192d31da40aedf418faa",
+        "parents": [
+          "4b72be0dde70689856669edc14d65545e8ec544c"
+        ],
+        "message": "Add bicycle bell inspection checklist\n\nChat-Succession-Run: 2c4bd1cb353aa66f94590f28\nChat-ID: 6afe9e15-c5d0-83ec-908f-157463a3a5f5\nChat-Succession-Next: Review the checklist and record the result\n",
+        "changes": "1\t0\tCHECKLIST.md\n"
+      },
+      {
+        "sha": "75e5d27480e5b0d01fd07d6a11efe05e52498697",
+        "parents": [
+          "4b72be0dde70689856669edc14d65545e8ec544c"
+        ],
+        "message": "Prepare disposable branch rotation closeout replay\n",
+        "changes": "2\t2\tMISSION.txt\n"
+      },
+      {
+        "sha": "58eecd7c3d7644f1a1370ac4f8b7b47a9a12d6bc",
+        "parents": [
+          "75e5d27480e5b0d01fd07d6a11efe05e52498697"
+        ],
+        "message": "Add bicycle bell checklist for review\n\nChat-Succession-Run: 989f529771afe7baa4c48594\nChat-ID: 6afedde3-aec8-83ec-ac30-363b359536fe\nChat-Succession-Next: Review the checklist and record the result\n",
+        "changes": "1\t0\tCHECKLIST.md\n"
+      },
+      {
+        "sha": "ddff24374d82fe243cc9b8dcb9579acaed7ec497",
+        "parents": [
+          "58eecd7c3d7644f1a1370ac4f8b7b47a9a12d6bc"
+        ],
+        "message": "Record bicycle bell checklist review\n\nChat-Succession-Run: 989f529771afe7baa4c48594\nChat-ID: 6afee03b-bbbc-83ec-af72-726463ad80da\nChat-Succession-Next: FINISHED\n",
+        "changes": "1\t0\tREVIEW.md\n"
+      }
+    ],
+    "branch_files": {
+      "refs/heads/codex/g2-rotation-entry-20261119": {
+        "commit": "75e5d27480e5b0d01fd07d6a11efe05e52498697",
+        "files": {
+          "MISSION.txt": "This is a disposable Chat Succession acceptance fixture. Use the authorized Windows Remote Desktop Commander tool and Ubuntu Git if the GitHub connector cannot see this private repository. Read current work from the entry branch in your prompt. No extra owner approval is needed for this pre-authorized planning and review task.\n\nIf CHECKLIST.md is absent, prepare a one-line checklist for checking a bicycle bell. The project's only authorized write route is a new branch called codex/g2-rotation-review-20261119. Branch from codex/g2-rotation-entry-20261119, create CHECKLIST.md with one short line, commit and push codex/g2-rotation-review-20261119. Verify the published tip. In your commit use the three Chat Succession trailers and set Chat-Succession-Next to Review the checklist and record the result. In your final answer write CHAT_HANDOFF_BRANCH: codex/g2-rotation-review-20261119 as a plain text paragraph and CHAT_STATUS: TASK_COMPLETE as the last plain text paragraph. Use no Markdown quote or code formatting around those markers.\n\nIf CHECKLIST.md exists and REVIEW.md does not, review that one checklist line and write one line recording the review to REVIEW.md on codex/g2-rotation-review-20261119. Publish and verify, use the three trailers with FINISHED, and end with CHAT_STATUS: TASK_COMPLETE. Use your own saved worker ID from the controller. The only allowed writes are CHECKLIST.md and REVIEW.md on codex/g2-rotation-review-20261119. Stop after publication of the two files.\n",
+          "README.md": "# Rotation trial\n\nRead MISSION.txt for the authorized task and publication route.\n"
+        }
+      },
+      "refs/heads/codex/g2-rotation-review-20261119": {
+        "commit": "ddff24374d82fe243cc9b8dcb9579acaed7ec497",
+        "files": {
+          "CHECKLIST.md": "Check that the bicycle bell rings clearly when operated.\n",
+          "MISSION.txt": "This is a disposable Chat Succession acceptance fixture. Use the authorized Windows Remote Desktop Commander tool and Ubuntu Git if the GitHub connector cannot see this private repository. Read current work from the entry branch in your prompt. No extra owner approval is needed for this pre-authorized planning and review task.\n\nIf CHECKLIST.md is absent, prepare a one-line checklist for checking a bicycle bell. The project's only authorized write route is a new branch called codex/g2-rotation-review-20261119. Branch from codex/g2-rotation-entry-20261119, create CHECKLIST.md with one short line, commit and push codex/g2-rotation-review-20261119. Verify the published tip. In your commit use the three Chat Succession trailers and set Chat-Succession-Next to Review the checklist and record the result. In your final answer write CHAT_HANDOFF_BRANCH: codex/g2-rotation-review-20261119 as a plain text paragraph and CHAT_STATUS: TASK_COMPLETE as the last plain text paragraph. Use no Markdown quote or code formatting around those markers.\n\nIf CHECKLIST.md exists and REVIEW.md does not, review that one checklist line and write one line recording the review to REVIEW.md on codex/g2-rotation-review-20261119. Publish and verify, use the three trailers with FINISHED, and end with CHAT_STATUS: TASK_COMPLETE. Use your own saved worker ID from the controller. The only allowed writes are CHECKLIST.md and REVIEW.md on codex/g2-rotation-review-20261119. Stop after publication of the two files.\n",
+          "README.md": "# Rotation trial\n\nRead MISSION.txt for the authorized task and publication route.\n",
+          "REVIEW.md": "PASS: The checklist is clear and testable because it specifies operating the bicycle bell and checking for a clear ring.\n"
+        }
+      },
+      "refs/heads/main": {
+        "commit": "4b72be0dde70689856669edc14d65545e8ec544c",
+        "files": {
+          "MISSION.txt": "This is a disposable Chat Succession acceptance fixture. Use the authorized Windows Remote Desktop Commander tool and Ubuntu Git if the GitHub connector cannot see this private repository. Read current work from the entry branch in your prompt. No extra owner approval is needed for this pre-authorized planning and review task.\n\nIf CHECKLIST.md is absent, prepare a one-line checklist for checking a bicycle bell. The project's only authorized write route is a new branch called work/checklist. Branch from main, create CHECKLIST.md with one short line, commit and push work/checklist. Verify the published tip. In your commit use the three Chat Succession trailers and set Chat-Succession-Next to Review the checklist and record the result. In your final answer write CHAT_HANDOFF_BRANCH: work/checklist as a plain text paragraph and CHAT_STATUS: TASK_COMPLETE as the last plain text paragraph. Use no Markdown quote or code formatting around those markers.\n\nIf CHECKLIST.md exists and REVIEW.md does not, review that one checklist line and write one line recording the review to REVIEW.md on work/checklist. Publish and verify, use the three trailers with FINISHED, and end with CHAT_STATUS: TASK_COMPLETE. Use your own saved worker ID from the controller. The only allowed writes are CHECKLIST.md and REVIEW.md on work/checklist. Stop after publication of the two files.\n",
+          "README.md": "# Rotation trial\n\nRead MISSION.txt for the authorized task and publication route.\n"
+        }
+      },
+      "refs/heads/work/checklist": {
+        "commit": "793d5361e3c37b8da88a192d31da40aedf418faa",
+        "files": {
+          "CHECKLIST.md": "- [ ] Ring the bicycle bell and confirm it sounds clearly and is securely mounted.\n",
+          "MISSION.txt": "This is a disposable Chat Succession acceptance fixture. Use the authorized Windows Remote Desktop Commander tool and Ubuntu Git if the GitHub connector cannot see this private repository. Read current work from the entry branch in your prompt. No extra owner approval is needed for this pre-authorized planning and review task.\n\nIf CHECKLIST.md is absent, prepare a one-line checklist for checking a bicycle bell. The project's only authorized write route is a new branch called work/checklist. Branch from main, create CHECKLIST.md with one short line, commit and push work/checklist. Verify the published tip. In your commit use the three Chat Succession trailers and set Chat-Succession-Next to Review the checklist and record the result. In your final answer write CHAT_HANDOFF_BRANCH: work/checklist as a plain text paragraph and CHAT_STATUS: TASK_COMPLETE as the last plain text paragraph. Use no Markdown quote or code formatting around those markers.\n\nIf CHECKLIST.md exists and REVIEW.md does not, review that one checklist line and write one line recording the review to REVIEW.md on work/checklist. Publish and verify, use the three trailers with FINISHED, and end with CHAT_STATUS: TASK_COMPLETE. Use your own saved worker ID from the controller. The only allowed writes are CHECKLIST.md and REVIEW.md on work/checklist. Stop after publication of the two files.\n",
+          "README.md": "# Rotation trial\n\nRead MISSION.txt for the authorized task and publication route.\n"
+        }
+      }
+    }
+  },
+  "my-cat-and-dog": {
+    "refs": {
+      "refs/heads/codex/story-01-scruffy": "1bff919d7eddd7855032b8dcf0423639f5c15357",
+      "refs/heads/codex/story-02-bluey": "4061a7f4507a491d568b31afc3c0d3b20058dba5",
+      "refs/heads/codex/story-03-scruffy": "9916752677e8dc3fd1706f1abc56bb1fd7c3733e",
+      "refs/heads/codex/story-04-bluey": "9b0180354fc1a6e127c9982dd44fb4b17f5716a9",
+      "refs/heads/main": "94eee8b6162520fc0f75f355bdac6e778310c50b"
+    },
+    "commits": [
+      {
+        "sha": "44ca34013d7e03e0392bb12a2d8f8ec12de430f3",
+        "parents": [],
+        "message": "Initial commit\n",
+        "changes": "1\t0\tREADME.md\n"
+      },
+      {
+        "sha": "cad1230cc8679820a3a09154ddae4f735a002993",
+        "parents": [
+          "44ca34013d7e03e0392bb12a2d8f8ec12de430f3"
+        ],
+        "message": "Seed four-turn Scruffy and Bluey story\n",
+        "changes": "18\t1\tREADME.md\n"
+      },
+      {
+        "sha": "94eee8b6162520fc0f75f355bdac6e778310c50b",
+        "parents": [
+          "cad1230cc8679820a3a09154ddae4f735a002993"
+        ],
+        "message": "Document verified branch handoffs for Chat Succession\n",
+        "changes": "16\t1\tREADME.md\n"
+      },
+      {
+        "sha": "1bff919d7eddd7855032b8dcf0423639f5c15357",
+        "parents": [
+          "94eee8b6162520fc0f75f355bdac6e778310c50b"
+        ],
+        "message": "Write story turn 1\n\nChat-ID: 6afe6c64-a40c-83ec-b7ce-f91df9f417aa\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "4061a7f4507a491d568b31afc3c0d3b20058dba5",
+        "parents": [
+          "1bff919d7eddd7855032b8dcf0423639f5c15357"
+        ],
+        "message": "Write story turn 2\n\nChat-ID: 6afe6cf7-2b74-83ec-9e38-1af5a5a95fee\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "9916752677e8dc3fd1706f1abc56bb1fd7c3733e",
+        "parents": [
+          "4061a7f4507a491d568b31afc3c0d3b20058dba5"
+        ],
+        "message": "Write story turn 3\n\nChat-ID: 6afe6da4-a4e8-83ec-855a-5f5548d41928\n",
+        "changes": "1\t0\tSTORY.md\n"
+      },
+      {
+        "sha": "9b0180354fc1a6e127c9982dd44fb4b17f5716a9",
+        "parents": [
+          "9916752677e8dc3fd1706f1abc56bb1fd7c3733e"
+        ],
+        "message": "Write story turn 4\n\nChat-ID: 6afe6e3e-34b4-83ec-9aa1-0d87ad7a2f2b\n",
+        "changes": "1\t0\tSTORY.md\n"
+      }
+    ],
+    "branch_files": {
+      "refs/heads/codex/story-01-scruffy": {
+        "commit": "1bff919d7eddd7855032b8dcf0423639f5c15357",
+        "files": {
+          "README.md": "# My Cat and Dog\n\nThis is a story about a cat and dog. Scruffy is the cat. Bluey is the dog.\n\n## Tell the story in four turns\n\nEach worker writes one short reply, then publishes it before handing off. Fetch the repo and find the first unpublished turn below. Create its working branch from the published branch named in the **Start from** column.\n\n| Turn | Speaker | Start from | Working branch | What to write |\n| --- | --- | --- | --- | --- |\n| 1 | Scruffy | `main` | `codex/story-01-scruffy` | “Bluey, what do you think about the weather? Have you got any thoughts?” |\n| 2 | Bluey | `codex/story-01-scruffy` | `codex/story-02-bluey` | Answer Scruffy and ask a short follow-up question. |\n| 3 | Scruffy | `codex/story-02-bluey` | `codex/story-03-scruffy` | Reply to Bluey and ask one last question. |\n| 4 | Bluey | `codex/story-03-scruffy` | `codex/story-04-bluey` | Answer Scruffy and end the conversation. |\n\nCreate `STORY.md` on turn 1 with one line and no heading. On each turn, add exactly one line in plain text, like `Scruffy: Bluey, what do you think about the weather?`. Preserve all previous lines. Make one commit that changes only `STORY.md`, push the turn branch, and verify the remote result. Keep `main` as the shared entry point.\n\nThe Windows controller records the saved chat ID. Before committing, read its private state through Remote Desktop Commander on Windows:\n\n```powershell\n(Get-Content -Raw (Join-Path $env:LOCALAPPDATA 'ChatSuccession/MyCatAndDog/controller.json') | ConvertFrom-Json).state\n```\n\nWait briefly if worker 1's state is still being initialized. Use `current_chat_id` only when the state shows the expected number of saved chats for your turn. Put that ID in the commit message as a Git trailer. Set the actual ID in place of the example value.\n\n```bash\ngit add STORY.md\ngit commit -m \"Write story turn 1\" -m \"Chat-ID: YOUR-SAVED-CHAT-UUID\"\n```\n\nUse your actual turn number. If you cannot verify which saved worker you are or a prior branch is missing, explain the blocker and end with `CHAT_STATUS: ERROR`. The Windows controller owns all successor launches.\n\nIn your chat reply, identify the branch you published and end with `CHAT_STATUS: TASK_COMPLETE` on its own line. Turns 1–3 leave the next speaker a question to answer. The story is complete when all four turns are published.\n",
+          "STORY.md": "Scruffy: Bluey, what do you think about the weather? Have you got any thoughts?\n"
+        }
+      },
+      "refs/heads/codex/story-02-bluey": {
+        "commit": "4061a7f4507a491d568b31afc3c0d3b20058dba5",
+        "files": {
+          "README.md": "# My Cat and Dog\n\nThis is a story about a cat and dog. Scruffy is the cat. Bluey is the dog.\n\n## Tell the story in four turns\n\nEach worker writes one short reply, then publishes it before handing off. Fetch the repo and find the first unpublished turn below. Create its working branch from the published branch named in the **Start from** column.\n\n| Turn | Speaker | Start from | Working branch | What to write |\n| --- | --- | --- | --- | --- |\n| 1 | Scruffy | `main` | `codex/story-01-scruffy` | “Bluey, what do you think about the weather? Have you got any thoughts?” |\n| 2 | Bluey | `codex/story-01-scruffy` | `codex/story-02-bluey` | Answer Scruffy and ask a short follow-up question. |\n| 3 | Scruffy | `codex/story-02-bluey` | `codex/story-03-scruffy` | Reply to Bluey and ask one last question. |\n| 4 | Bluey | `codex/story-03-scruffy` | `codex/story-04-bluey` | Answer Scruffy and end the conversation. |\n\nCreate `STORY.md` on turn 1 with one line and no heading. On each turn, add exactly one line in plain text, like `Scruffy: Bluey, what do you think about the weather?`. Preserve all previous lines. Make one commit that changes only `STORY.md`, push the turn branch, and verify the remote result. Keep `main` as the shared entry point.\n\nThe Windows controller records the saved chat ID. Before committing, read its private state through Remote Desktop Commander on Windows:\n\n```powershell\n(Get-Content -Raw (Join-Path $env:LOCALAPPDATA 'ChatSuccession/MyCatAndDog/controller.json') | ConvertFrom-Json).state\n```\n\nWait briefly if worker 1's state is still being initialized. Use `current_chat_id` only when the state shows the expected number of saved chats for your turn. Put that ID in the commit message as a Git trailer. Set the actual ID in place of the example value.\n\n```bash\ngit add STORY.md\ngit commit -m \"Write story turn 1\" -m \"Chat-ID: YOUR-SAVED-CHAT-UUID\"\n```\n\nUse your actual turn number. If you cannot verify which saved worker you are or a prior branch is missing, explain the blocker and end with `CHAT_STATUS: ERROR`. The Windows controller owns all successor launches.\n\nIn your chat reply, identify the branch you published and end with `CHAT_STATUS: TASK_COMPLETE` on its own line. Turns 1–3 leave the next speaker a question to answer. The story is complete when all four turns are published.\n",
+          "STORY.md": "Scruffy: Bluey, what do you think about the weather? Have you got any thoughts?\nBluey: I think rain is on the way, Scruffy. Shall we watch it from the porch?\n"
+        }
+      },
+      "refs/heads/codex/story-03-scruffy": {
+        "commit": "9916752677e8dc3fd1706f1abc56bb1fd7c3733e",
+        "files": {
+          "README.md": "# My Cat and Dog\n\nThis is a story about a cat and dog. Scruffy is the cat. Bluey is the dog.\n\n## Tell the story in four turns\n\nEach worker writes one short reply, then publishes it before handing off. Fetch the repo and find the first unpublished turn below. Create its working branch from the published branch named in the **Start from** column.\n\n| Turn | Speaker | Start from | Working branch | What to write |\n| --- | --- | --- | --- | --- |\n| 1 | Scruffy | `main` | `codex/story-01-scruffy` | “Bluey, what do you think about the weather? Have you got any thoughts?” |\n| 2 | Bluey | `codex/story-01-scruffy` | `codex/story-02-bluey` | Answer Scruffy and ask a short follow-up question. |\n| 3 | Scruffy | `codex/story-02-bluey` | `codex/story-03-scruffy` | Reply to Bluey and ask one last question. |\n| 4 | Bluey | `codex/story-03-scruffy` | `codex/story-04-bluey` | Answer Scruffy and end the conversation. |\n\nCreate `STORY.md` on turn 1 with one line and no heading. On each turn, add exactly one line in plain text, like `Scruffy: Bluey, what do you think about the weather?`. Preserve all previous lines. Make one commit that changes only `STORY.md`, push the turn branch, and verify the remote result. Keep `main` as the shared entry point.\n\nThe Windows controller records the saved chat ID. Before committing, read its private state through Remote Desktop Commander on Windows:\n\n```powershell\n(Get-Content -Raw (Join-Path $env:LOCALAPPDATA 'ChatSuccession/MyCatAndDog/controller.json') | ConvertFrom-Json).state\n```\n\nWait briefly if worker 1's state is still being initialized. Use `current_chat_id` only when the state shows the expected number of saved chats for your turn. Put that ID in the commit message as a Git trailer. Set the actual ID in place of the example value.\n\n```bash\ngit add STORY.md\ngit commit -m \"Write story turn 1\" -m \"Chat-ID: YOUR-SAVED-CHAT-UUID\"\n```\n\nUse your actual turn number. If you cannot verify which saved worker you are or a prior branch is missing, explain the blocker and end with `CHAT_STATUS: ERROR`. The Windows controller owns all successor launches.\n\nIn your chat reply, identify the branch you published and end with `CHAT_STATUS: TASK_COMPLETE` on its own line. Turns 1–3 leave the next speaker a question to answer. The story is complete when all four turns are published.\n",
+          "STORY.md": "Scruffy: Bluey, what do you think about the weather? Have you got any thoughts?\nBluey: I think rain is on the way, Scruffy. Shall we watch it from the porch?\nScruffy: The porch sounds purrfect, Bluey. Shall we bring a blanket in case it gets chilly?\n"
+        }
+      },
+      "refs/heads/codex/story-04-bluey": {
+        "commit": "9b0180354fc1a6e127c9982dd44fb4b17f5716a9",
+        "files": {
+          "README.md": "# My Cat and Dog\n\nThis is a story about a cat and dog. Scruffy is the cat. Bluey is the dog.\n\n## Tell the story in four turns\n\nEach worker writes one short reply, then publishes it before handing off. Fetch the repo and find the first unpublished turn below. Create its working branch from the published branch named in the **Start from** column.\n\n| Turn | Speaker | Start from | Working branch | What to write |\n| --- | --- | --- | --- | --- |\n| 1 | Scruffy | `main` | `codex/story-01-scruffy` | “Bluey, what do you think about the weather? Have you got any thoughts?” |\n| 2 | Bluey | `codex/story-01-scruffy` | `codex/story-02-bluey` | Answer Scruffy and ask a short follow-up question. |\n| 3 | Scruffy | `codex/story-02-bluey` | `codex/story-03-scruffy` | Reply to Bluey and ask one last question. |\n| 4 | Bluey | `codex/story-03-scruffy` | `codex/story-04-bluey` | Answer Scruffy and end the conversation. |\n\nCreate `STORY.md` on turn 1 with one line and no heading. On each turn, add exactly one line in plain text, like `Scruffy: Bluey, what do you think about the weather?`. Preserve all previous lines. Make one commit that changes only `STORY.md`, push the turn branch, and verify the remote result. Keep `main` as the shared entry point.\n\nThe Windows controller records the saved chat ID. Before committing, read its private state through Remote Desktop Commander on Windows:\n\n```powershell\n(Get-Content -Raw (Join-Path $env:LOCALAPPDATA 'ChatSuccession/MyCatAndDog/controller.json') | ConvertFrom-Json).state\n```\n\nWait briefly if worker 1's state is still being initialized. Use `current_chat_id` only when the state shows the expected number of saved chats for your turn. Put that ID in the commit message as a Git trailer. Set the actual ID in place of the example value.\n\n```bash\ngit add STORY.md\ngit commit -m \"Write story turn 1\" -m \"Chat-ID: YOUR-SAVED-CHAT-UUID\"\n```\n\nUse your actual turn number. If you cannot verify which saved worker you are or a prior branch is missing, explain the blocker and end with `CHAT_STATUS: ERROR`. The Windows controller owns all successor launches.\n\nIn your chat reply, identify the branch you published and end with `CHAT_STATUS: TASK_COMPLETE` on its own line. Turns 1–3 leave the next speaker a question to answer. The story is complete when all four turns are published.\n",
+          "STORY.md": "Scruffy: Bluey, what do you think about the weather? Have you got any thoughts?\nBluey: I think rain is on the way, Scruffy. Shall we watch it from the porch?\nScruffy: The porch sounds purrfect, Bluey. Shall we bring a blanket in case it gets chilly?\nBluey: Absolutely, Scruffy! I'll fetch the blanket, and we can watch the rain together, warm and cosy on the porch.\n"
+        }
+      },
+      "refs/heads/main": {
+        "commit": "94eee8b6162520fc0f75f355bdac6e778310c50b",
+        "files": {
+          "README.md": "# My Cat and Dog\n\nThis is a story about a cat and dog. Scruffy is the cat. Bluey is the dog.\n\n## Tell the story in four turns\n\nEach worker writes one short reply, then publishes it before handing off. Fetch the repo and find the first unpublished turn below. Create its working branch from the published branch named in the **Start from** column.\n\n| Turn | Speaker | Start from | Working branch | What to write |\n| --- | --- | --- | --- | --- |\n| 1 | Scruffy | `main` | `codex/story-01-scruffy` | “Bluey, what do you think about the weather? Have you got any thoughts?” |\n| 2 | Bluey | `codex/story-01-scruffy` | `codex/story-02-bluey` | Answer Scruffy and ask a short follow-up question. |\n| 3 | Scruffy | `codex/story-02-bluey` | `codex/story-03-scruffy` | Reply to Bluey and ask one last question. |\n| 4 | Bluey | `codex/story-03-scruffy` | `codex/story-04-bluey` | Answer Scruffy and end the conversation. |\n\nCreate `STORY.md` on turn 1 with one line and no heading. On each turn, add exactly one line in plain text, like `Scruffy: Bluey, what do you think about the weather?`. Preserve all previous lines. Make one commit that changes only `STORY.md`, push the turn branch, and verify the remote result. Keep `main` as the shared entry point.\n\nThe Windows controller records the saved chat ID. Before committing, read its private state through Remote Desktop Commander on Windows:\n\n```powershell\n(Get-Content -Raw (Join-Path $env:LOCALAPPDATA 'ChatSuccession/MyCatAndDog/controller.json') | ConvertFrom-Json).state\n```\n\nWait briefly if worker 1's state is still being initialized. Use `current_chat_id` only when the state shows the expected number of saved chats for your turn. Put that ID in the commit message as a Git trailer. Set the actual ID in place of the example value.\n\n```bash\ngit add STORY.md\ngit commit -m \"Write story turn 1\" -m \"Chat-ID: YOUR-SAVED-CHAT-UUID\"\n```\n\nUse your actual turn number. If you cannot verify which saved worker you are or a prior branch is missing, explain the blocker and end with `CHAT_STATUS: ERROR`. The Windows controller owns all successor launches.\n\nIn your chat reply, identify the branch you published and end with `CHAT_STATUS: TASK_COMPLETE` on its own line. Turns 1–3 leave the next speaker a question to answer. The story is complete when all four turns are published.\n"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,274 @@
+[
+  {
+    "repo": "chat-succession-bird-pig",
+    "ref": "refs/heads/codex/parallel-story-20261119",
+    "tip": "5c3da4ee0d3edea355f229d8f73e7d15c4f3b95a",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "3a1bc9fa7d591d0030d5389d"
+      ],
+      "Chat-ID": [
+        "6afed67a-8a18-83ec-a693-94ebfd6ec465"
+      ],
+      "Chat-Succession-Next": [
+        "FINISHED"
+      ]
+    },
+    "two_receipt_chain": true,
+    "classification": "TWO_WORKERS_PUBLISHED",
+    "parent": "abe2a5127c87800e9ad1ca2e3fd7e93e4efb3570",
+    "distinct_chat_ids": true,
+    "tip_one_file_one_added_line": true
+  },
+  {
+    "repo": "chat-succession-bird-pig",
+    "ref": "refs/heads/codex/takeover-audit-bird-pig-20261119",
+    "tip": "e940ee5381f32bdb8fa5a85a12a174aeb5a8c2a4",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "779158bad86635df9761a799"
+      ],
+      "Chat-ID": [
+        "6afefa1d-b6b8-83ec-bb84-f0992c41e758"
+      ],
+      "Chat-Succession-Next": [
+        "Review the two published lines"
+      ]
+    },
+    "two_receipt_chain": true,
+    "classification": "TWO_WORKERS_PUBLISHED",
+    "parent": "8c2bf709570ab3ce6333d5ae7afda9cf45b8b387",
+    "distinct_chat_ids": true,
+    "tip_one_file_one_added_line": true
+  },
+  {
+    "repo": "chat-succession-bird-pig",
+    "ref": "refs/heads/main",
+    "tip": "b7d083d88874f2c410d1901819fbb7c17ba4fdb9",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "9c9a07c8f8eb7c2ac7b34adb"
+      ],
+      "Chat-ID": [
+        "6afed0a8-1420-83ec-b7dc-9215bda97834"
+      ],
+      "Chat-Succession-Next": [
+        "FINISHED"
+      ]
+    },
+    "two_receipt_chain": true,
+    "classification": "TWO_WORKERS_PUBLISHED",
+    "parent": "eeba425d61918e17f7c8ab7ff9e9561e1d6943bb",
+    "distinct_chat_ids": true,
+    "tip_one_file_one_added_line": true
+  },
+  {
+    "repo": "chat-succession-cat-dog-pair",
+    "ref": "refs/heads/codex/parallel-phone-cat-dog-20261119",
+    "tip": "2523cfe54a1c339b0906617c33494cc09a6fd98e",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "5a766a5d366b70c0f482e7aa"
+      ],
+      "Chat-ID": [
+        "6afee63c-dc38-83ec-8dc8-228b0b25dd93"
+      ],
+      "Chat-Succession-Next": [
+        "FINISHED"
+      ]
+    },
+    "two_receipt_chain": true,
+    "classification": "TWO_WORKERS_PUBLISHED",
+    "parent": "850d96c5f27e2f19912322982ea0b0b45f5d0ccb",
+    "distinct_chat_ids": true,
+    "tip_one_file_one_added_line": true
+  },
+  {
+    "repo": "chat-succession-cat-dog-pair",
+    "ref": "refs/heads/codex/takeover-audit-cat-dog-20261119",
+    "tip": "3105b8d6af3bc4c37ecbd79c127e14d0312b375e",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "1a6459bfd9c95893ee137b05"
+      ],
+      "Chat-ID": [
+        "6afef745-7154-83ec-8476-584ef0811dcc"
+      ],
+      "Chat-Succession-Next": [
+        "FINISHED"
+      ]
+    },
+    "two_receipt_chain": true,
+    "classification": "TWO_WORKERS_PUBLISHED",
+    "parent": "8da07c510bd9b713ab5767931e703f72de71a6f1",
+    "distinct_chat_ids": true,
+    "tip_one_file_one_added_line": true
+  },
+  {
+    "repo": "chat-succession-cat-dog-pair",
+    "ref": "refs/heads/main",
+    "tip": "61c609a3391b1adbb0bb462beab71e4cff39a21c",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "665ea3264e8d8c70d63adead"
+      ],
+      "Chat-ID": [
+        "6afed586-9e58-83ec-8134-17a7df9f1234"
+      ],
+      "Chat-Succession-Next": [
+        "FINISHED"
+      ]
+    },
+    "two_receipt_chain": true,
+    "classification": "TWO_WORKERS_PUBLISHED",
+    "parent": "6e89084b7b96f7c980aad07b568bd206300c5836",
+    "distinct_chat_ids": true,
+    "tip_one_file_one_added_line": true
+  },
+  {
+    "repo": "chat-succession-trial-approval",
+    "ref": "refs/heads/codex/g2-approval-closeout-20261119",
+    "tip": "2114f567cfa6fbd5fa257ff666aaf49f794214cc",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "8afddd010cff7063675be63b"
+      ],
+      "Chat-ID": [
+        "6afee16b-de44-83ec-b3c9-f464fcf91ec6"
+      ],
+      "Chat-Succession-Next": [
+        "FINISHED"
+      ]
+    },
+    "two_receipt_chain": true,
+    "classification": "TWO_WORKERS_PUBLISHED",
+    "parent": "750c3981528ee1888c41279aebabf0fee408e9cb",
+    "distinct_chat_ids": true,
+    "tip_one_file_one_added_line": true
+  },
+  {
+    "repo": "chat-succession-trial-approval",
+    "ref": "refs/heads/codex/g2-iphone-approval-20261119",
+    "tip": "1590c45af104e34cdcd5c2820e9ce30c9da35e80",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "8f8bb228a19625f450959aaa"
+      ],
+      "Chat-ID": [
+        "6afee7d1-a62c-83ec-9624-023f3c6ca5a7"
+      ],
+      "Chat-Succession-Next": [
+        "FINISHED"
+      ]
+    },
+    "two_receipt_chain": true,
+    "classification": "TWO_WORKERS_PUBLISHED",
+    "parent": "cba98805faec9cbc57bcba8737dd9347b99e0d3d",
+    "distinct_chat_ids": true,
+    "tip_one_file_one_added_line": true
+  },
+  {
+    "repo": "chat-succession-trial-approval",
+    "ref": "refs/heads/codex/g2-iphone-approval-shoco-20261120",
+    "tip": "b91b00fe75be2ca011eac1ad1cc0d668ffd8d8bf",
+    "classification": "STAGED_NOT_RUN",
+    "no_NOTES_file": true
+  },
+  {
+    "repo": "chat-succession-trial-approval",
+    "ref": "refs/heads/main",
+    "tip": "10e5aac1a2a11842aa72ccd4a1dd28cd3151a976",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "493f1052a969ff495c41afae"
+      ],
+      "Chat-ID": [
+        "6afe9cba-0704-83ec-9468-fb09cb209902"
+      ],
+      "Chat-Succession-Next": [
+        "Append verification line to NOTES.md"
+      ]
+    },
+    "two_receipt_chain": false,
+    "classification": "ONE_RECEIPT_ONLY"
+  },
+  {
+    "repo": "chat-succession-trial-rotation",
+    "ref": "refs/heads/codex/g2-rotation-review-20261119",
+    "tip": "ddff24374d82fe243cc9b8dcb9579acaed7ec497",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "989f529771afe7baa4c48594"
+      ],
+      "Chat-ID": [
+        "6afee03b-bbbc-83ec-af72-726463ad80da"
+      ],
+      "Chat-Succession-Next": [
+        "FINISHED"
+      ]
+    },
+    "two_receipt_chain": true,
+    "classification": "TWO_WORKERS_PUBLISHED",
+    "parent": "58eecd7c3d7644f1a1370ac4f8b7b47a9a12d6bc",
+    "distinct_chat_ids": true,
+    "tip_one_file_one_added_line": true
+  },
+  {
+    "repo": "chat-succession-trial-rotation",
+    "ref": "refs/heads/work/checklist",
+    "tip": "793d5361e3c37b8da88a192d31da40aedf418faa",
+    "trailers": {
+      "Chat-Succession-Run": [
+        "2c4bd1cb353aa66f94590f28"
+      ],
+      "Chat-ID": [
+        "6afe9e15-c5d0-83ec-908f-157463a3a5f5"
+      ],
+      "Chat-Succession-Next": [
+        "Review the checklist and record the result"
+      ]
+    },
+    "two_receipt_chain": false,
+    "classification": "ONE_RECEIPT_ONLY"
+  },
+  {
+    "repo": "my-cat-and-dog",
+    "ref": "refs/heads/codex/story-01-scruffy",
+    "tip": "1bff919d7eddd7855032b8dcf0423639f5c15357",
+    "turn": 1,
+    "chat_id": [
+      "6afe6c64-a40c-83ec-b7ce-f91df9f417aa"
+    ],
+    "one_line_only_and_expected_parent": true
+  },
+  {
+    "repo": "my-cat-and-dog",
+    "ref": "refs/heads/codex/story-02-bluey",
+    "tip": "4061a7f4507a491d568b31afc3c0d3b20058dba5",
+    "turn": 2,
+    "chat_id": [
+      "6afe6cf7-2b74-83ec-9e38-1af5a5a95fee"
+    ],
+    "one_line_only_and_expected_parent": true
+  },
+  {
+    "repo": "my-cat-and-dog",
+    "ref": "refs/heads/codex/story-03-scruffy",
+    "tip": "9916752677e8dc3fd1706f1abc56bb1fd7c3733e",
+    "turn": 3,
+    "chat_id": [
+      "6afe6da4-a4e8-83ec-855a-5f5548d41928"
+    ],
+    "one_line_only_and_expected_parent": true
+  },
+  {
+    "repo": "my-cat-and-dog",
+    "ref": "refs/heads/codex/story-04-bluey",
+    "tip": "9b0180354fc1a6e127c9982dd44fb4b17f5716a9",
+    "turn": 4,
+    "chat_id": [
+      "6afe6e3e-34b4-83ec-9aa1-0d87ad7a2f2b"
+    ],
+    "one_line_only_and_expected_parent": true
+  }
+]

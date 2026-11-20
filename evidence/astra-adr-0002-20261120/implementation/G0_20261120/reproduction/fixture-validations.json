@@ -1,0 +1,132 @@
+[
+  {
+    "fixture": "astra-l01-20261118-a",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 2,
+      "total_steps": 2
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l02-20261118-a",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 2,
+      "total_steps": 2
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l03-20261118-a",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 1,
+      "total_steps": 1
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l04-20261118-a",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 1,
+      "total_steps": 1
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l05-20261118-a",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 2,
+      "total_steps": 3
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l06-20261118-a",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 2,
+      "total_steps": 2
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l09-20261118-a",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 2,
+      "total_steps": 2
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l13-20261118-a",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 5,
+      "total_steps": 5
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l13-20261118-b",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 5,
+      "total_steps": 5
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l13-20261118-c",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 5,
+      "total_steps": 5
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l13-20261118-d",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 1,
+      "total_steps": 5
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l13-20261119-e",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 3,
+      "total_steps": 5
+    },
+    "stderr": ""
+  },
+  {
+    "fixture": "astra-l13-20261119-f",
+    "returncode": 0,
+    "result": {
+      "fixture_valid": true,
+      "completed_steps": 5,
+      "total_steps": 5
+    },
+    "stderr": ""
+  }
+]

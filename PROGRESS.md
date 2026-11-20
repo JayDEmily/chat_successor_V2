@@ -1,5 +1,9 @@
 # Progress
 
+## ADR 0002 programme — 20 November 2026
+
+Owner accepted the bounded ten-leaf implementation with standing authority (no repeat routine approvals). [Operative ADR](docs/adr/0002-account-bound-resumable-runs.md) · [Management and gates](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) · [G0 baseline](evidence/astra-adr-0002-20261120/implementation/G0_20261120/BASELINE.md). A2-G0 PASS via fresh Ubuntu 295/295 manifest, 63+119 suites, six Git histories and 13 fixtures. The paused Rowing and SolidWorks runs remain untouched. Next eligible leaf: A2-L02.
+
 ## Astra ADR 0002 review intake — 20 November 2026
 
 The complete 13:09 AEDT Astra response has been preserved verbatim on this branch: [intake and checksums](evidence/astra-adr-0002-20261120/INTAKE.md), [proposed ADR](evidence/astra-adr-0002-20261120/package/docs/adr/0002-account-bound-resumable-runs.md), [implementation plan](evidence/astra-adr-0002-20261120/package/docs/IMPLEMENTATION_PLAN.md) and [acceptance gates](evidence/astra-adr-0002-20261120/package/acceptance/GATES.md).
