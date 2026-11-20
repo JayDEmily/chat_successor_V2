@@ -7,7 +7,8 @@
 - **Focused offline evidence:** eighteen Windows Chrome-readback assertions and eleven Python worker-view tests passed. The new reader-change and regeneration assertions reproduced the missing holds before the repair.
 - **Review follow-up:** the initial candidate `1f13363` needed stronger route and transcript binding. The repair requires the app-rendered conversation ID and verified assistant prose, holds unknown trailing rows, and checks saved source and reader identity at re-entry, successor preparation, and receipt readback. Twenty-five Windows assertions and twelve headless Chrome checks passed on the repair.
 - **Successor follow-up:** source and destination stay in separate ordinary Chrome windows so a paused preparation can be resumed with source proof. The native Send path verifies the source again after typed readback. The twenty-five native readback assertions still pass.
-- **Limit:** candidate only. The scoped Shoko Yumi Chrome installation confirmation, positive Windows fixture observations, and independent LEAN-G1 review are pending.
+- **Offline acceptance:** the independent reviewer confirmed the final successor fixes at `2348046`. The full Windows run passed 118 integration and 119 reference cases. [Independent review](evidence/astra-adr-0002-20261120/implementation/G3_20261120/LEAN_L06_L08_REVIEW.md)
+- **Limit:** the privately scoped Chrome package is staged. The fixture still returns `UIA_VIRTUALIZED_UNQUALIFIED` through the standalone Windows reader. Chrome installation confirmation and positive live qualification remain pending.
 - **Next:** qualify the live reader and receipts before installing the desktop trial backend.
 
 ## Lean ADR 0002 L07 — Exact Chrome posted-message receipt (21 November 2026)
