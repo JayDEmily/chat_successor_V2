@@ -1,0 +1,40 @@
+{
+  "R01_R02_wrong_backend": {
+    "declared_backend_is_all_zero": true,
+    "preflight_event": "preflight_passed",
+    "mock_adapter_modes": [
+      "Prepare",
+      "Prepare",
+      "Send"
+    ],
+    "bootstrap_intents": 1,
+    "hold_after_unverified_mock_submission": "Initial Send is held until exact posted-message evidence identifies the saved chat",
+    "invalid_32_character_job_id_control": "Invalid job_id"
+  },
+  "R04_S02_publication": {
+    "generic_wrong_worker_action": "HOLD",
+    "generic_wrong_worker_consumed": [],
+    "generic_repair_action": "LAUNCH_SUCCESSOR",
+    "generic_repair_exact_sha_in_verified_and_adopted_logs": true,
+    "generic_repair_logged_sha": "123783154bfb90ed8429340d45192b9c315c5292",
+    "status_publication_commit_after_verified_adoption": null,
+    "legacy_story_wrong_worker_action": "HOLD",
+    "legacy_story_wrong_worker_response_consumed": true,
+    "legacy_story_wrong_worker_labelled_identity_match": true,
+    "legacy_story_wrong_worker_labelled_adopted": true
+  },
+  "S06_provisional_successor": {
+    "action": "WAIT",
+    "count": 2,
+    "pending_preserved": false,
+    "mock_adapter_modes": [
+      "Reconcile"
+    ]
+  },
+  "O05_missing_owner_context": {
+    "input_exists_at_dispatch": false,
+    "mock_send_invocations": 1,
+    "outcome": "WAIT",
+    "count": 1
+  }
+}

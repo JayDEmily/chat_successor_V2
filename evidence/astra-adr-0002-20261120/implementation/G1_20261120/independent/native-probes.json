@@ -1,0 +1,11 @@
+{
+    "S09_original_bootstrap_receipt_accepted":  true,
+    "S09_substituted_valid_bootstrap_action_id_accepted":  true,
+    "R02_V05_synthetic_wrong_profile_window_selected":  true,
+    "S06_provisional_suffix_matches_project":  true,
+    "S06_provisional_suffix_treated_as_chat_id":  "local-chatgpt",
+    "V04_already_consumed_same_reply_eligible_for_reload":  true,
+    "V04_changed_user_eligible_for_reload":  false,
+    "S05_older_identical_prompt_matches":  false,
+    "S05_prompt_after_exact_anchor_matches":  true
+}

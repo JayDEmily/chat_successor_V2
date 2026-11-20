@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G1 independent review — 20 November 2026
+
+**A2-G1 OFFLINE HOLD** on candidate `9a2fc382049a548adfefb5ed26a202c715988ca2`. The separate review reproduced 106 integration and 119 reference passes on each of Windows CPython 3.13.15 and Ubuntu CPython 3.14.4, plus all three native PowerShell helper tests. The [independent review, 24-case matrix and raw evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent/REPORT.md) record 15 offline passes and 9 holds. The negative probes reproduce unverified routing, a mismatched bootstrap action, provisional successor adoption, stale-view and publication gaps, and dispatch with absent private owner context.
+
+**Next eligible work** is targeted correction in L02–L05 and separate A2-G1 review of the new pinned candidate. A2-G2–G6 are NOT_RUN. The paused Shoco workloads retain their recorded holds.
+
 ## ADR 0002 G1 fresh receiver precheck — 20 November 2026
 
 Clean clone of 9a2fc382 verified [24-case G1 receiver matrix](evidence/astra-adr-0002-20261120/implementation/G1_20261120/RECEIVER_AUDIT.md), 106 integration + 119 reference, and native PowerShell action/view helper tests PASS. [A strictly independent separate-review commission](docs/astra-succession/adr-0002/G1_STRICT_REVIEW_COMMISSION.md) is ready; A2-G1 remains PENDING separate reviewer. A2-G2–G6 NOT_RUN; no installed changes or active project restarts.
