@@ -386,7 +386,7 @@ function Get-ConversationTurns($all) {
  }
 }
 
-function Find-PostedMessage($window,$expected,[string]$afterResponse='',[string]$url='') {
+function Find-PostedMessage($window,$expected,[string]$afterResponse='',[string]$url='',[string]$pendingAnchor='') {
  # The complete latest user turn must match. For continuation, also bind
  # the immediately preceding assistant turn to the triggering response.
  try{
@@ -396,12 +396,14 @@ function Find-PostedMessage($window,$expected,[string]$afterResponse='',[string]
    if(-not $chat -or -not (Check-Project $url)){return $false}
    $snapshot=Read-ChromeTurnSnapshot $all $chat
    if($null -ne $snapshot){
+    if($pendingAnchor -and $pendingAnchor -cnotmatch '^chrome-turn-'){return $false}
     if($snapshot.phase -cne 'observed' -or $snapshot.user -cne $expected){return $false}
     if($afterResponse -and ($null -eq $snapshot.previous -or
        (Get-ChromeResponseId $snapshot.previous) -cne $afterResponse)){return $false}
     return ((Get-Address $window) -ceq $url -and (Test-WindowProfile $window))
    }
   }
+  if($pendingAnchor -cmatch '^chrome-turn-'){return $false}
   $afterOrdinal=0
   if($afterResponse){
    if($afterResponse -cnotmatch '^uia-turn-([1-9][0-9]*)-[a-f0-9]{20}$'){return $false}
@@ -493,13 +495,18 @@ function Test-AssistantProse($element) {
 }
 
 function Compare-OwnerTurn($turn,[string]$anchor) {
- if($anchor -and (($anchor -cmatch '^chrome-turn-') -ne ($turn['method'] -ceq 'CHROME_DOM'))){
+ $chrome=$anchor -cmatch '^chrome-turn-'
+ if($anchor -and ($chrome -ne ($turn['method'] -ceq 'CHROME_DOM'))){
+  return 'unknown'
+ }
+ if($chrome){
+  if($turn.ready -and $turn['response_id'] -ceq $anchor){return 'idle'}
+  if($turn['previous_response_id'] -ceq $anchor){return 'advanced'}
   return 'unknown'
  }
  if($turn.stop_control -or $turn.user_after_assistant){return 'advanced'}
  if(-not $turn.ready -or -not $turn.user_turn_seen){return 'unknown'}
  if($turn.response_id -ceq $anchor){return 'idle'}
- if($anchor -and $turn['previous_response_id'] -ceq $anchor){return 'advanced'}
  if($anchor -cmatch '^uia-turn-(\d+)-([a-f0-9]+)$'){
   $count=[int]$Matches[1]
   $digest=$Matches[2]
@@ -896,6 +903,16 @@ function Test-SourceComposerForNavigation($source) {
          @(Find-EnabledSendButtons $source.window).Count -eq 0)
 }
 
+function Get-VerifiedSuccessorSource([string]$responseId) {
+ $source=Get-TargetWindow $ChatId 0
+ $turn=Read-CurrentTurn $source
+ if(-not $turn.ready -or $turn.response_id -cne $responseId -or
+    (Get-Address $source.window) -cne $source.url -or -not (Test-WindowProfile $source.window)){
+  throw 'The saved worker no longer shows the verified completion for this successor'
+ }
+ return $source
+}
+
 function Save-NavigationTarget($source) {
  $record=@{kind='LAUNCH_SUCCESSOR';source=$ChatId;handle=[long]$source.window.Current.NativeWindowHandle
            action_id=$PrepareAction} | ConvertTo-Json -Compress
@@ -938,6 +955,9 @@ if($Mode -eq 'ObserveReentry') {
  if($existing['view_status']){$existing | ConvertTo-Json -Compress;exit 0}
  $turn=Read-CurrentTurn $existing
  if($turn.stop_control -or $turn.user_after_assistant){
+  if((Compare-OwnerTurn $turn $OwnerAnchor) -cne 'advanced'){
+   throw 'The active reader could not verify advancement from the saved reply anchor'
+  }
   @{disposition='advanced';project=$ProjectId;chat_id=$ChatId} | ConvertTo-Json -Compress
   exit 0
  }
@@ -1028,6 +1048,7 @@ if($Mode -eq 'Prepare') {
     if($uniquePages.Count -ne 1){throw 'No unique independently observed target Project URL'}
     $projectPage=$uniquePages[0]
    }
+  $source=if($ChatId -and $SourceResponse){Get-VerifiedSuccessorSource $SourceResponse}
   $new=$null
   if($ChatId -and $WindowHandle -gt 0){
    try {
@@ -1037,11 +1058,10 @@ if($Mode -eq 'Prepare') {
     }
    }catch{}
   }
-  if($ChatId -and $SourceResponse -and $PrepareAction -and $PrepareTargetPath -and $null -eq $new){
-   $source=$null
+  if($null -ne $source -and $SourceResponse -cmatch '^uia-turn-' -and
+     $PrepareAction -and $PrepareTargetPath -and $null -eq $new){
    $navigation=$null
    try {
-    $source=Get-TargetWindow $ChatId 0
     $navigation=Get-ProjectNavigation $source
    }catch{}
    if($null -ne $navigation -and (Test-SourceComposerForNavigation $source)){
@@ -1168,6 +1188,10 @@ if($Mode -eq 'Send') {
   throw 'Continuation needs the saved chat and triggering response'
  }
  $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
+ $chromeSuccessor=$Kind -eq 'LAUNCH_SUCCESSOR' -and $PendingResponseId -cmatch '^chrome-turn-'
+ if($chromeSuccessor){
+  try{$null=Get-VerifiedSuccessorSource $PendingResponseId}catch{Hold-ForChangedDestination}
+ }
  if($Kind -eq 'CONTINUE_CURRENT'){
   $turn=Read-CurrentTurn $target
   $comparison=Compare-OwnerTurn $turn $SourceResponse
@@ -1202,6 +1226,7 @@ if($Mode -eq 'Send') {
   if((Get-Address $target.window) -cne $target.url -or -not (Test-WindowProfile $target.window)){
    Hold-ForChangedDestination
   }
+  if($chromeSuccessor){$null=Get-VerifiedSuccessorSource $PendingResponseId}
   $pattern.SetValue($Message)
  }
  $typed=''
@@ -1254,7 +1279,7 @@ if($Mode -eq 'Send') {
   $url=Get-Address $target.window
   $chat=Chat-FromUrl $url
   if($chat -and (Check-Project $url) -and ($Kind -ne 'CONTINUE_CURRENT' -or $chat -ceq $ChatId) -and
-     (Find-PostedMessage $target.window $Message $SourceResponse $url)){
+     (Find-PostedMessage $target.window $Message $SourceResponse $url $PendingResponseId)){
    @{project=$ProjectId;chat_id=$chat;submitted_text=$Message;posted_message_observed=$true;window_handle=$WindowHandle} | ConvertTo-Json -Compress
    exit 0
   }
@@ -1270,7 +1295,7 @@ if($Mode -eq 'Reconcile') {
  $url=Get-Address $target.window
  $chat=Chat-FromUrl $url
  $posted= $chat -and ($Kind -ne 'CONTINUE_CURRENT' -or $chat -ceq $ChatId) -and
-          (Find-PostedMessage $target.window $Message $SourceResponse $url)
+          (Find-PostedMessage $target.window $Message $SourceResponse $url $PendingResponseId)
  @{project=$ProjectId;chat_id=$chat;submitted_text=$(if($posted){$Message}else{$null});posted_message_observed=[bool]$posted} | ConvertTo-Json -Compress
  exit 0
 }

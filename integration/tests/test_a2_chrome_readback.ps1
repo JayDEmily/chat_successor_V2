@@ -9,7 +9,7 @@ $script = Join-Path $PSScriptRoot '..\uia_adapter.ps1'
 $tree = [Management.Automation.Language.Parser]::ParseFile($script,[ref]$tokens,[ref]$parserErrors)
 if($parserErrors.Count){throw 'Windows adapter did not parse'}
 foreach($name in @('Check-Project','Chat-FromUrl','Read-ChromeTurnSnapshot','Get-ChromeResponseId','Read-CurrentTurn',
-                   'Find-PostedMessage','Compare-OwnerTurn')){
+                   'Find-PostedMessage','Compare-OwnerTurn','Get-VerifiedSuccessorSource')){
  $nodes=@($tree.FindAll({
   param($node)
   $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name
@@ -103,3 +103,39 @@ $moving=@{ready=$false;user_after_assistant=$true;stop_control=$true;method='CHR
 Check ((Compare-OwnerTurn $moving $legacy) -ceq 'unknown') 'a legacy pending anchor holds even while Chrome is streaming'
 $moving.method='UIA_ACCESSIBILITY_TEXT'
 Check ((Compare-OwnerTurn $moving $first.response_id) -ceq 'unknown') 'a Chrome pending anchor holds if the native reader takes over'
+$moving.method='CHROME_DOM'
+Check ((Compare-OwnerTurn $moving $first.response_id) -ceq 'unknown') 'partial rendering does not establish Chrome advancement'
+$moving.previous_response_id=$first.response_id
+Check ((Compare-OwnerTurn $moving $first.response_id) -ceq 'advanced') 'Chrome advancement is bound to the exact prior reply'
+Check (-not (Find-PostedMessage $target.window $snapshot.user '' $target.url $legacy)) 'a native pending successor cannot adopt a Chrome receipt'
+
+function Get-ObservableSavedTarget {return $target}
+function Get-TargetWindow($expectedChat,$handle){return $target}
+function Open-ChromeWindow($url){throw 'Unexpected browser open in source validation test'}
+function Read-CurrentTurn($view){return $moving}
+function Invoke-AdapterMode([string]$name){
+ $conditionText='$Mode -eq ' + "'" + $name + "'"
+ $block=$tree.Find({
+  param($node)
+  $node -is [Management.Automation.Language.IfStatementAst] -and
+    $node.Clauses[0].Item1.Extent.Text -ceq $conditionText
+ },$false)
+ if($null -eq $block){throw "Could not find adapter mode $name"}
+ & ([scriptblock]::Create($block.Extent.Text.Replace('exit 0','return')))
+}
+
+$ChatId=$chat
+$OwnerAnchor=$legacy
+$Mode='ObserveReentry'
+Expect-Hold {Invoke-AdapterMode $Mode} 'could not verify advancement from the saved reply anchor'
+$moving.ready=$true
+$moving.response_id=$first.response_id
+Check ((Get-VerifiedSuccessorSource $first.response_id).chat -ceq $chat) 'a successor has an affirmative saved source proof'
+$Mode='Prepare'
+$Kind='LAUNCH_SUCCESSOR'
+$ProjectUrl="https://chatgpt.com/g/$ProjectId/project"
+$SourceResponse=$legacy
+$Preflight=$false
+foreach($WindowHandle in @(0,123)){
+ Expect-Hold {Invoke-AdapterMode $Mode} 'no longer shows the verified completion'
+}

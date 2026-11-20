@@ -7,9 +7,10 @@
     const finalStatus = /^(?:CHAT_STATUS: )?(?:NEED_MORE_TIME|TASK_COMPLETE|ERROR)$/;
     const projects = new Set(chrome.runtime.getManifest().content_scripts[0].matches
         .map(pattern => pattern.match(/^https:\/\/chatgpt\.com\/g\/(g-p-[0-9a-f]+)\*$/)?.[1]));
+    const userRoutes = new WeakMap();
     let field;
 
-    function readTurn(turn) {
+    function readTurn(turn, chat) {
         const userHeadings = turn.querySelectorAll('h4[data-conversation-role="user"]');
         const assistantHeadings = turn.querySelectorAll('h4[data-conversation-role="assistant"]');
         const keys = turn.querySelectorAll("[data-turn-key]");
@@ -20,10 +21,17 @@
             return {phase: "unqualified"};
         }
         const key = keys[0]?.getAttribute("data-turn-key");
-        const user = users[0]?.innerText;
+        const bubble = users[0];
+        const user = bubble?.innerText;
         if (!messageId.test(key ?? "") || !user || userHeadings.length !== 1) {
             return {phase: "loading"};
         }
+        const owner = bubble.closest("[data-chatgpt-conversation-selection-target]");
+        const renderedChat = owner?.getAttribute("data-chatgpt-conversation-selection-target");
+        if (renderedChat !== chat || (userRoutes.has(bubble) && userRoutes.get(bubble) !== chat)) {
+            return {phase: "unqualified"};
+        }
+        userRoutes.set(bubble, chat);
         const complete = states[0]?.getAttribute("data-talvt-turn-state") === "complete";
         const result = {phase: "observed", key, user, reply: null,
             userAfterAssistant: !complete && assistantHeadings.length === 0};
@@ -39,14 +47,25 @@
         if (ids?.length > 1) {
             return {phase: "unqualified"};
         }
-        const replyId = ids?.[0]?.getAttribute("data-chatgpt-selection-message-id");
+        const selection = ids?.[0];
+        const replyId = selection?.getAttribute("data-chatgpt-selection-message-id");
+        if (selection && selection.getAttribute("data-chatgpt-selection-conversation-id") !== chat) {
+            return {phase: "unqualified"};
+        }
         const text = body?.innerText;
         if (!messageId.test(replyId ?? "") || !text) {
             return result;
         }
-        const prose = [...body.querySelectorAll("p")]
-            .filter(paragraph => paragraph.getClientRects().length &&
-                !paragraph.closest("blockquote, pre, code") && !paragraph.querySelector("code"));
+        const prose = [...selection.querySelectorAll("p[data-d-text-flow][data-d-component]")]
+            .filter(paragraph => {
+                const renderer = paragraph.closest("[data-dil-response][data-dil-message-id]");
+                const source = paragraph.closest("[data-dil-source-message-id][data-markdown-copy]");
+                const excluded = paragraph.closest("[data-tool-output], [data-mcp-app-portal-target]");
+                return paragraph.getClientRects().length && !paragraph.closest("blockquote, pre, code") &&
+                    !paragraph.querySelector("code") && !(excluded && body.contains(excluded)) &&
+                    renderer?.getAttribute("data-dil-message-id") === replyId &&
+                    source?.getAttribute("data-dil-source-message-id") === replyId;
+            });
         const last = text.trim().split(/\r?\n/).at(-1).trim();
         const paragraph = prose.at(-1);
         let final = false;
@@ -61,7 +80,21 @@
         return result;
     }
 
-    function readConversation() {
+    function isTranscriptChrome(element, rootLevel) {
+        if (element.getAttribute("aria-hidden") === "true" &&
+            !element.children.length && !element.textContent.trim()) {
+            return true;
+        }
+        if (element.classList.contains("grid") &&
+            element.textContent.trim() === "ChatGPT can make mistakes. Check important info.") {
+            return true;
+        }
+        return rootLevel && [...element.classList].some(name => name.startsWith("footer-")) &&
+            !!element.querySelector(".ProseMirror") &&
+            !element.querySelector("[data-virtualized-turn], [data-turn-key], [data-conversation-role]");
+    }
+
+    function readConversation(chat) {
         const regions = document.querySelectorAll('div.thread-scroll-container[role="region"][aria-label="Conversation"]');
         if (regions.length !== 1) {
             return {phase: regions.length === 0 ? "loading" : "unqualified"};
@@ -81,12 +114,19 @@
         if (list.children.length !== turns.length || turns.some(turn => turn.parentElement !== list)) {
             return {phase: "unqualified"};
         }
-        const current = readTurn(turns.at(-1));
+        for (let branch = list; branch !== region; branch = branch.parentElement) {
+            for (let sibling = branch.nextElementSibling; sibling; sibling = sibling.nextElementSibling) {
+                if (!isTranscriptChrome(sibling, branch.parentElement === region)) {
+                    return {phase: "unqualified"};
+                }
+            }
+        }
+        const current = readTurn(turns.at(-1), chat);
         if (current.key && turns.slice(0, -1).some(turn =>
             [...turn.querySelectorAll("[data-turn-key]")].some(node => node.getAttribute("data-turn-key") === current.key))) {
             return {phase: "unqualified"};
         }
-        const previous = turns.length > 1 ? readTurn(turns.at(-2)) : null;
+        const previous = turns.length > 1 ? readTurn(turns.at(-2), chat) : null;
         return {...current, previous: previous?.reply?.final ? {
             key: previous.key, reply: {id: previous.reply.id}
         } : null};
@@ -110,7 +150,7 @@
         }
         let turn;
         try {
-            turn = readConversation();
+            turn = readConversation(route[2]);
         } catch {
             turn = {phase: "unqualified"};
         }

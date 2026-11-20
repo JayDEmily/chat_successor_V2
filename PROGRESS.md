@@ -5,6 +5,7 @@
 - **Base:** `e63c315`.
 - **Implementation:** an existing saved worker holds if the readback identity changes between native and Chrome readers, or if Chrome replaces the reply to an already-consumed input. A pending action stays held if its anchor belongs to the other reader. Journal format and contents are preserved.
 - **Focused offline evidence:** eighteen Windows Chrome-readback assertions and eleven Python worker-view tests passed. The new reader-change and regeneration assertions reproduced the missing holds before the repair.
+- **Review follow-up:** the initial candidate `1f13363` needed stronger route and transcript binding. The repair requires the app-rendered conversation ID and verified assistant prose, holds unknown trailing rows, and checks saved source and reader identity at re-entry, successor preparation, and receipt readback. Twenty-five Windows assertions and twelve headless Chrome checks passed on the repair.
 - **Limit:** candidate only. The scoped Shoko Yumi Chrome installation confirmation, positive Windows fixture observations, and independent LEAN-G1 review are pending.
 - **Next:** qualify the live reader and receipts before installing the desktop trial backend.
 
