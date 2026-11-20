@@ -520,6 +520,37 @@ function Read-ConversationContent($turn,[int]$ordinal) {
           handoff_locator_verified=($locatorProse -and $finalProse)}
 }
 
+function Read-ChromeTurnSnapshot($all,[string]$expectedChat) {
+ $readers=@($all | Where-Object {
+  $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit -and
+  $_.Current.Name -ceq 'Chat Succession Chrome readback' -and
+  $_.Current.ClassName -ceq 'chat-succession-readback'
+ })
+ if($readers.Count -eq 0){return}
+ if($readers.Count -ne 1 -or -not $ChromeAppId -or -not $expectedChat){
+  throw 'Chrome readback is ambiguous or has no verified saved destination'
+ }
+ $value=$readers[0].GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current
+ if(-not $value.IsReadOnly -or -not $value.Value){throw 'Chrome readback field is not ready'}
+ try{$snapshot=$value.Value | ConvertFrom-Json}
+ catch{throw 'Chrome readback field does not contain a complete observation'}
+ if($snapshot.project -cne $ProjectId -or $snapshot.chat -cne $expectedChat){
+  throw 'Chrome readback belongs to a different Project or saved chat'
+ }
+ if($snapshot.observedAt -isnot [long]){throw 'Chrome readback has no valid sample time'}
+ $age=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds() - $snapshot.observedAt
+ if($age -lt 0 -or $age -gt 5000){throw 'Chrome readback sample has expired'}
+ return $snapshot
+}
+
+function Get-ChromeResponseId($snapshot) {
+ $idPattern='^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$'
+ if($snapshot.key -cnotmatch $idPattern -or $snapshot.reply.id -cnotmatch $idPattern){
+  throw 'Chrome readback has no stable user or reply identity'
+ }
+ return ('chrome-turn-' + $snapshot.key + '-' + $snapshot.reply.id)
+}
+
 function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
  $all=Desc $target.window
  $stop=$false
@@ -528,6 +559,29 @@ function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
    if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
       $el.Current.Name -ceq 'Stop' -and $el.Current.IsEnabled){$stop=$true}
   }catch{}
+ }
+ if($target['url']){
+  $snapshot=Read-ChromeTurnSnapshot $all $target.chat
+  if($null -ne $snapshot){
+   $observed=$snapshot.phase -ceq 'observed'
+   if($snapshot.phase -cnotin @('observed','loading') -and -not $stop){
+    throw 'Chrome readback could not establish the latest visible turn'
+   }
+   $reply=if($observed){$snapshot.reply}
+   $ready=$null -ne $reply -and $reply.text -is [string] -and $reply.text -and
+          $reply.final -is [bool] -and $reply.final -and -not $stop
+   $result=@{
+    ready=$ready;complete=$ready;role='assistant';chat_id=$target.chat;project=$ProjectId
+    method='CHROME_DOM';chrome_read_at=$snapshot.observedAt;stop_control=$stop
+    reason=$(if($ready){'Completed status observed in Chrome prose'}else{'Waiting for a completed Chrome reply'})
+    response_id=$(if($null -ne $reply){Get-ChromeResponseId $snapshot})
+    text=$(if($null -ne $reply){$reply.text}else{''})
+    handoff_locator_verified=($ready -and $reply.handoff -is [bool] -and $reply.handoff)
+    user_turn_seen=$observed;user_after_assistant=($observed -and $snapshot.userAfterAssistant -eq $true)
+   }
+   if($IncludeUserAnchor){$result['assistant_turn_count']=$null;$result['user_turn_count']=$null}
+   return $result
+  }
  }
  try{$turns=@(Get-ConversationTurns $all)}
  catch{

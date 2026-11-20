@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Chat Succession readback",
+  "version": "1.0.0",
+  "description": "Expose the nominated Project's rendered turns to Windows UI Automation.",
+  "content_scripts": [{
+    "matches": ["https://chatgpt.com/g/g-p-00000000000000000000000000000000*"],
+    "js": ["readback.js"]
+  }]
+}

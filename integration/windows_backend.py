@@ -202,6 +202,12 @@ class WindowsUIA(Browser):
         # Check independent read-back of the exact completed turn at a later poll.
         time.sleep(1.2)
         second = self._worker_view("Observe", expected_chat_id)
+        if first.get("method") == "CHROME_DOM":
+            previous_read = first.get("chrome_read_at")
+            current_read = second.get("chrome_read_at")
+            if type(previous_read) is not int or type(current_read) is not int or current_read <= previous_read:
+                return None
+            first = {**first, "chrome_read_at": current_read}
         if not second.get("ready") or second != first:
             log.info("response_readback_changed chat=%s", expected_chat_id)
             return None

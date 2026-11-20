@@ -58,6 +58,13 @@ class WorkerViewTests(unittest.TestCase):
                 self.assertIn(self.worker_url, str(hold.exception))
                 self.adapter.assert_called_once_with("Observe", ChatId=self.chat)
 
+    def test_chrome_read_requires_two_live_matching_samples(self):
+        first = {**self.ready, "method": "CHROME_DOM", "chrome_read_at": 1000}
+        self.adapter.side_effect = [first, first, first, {**first, "chrome_read_at": 2000}]
+        with patch("windows_backend.time.sleep"):
+            self.assertIsNone(self.bridge.observe(self.chat))
+            self.assertEqual(self.bridge.observe(self.chat).response_id, first["response_id"])
+
     def test_unqualified_view_waits_for_streaming_then_saves_hold(self):
         state = self.bridge.state_path
         controller = initialise(state, Config(self.project, "example/fixture", "work/test", 2), self.chat)

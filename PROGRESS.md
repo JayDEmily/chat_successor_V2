@@ -1,5 +1,13 @@
 # Progress
 
+## Lean ADR 0002 L06 — Chrome turn reader (21 November 2026)
+
+- **Base:** `3a1cf0d`. The owner approved a read-only DOM path before the Shoko Yumi desktop chain.
+- **Implementation:** a Project-scoped Chrome content script exposes the current rendered user and assistant identities and reply through one read-only accessibility field. Windows checks the exact Project, saved chat, sample age, and two fresh matching observations.
+- **Offline evidence:** ten Windows readback assertions, ten Python worker-view tests, and six headless Chrome assertions passed. Test cases cover identical replies with different IDs, duplicate turn keys, unknown trailing rows, code-block text, partial renders, and offscreen reads.
+- **Limit:** packaged candidate and offline checks. The installed reader and live fixture qualification remain pending.
+- **Next:** verify the reader in Shoko Yumi, then qualify exact posted-message readback (L07).
+
 ## Lean ADR 0002 L05 — Shoko Yumi read-only qualification (21 November 2026)
 
 - **Source and fixture:** `7fc7a7a4f4ac2103625c6394a82de997634c9cbb`. Created the dedicated **Chat Succession — Shoko Yumi Qualification** Project and posted two owner-authorized identical manual prompts to one saved fixture chat. The controller stayed idle.
