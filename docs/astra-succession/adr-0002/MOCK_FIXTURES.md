@@ -16,6 +16,7 @@ the owner to create and operate new mock Projects and repositories applies.
 ### ChatGPT Project allocation
 
 - `Chat Succession ADR2 — Finish Test` exists in Shoco and passed staged no-Send preflight. The exact landing URL is recorded privately on Windows. [Preflight evidence](../../../evidence/astra-adr-0002-20261120/implementation/G2_20261120/PREFLIGHT.md)
+- `test_folder_2` was created by the owner in James Student. It passed staged no-Send preflight in Chat mode with the same read-only approval seed ref. Its landing URL is recorded privately on Windows. [Preflight evidence](../../../evidence/astra-adr-0002-20261120/implementation/G2_20261120/PREFLIGHT.md)
 - `Chat Succession ADR2 — Cap Test` and `Chat Succession ADR2 — Approval Test` are proposed names. Record their actual account, Project IDs and URLs privately when created.
 
 A test requires a positively verified Project identity and account/profile.

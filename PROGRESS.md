@@ -1,10 +1,10 @@
 # Progress
 
-## ADR 0002 A2-G2 Shoco Windows preflight — 20 November 2026
+## ADR 0002 A2-G2 staged Windows preflight for both accounts — 20 November 2026
 
-A2-G1 remains independently accepted for `0b6bfa3`. The [A2-G2 checkpoint](evidence/astra-adr-0002-20261120/implementation/G2_20261120/PREFLIGHT.md) records a live **staged Shoco no-Send PASS** on the isolated Finish Test Project, exact published fixture SHA `b91b00f`, wrong-key HOLD and matching before/after staged and installed state. The active Shoco Chrome Project was left open.
+A2-G1 remains independently accepted for `0b6bfa3`. The [A2-G2 checkpoint](evidence/astra-adr-0002-20261120/implementation/G2_20261120/PREFLIGHT.md) records live **staged no-Send PASS** for Shoco's Finish Test Project and James Student's `test_folder_2` in Chat mode. Each verified the exact published fixture SHA `b91b00f`. The unknown account and a stock draft both held. The before/after staged and installed state hashes matched.
 
-**A2-G2 is HOLD** pending the signed-in James Student private plugin and both actual connector routes. Automatic approval review blocked the James window launch and the existing browser tab was unreadable through the browser connection. W02/W03 installed acceptance and A2-G3–G6 are NOT_RUN.
+**A2-G2 is HOLD.** James Student's signed-in browser shows its own Chat Succession 0.4.2 with Remote Desktop Commander connected. The available Plugin Creator connection could not read that private release. The available Remote Desktop Commander connection found the canonical wrapper under native Windows LocalAppData. The per-account connector selectors and installed candidate still need verification. W02/W03 installed acceptance and A2-G3–G6 are NOT_RUN.
 
 ## ADR 0002 A2-G1 independent acceptance — 20 November 2026
 
