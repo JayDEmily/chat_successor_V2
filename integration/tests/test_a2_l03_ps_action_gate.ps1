@@ -103,7 +103,7 @@ try {
   if($BootstrapIntentPath){ Remove-Item -LiteralPath $BootstrapIntentPath -Force -ErrorAction SilentlyContinue }
 }
 
-foreach ($name in @('Get-ConversationRole', 'Get-ConversationTurns', 'Find-PostedMessage',
+foreach ($name in @('Test-TranscriptRegion', 'Get-ConversationRole', 'Get-ConversationTurns', 'Find-PostedMessage',
                    'Read-ConversationContent', 'Read-CurrentTurn')) {
   $definition = $ast.Find({
     param($node)
@@ -128,7 +128,9 @@ function Turn-Article([int]$index,[string]$label,[object[]]$body){
     Id=$index; Children=@(); Parent=$null
   }
   $article | Add-Member ScriptMethod GetRuntimeId { return @(42,$this.Id) }
-  $heading=Text-Leaf $label
+  $heading=[pscustomobject](Text-Leaf $label)
+  $heading | Add-Member NoteProperty Id ($index+1000)
+  $heading | Add-Member ScriptMethod GetRuntimeId { return @(42,$this.Id) }
   $heading.Current.LocalizedControlType='heading'
   $heading.Current.ClassName='sr-only'
   $heading.Parent=$article
@@ -139,8 +141,13 @@ function Turn-Article([int]$index,[string]$label,[object[]]$body){
   return $article
 }
 function Transcript-Window([object[]]$articles){
+  $thread=@{Current=@{Name=''; ControlType=[System.Windows.Automation.ControlType]::Pane
+                      LocalizedControlType='region'; ClassName='thread-scroll-container'}
+             Parent=$null; Children=@()}
+  foreach($article in $articles){$article.Parent=$thread}
   $children=@(foreach($article in $articles){$article;$article.Children})
-  return @{Children=$children+@(Text-Leaf 'Ask ChatGPT'; Text-Leaf 'Chrome text outside the articles')}
+  $thread.Children=$children
+  return @{Children=@($thread)+$children+@(Text-Leaf 'Ask ChatGPT'; Text-Leaf 'Chrome text outside the articles')}
 }
 $initial=Turn-Article 1 'You said:' @((Text-Leaf $Message))
 $assistant=Turn-Article 2 'ChatGPT said:' @((Text-Leaf 'CHAT_STATUS: NEED_MORE_TIME' $true))
@@ -174,6 +181,22 @@ $twoUserTurns=Transcript-Window @($initial,$assistant,
 if(Find-PostedMessage $twoUserTurns $Message $anchor){throw 'Non-adjacent user turn acknowledged'}
 if(Find-PostedMessage @{Children=@(Text-Leaf 'You said:'; Text-Leaf $Message)} $Message){
   throw 'An unverified conversation structure acknowledged a post'
+}
+$unknown=Turn-Article 4 'You said:' @((Text-Leaf 'Newer user turn'))
+$unknown.Children[0].Current.ClassName=''
+$olderMatch=Transcript-Window @($initial,$assistant,(Turn-Article 3 'You said:' @((Text-Leaf $Message))),$unknown)
+if((Find-PostedMessage $olderMatch $Message $anchor) -or (Find-PostedMessage $olderMatch $Message)){
+  throw 'An older message was accepted ahead of an unverified article'
+}
+$unverifiedTail=Transcript-Window @($initial,$assistant,$unknown)
+$held=$false
+try{$null=Read-CurrentTurn @{window=$unverifiedTail; chat=$ChatId}}
+catch{$held=$_.Exception.Message -like '*no verified role heading*'}
+if(-not $held){throw 'An older assistant status was accepted ahead of an unverified article'}
+$unverifiedTail.Children+=@{Current=@{Name='Stop'; ControlType=[System.Windows.Automation.ControlType]::Button
+                                      IsEnabled=$true; LocalizedControlType='button'; ClassName=''}}
+if((Read-CurrentTurn @{window=$unverifiedTail; chat=$ChatId}).ready){
+  throw 'An incomplete streaming article allowed a status'
 }
 foreach($status in @('CHAT_STATUS: NEED_MORE_TIME','CHAT_STATUS: TASK_COMPLETE','ERROR')){
   $window=Transcript-Window @($initial,(Turn-Article 2 'ChatGPT said:' @((Text-Leaf $status))))

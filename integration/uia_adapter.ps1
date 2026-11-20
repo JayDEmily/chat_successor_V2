@@ -228,23 +228,31 @@ function Get-AccessibilityParent($element) {
  return [System.Windows.Automation.TreeWalker]::RawViewWalker.GetParent($element)
 }
 
+function Test-TranscriptRegion($element) {
+ $current=$element.Current
+ return ($current.LocalizedControlType -eq 'region' -and
+         $current.ClassName -match '(?:^|\s)thread-scroll-container(?:\s|$)')
+}
+
 function Get-ConversationRole($element) {
  $name=$element.Current.Name
  if($name -cnotin @('You said:','ChatGPT said:')){return}
- $heading=$false
+ $heading=$null
  # Only the application's role heading establishes a turn. Identical text
  # in a message body remains content.
  for($i=0;$i -lt 24 -and $null -ne $element;$i++){
   $current=$element.Current
   if($current.LocalizedControlType -eq 'heading' -and
      $current.ClassName -match '(?:^|\s)sr-only(?:\s|$)' -and $current.Name -ceq $name){
-   $heading=$true
+   $heading=$element
   }
   if($current.LocalizedControlType -eq 'article'){
    if(-not $heading){return}
    $id=$element.GetRuntimeId() -join '.'
-   if(-not $id){throw 'Conversation article identity unavailable'}
-   return @{article=$element; id=$id; role=$(if($name -ceq 'You said:'){'user'}else{'assistant'})}
+   $headingId=$heading.GetRuntimeId() -join '.'
+   if(-not $id -or -not $headingId){throw 'Conversation article or heading identity unavailable'}
+   return @{article=$element; id=$id; heading_id=$headingId
+            role=$(if($name -ceq 'You said:'){'user'}else{'assistant'})}
   }
   $element=Get-AccessibilityParent $element
  }
@@ -252,17 +260,28 @@ function Get-ConversationRole($element) {
 }
 
 function Get-ConversationTurns($all) {
- $seen=@{}
- foreach($element in $all){
-  if($element.Current.Name -cnotin @('You said:','ChatGPT said:')){continue}
-  $turn=Get-ConversationRole $element
-  if($null -eq $turn){continue}
-  if($seen.ContainsKey($turn.id)){
-   if($seen[$turn.id] -cne $turn.role){throw 'Conflicting role headings in a conversation article'}
-   continue
+ $threads=@($all | Where-Object {Test-TranscriptRegion $_})
+ if($threads.Count -ne 1){throw 'A single conversation transcript could not be established'}
+ foreach($article in (Desc $threads[0])){
+  if($article.Current.LocalizedControlType -ne 'article'){continue}
+  for($parent=Get-AccessibilityParent $article; $null -ne $parent; $parent=Get-AccessibilityParent $parent){
+   if($parent.Current.LocalizedControlType -eq 'article' -or (Test-TranscriptRegion $parent)){break}
   }
-  $seen[$turn.id]=$turn.role
-  $turn
+  if($null -eq $parent){throw 'Conversation article left the transcript during observation'}
+  if($parent.Current.LocalizedControlType -eq 'article'){continue}
+  $id=$article.GetRuntimeId() -join '.'
+  $verified=$null
+  foreach($element in (Desc $article)){
+   $turn=Get-ConversationRole $element
+   if($null -eq $turn -or $turn.id -cne $id){continue}
+   if($null -ne $verified -and ($verified.heading_id -cne $turn.heading_id -or
+                                $verified.role -cne $turn.role)){
+    throw 'Conversation article has multiple role headings'
+   }
+   $verified=$turn
+  }
+  if($null -eq $verified){throw 'Conversation article has no verified role heading'}
+  $verified
  }
 }
 
@@ -352,7 +371,7 @@ function Test-AssistantProse($element) {
   if($kind -eq 'paragraph' -or
      ($class -match '(?:^|\s)TextBase-\w+' -and $class -match '(?:^|\s)Text-\w+')){$paragraph=$true}
   if($class -match '(?:^|\s)(?:markdown(?:\s|$)|Renderer-\w+)'){$renderer=$true}
-  if($kind -eq 'region' -and $class -match '(?:^|\s)thread-scroll-container(?:\s|$)'){
+  if(Test-TranscriptRegion $element){
    return ($paragraph -and $renderer)
   }
   $element=$walker.GetParent($element)
@@ -402,9 +421,6 @@ function Read-ConversationContent($turn,[int]$ordinal) {
 
 function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
  $all=Desc $target.window
- $turns=@(Get-ConversationTurns $all)
- $assistant=@($turns | Where-Object {$_.role -ceq 'assistant'})
- $user=@($turns | Where-Object {$_.role -ceq 'user'})
  $stop=$false
  foreach($el in $all){
   try{
@@ -412,6 +428,15 @@ function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
       $el.Current.Name -ceq 'Stop' -and $el.Current.IsEnabled){$stop=$true}
   }catch{}
  }
+ try{$turns=@(Get-ConversationTurns $all)}
+ catch{
+  if(-not $stop){throw}
+  return @{ready=$false;chat_id=$target.chat;stop_control=$true
+           user_turn_seen=$false;user_after_assistant=$false
+           reason='Streaming conversation structure is incomplete'}
+ }
+ $assistant=@($turns | Where-Object {$_.role -ceq 'assistant'})
+ $user=@($turns | Where-Object {$_.role -ceq 'user'})
  if(-not $assistant.Count){
   $turn=@{ready=$false;reason='No assistant turn observed';chat_id=$target.chat
           stop_control=$stop;user_after_assistant=$false;user_turn_seen=($user.Count -gt 0)}
