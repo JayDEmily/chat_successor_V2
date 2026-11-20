@@ -337,29 +337,32 @@ function Get-VirtualizedConversationTurns($thread) {
 function Get-ConversationTurns($all) {
  $threads=@($all | Where-Object {Test-TranscriptRegion $_})
  if($threads.Count -ne 1){throw 'A single conversation transcript could not be established'}
- $articles=@((Desc $threads[0]) | Where-Object {
+ $descendants=@(Desc $threads[0])
+ $articles=@($descendants | Where-Object {
   $_.Current.LocalizedControlType -ceq 'article'
  })
  if($articles.Count -eq 0){
   Get-VirtualizedConversationTurns $threads[0]
   return
  }
- # A trailing virtualized row beside historical article nodes must not let an
- # older verified article appear to be the newest turn.
- foreach($element in (Desc $threads[0])){
-  $current=$element.Current
-  $isRoleHeading=($current.LocalizedControlType -ceq 'heading' -and
-                  $current.ClassName -cmatch '(?:^|\s)sr-only(?:\s|$)' -and
-                  $current.Name -cin @('You said:','ChatGPT said:'))
-  $isMessageBody=($current.LocalizedControlType -ceq 'group' -and
-                  $current.ClassName -cmatch '(?:^|\s)(?:Renderer-[\w-]+|bg-user-message)(?:\s|$)')
-  if(-not ($isRoleHeading -or $isMessageBody)){continue}
+ # Article ancestors establish layout. Any other node outside an article
+ # can hide a newer turn, regardless of its accessibility control type.
+ foreach($element in $descendants){
   $insideArticle=$false
-  for($parent=Get-AccessibilityParent $element;$null -ne $parent;$parent=Get-AccessibilityParent $parent){
-   if($parent.Current.LocalizedControlType -ceq 'article'){$insideArticle=$true;break}
-   if(Test-TranscriptRegion $parent){break}
+  for($node=$element;$null -ne $node;$node=Get-AccessibilityParent $node){
+   if($node.Current.LocalizedControlType -ceq 'article'){$insideArticle=$true;break}
+   if(Test-TranscriptRegion $node){break}
   }
-  if(-not $insideArticle){throw 'Article transcript has an unverified virtualized row'}
+  if($insideArticle){continue}
+  $articleContainer=$false
+  foreach($article in $articles){
+   for($parent=Get-AccessibilityParent $article;$null -ne $parent;$parent=Get-AccessibilityParent $parent){
+    if($parent -eq $element){$articleContainer=$true;break}
+    if(Test-TranscriptRegion $parent){break}
+   }
+   if($articleContainer){break}
+  }
+  if(-not $articleContainer){throw 'Article transcript has an unverified non-article row'}
  }
  foreach($article in $articles){
   for($parent=Get-AccessibilityParent $article; $null -ne $parent; $parent=Get-AccessibilityParent $parent){

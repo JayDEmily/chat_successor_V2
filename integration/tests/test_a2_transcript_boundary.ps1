@@ -134,5 +134,20 @@ $stream=New-LeanHistory
 $stream.Children+=@{Current=@{Name='Stop';ControlType=[System.Windows.Automation.ControlType]::Button
                                IsEnabled=$true;LocalizedControlType='button';ClassName=''}}
 Check 'streaming_not_ready' (-not (Read-CurrentTurn @{window=$stream;chat=$ChatId}).ready)
+
+# The ancestry of verified articles establishes the role of a layout pane.
+$wrapped=New-LeanHistory $true
+$thread=$wrapped.Children[0]
+$layout=[pscustomobject]@{
+    Current=@{Name=''; LocalizedControlType='pane'; ClassName=''
+              ControlType=[System.Windows.Automation.ControlType]::Pane}
+    Parent=$thread; Children=$thread.Children
+}
+foreach($row in $thread.Children){
+    if($row.Current.LocalizedControlType -ceq 'article'){$row.Parent=$layout}
+}
+$thread.Children=@($layout)+$thread.Children
+$wrapped.Children+=@($layout)
+Check 'positive_article_layout_pane' ([bool](Find-PostedMessage $wrapped $expected $before.response_id))
 Write-Output ('Checks='+$script:checks+' Failures='+$script:failures.Count)
 if($script:failures.Count){throw ('Transcript regressions failed: '+($script:failures -join ', '))}

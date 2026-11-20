@@ -217,6 +217,6 @@ $mixed.Children[0].Children+=@($virtualTail)
 $mixed.Children+=@($virtualTail)
 $mixedHeld=$false
 try{$null=Read-CurrentTurn @{window=$mixed;chat=$ChatId}}
-catch{$mixedHeld=$_.Exception.Message -like '*unverified virtualized row*'}
+catch{$mixedHeld=$_.Exception.Message -eq 'Article transcript has an unverified non-article row'}
 if(-not $mixedHeld){throw 'Mixed article and trailing virtualized turn accepted an older status'}
 Write-Output 'PASS: Windows PowerShell action, structurally bounded full turns, prose status and owner receipt checks.'

@@ -1,5 +1,13 @@
 # Progress
 
+## Lean ADR 0002 L02 — Mixed transcript containment (21 November 2026)
+
+- **Base and candidate:** `a46b492` to adapter blob `82778debdb69bd2738e4dc3626137ac3e5d3b1c1`.
+- **Behavior:** `Get-ConversationTurns` accepts article content and its layout ancestry. Unknown siblings hold regardless of control type. The old native diagnostic assertion now checks the deliberate error, and a layout pane enclosing verified articles stays valid.
+- **Windows PowerShell 5.1:** transcript regression 28/28, action gate PASS, virtualized turns PASS. All three exited 0.
+- **Limit:** this contains false receipts in the synthetic article path. Current-turn identity on virtualized Chrome remains unqualified.
+- **Next:** L03, surface explicit unqualified observation as a durable hold.
+
 ## Lean ADR 0002 L01 — Windows regression baseline (21 November 2026)
 
 - **Base and candidate:** published `beacfae4790c2ec4f390e90ad0bd214fe6a1ef05` and a byte-identical copy of the interrupted adapter, SHA-256 `dfed13f20650162de74500eb4806dc884ea3effef868dbccc4c3b02193e9b769`.
