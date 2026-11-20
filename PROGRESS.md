@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G1 independent review of c605c5f — 20 November 2026
+
+**A2-G1 OFFLINE HOLD** on `c605c5fafe4d3cfefe4173f04a53ebf0d1943d59`. [Independent review, exact case matrix and raw repro](evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-c605c5f/REPORT.md). Both hosts pass 113 integration and 119 reference tests, and the three native suites pass. All five in-body labels are now preserved. A newer article without a verified role can still be omitted while an older status or posted body is accepted, holding S01, S05, S06 and O04.
+
+**Next eligible work** is correcting this shared latest-turn boundary and independently re-reviewing the next pin. A2-G2–G6 are NOT_RUN.
+
 ## ADR 0002 A2-G1 conversation readback correction — 20 November 2026
 
 Candidate `c605c5fafe4d3cfefe4173f04a53ebf0d1943d59` corrects the shared accessibility text-boundary fault found below. [Corrective evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/corrective-c605c5f/RESULT.md) records 113/113 integration on Windows and Ubuntu and three native Windows PowerShell passes. The native test covers all five former literal delimiters, whole anchored acknowledgement, and genuine final prose status.
