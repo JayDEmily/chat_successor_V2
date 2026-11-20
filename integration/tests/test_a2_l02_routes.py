@@ -12,7 +12,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from account_routes import require_route, bound_config_fields
 from cli import create_dependencies, load_config
 from launch_project import launch_request, matching_runs
-from runner import initialise, inspect_state
+from runner import initialise, inspect_state, owner_pause_reason
 from succession.core import Config, Controller
 
 PROJECT="g-p-abc123"
@@ -196,12 +196,21 @@ class ADR2RouteTests(unittest.TestCase):
         self.assertTrue(first["pause_requested"])
         self.assertFalse(first["pause_acknowledged"])
         self.assertEqual(first["account_key"],"shoco")
-        c.pause("Operator pause requested")
+        c.pause(owner_pause_reason(state))
         c.save(state)
         second=inspect_state(state)
         self.assertTrue(second["pause_acknowledged"])
         self.assertEqual(second["unique_chat_count"],1)
         self.assertTrue(marker.exists())
+        marker.write_text("second pause generation")
+        before = state.read_bytes()
+        newest = inspect_state(state)
+        self.assertTrue(newest["pause_requested"])
+        self.assertFalse(newest["pause_acknowledged"])
+        self.assertEqual(state.read_bytes(), before)
+        c.pause(owner_pause_reason(state))
+        c.save(state)
+        self.assertTrue(inspect_state(state)["pause_acknowledged"])
 
     def test_r02_child_browser_profile_overrides_ambient_profile(self):
         path=self._stage_saved_run("c"*24)

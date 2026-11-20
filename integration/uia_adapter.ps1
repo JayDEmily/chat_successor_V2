@@ -22,6 +22,7 @@ param(
  [string]$DocumentId = '',
  [string]$ChromeAppId = '',
  [string]$WorkerJournalPath = '',
+ [string]$OwnerInputPath = '',
  [string]$L09Fault = '',
  [string]$PausePath = '',
  [ValidateSet('missing','stale')][string]$Recovery,
@@ -224,9 +225,8 @@ function Find-EnabledSendButtons($window) {
  }
 }
 function Find-PostedMessage($window,$expected,[string]$afterResponse='') {
- # Only text under a user turn is a posted message. The assistant may quote
- # the exact continuation string. A repeated continuation also needs a user
- # turn after the specific assistant response that triggered this action.
+ # The complete latest user turn must match. For continuation, also bind
+ # the immediately preceding assistant turn to the triggering response.
  $afterOrdinal=0
  if($afterResponse){
   if($afterResponse -cnotmatch '^uia-turn-([1-9][0-9]*)-[a-f0-9]{20}$'){return $false}
@@ -234,30 +234,33 @@ function Find-PostedMessage($window,$expected,[string]$afterResponse='') {
  }
  $all=Desc $window
  $assistantCount=0
- $anchorSeen=($afterOrdinal -eq 0)
- $inUserTurn=$false
- $latestUserMatches=$false
+ $lastAssistant=-1
+ $lastUser=-1
+ $userAnchor=-1
+ $userAnchorOrdinal=0
  for($i=0;$i -lt $all.Count;$i++) {
   $el=$all[$i]
   try{
    if($el.Current.ControlType -ne [System.Windows.Automation.ControlType]::Text){continue}
    $name=$el.Current.Name
    if($name -ceq 'You said:'){
-    $inUserTurn=$anchorSeen
-    $latestUserMatches=$false
+    $lastUser=$i
+    $userAnchor=$lastAssistant
+    $userAnchorOrdinal=$assistantCount
    }elseif($name -ceq 'ChatGPT said:'){
-    $inUserTurn=$false
+    $lastAssistant=$i
     $assistantCount++
-    if($afterOrdinal -gt 0){
-     $anchorSeen=($assistantCount -eq $afterOrdinal -and
-        (Read-AssistantContent $all $i $assistantCount).response_id -ceq $afterResponse)
-    }
-   }elseif($inUserTurn -and $name -ceq $expected){
-    $latestUserMatches=$true
    }
-  }catch{}
+  }catch{return $false}
  }
- return $latestUserMatches
+ if($lastUser -lt 0){return $false}
+ try{
+  if($afterOrdinal -gt 0 -and ($userAnchor -lt 0 -or $userAnchorOrdinal -ne $afterOrdinal -or
+     (Read-AssistantContent $all $userAnchor $userAnchorOrdinal -Strict).response_id -cne $afterResponse)){
+   return $false
+  }
+  return ((Read-AssistantContent $all $lastUser 0 -Strict).text -ceq $expected)
+ }catch{return $false}
 }
 
 if($Mode -eq 'ResolveProject') {
@@ -340,7 +343,7 @@ function Compare-OwnerTurn($turn,[string]$anchor) {
  return 'unknown'
 }
 
-function Read-AssistantContent($all,[int]$header,[int]$ordinal) {
+function Read-AssistantContent($all,[int]$header,[int]$ordinal,[switch]$Strict) {
  $parts=@()
  $locatorProse=$false
  $finalProse=$false
@@ -354,18 +357,19 @@ function Read-AssistantContent($all,[int]$header,[int]$ordinal) {
        $name -ceq 'Latest response' -or $name -ceq 'Ask ChatGPT'){break}
     if($name){
      $parts+= $name
+     $finalProse=$false
      if($name -cmatch '^CHAT_HANDOFF_BRANCH: '){$locatorProse=Test-AssistantProse $el}
-     if($name -ceq 'CHAT_STATUS: TASK_COMPLETE'){$finalProse=Test-AssistantProse $el}
+     $finalProse=($name -cmatch '^(?:CHAT_STATUS: )?(?:NEED_MORE_TIME|TASK_COMPLETE|ERROR)$' -and
+                  (Test-AssistantProse $el))
     }
    }
-  }catch{}
+  }catch{if($Strict){throw}}
  }
  $body=$parts -join [Environment]::NewLine
  $sha=[Security.Cryptography.SHA256]::Create()
  try{$digest=[BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($body))).Replace('-','').ToLowerInvariant()}finally{$sha.Dispose()}
- $final=if($parts.Count){$parts[-1]}else{''}
  $shortDigest=$digest.Substring(0,20)
- return @{text=$body;final=$final;response_id=('uia-turn-' + $ordinal + '-' + $shortDigest);digest=$shortDigest
+ return @{text=$body;final_status_verified=$finalProse;response_id=('uia-turn-' + $ordinal + '-' + $shortDigest);digest=$shortDigest
           handoff_locator_verified=($locatorProse -and $finalProse)}
 }
 
@@ -393,12 +397,12 @@ function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
  }else{
   $content=Read-AssistantContent $all $last $assistantCount
   # No automatic turn completion until a final status line and no active Stop.
-  $terminal=($content.final -cmatch '^(?:CHAT_STATUS: )?(?:NEED_MORE_TIME|TASK_COMPLETE|ERROR)$')
+  $terminal=$content.final_status_verified
   $ready=$terminal -and -not $stop -and $last -gt $lastUser
   $turn=@{
    ready=$ready;chat_id=$target.chat;project=$ProjectId;role='assistant'
    response_id=$content.response_id
-   text=$content.text;complete=$ready;reason=$(if($stop){'Streaming/Stop control present'}elseif(-not $terminal){'No final standalone status leaf'}else{'Completed marker candidate; UIA hierarchy validation pending'})
+   text=$content.text;complete=$ready;reason=$(if($stop){'Streaming/Stop control present'}elseif(-not $terminal){'No final status in verified assistant prose'}else{'Completed status observed in assistant prose'})
    method='UIA_ACCESSIBILITY_TEXT';stop_control=$stop
    user_after_assistant=($lastUser -gt $last);user_turn_seen=($lastUser -ge 0)
    handoff_locator_verified=$content.handoff_locator_verified
@@ -800,6 +804,12 @@ function Hold-ForChangedDestination {
 function Assert-PrivateDispatchReceipt {
  # Revalidate the exact persisted action at the actual native browser
  # boundary. An old handle/source pair is never sufficient to authorize Send.
+ if($Mode -eq 'Send' -and $OwnerInputPath){
+  $expectedInput=[IO.File]::ReadAllText([IO.Path]::ChangeExtension($OwnerInputPath, '.sha256'),
+                                      [Text.Encoding]::ASCII).Trim()
+  $actualInput=(Get-FileHash -LiteralPath $OwnerInputPath -Algorithm SHA256).Hash.ToLowerInvariant()
+  if($actualInput -cne $expectedInput){throw 'Private owner input changed before browser dispatch'}
+ }
  if($PrepareAction){
   if(-not $PrepareTargetPath -or -not [IO.File]::Exists($PrepareTargetPath)){
    throw 'Prepared action record unavailable'

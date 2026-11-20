@@ -371,10 +371,17 @@ class WindowsUIA(Browser):
         if fault == "before_click":
             raise BrowserObservationError(
                 "L09 injected after durable sending but before UIA Send; no click")
+        owner_request_id = p.get("owner_request_id")
+        owner_path = None
+        if owner_request_id is not None:
+            if not isinstance(owner_request_id, str) or not re.fullmatch(r"[a-z0-9]{24,64}", owner_request_id):
+                raise BrowserObservationError("Invalid saved owner request ID")
+            owner_path = self.state_path.with_name(f"owner-{owner_request_id}.json").resolve()
         result = self._invoke(
             "Send", Kind=p["kind"], ChatId=p["source_chat_id"],
             WindowHandle=target.private_window_handle, Message=message,
             DocumentId=target.private_document_id,
+            OwnerInputPath=owner_path,
             PrepareAction=p["action_id"], PrepareTargetPath=self.target_path.resolve(),
             RouteReceipt=record.get("route_receipt") or "",
             PendingResponseId=p["response_id"],

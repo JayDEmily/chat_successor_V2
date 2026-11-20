@@ -10,7 +10,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from account_routes import require_route
-from runner import inspect_state, initialise
+from runner import inspect_state, initialise, owner_pause_reason
 from succession.core import Config, Controller
 
 
@@ -51,10 +51,10 @@ class A2L02StrictReviewTests(unittest.TestCase):
         state = self.install / "controller.json"
         c = initialise(state, Config("g-p-test", "example-org/test", "main", 2),
                        "00000000-0000-0000-0000-000000000001")
-        c.pause("Operator pause requested before Send")
-        c.save(state)
         marker = state.with_suffix(".pause")
         marker.write_text("Owner pause gate 1")
+        c.pause(owner_pause_reason(state, "Operator pause requested before Send"))
+        c.save(state)
         before = state.read_bytes()
         info = inspect_state(state)
         self.assertEqual(info["halted"], "Operator pause requested before Send")

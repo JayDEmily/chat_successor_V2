@@ -14,7 +14,7 @@ from uuid import uuid4
 
 from cli import create_dependencies, exclusive_lock, load_config
 from repo_reader import GitHandoffReader, HANDOFF_WORKFLOW, STORY_REPO
-from runner import initialise, inspect_state
+from runner import initialise, inspect_state, owner_context, read_verified_owner_input
 from succession.composer import ComposerState, classify_composer
 from succession.core import Action, Config
 from windows_backend import is_saved_chat_id
@@ -77,6 +77,14 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
     else:
         if pause_path.exists():
             raise RuntimeError("Owner paused before the initial Send")
+        owner_path = None
+        if owner_request_id is not None:
+            if not re.fullmatch(r"[a-z0-9]{24,64}", owner_request_id):
+                raise ValueError("Invalid initial owner request ID")
+            owner_path = state_path.with_name(f"owner-{owner_request_id}.json").resolve()
+            context = owner_context(read_verified_owner_input(owner_path), anchored=False)
+            if context["request_id"] != owner_request_id:
+                raise ValueError("Initial owner input does not match the request")
         target = prepare_first(browser, reader)
         intent = {"handle": target.private_window_handle,
                   "project": target.project, "message": pointer,
@@ -92,6 +100,7 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
         receipt = browser._invoke("Send", Kind=Action.LAUNCH_SUCCESSOR.value,
                                   WindowHandle=intent["handle"], Message=pointer,
                                   DocumentId=intent["document_id"],
+                                  OwnerInputPath=owner_path,
                                   BootstrapIntentPath=intent_path.resolve(),
                                   BootstrapRunId=cfg["run_id"],
                                   BootstrapActionId=intent["action_id"],

@@ -1,27 +1,39 @@
 """Route a scoped owner request to the one registered worker."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 
 from cli import exclusive_lock, load_config, read_pause_marker, release_pause_marker
-from runner import inspect_state
+from runner import inspect_state, owner_pause_reason, read_verified_owner_input
 from succession.core import Config, Controller
 
 
 def record_context(state_path, context):
     request_id = context["request_id"]
     path = state_path.with_name(f"owner-{request_id}.json")
-    tmp = path.with_suffix(".tmp")
+    receipt = path.with_suffix(".sha256")
     if path.exists():
-        if json.loads(path.read_text(encoding="utf-8")) != context:
+        body = path.read_bytes()
+        if json.loads(body.decode("utf-8")) != context:
             raise ValueError("Owner request ID already has different content")
     else:
-        with tmp.open("w", encoding="utf-8") as stream:
-            json.dump(context, stream, ensure_ascii=False)
+        body = json.dumps(context, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    digest = hashlib.sha256(body).hexdigest()
+    if receipt.exists() and receipt.read_text(encoding="ascii").strip() != digest:
+        raise ValueError("Owner request differs from its durable input receipt")
+    # The run lock serializes both writes. An interrupted intake can finish
+    # only when the explicit retry matches the existing content or receipt.
+    for destination, data in ((path, body), (receipt, (digest + "\n").encode("ascii"))):
+        if destination.exists():
+            continue
+        temporary = destination.with_suffix(destination.suffix + ".tmp")
+        with temporary.open("wb") as stream:
+            stream.write(data)
             stream.flush()
             os.fsync(stream.fileno())
-        tmp.replace(path)
+        temporary.replace(destination)
     return request_id
 
 
@@ -31,7 +43,7 @@ def accepted_context(state_path, controller, incoming):
         if not same_id and anchor != [incoming["worker_id"], incoming["response_id"]]:
             continue
         saved = state_path.with_name(f"owner-{request_id}.json")
-        if json.loads(saved.read_text(encoding="utf-8")) != {**incoming, "request_id": request_id}:
+        if read_verified_owner_input(saved) != {**incoming, "request_id": request_id}:
             raise ValueError("The same hold already has an owner decision with different content")
         return request_id
     return None
@@ -103,7 +115,7 @@ def resume_request(cfg_path, state_path, request, name, dependencies, start):
         else:
             c.resume_after_owner()
         if request.get("release_pause") and not release_pause_marker(pause, observed_pause):
-            c.pause("Operator pause requested")
+            c.pause(owner_pause_reason(state_path))
             c.save(state_path)
             return {"run_id": cfg["run_id"], **inspect_state(state_path), "event": "pause_preserved"}
         c.save(state_path)

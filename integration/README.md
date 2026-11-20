@@ -12,6 +12,8 @@ cannot find that list. Inspection selects using the verified Project ID and
 normalized repo, or a matching explicit `run_id`. A genuine new job requires
 a stable `job_id`. An optional `owner_context` follows the [plugin request
 contract](../plugins/chat-succession/skills/start-chat-succession/SKILL.md).
+Each saved owner input has a private SHA-256 receipt in the same run
+directory. Preserve the input and its receipt together when restoring a run.
 Supply the published `branch` when using `--check`. It verifies the exact
 GitHub branch through Ubuntu Git and checks an empty composer in a temporary
 Chrome window. It closes that window and leaves private run state and saved
@@ -119,6 +121,8 @@ The controller checks the existing owner pause marker after composer preparation
 The Windows adapter checks it again before typing and immediately before invoking
 Send. An explicit pre-click pause preserves the prepared action, including any
 draft already typed. Missing or ambiguous receipts still require reconciliation.
+Status acknowledges the exact pause marker observed by the controller. A new
+pause marker shows as requested until that generation is observed.
 
 **L06 prepared-handover test seam:** CLI cycle --prepare-only observes the
 completed current worker, validates published handover state, and saves the

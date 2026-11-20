@@ -19,7 +19,7 @@ import sys
 import time
 from uuid import uuid4
 
-from runner import cycle, initialise, inspect_state
+from runner import cycle, initialise, inspect_state, owner_pause_reason
 from account_routes import require_route, verify_backend, verify_saved_binding
 from repo_reader import (
     GitHandoffReader, GitPublishedReader, GitStoryReader, HANDOFF_WORKFLOW, STORY_REPO, STORY_TURNS,
@@ -236,7 +236,7 @@ def main():
             c.resume_after_owner()
             released = release_pause_marker(pause, observed_pause)
             if not released:
-                c.pause("Operator pause requested")
+                c.pause(owner_pause_reason(path))
             c.save(path)
             output("resumed" if released else "pause_preserved", path)
         return
@@ -256,7 +256,7 @@ def main():
         while True:
             if (c.state.halted not in ("programme_finished", "chat_cap")
                     and path.with_suffix(".pause").exists()):
-                c.pause("Operator pause requested")
+                c.pause(owner_pause_reason(path))
                 c.save(path)
                 output("paused", path)
                 return

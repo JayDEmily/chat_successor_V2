@@ -6,6 +6,7 @@ state is persisted. Tests inject an adapter; real operation uses Windows UIA.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 from pathlib import Path
 from typing import Protocol
 import json
@@ -72,20 +73,40 @@ def owner_context(data, *, anchored):
     return data
 
 
+def read_verified_owner_input(path: Path) -> dict:
+    try:
+        body = path.read_bytes()
+        expected = path.with_suffix(".sha256").read_text(encoding="ascii").strip()
+        if hashlib.sha256(body).hexdigest() != expected:
+            raise ValueError("Private owner input differs from its durable receipt")
+        return json.loads(body.decode("utf-8"))
+    except (OSError, ValueError) as exc:
+        raise ValueError("The saved private owner input or its receipt is unavailable or changed") from exc
+
+
 def read_pending_owner_context(controller: Controller, pending: Pending, state_path: Path) -> dict:
     request_id = pending.owner_request_id
     if not isinstance(request_id, str) or not re.fullmatch(r"[a-z0-9]{24,64}", request_id):
         raise ValueError("Invalid saved owner request ID")
-    try:
-        path = state_path.with_name(f"owner-{request_id}.json")
-        context = owner_context(json.loads(path.read_text(encoding="utf-8")), anchored=True)
-    except (OSError, ValueError) as exc:
-        raise ValueError("The saved private owner input is missing or unreadable") from exc
+    path = state_path.with_name(f"owner-{request_id}.json")
+    context = owner_context(read_verified_owner_input(path), anchored=True)
     anchor = [pending.source_chat_id, pending.response_id]
     if (context["request_id"] != request_id or [context["worker_id"], context["response_id"]] != anchor
             or controller.state.owner_requests.get(request_id) != anchor):
         raise ValueError("The saved private owner input does not match the pending worker and response")
     return context
+
+
+def pause_marker_digest(state_path: Path) -> str | None:
+    try:
+        return hashlib.sha256(state_path.with_suffix(".pause").read_bytes()).hexdigest()
+    except FileNotFoundError:
+        return None
+
+
+def owner_pause_reason(state_path: Path, reason: str = "Operator pause requested") -> str:
+    digest = pause_marker_digest(state_path)
+    return f"{reason} [pause-marker={digest}]" if digest else reason
 
 
 def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path) -> Action:
@@ -135,7 +156,7 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
         return Action.HOLD
 
     if state_path.with_suffix(".pause").exists():
-        controller.pause("Operator pause requested before Send")
+        controller.pause(owner_pause_reason(state_path, "Operator pause requested before Send"))
         controller.save(state_path)
         return Action.HOLD
 
@@ -153,7 +174,8 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
         return decision.action
     except SendBlockedBeforeClick as exc:
         controller.confirm_not_sent(p.action_id, str(exc))
-        controller.pause(str(exc))
+        reason = owner_pause_reason(state_path, str(exc)) if isinstance(exc, PausedBeforeClick) else str(exc)
+        controller.pause(reason)
         controller.save(state_path)
         return Action.HOLD
     except WorkerAdvancedBeforeClick:
@@ -306,8 +328,14 @@ def last_publication(state_path: Path, controller: Controller, run_id: str | Non
 
 def inspect_state(state_path: Path) -> dict:
     c = Controller.load(state_path)
-    marker = state_path.with_suffix(".pause")
-    paused = marker.is_file()
+    marker_digest = pause_marker_digest(state_path)
+    halted = c.state.halted
+    pause_acknowledged = False
+    if isinstance(halted, str) and halted.startswith("Operator pause requested"):
+        reason, separator, recorded = halted.rpartition(" [pause-marker=")
+        if separator and re.fullmatch(r"[a-f0-9]{64}\]", recorded):
+            halted = reason
+            pause_acknowledged = marker_digest is not None and recorded == f"{marker_digest}]"
     cfg_path = state_path.with_name("config.json")
     cfg = {}
     if cfg_path.is_file():
@@ -332,10 +360,9 @@ def inspect_state(state_path: Path) -> dict:
             "kind": c.state.pending.kind, "phase": c.state.pending.phase,
             "action_id": c.state.pending.action_id,
         },
-        "halted": c.state.halted,
-        "pause_requested": paused,
-        "pause_acknowledged": (paused and isinstance(c.state.halted, str)
-                               and c.state.halted.startswith("Operator pause requested")),
+        "halted": halted,
+        "pause_requested": marker_digest is not None,
+        "pause_acknowledged": pause_acknowledged,
         "account_key": cfg.get("account_key"),
         "route_receipt": cfg.get("route_receipt"),
         "publication_commit": publication_commit,

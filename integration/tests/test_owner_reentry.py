@@ -134,6 +134,22 @@ class ReentryTests(unittest.TestCase):
         self.assertEqual(saved.state.pending.phase, "prepared")
         self.assertEqual(saved.unique_count, 1)
 
+    def test_substituted_owner_scope_cannot_dispatch_after_restart(self):
+        self.resume(owner_context=self.context)
+        controller = Controller.load(self.state)
+        expected_action = controller.state.pending.action_id
+        body = self.state.with_name(f"owner-{REQUEST_ID}.json")
+        receipt = body.with_suffix(".sha256")
+        original_receipt = receipt.read_bytes()
+        body.write_text(json.dumps({**self.context, "scope": "Different work",
+                                    "instruction": "Change a second fixture"}), encoding="utf-8")
+        self.browser.reset_mock()
+        act = cycle(controller, self.browser, self.reader, "c" * 24, self.state)
+        self.assertEqual(act, Action.HOLD)
+        self.assertEqual(self.browser.mock_calls, [])
+        self.assertEqual(Controller.load(self.state).state.pending.action_id, expected_action)
+        self.assertEqual(receipt.read_bytes(), original_receipt)
+
     def test_uncertain_owner_send_requires_positive_reconciliation(self):
         self.resume(owner_context=self.context)
         controller = Controller.load(self.state)

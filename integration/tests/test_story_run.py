@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from launch_story import bootstrap
 from launch_project import launch_request
-from repo_reader import GitHandoffReader, GitStoryReader, PublishedStateError, STORY_REPO, STORY_TURNS
+from repo_reader import GitHandoffReader, GitPublishedReader, GitStoryReader, PublishedStateError, STORY_REPO, STORY_TURNS
 from runner import Destination, Submitted, cycle, initialise
 from succession.composer import ComposerObservation
 from succession.core import Action, Config, Response
@@ -97,6 +97,36 @@ class StoryTests(unittest.TestCase):
         self.assertIsNone(saved.state.pending)
         self.assertTrue(any("publication_receipt_rejected" in row for row in captured.output))
         self.assertFalse(any("publication_receipt_adopted" in row for row in captured.output))
+        browser.prepare.assert_not_called()
+        browser.send_once.assert_not_called()
+
+    def test_repaired_fixture_receipt_reuses_the_original_unconsumed_response(self):
+        from succession.core import Controller
+        fixture = "succession-tests/review"
+        task = self.writer / fixture / "STATE.json"
+        task.parent.mkdir(parents=True)
+        reader = GitPublishedReader(self.root / "reader", "example-org/fixture", "main", fixture)
+        reader._verify_origin = Mock()
+        path = self.root / "controller.json"
+        controller = initialise(path, Config(PROJECT, reader.repo_name, "main", 3), CHATS[0])
+        browser = Mock()
+        browser.observe.return_value = Response(
+            CHATS[0], "turn-first", "CHAT_STATUS: TASK_COMPLETE", project=PROJECT)
+        for next_task in ("  ", "Run the next authorized mock step"):
+            task.write_text(json.dumps({"run_id": "trial", "programme_complete": False,
+                                        "last_chat_id": CHATS[0], "next_task": next_task}))
+            git(self.writer, "add", fixture)
+            git(self.writer, "commit", "-m", "Publish fixture receipt")
+            git(self.writer, "push", "origin", "main")
+            act = cycle(controller, browser, reader, "trial", path, defer_dispatch=True)
+            controller = Controller.load(path)
+            if not next_task.strip():
+                self.assertEqual(act, Action.HOLD)
+                self.assertEqual(controller.state.consumed_responses, [])
+                controller.resume_after_owner()
+                controller.save(path)
+        self.assertEqual(act, Action.LAUNCH_SUCCESSOR)
+        self.assertEqual(controller.state.consumed_responses, [[CHATS[0], "turn-first"]])
         browser.prepare.assert_not_called()
         browser.send_once.assert_not_called()
 

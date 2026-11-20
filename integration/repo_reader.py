@@ -118,7 +118,8 @@ class GitPublishedReader(PublishedGit):
             raise PublishedStateError("Published completion flag is not boolean")
         if data.get("programme_complete") and data.get("next_task"):
             raise PublishedStateError("Completed programme contradicts next task")
-        if not data.get("programme_complete") and not isinstance(data.get("next_task"), str):
+        if not data["programme_complete"] and (
+                not isinstance(data.get("next_task"), str) or not data["next_task"].strip()):
             raise PublishedStateError("Published next task is missing or invalid")
         last = data.get("last_chat_id")
         if not isinstance(last, str) or not last.strip():
