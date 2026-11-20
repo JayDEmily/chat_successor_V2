@@ -19,7 +19,7 @@ if str(_KIT) not in sys.path:
     sys.path.insert(0, str(_KIT))
 
 from succession.composer import ComposerObservation, ComposerState, classify_composer
-from succession.core import Action, Config, Controller, Response, RepoView, Status, interpret
+from succession.core import Action, Config, Controller, Pending, Response, RepoView, Status, interpret
 from repo_reader import GitHandoffReader, GitPublishedReader, GitStoryReader, PublishedStateError
 
 
@@ -30,6 +30,7 @@ class Destination:
     current_chat_id: str | None
     composer: ComposerObservation
     private_window_handle: int
+    private_document_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -59,6 +60,34 @@ class Browser(Protocol):
     def send_once(self, target: Destination, message: str) -> Submitted: ...
 
 
+def owner_context(data, *, anchored):
+    fields = {"request_id", "instruction", "scope", "pointer"}
+    if anchored:
+        fields |= {"worker_id", "response_id"}
+    if (not isinstance(data, dict) or set(data) != fields
+            or any(not isinstance(value, str) or not value.strip() or len(value) > 4000
+                   for value in data.values())
+            or not re.fullmatch(r"[a-z0-9]{24,64}", data["request_id"])):
+        raise ValueError("Owner context needs a stable ID, instruction, scope and project pointer")
+    return data
+
+
+def read_pending_owner_context(controller: Controller, pending: Pending, state_path: Path) -> dict:
+    request_id = pending.owner_request_id
+    if not isinstance(request_id, str) or not re.fullmatch(r"[a-z0-9]{24,64}", request_id):
+        raise ValueError("Invalid saved owner request ID")
+    try:
+        path = state_path.with_name(f"owner-{request_id}.json")
+        context = owner_context(json.loads(path.read_text(encoding="utf-8")), anchored=True)
+    except (OSError, ValueError) as exc:
+        raise ValueError("The saved private owner input is missing or unreadable") from exc
+    anchor = [pending.source_chat_id, pending.response_id]
+    if (context["request_id"] != request_id or [context["worker_id"], context["response_id"]] != anchor
+            or controller.state.owner_requests.get(request_id) != anchor):
+        raise ValueError("The saved private owner input does not match the pending worker and response")
+    return context
+
+
 def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path) -> Action:
     """Serialized prepare -> persist sending -> one click -> read-back.
 
@@ -71,10 +100,13 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
     if p.phase != "prepared" or controller.state.halted:
         return Action.HOLD
     try:
-        if p.owner_request_id and browser.reentry_disposition(p.source_chat_id, p.response_id) == "advanced":
-            controller.state.pending = None
-            controller.save(state_path)
-            return Action.IGNORE
+        context = None
+        if p.owner_request_id:
+            context = read_pending_owner_context(controller, p, state_path)
+            if browser.reentry_disposition(p.source_chat_id, p.response_id) == "advanced":
+                controller.state.pending = None
+                controller.save(state_path)
+                return Action.IGNORE
         target = browser.prepare(p.kind, p.source_chat_id)
         expected = controller.config.project
         if target.project != expected or target.private_window_handle <= 0:
@@ -95,6 +127,8 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
             controller.pause("Existing draft, attachment or ambiguous editor evidence")
             controller.save(state_path)
             return Action.HOLD
+        if context is not None and read_pending_owner_context(controller, p, state_path) != context:
+            raise ValueError("The saved private owner input changed during preparation")
     except Exception as exc:
         controller.pause(f"Desktop prepare did not establish safe target: {exc}")
         controller.save(state_path)
@@ -187,24 +221,25 @@ def cycle(controller: Controller, browser: Browser,
             [response.chat_id, response.response_id] not in controller.state.consumed_responses):
         logging.info("publication_check_start chat=%s", response.chat_id)
         try:
+            branch = controller.checkpoint_branch
             if isinstance(reader, GitHandoffReader):
-                branch = checkpoint_from_response(response.text, controller.checkpoint_branch)
+                branch = checkpoint_from_response(response.text, branch)
                 if "CHAT_HANDOFF_BRANCH" in response.text.upper() and response.handoff_locator_verified is False:
                     raise PublishedStateError("Browser did not verify the branch locator in the assistant's prose")
                 publication = reader.read_checkpoint(run_id, branch)
-                if (publication.view.last_chat_id != response.chat_id or
-                        publication.view.repo != controller.config.repo or publication.view.branch != branch):
-                    raise PublishedStateError("Published receipt is for a different worker or route")
-                if branch != controller.config.branch:
-                    controller.state.checkpoint_branch = branch
-                else:
-                    controller.state.checkpoint_branch = None
             else:
                 publication = reader.read(run_id)
+            if (publication.run_id != run_id or publication.view.last_chat_id != response.chat_id
+                    or publication.view.repo != controller.config.repo or publication.view.branch != branch):
+                raise PublishedStateError("Published receipt is for a different run, worker or route")
+            if (publication.view.published is not True or publication.view.readable is not True
+                    or not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", publication.commit or "")):
+                raise PublishedStateError("Published receipt lacks a verified commit")
             if (isinstance(reader, GitStoryReader) and
                     publication.completed_turns != controller.unique_count):
                 raise PublishedStateError("Published story turn does not match the current worker count")
             repo = publication.view
+            controller.state.checkpoint_branch = branch if branch != controller.config.branch else None
             accepted_publication = publication
             logging.info("publication_receipt_verified run=%s chat=%s response=%s ref=refs/heads/%s sha=%s result=IDENTITY_MATCH",
                          run_id, response.chat_id, response.response_id,
@@ -222,7 +257,8 @@ def cycle(controller: Controller, browser: Browser,
     if decision.action == Action.LAUNCH_SUCCESSOR and isinstance(reader, GitHandoffReader):
         controller.state.pending.message += reader.instructions(run_id, controller.unique_count + 1)
     controller.save(state_path)
-    if accepted_publication is not None:
+    if accepted_publication is not None and decision.action in (
+            Action.LAUNCH_SUCCESSOR, Action.STOP_FINISHED, Action.STOP_CAP):
         logging.info("publication_receipt_adopted run=%s chat=%s response=%s ref=refs/heads/%s sha=%s decision=%s",
                      run_id, response.chat_id, response.response_id,
                      accepted_publication.view.branch, accepted_publication.commit,
@@ -243,20 +279,45 @@ def initialise(state_path: Path, config: Config, observed_chat_id: str) -> Contr
     return c
 
 
+_ADOPTED_PUBLICATION = re.compile(
+    r"^(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z )?"
+    r"publication_receipt_adopted run=(\S+) chat=(\S+) response=(\S+) "
+    r"ref=(refs/heads/\S+) sha=([0-9a-f]{40}|[0-9a-f]{64}) "
+    r"decision=(?:LAUNCH_SUCCESSOR|STOP_FINISHED|STOP_CAP)\s*$"
+)
+
+
+def last_publication(state_path: Path, controller: Controller, run_id: str | None) -> tuple[str | None, str | None]:
+    if not run_id:
+        return None, None
+    consumed = {tuple(anchor) for anchor in controller.state.consumed_responses}
+    ref = f"refs/heads/{controller.checkpoint_branch}"
+    commit = None
+    try:
+        with state_path.with_name("controller-timing.log").open(encoding="utf-8", errors="replace") as log:
+            for line in log:
+                match = _ADOPTED_PUBLICATION.search(line)
+                if match and match[1] == run_id and match[4] == ref and (match[2], match[3]) in consumed:
+                    commit = match[5]
+    except OSError:
+        return None, None
+    return (commit, ref) if commit else (None, None)
+
+
 def inspect_state(state_path: Path) -> dict:
     c = Controller.load(state_path)
     marker = state_path.with_suffix(".pause")
     paused = marker.is_file()
     cfg_path = state_path.with_name("config.json")
-    account_key = None
-    route_receipt = None
+    cfg = {}
     if cfg_path.is_file():
         try:
             cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+            if not isinstance(cfg, dict):
+                raise ValueError("Private run config must be an object")
         except (ValueError, OSError) as exc:
             raise ValueError("Private run account configuration unreadable") from exc
-        account_key = cfg.get("account_key")
-        route_receipt = cfg.get("route_receipt")
+    publication_commit, publication_ref = last_publication(state_path, c, cfg.get("run_id"))
     return {
         "project": c.config.project,
         "repo": c.config.repo,
@@ -275,7 +336,8 @@ def inspect_state(state_path: Path) -> dict:
         "pause_requested": paused,
         "pause_acknowledged": (paused and isinstance(c.state.halted, str)
                                and c.state.halted.startswith("Operator pause requested")),
-        "account_key": account_key,
-        "route_receipt": route_receipt,
-        "publication_commit": None,  # not persisted; never invent a live Git receipt
+        "account_key": cfg.get("account_key"),
+        "route_receipt": cfg.get("route_receipt"),
+        "publication_commit": publication_commit,
+        "publication_ref": publication_ref,
     }

@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import time
@@ -16,6 +17,7 @@ from repo_reader import GitHandoffReader, HANDOFF_WORKFLOW, STORY_REPO
 from runner import initialise, inspect_state
 from succession.composer import ComposerState, classify_composer
 from succession.core import Action, Config
+from windows_backend import is_saved_chat_id
 
 
 def prepare_first(browser, reader):
@@ -27,6 +29,7 @@ def prepare_first(browser, reader):
     composer = classify_composer(target.composer)
     if (target.project != browser.project or target.current_chat_id is not None
             or target.private_window_handle <= 0
+            or not target.private_document_id
             or composer != ComposerState.EMPTY):
         raise RuntimeError(f"Fresh empty Project composer was not verified ({composer.value})")
     return target
@@ -61,7 +64,7 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
                     intent.get("route_receipt", "") != (cfg.get("route_receipt") or "") or
                     intent.get("message_sha256") != hashlib.sha256(pointer.encode("utf-8")).hexdigest() or
                     not isinstance(intent.get("action_id"), str) or
-                    len(intent["action_id"]) != 32):
+                    not re.fullmatch(r"[a-f0-9]{32}", intent["action_id"])):
                 raise RuntimeError("Existing initial intent has a changed run, route or message identity")
         elif cfg.get("account_key"):
             raise RuntimeError("Bound initial Send cannot adopt an unbound legacy intent")
@@ -69,6 +72,7 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
                                   WindowHandle=intent["handle"], Message=pointer,
                                   BootstrapIntentPath=intent_path.resolve(),
                                   BootstrapRunId=cfg["run_id"] if complete else None,
+                                  BootstrapActionId=intent.get("action_id") if complete else None,
                                   RouteReceipt=cfg.get("route_receipt") or "")
     else:
         if pause_path.exists():
@@ -76,6 +80,7 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
         target = prepare_first(browser, reader)
         intent = {"handle": target.private_window_handle,
                   "project": target.project, "message": pointer,
+                  "document_id": target.private_document_id,
                   "action_id": uuid4().hex,
                   "run_id": cfg["run_id"],
                   "route_receipt": cfg.get("route_receipt") or "",
@@ -86,8 +91,10 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
             os.fsync(stream.fileno())
         receipt = browser._invoke("Send", Kind=Action.LAUNCH_SUCCESSOR.value,
                                   WindowHandle=intent["handle"], Message=pointer,
+                                  DocumentId=intent["document_id"],
                                   BootstrapIntentPath=intent_path.resolve(),
                                   BootstrapRunId=cfg["run_id"],
+                                  BootstrapActionId=intent["action_id"],
                                   RouteReceipt=cfg.get("route_receipt") or "",
                                   PausePath=pause_path)
         if receipt == {"paused_before_click": True}:
@@ -100,7 +107,7 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
     if (receipt.get("posted_message_observed") is not True
             or receipt.get("project") != cfg["project"]
             or receipt.get("submitted_text") != pointer
-            or not receipt.get("chat_id")):
+            or not is_saved_chat_id(receipt.get("chat_id"))):
         raise RuntimeError("Initial Send is held until exact posted-message evidence identifies the saved chat")
     config = Config(cfg["project"], cfg["repo"], cfg["branch"], cfg["max_unique_chats"])
     initialise(state_path, config, receipt["chat_id"])

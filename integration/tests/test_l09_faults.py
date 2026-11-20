@@ -15,6 +15,9 @@ from succession.composer import ComposerObservation
 from succession.core import Action, Config, Controller, RepoView, Response
 from windows_backend import BrowserObservationError, WindowsUIA
 
+FIRST = "00000000-0000-0000-0000-000000000001"
+NEXT = "00000000-0000-0000-0000-000000000002"
+
 
 class L09AdapterFaultTests(unittest.TestCase):
     def setUp(self):
@@ -23,20 +26,20 @@ class L09AdapterFaultTests(unittest.TestCase):
         self.path = Path(self.tmp.name) / "controller.json"
         self.cfg = Config("g-p-L09TEST", "JayDEmily/chat_successor",
                           "work/astra-succession-implementation-20261118", 3)
-        self.c = initialise(self.path, self.cfg, "chat-first")
+        self.c = initialise(self.path, self.cfg, FIRST)
         self.w = WindowsUIA(self.cfg.project, "Chat succession folder",
                             Path(self.tmp.name) / "uia_adapter.ps1", self.path)
 
     def stage_sending(self, kind):
         if kind == Action.CONTINUE_CURRENT:
-            response = Response("chat-first", "turn-1", "CHAT_STATUS: NEED_MORE_TIME",
+            response = Response(FIRST, "turn-1", "CHAT_STATUS: NEED_MORE_TIME",
                                 project=self.cfg.project)
             decision = self.c.consume(response)
-            chat_id = "chat-first"
+            chat_id = FIRST
         else:
-            response = Response("chat-first", "turn-1", "CHAT_STATUS: TASK_COMPLETE",
+            response = Response(FIRST, "turn-1", "CHAT_STATUS: TASK_COMPLETE",
                                 project=self.cfg.project)
-            repo_view = RepoView(self.cfg.repo, self.cfg.branch, "chat-first",
+            repo_view = RepoView(self.cfg.repo, self.cfg.branch, FIRST,
                                  False, "Next fixture slice", True, True)
             decision = self.c.consume(response, repo_view)
             chat_id = None
@@ -45,7 +48,7 @@ class L09AdapterFaultTests(unittest.TestCase):
         self.c.begin_send(decision.action_id)
         self.c.save(self.path)
         self.w._atomic_target_write({"kind": kind.value,
-                                     "source": "chat-first", "handle": 1234,
+                                     "source": FIRST, "handle": 1234, "document_id": "42.1234",
                                      "project": self.cfg.project,
                                      "action_id": decision.action_id,
                                      "source_response": "turn-1",
@@ -53,7 +56,7 @@ class L09AdapterFaultTests(unittest.TestCase):
                                      "route_receipt": None})
         target = Destination(self.cfg.project, chat_id,
                              ComposerObservation(editable_text=""),
-                             private_window_handle=1234)
+                             private_window_handle=1234, private_document_id="42.1234")
         return decision, target
 
     def test_before_click_has_durable_sending_and_never_invokes_UIA_send(self):
@@ -113,10 +116,26 @@ class L09AdapterFaultTests(unittest.TestCase):
         self.assertEqual(saved.unique_count, expected_count)
 
     def test_after_click_lost_ack_reconciles_successor_once(self):
-        self.check_lost_ack_after_click(Action.LAUNCH_SUCCESSOR, "chat-next")
+        self.check_lost_ack_after_click(Action.LAUNCH_SUCCESSOR, NEXT)
 
     def test_after_click_lost_ack_reconciles_same_chat_once(self):
-        self.check_lost_ack_after_click(Action.CONTINUE_CURRENT, "chat-first")
+        self.check_lost_ack_after_click(Action.CONTINUE_CURRENT, FIRST)
+
+    def test_provisional_successor_readback_keeps_exact_uncertain_action(self):
+        action, _ = self.stage_sending(Action.LAUNCH_SUCCESSOR)
+        self.c.uncertain(action.action_id)
+        self.c.save(self.path)
+        self.w._invoke = Mock(return_value={
+            "project": self.cfg.project, "chat_id": "local-chatgpt",
+            "submitted_text": action.message, "posted_message_observed": True,
+        })
+        before = self.path.read_bytes()
+        receipt = self.w.reconcile_readonly()
+        self.assertIsNone(receipt.chat_id)
+        self.assertFalse(receipt.posted_message_observed)
+        self.assertEqual(self.w._invoke.call_args.args, ("Reconcile",))
+        self.assertEqual(self.path.read_bytes(), before)
+        self.assertEqual(Controller.load(self.path).unique_count, 1)
 
     def test_unknown_fault_name_does_not_enter_UIA(self):
         decision, target = self.stage_sending(Action.CONTINUE_CURRENT)

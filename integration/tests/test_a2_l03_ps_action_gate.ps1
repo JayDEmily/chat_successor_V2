@@ -12,6 +12,7 @@ $PrepareAction = 'a2-action-id-1'
 $RouteReceipt = ''
 $PendingResponseId = 'uia-turn-1-aaa00000000000000000'
 $BootstrapRunId = ''
+$BootstrapActionId = ''
 $PrepareTargetPath = Join-Path $env:TEMP 'a2-ps-target-receipt-test.json'
 $BootstrapIntentPath = ''
 $ProjectId = 'g-p-TEST'
@@ -19,13 +20,14 @@ $Kind = 'CONTINUE_CURRENT'
 $ChatId = 'worker-first'
 $SourceResponse = 'uia-turn-1-aaa00000000000000000'
 $WindowHandle = [long]222
+$DocumentId = '42.222'
 $Message = 'Okay, continue working.'
 $Mode = 'Send'
 $hash = [Security.Cryptography.SHA256]::Create()
 try {
     $digest = [BitConverter]::ToString($hash.ComputeHash([Text.Encoding]::UTF8.GetBytes($Message))).Replace('-','').ToLowerInvariant()
 } finally { $hash.Dispose() }
-$record = [ordered]@{ action_id=$PrepareAction; project=$ProjectId; kind=$Kind; source=$ChatId; handle=$WindowHandle; message_sha256=$digest; source_response=$SourceResponse; route_receipt=$RouteReceipt }
+$record = [ordered]@{ action_id=$PrepareAction; project=$ProjectId; kind=$Kind; source=$ChatId; handle=$WindowHandle; document_id=$DocumentId; message_sha256=$digest; source_response=$SourceResponse; route_receipt=$RouteReceipt }
 try {
   [IO.File]::WriteAllText($PrepareTargetPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
   Assert-PrivateDispatchReceipt
@@ -53,10 +55,16 @@ try {
   try { Assert-PrivateDispatchReceipt } catch { $failed=$true }
   if(-not $failed){throw 'CHANGED_SUCCESSOR_SOURCE_ANCHOR_ACCEPTED'}
   $record['source_response']=$PendingResponseId
+  $record['document_id']='42.333'
+  [IO.File]::WriteAllText($PrepareTargetPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
+  $failed=$false
+  try { Assert-PrivateDispatchReceipt } catch { $failed=$true }
+  if(-not $failed){throw 'CHANGED_DOCUMENT_ACCEPTED'}
   $BootstrapIntentPath = Join-Path $env:TEMP 'a2-ps-bootstrap-intent-test.json'
   $PrepareAction = ''
   $BootstrapRunId='a2-test-run-1'
-  $record = [ordered]@{ action_id=('b'*32); project=$ProjectId; handle=$WindowHandle; message=$Message; run_id=$BootstrapRunId; route_receipt=$RouteReceipt; message_sha256=$digest }
+  $BootstrapActionId='b'*32
+  $record = [ordered]@{ action_id=$BootstrapActionId; project=$ProjectId; handle=$WindowHandle; document_id=$DocumentId; message=$Message; run_id=$BootstrapRunId; route_receipt=$RouteReceipt; message_sha256=$digest }
   [IO.File]::WriteAllText($BootstrapIntentPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
   Assert-PrivateDispatchReceipt
   $record['route_receipt']='wrong-bootstrap-route'
@@ -65,12 +73,17 @@ try {
   try { Assert-PrivateDispatchReceipt } catch { $failed=$true }
   if(-not $failed){throw 'CHANGED_BOOTSTRAP_ROUTE_ACCEPTED'}
   $record['route_receipt']=$RouteReceipt
+  $record['action_id']='c'*32
+  [IO.File]::WriteAllText($BootstrapIntentPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
+  $failed=$false
+  try { Assert-PrivateDispatchReceipt } catch { $failed=$true }
+  if(-not $failed){throw 'CHANGED_VALID_BOOTSTRAP_ACTION_ID_ACCEPTED'}
   $record.Remove('action_id')
   [IO.File]::WriteAllText($BootstrapIntentPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
   $failed=$false
   try { Assert-PrivateDispatchReceipt } catch { $failed=$true }
   if(-not $failed){throw 'BOOTSTRAP_WITHOUT_ACTION_ID_ACCEPTED'}
-  Write-Output 'PASS: Windows PowerShell AST parse; 1 positive follow-up action; 4 negative target identities; 1 positive bootstrap; 2 negative bootstrap.'
+  Write-Output 'PASS: Windows PowerShell action checks, including changed document and substituted bootstrap ID.'
 } finally {
   Remove-Item -LiteralPath $PrepareTargetPath -Force -ErrorAction SilentlyContinue
   if($BootstrapIntentPath){ Remove-Item -LiteralPath $BootstrapIntentPath -Force -ErrorAction SilentlyContinue }

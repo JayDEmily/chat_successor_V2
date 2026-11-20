@@ -77,6 +77,8 @@ class SavedViewQualification(unittest.TestCase):
                          ["Observe","Observe","RecoverView","Observe","Observe"])
         self.assertEqual(self.w._invoke.call_args_list[2].kwargs["SourceResponse"],
                          self.partial["response_id"])
+        self.assertEqual(self.w._invoke.call_args_list[2].kwargs["WorkerJournalPath"],
+                         self.state.resolve())
         self.assertEqual(self.state.read_bytes(),self.before)
 
     def test_v04_uncompleted_fresh_probe_waits_without_send(self):

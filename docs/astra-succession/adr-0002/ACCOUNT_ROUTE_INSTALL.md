@@ -24,12 +24,14 @@ At the installation step **after A2-G1**:
     "shoco": {
       "install_root": "VERIFIED_ABSOLUTE_NATIVE_INSTALL_ROOT",
       "profile_path": "VERIFIED_ABSOLUTE_CHROME_PROFILE_PATH",
+      "chrome_app_id": "OBSERVED_CHROME_WINDOW_APP_USER_MODEL_ID",
       "plugin_id": "VERIFIED_PRIVATE_PLUGIN_ID",
       "backend_commit": "VERIFIED_40_CHARACTER_GIT_SHA"
     },
     "james-student": {
       "install_root": "VERIFIED_ABSOLUTE_NATIVE_INSTALL_ROOT",
       "profile_path": "VERIFIED_ABSOLUTE_CHROME_PROFILE_PATH",
+      "chrome_app_id": "OBSERVED_CHROME_WINDOW_APP_USER_MODEL_ID",
       "plugin_id": "VERIFIED_PRIVATE_PLUGIN_ID",
       "backend_commit": "VERIFIED_40_CHARACTER_GIT_SHA"
     }
@@ -56,6 +58,21 @@ At the installation step **after A2-G1**:
 The installed wrapper chooses the account key; the user does not need to
 supply it. Once bound, controller subprocess UIA invocations explicitly pass
 the configured Chrome profile instead of inheriting an arbitrary ambient one.
+
+Set each `chrome_app_id` from a normal Chrome window already verified to use
+that account and profile. The native read uses the window handle and
+`System.AppUserModel.ID`. Use the existing no-Send setup to confirm the
+profile path and signed-in ChatGPT account on the same window before pinning
+the ID. Each account must have a distinct profile, window ID and private
+plugin. The adapter checks the ID on newly opened and existing windows.
+[Chrome profile taskbar identity](https://chromium.googlesource.com/chromium/src.git/%2Bshow/b855dc7a9addbed2a8bc023ae53c2530cfdb9bdd/docs/windows_shortcut_and_taskbar_handling.md)
+· [Windows window property API](https://learn.microsoft.com/en-us/windows/desktop/api/shellapi/nf-shellapi-shgetpropertystoreforwindow).
+
+The wrapper must point at the exact Git checkout named by `backend_commit`.
+The launcher and controller verify the running checkout's HEAD and tracked
+backend source with the local Windows Git executable before browser effects.
+Use the implementation commit as the installation pin. The review and
+evidence commits can advance separately on the working branch.
 
 ## Compatibility
 

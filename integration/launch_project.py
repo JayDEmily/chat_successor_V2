@@ -10,11 +10,11 @@ import re
 import subprocess
 
 from cli import create_dependencies, exclusive_lock, load_config
-from account_routes import require_route, verify_saved_binding, bound_config_fields
+from account_routes import require_route, verify_backend, verify_saved_binding, bound_config_fields
 from launch_story import check_bootstrap_journal, launch, start_controller
-from owner_reentry import owner_context, record_context, resume_request
+from owner_reentry import record_context, resume_request
 from repo_reader import GitHandoffReader, HANDOFF_WORKFLOW, validate_github_repo
-from runner import inspect_state
+from runner import inspect_state, owner_context
 from succession.composer import ComposerObservation, ComposerState, classify_composer
 from succession.core import Action
 from windows_backend import WindowsUIA
@@ -90,7 +90,8 @@ def resolve_project(request: dict, state_path: Path, route: dict | None = None) 
         match = PROJECT_URL.fullmatch(url)
         return match[1], request["project_name"], url
     browser = WindowsUIA("", request["project_name"], Path(__file__).with_name("uia_adapter.ps1"),
-                         state_path, profile_path=route["profile_path"] if route else None)
+                         state_path, profile_path=route["profile_path"] if route else None,
+                         chrome_app_id=route["chrome_app_id"] if route else None)
     resolved = browser._invoke("ResolveProject")
     url = resolved.get("project_url", "")
     match = PROJECT_URL.fullmatch(url)
@@ -116,7 +117,8 @@ def preflight_request(request: dict, state_path: Path, route: dict | None = None
     project, name, url = resolve_project(request, state_path, route)
     browser = WindowsUIA(project, name, Path(__file__).with_name("uia_adapter.ps1"),
                          state_path, project_url=url,
-                         profile_path=route["profile_path"] if route else None)
+                         profile_path=route["profile_path"] if route else None,
+                         chrome_app_id=route["chrome_app_id"] if route else None)
     observed = browser._invoke("Prepare", Kind=Action.LAUNCH_SUCCESSOR.value,
                                ProjectUrl=url, Preflight=True)
     observed_url = observed.get("observed_url", "")
@@ -173,6 +175,7 @@ def launch_request(path: Path, base: Path, *, check_only: bool = False,
                    account_key: str | None = None) -> dict:
     route = require_route(base, account_key)
     request = read_request(path)
+    verify_backend(route)
     if check_only:
         return preflight_request(request, base / "controller.json", route)
     project, name, url = resolve_project(request, base / "controller.json", route)

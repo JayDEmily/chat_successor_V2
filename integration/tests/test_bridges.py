@@ -107,13 +107,14 @@ class WindowsBridgeTests(unittest.TestCase):
             state = Path(tmp) / "controller.json"
             w = WindowsUIA("g-p-TEST", "Project", Path(tmp) / "uia_adapter.ps1", state)
             w._invoke = Mock(return_value={"project": "g-p-TEST", "current_chat_id": None,
-                                          "private_window_handle": 34, "editable_text": "",
+                                          "private_window_handle": 12, "document_id": "42.12", "editable_text": "",
                                           "attachments_present": False})
             pending = {"kind": "LAUNCH_SUCCESSOR", "source_chat_id": "chat-first", "phase": "prepared",
                        "response_id": "turn-one", "action_id": "action-one",
                        "message": "Next worker instruction"}
             state.write_text(json.dumps({"state": {"pending": pending}}))
             w._atomic_target_write({"kind": "LAUNCH_SUCCESSOR", "source": "chat-first", "handle": 12,
+                                    "document_id": "42.12",
                                     "action_id": "action-one", "project": "g-p-TEST",
                                     "source_response": "turn-one",
                                     "message_sha256": hashlib.sha256(
@@ -124,6 +125,7 @@ class WindowsBridgeTests(unittest.TestCase):
             self.assertEqual(w._invoke.call_args.kwargs["SourceResponse"], "turn-one")
             pending["action_id"] = "action-two"
             state.write_text(json.dumps({"state": {"pending": pending}}))
+            w._invoke.return_value.update(private_window_handle=34, document_id="42.34")
             w.prepare("LAUNCH_SUCCESSOR", "chat-first")
             self.assertNotIn("WindowHandle", w._invoke.call_args.kwargs)
             # A different triggering worker or action kind is a hard hold,
@@ -145,14 +147,16 @@ class WindowsBridgeTests(unittest.TestCase):
                                 project=cfg.project)
             d = c.consume(response)
             c.save(state)
-            t = Destination(cfg.project, "chat-first", ComposerObservation(editable_text=""), 1234)
+            t = Destination(cfg.project, "chat-first", ComposerObservation(editable_text=""), 1234, "42.1234")
             w._atomic_target_write({"kind": "CONTINUE_CURRENT",
                                     "source": "chat-first", "handle": 1234,
+                                    "document_id": "42.1234",
                                     "project": cfg.project, "action_id": d.action_id,
                                     "source_response": "turn1",
                                     "message_sha256": hashlib.sha256(d.message.encode()).hexdigest(),
                                     "route_receipt": None})
-            w._invoke = Mock(return_value={"project": cfg.project, "chat_id": "chat-first",
+            w._invoke = Mock(return_value={"project": cfg.project,
+                                           "chat_id": "00000000-0000-0000-0000-000000000001",
                                            "submitted_text": d.message,
                                            "posted_message_observed": True})
             with self.assertRaises(BrowserObservationError):

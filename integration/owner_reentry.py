@@ -3,23 +3,10 @@ from __future__ import annotations
 
 import json
 import os
-import re
 
 from cli import exclusive_lock, load_config, read_pause_marker, release_pause_marker
 from runner import inspect_state
 from succession.core import Config, Controller
-
-
-def owner_context(data, *, anchored):
-    fields = {"request_id", "instruction", "scope", "pointer"}
-    if anchored:
-        fields |= {"worker_id", "response_id"}
-    if (not isinstance(data, dict) or set(data) != fields
-            or any(not isinstance(value, str) or not value.strip() or len(value) > 4000
-                   for value in data.values())
-            or not re.fullmatch(r"[a-z0-9]{24,64}", data["request_id"])):
-        raise ValueError("Owner context needs a stable ID, instruction, scope and project pointer")
-    return data
 
 
 def record_context(state_path, context):

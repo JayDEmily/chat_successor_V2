@@ -101,7 +101,8 @@ class WorkerViewTests(unittest.TestCase):
 
     def test_prepared_continuation_and_explicit_resume_restore_exact_worker(self):
         prepared = {"project": self.project, "current_chat_id": self.chat,
-                    "private_window_handle": 45, "editable_text": "", "attachments_present": False}
+                    "private_window_handle": 45, "document_id": "42.45",
+                    "editable_text": "", "attachments_present": False}
         self.adapter.side_effect = [self.missing, self.restored, prepared,
                                     self.missing, self.restored, {**self.identity, "disposition": "idle"}]
         self.assertEqual(self.bridge.prepare("CONTINUE_CURRENT", self.chat).current_chat_id, self.chat)

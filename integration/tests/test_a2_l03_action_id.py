@@ -13,32 +13,35 @@ from runner import Destination,initialise
 from succession.composer import ComposerObservation
 from succession.core import Action, Config,Controller,Response,RepoView
 
+WORKER = "00000000-0000-0000-0000-000000000001"
+DOCUMENT = "42.222"
+
 class L03ActionTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.state=Path(self.tmp.name)/"controller.json"
         self.cfg=Config("g-p-TEST","example/fixture","work/test",2)
-        self.c=initialise(self.state,self.cfg,"source-worker")
+        self.c=initialise(self.state,self.cfg,WORKER)
         self.w=WindowsUIA(self.cfg.project,"Fixture",Path(self.tmp.name)/"adapter.ps1",self.state)
-        self.response=Response("source-worker","uia-turn-1-aaa00000000000000000",
+        self.response=Response(WORKER,"uia-turn-1-aaa00000000000000000",
                                "CHAT_STATUS: NEED_MORE_TIME",project=self.cfg.project)
 
     def stage(self,kind=Action.CONTINUE_CURRENT, uncertain=False):
         if kind==Action.CONTINUE_CURRENT:
             decision=self.c.consume(self.response)
-            chat="source-worker"
+            chat=WORKER
         else:
-            resp=Response("source-worker",self.response.response_id,
+            resp=Response(WORKER,self.response.response_id,
                           "CHAT_STATUS: TASK_COMPLETE",project=self.cfg.project)
-            pub=RepoView(self.cfg.repo,self.cfg.branch,"source-worker",
+            pub=RepoView(self.cfg.repo,self.cfg.branch,WORKER,
                          False,"Next mock slice",True,True)
             decision=self.c.consume(resp,pub)
             chat=None
         self.c.save(self.state)
         pending=self.c.state.pending
-        target=Destination(self.cfg.project,chat,ComposerObservation(editable_text=""),222)
-        record={"kind":pending.kind,"source":pending.source_chat_id,"handle":222,
+        target=Destination(self.cfg.project,chat,ComposerObservation(editable_text=""),222,DOCUMENT)
+        record={"kind":pending.kind,"source":pending.source_chat_id,"handle":222,"document_id":DOCUMENT,
                 "project":self.cfg.project,"source_response":pending.response_id,
                 "action_id":pending.action_id,
                 "message_sha256":hashlib.sha256(pending.message.encode()).hexdigest(),
@@ -78,7 +81,7 @@ class L03ActionTests(unittest.TestCase):
 
     def test_s09_wrong_project_and_handle_block(self):
         decision,target,record=self.stage()
-        for changed,value in (("project","g-p-other"),("handle",333),
+        for changed,value in (("project","g-p-other"),("handle",333),("document_id","42.333"),
                               ("kind","LAUNCH_SUCCESSOR")):
             with self.subTest(changed=changed):
                 self.w._atomic_target_write({**record,changed:value})
@@ -89,7 +92,11 @@ class L03ActionTests(unittest.TestCase):
 
     def test_s09_bound_route_receipt_not_substitutable(self):
         d,t,record=self.stage()
-        cfg={"route_receipt":"expected-route-hash"}
+        self.w.route_receipt = "a" * 64
+        self.w.profile_path = r"C:\Mock Chrome\Profile 1"
+        self.w.chrome_app_id = "Chrome.Mock"
+        cfg={"account_key": "shoco", "route_receipt": self.w.route_receipt,
+             "chrome_profile_path": self.w.profile_path, "chrome_app_id": self.w.chrome_app_id}
         self.state.with_name("config.json").write_text(json.dumps(cfg))
         self.w._invoke=Mock()
         with self.assertRaisesRegex(BrowserObservationError,"identity mismatch"):
@@ -109,7 +116,7 @@ class L03ActionTests(unittest.TestCase):
     def test_s05_uncertain_reconcile_exact_action_and_anchor_once(self):
         d,t,record=self.stage(uncertain=True)
         self.w._invoke=Mock(return_value={
-          "project":self.cfg.project,"chat_id":"source-worker",
+          "project":self.cfg.project,"chat_id":WORKER,
           "submitted_text":d.message,"posted_message_observed":True})
         receipt=self.w.reconcile_readonly()
         self.assertTrue(receipt.posted_message_observed)
@@ -125,7 +132,7 @@ class L03ActionTests(unittest.TestCase):
     def test_s09_send_carries_original_action_id_to_ps_boundary(self):
         d,t,record=self.stage()
         self.w._invoke=Mock(return_value={
-          "project":self.cfg.project,"chat_id":"source-worker",
+          "project":self.cfg.project,"chat_id":WORKER,
           "submitted_text":d.message,"posted_message_observed":True})
         receipt=self.w.send_once(t,d.message)
         self.assertTrue(receipt.posted_message_observed)
@@ -133,19 +140,22 @@ class L03ActionTests(unittest.TestCase):
         self.assertEqual(kw["PrepareAction"],d.action_id)
         self.assertEqual(kw["PrepareTargetPath"],self.w.target_path.resolve())
         self.assertEqual(kw["SourceResponse"],self.response.response_id)
+        self.assertEqual(kw["DocumentId"], DOCUMENT)
 
     def test_s09_prepare_records_action_id_for_continuation(self):
         d=self.c.consume(self.response)
         self.c.save(self.state)
         self.w._invoke=Mock(return_value={
-          "project":self.cfg.project,"current_chat_id":"source-worker",
-          "private_window_handle":222,"editable_text":"","attachments_present":False})
-        target=self.w.prepare("CONTINUE_CURRENT","source-worker")
+          "project":self.cfg.project,"current_chat_id":WORKER,
+          "private_window_handle":222,"document_id":DOCUMENT,
+          "editable_text":"","attachments_present":False})
+        target=self.w.prepare("CONTINUE_CURRENT",WORKER)
         self.assertEqual(target.private_window_handle,222)
         record=json.loads(self.w.target_path.read_text())
         self.assertEqual(record["action_id"],d.action_id)
         self.assertEqual(record["source_response"],self.response.response_id)
         self.assertEqual(record["project"],self.cfg.project)
+        self.assertEqual(record["document_id"], DOCUMENT)
         self.assertEqual(record["message_sha256"],hashlib.sha256(d.message.encode()).hexdigest())
 
 if __name__=="__main__":

@@ -12,8 +12,11 @@ import json
 import ntpath
 from pathlib import Path
 import re
+import subprocess
 
 _ACCOUNT = re.compile(r"[a-z][a-z0-9-]{1,39}\Z")
+_APP_ID = re.compile(r"[A-Za-z0-9_.-]{1,128}")
+_ROUTE_FIELDS = {"install_root", "profile_path", "chrome_app_id", "plugin_id", "backend_commit"}
 
 
 def _reject_duplicate_json_keys(pairs):
@@ -45,23 +48,29 @@ def require_route(install_root: Path, account_key: str | None) -> dict | None:
     # A single signed-in Chrome profile cannot independently represent two
     # distinct ChatGPT accounts. Reject ambiguous sibling routes before any
     # login/browser operation, including Windows case/slash variants.
-    seen_profiles = {}
+    seen_profiles = set()
+    seen_window_ids = set()
+    seen_plugins = set()
     for sibling_key, sibling in raw["accounts"].items():
         if (not isinstance(sibling_key, str) or not _ACCOUNT.fullmatch(sibling_key)
                 or not isinstance(sibling, dict)
-                or not isinstance(sibling.get("profile_path"), str)
-                or not sibling["profile_path"].strip()):
+                or set(sibling) != _ROUTE_FIELDS
+                or any(not isinstance(value, str) or not value.strip() for value in sibling.values())
+                or not _APP_ID.fullmatch(sibling["chrome_app_id"])
+                or not re.fullmatch(r"[A-Za-z0-9_-]{8,128}", sibling["plugin_id"])
+                or not re.fullmatch(r"[0-9a-f]{40}", sibling["backend_commit"])):
             raise ValueError("Invalid account route sibling entry")
         profile_key = ntpath.normcase(ntpath.normpath(sibling["profile_path"])).casefold()
         if profile_key in seen_profiles:
             raise ValueError("Conflicting account routes share one Chrome profile")
-        seen_profiles[profile_key] = sibling_key
+        if sibling["chrome_app_id"].casefold() in seen_window_ids or sibling["plugin_id"] in seen_plugins:
+            raise ValueError("Conflicting account routes share a Chrome window identity or plugin")
+        seen_profiles.add(profile_key)
+        seen_window_ids.add(sibling["chrome_app_id"].casefold())
+        seen_plugins.add(sibling["plugin_id"])
     entry = raw["accounts"].get(account_key)
     if not isinstance(entry, dict):
         raise ValueError("Unknown account route; refusing implicit fallback")
-    required = {"install_root", "profile_path", "plugin_id", "backend_commit"}
-    if set(entry) != required or any(not isinstance(v, str) or not v.strip() for v in entry.values()):
-        raise ValueError("Account route is incomplete")
     if not Path(entry["install_root"]).is_absolute():
         raise ValueError("Account installation root must be absolute")
     try:
@@ -73,16 +82,30 @@ def require_route(install_root: Path, account_key: str | None) -> dict | None:
     profile = entry["profile_path"]
     if not ntpath.isabs(profile) and not Path(profile).is_absolute():
         raise ValueError("Account Chrome profile path must be absolute")
-    if not re.fullmatch(r"[0-9a-f]{40}", entry["backend_commit"]):
-        raise ValueError("Account route backend commit is invalid")
-    if not re.fullmatch(r"[A-Za-z0-9_-]{8,128}", entry["plugin_id"]):
-        raise ValueError("Account route plugin ID is invalid")
     receipt = hashlib.sha256(json.dumps(
         {"account_key": account_key, **entry}, sort_keys=True,
         separators=(",", ":")).encode()).hexdigest()
     return {"account_key": account_key, "profile_path": profile,
+            "chrome_app_id": entry["chrome_app_id"],
             "install_root": str(base), "backend_commit": entry["backend_commit"],
             "plugin_id": entry["plugin_id"], "route_receipt": receipt}
+
+
+def verify_backend(route: dict | None) -> None:
+    if route is None:
+        return
+    root = Path(__file__).resolve().parents[1]
+    git = ["git", "-C", str(root)]
+    try:
+        head = subprocess.run([*git, "rev-parse", "--verify", "HEAD^{commit}"],
+                              capture_output=True, text=True, check=True, timeout=10).stdout.strip()
+        if head != route["backend_commit"]:
+            raise ValueError("The running backend differs from the verified account route")
+        subprocess.run([*git, "diff", "--quiet", "HEAD", "--", "integration",
+                        "astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/succession"],
+                       capture_output=True, check=True, timeout=10)
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise ValueError("The running backend checkout could not be verified") from exc
 
 
 def verify_saved_binding(cfg: dict, route: dict | None) -> bool:
@@ -93,6 +116,7 @@ def verify_saved_binding(cfg: dict, route: dict | None) -> bool:
         return True
     for key, cfg_key in (("account_key", "account_key"),
                          ("profile_path", "chrome_profile_path"),
+                         ("chrome_app_id", "chrome_app_id"),
                          ("install_root", "install_root"),
                          ("backend_commit", "route_backend_commit"),
                          ("plugin_id", "route_plugin_id"),
@@ -105,6 +129,7 @@ def verify_saved_binding(cfg: dict, route: dict | None) -> bool:
 def bound_config_fields(route: dict) -> dict:
     return {"account_key": route["account_key"],
             "chrome_profile_path": route["profile_path"],
+            "chrome_app_id": route["chrome_app_id"],
             "install_root": route["install_root"],
             "route_backend_commit": route["backend_commit"],
             "route_plugin_id": route["plugin_id"],

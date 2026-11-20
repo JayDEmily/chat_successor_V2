@@ -38,7 +38,7 @@ class A2L03IndependentNegativeTests(unittest.TestCase):
         action = c.consume(response, repo)
         c.save(self.state)
         p = c.state.pending
-        record = {"project": self.cfg.project, "handle": 223, "kind": p.kind,
+        record = {"project": self.cfg.project, "handle": 223, "document_id": "42.223", "kind": p.kind,
                   "source": p.source_chat_id, "source_response": p.response_id,
                   "action_id": p.action_id,
                   "message_sha256": hashlib.sha256(p.message.encode()).hexdigest(),
@@ -67,7 +67,7 @@ class A2L03IndependentNegativeTests(unittest.TestCase):
         self.browser._atomic_target_write(record)
         self.browser._invoke = Mock(return_value={
             "project": self.cfg.project, "current_chat_id": None,
-            "private_window_handle": 224,
+            "private_window_handle": 224, "document_id": "42.224",
             "editable_text": "", "attachments_present": False
         })
         target = self.browser.prepare("LAUNCH_SUCCESSOR", self.current)
@@ -84,7 +84,7 @@ class A2L03IndependentNegativeTests(unittest.TestCase):
         browser = Mock()
         browser.project = self.cfg.project
         browser.prepare.return_value = Destination(
-            self.cfg.project, None, ComposerObservation(editable_text="", attachments_present=False), 114)
+            self.cfg.project, None, ComposerObservation(editable_text="", attachments_present=False), 114, "42.114")
         browser._invoke.return_value = {}
         reader = Mock()
         reader.heads.return_value = {"main":"seed"}
@@ -103,7 +103,7 @@ class A2L03IndependentNegativeTests(unittest.TestCase):
         browser = Mock()
         browser.project = self.cfg.project
         browser.prepare.return_value = Destination(
-            self.cfg.project, None, ComposerObservation(editable_text="", attachments_present=False), 115)
+            self.cfg.project, None, ComposerObservation(editable_text="", attachments_present=False), 115, "42.115")
         browser._invoke.return_value = {"paused_before_click":True}
         reader = Mock()
         reader.heads.return_value = {"main":"seed"}
@@ -124,7 +124,7 @@ class A2L03IndependentNegativeTests(unittest.TestCase):
         self.state.with_name("config.json").write_text(
             json.dumps({"account_key":"shoco"}))
         self.browser._invoke = Mock()
-        target = Destination(self.cfg.project, self.current, ComposerObservation(editable_text=""), 223)
+        target = Destination(self.cfg.project, self.current, ComposerObservation(editable_text=""), 223, "42.223")
         with self.assertRaisesRegex(BrowserObservationError, "Invalid private account route receipt"):
             self.browser.send_once(target, action.message)
         self.browser._invoke.assert_not_called()

@@ -36,9 +36,11 @@ class ADR2RouteTests(unittest.TestCase):
             "accounts":{
                 "shoco":{"install_root":str(self.base.resolve()),
                          "profile_path":"C:\\Users\\james\\Chrome\\Profile 11",
+                         "chrome_app_id":"Chrome.ShocoTest",
                          "plugin_id":"plugin_shoco_0001","backend_commit":SHA},
                 "james-student":{"install_root":str(self.base.resolve()),
                          "profile_path":"C:\\Users\\james\\Chrome\\Profile 13",
+                         "chrome_app_id":"Chrome.JamesTest",
                          "plugin_id":"plugin_james_0001","backend_commit":"b"*40},
             }}
         (self.base/"account_routes.json").write_text(json.dumps(self.routes),encoding="utf-8")
@@ -53,7 +55,8 @@ class ADR2RouteTests(unittest.TestCase):
         self.assertNotEqual(s["profile_path"],j["profile_path"])
         self.assertNotEqual(s["route_receipt"],j["route_receipt"])
         self.assertEqual(s["account_key"],"shoco")
-        with patch("launch_project.wsl",return_value=f"{SHA}\trefs/heads/{BRANCH}"), \
+        with patch("account_routes.subprocess.run", return_value=Mock(stdout=SHA)), \
+             patch("launch_project.wsl",return_value=f"{SHA}\trefs/heads/{BRANCH}"), \
              patch("launch_project.WindowsUIA") as browser:
             browser.return_value._invoke.return_value={
                 "project":PROJECT,"observed_url":URL,"current_chat_id":None,
@@ -61,6 +64,19 @@ class ADR2RouteTests(unittest.TestCase):
             result=launch_request(self.file,self.base,check_only=True,account_key="shoco")
             self.assertEqual(result["event"],"preflight_passed")
             self.assertEqual(browser.call_args.kwargs["profile_path"],s["profile_path"])
+            self.assertEqual(browser.call_args.kwargs["chrome_app_id"],s["chrome_app_id"])
+
+    def test_wrong_backend_sha_holds_before_preflight_or_start(self):
+        before = self.file.read_bytes()
+        with patch("account_routes.subprocess.run", return_value=Mock(stdout="0" * 40)), \
+             patch("launch_project.WindowsUIA") as browser, patch("launch_project.wsl") as git:
+            for check_only in (False, True):
+                with self.assertRaisesRegex(ValueError, "backend differs"):
+                    launch_request(self.file, self.base, check_only=check_only, account_key="shoco")
+            browser.assert_not_called()
+            git.assert_not_called()
+        self.assertFalse((self.base / "Runs").exists())
+        self.assertEqual(self.file.read_bytes(), before)
 
     def test_r02_ambiguous_route_blocks_before_any_project_or_git(self):
         for key in [None,"unknown","shoco!","SHOCO"]:
@@ -145,7 +161,8 @@ class ADR2RouteTests(unittest.TestCase):
         request=json.loads(self.file.read_text())
         request["operation"]="new"
         self.file.write_text(json.dumps(request))
-        with patch("launch_project.resolve_project",return_value=(PROJECT,"Mock Project",URL)), \
+        with patch("account_routes.subprocess.run",return_value=Mock(stdout=SHA)), \
+                patch("launch_project.resolve_project",return_value=(PROJECT,"Mock Project",URL)), \
                 patch("launch_project.provision_reader",return_value="/tmp/mock-repo"), \
                 patch("launch_project.launch",return_value={"event":"controller_started"}) as launch:
             first=launch_request(self.file,self.base,account_key="shoco")
@@ -161,8 +178,10 @@ class ADR2RouteTests(unittest.TestCase):
         path=self._stage_saved_run("c"*24)
         state=path.with_name("controller.json")
         cfg=load_config(path)
-        browser,reader=create_dependencies(cfg,state)
+        with patch("account_routes.subprocess.run",return_value=Mock(stdout=SHA)):
+            browser,reader=create_dependencies(cfg,state)
         self.assertEqual(browser.profile_path,self.route()["profile_path"])
+        self.assertEqual(browser.chrome_app_id,self.route()["chrome_app_id"])
         with self.assertRaisesRegex(ValueError,"native installation"):
             create_dependencies(cfg,self.base/"Other"/"controller.json")
 
@@ -187,11 +206,14 @@ class ADR2RouteTests(unittest.TestCase):
     def test_r02_child_browser_profile_overrides_ambient_profile(self):
         path=self._stage_saved_run("c"*24)
         cfg=load_config(path)
-        b,_=create_dependencies(cfg,path.with_name("controller.json"))
+        with patch("account_routes.subprocess.run",return_value=Mock(stdout=SHA)):
+            b,_=create_dependencies(cfg,path.with_name("controller.json"))
         with patch("windows_backend.subprocess.run",return_value=Mock(returncode=0,stdout='{"ready": false}')) as runner:
             self.assertEqual(b._invoke("Observe",ChatId="test-worker"),{"ready":False})
             self.assertEqual(runner.call_args.kwargs["env"]["CHAT_SUCCESSION_CHROME_PROFILE_PATH"],
                              self.route()["profile_path"])
+            cmd = runner.call_args.args[0]
+            self.assertEqual(cmd[cmd.index("-ChromeAppId") + 1], self.route()["chrome_app_id"])
 
     def test_r04_unbound_legacy_direct_cli_holds_without_browser(self):
         cfgpath=self._stage_saved_run("c"*24,legacy=True)

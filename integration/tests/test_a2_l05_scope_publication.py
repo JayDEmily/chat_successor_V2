@@ -12,7 +12,7 @@ from unittest.mock import Mock
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from owner_reentry import resume_request
 from repo_reader import PublishedObservation, PublishedStateError
-from runner import Destination, Submitted, initialise, cycle
+from runner import Destination, Submitted, initialise, cycle, inspect_state
 from succession.composer import ComposerObservation
 from succession.core import Config, Controller, RepoView, Response, Action
 
@@ -91,6 +91,18 @@ class L05ScopeAndPublicationTests(unittest.TestCase):
         self.assertEqual(persisted.state.consumed_responses,[[CHAT,RESPONSE]])
         self.assertIsNotNone(persisted.state.pending)
         browser.send_once.assert_not_called()
+        self.state.with_name("config.json").write_text(json.dumps({"run_id": RUN_ID}))
+        timing = self.state.with_name("controller-timing.log")
+        timing.write_text("\n".join(row.removeprefix("INFO:root:") for row in captured.output)
+                          + "\n2026-11-20T04:00:00Z publication_receipt_adopted "
+                            f"run={RUN_ID} chat={CHAT} response=unknown ref=refs/heads/{BRANCH} "
+                            f"sha={'b' * 40} decision=LAUNCH_SUCCESSOR\n",
+                          encoding="utf-8")
+        before = self.state.read_bytes()
+        summary = inspect_state(self.state)
+        self.assertEqual(summary["publication_commit"], PUBLISHED_SHA)
+        self.assertEqual(summary["publication_ref"], f"refs/heads/{BRANCH}")
+        self.assertEqual(self.state.read_bytes(), before)
 
     def test_invalid_unpublished_receipt_logs_hold_without_adoption(self):
         browser=Mock()

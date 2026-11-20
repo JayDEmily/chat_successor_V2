@@ -15,9 +15,13 @@ param(
  [string]$PrepareAction = '',
  [string]$PrepareTargetPath = '',
  [string]$BootstrapIntentPath = '',
+ [string]$BootstrapActionId = '',
  [string]$RouteReceipt = '',
  [string]$PendingResponseId = '',
  [string]$BootstrapRunId = '',
+ [string]$DocumentId = '',
+ [string]$ChromeAppId = '',
+ [string]$WorkerJournalPath = '',
  [string]$L09Fault = '',
  [string]$PausePath = '',
  [ValidateSet('missing','stale')][string]$Recovery,
@@ -31,6 +35,7 @@ $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+if($ChromeAppId){Add-Type -Path (Join-Path $PSScriptRoot 'window_profile.cs')}
 if($Mode -ne 'ResolveProject' -and -not $ProjectId){throw 'Nominated Project ID required'}
 
 function Desc($element) {
@@ -50,6 +55,13 @@ function Get-ChromeWindows {
   }catch{}
  }
  return $found
+}
+function Test-WindowProfile($window) {
+ if(-not $ChromeAppId){return $true}
+ try {
+  $observed=[ChatSuccession.WindowProfile]::ReadAppId([IntPtr][long]$window.Current.NativeWindowHandle)
+  return ($observed -ceq $ChromeAppId)
+ }catch{return $false}
 }
 function Open-ChromeWindow([string]$url) {
  if(-not (Test-Path -LiteralPath $ChromeExe -PathType Leaf)){throw 'Chrome executable missing'}
@@ -76,7 +88,7 @@ function Open-ChromeWindow([string]$url) {
    Start-Sleep -Milliseconds 400
    $candidates=@((Get-ChromeWindows) | Where-Object {$before -notcontains $_.Current.NativeWindowHandle})
    if($candidates.Count -gt 1){throw 'Ambiguous new Chrome windows'}
-   if($candidates.Count -eq 1){return $candidates[0]}
+   if($candidates.Count -eq 1 -and (Test-WindowProfile $candidates[0])){return $candidates[0]}
   }
   throw 'Fresh Chrome window was not uniquely observed'
  } finally {
@@ -101,12 +113,14 @@ function Check-Project($url) {
  return ($url -match ('^https://chatgpt[.]com/g/' + [regex]::Escape($ProjectId) + '(?:-[^/]+)?/(?:project|c/[A-Za-z0-9_-]+)(?:[/?#]|$)'))
 }
 function Chat-FromUrl($url) {
- if($url -match ('^https://chatgpt[.]com/g/' + [regex]::Escape($ProjectId) + '(?:-[^/]+)?/c/([A-Za-z0-9_-]+)(?:[/?#]|$)')) {
+ if($url -match ('^https://chatgpt[.]com/g/' + [regex]::Escape($ProjectId) + '(?:-[^/]+)?/c/([a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12})(?:[/?#]|$)')) {
   return $Matches[1]
  }
  return $null
 }
 function Find-TargetWindows([string]$expectedChat,[long]$handle) {
+ $targets=@()
+ $wrongProfile=$false
  foreach($w in (Get-ChromeWindows)) {
   try{
    if($handle -ne 0 -and $w.Current.NativeWindowHandle -ne $handle){continue}
@@ -114,9 +128,12 @@ function Find-TargetWindows([string]$expectedChat,[long]$handle) {
    if(-not (Check-Project $url)){continue}
    $chat=Chat-FromUrl $url
    if($expectedChat -and $chat -cne $expectedChat){continue}
-   @{window=$w;url=$url;chat=$chat}
+   if(Test-WindowProfile $w){$targets+= @{window=$w;url=$url;chat=$chat}}
+   else{$wrongProfile=$true}
   }catch{}
  }
+ if($wrongProfile -and $targets.Count -eq 0){throw 'Target Chrome window profile could not be verified'}
+ return $targets
 }
 function Get-TargetWindow([string]$expectedChat,[long]$handle) {
  $hits=@(Find-TargetWindows $expectedChat $handle)
@@ -142,6 +159,20 @@ function Find-Composer($window,$expectedName) {
  }
  if($editors.Count -ne 1){throw ('Project editor not uniquely observed, count=' + $editors.Count)}
  return $editors[0]
+}
+function Get-ComposerDocument($editor) {
+ $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
+ $document=$walker.GetParent($editor)
+ while($null -ne $document -and $document.Current.ControlType -ne [System.Windows.Automation.ControlType]::Document){
+  $document=$walker.GetParent($document)
+ }
+ if($null -eq $document){throw 'Composer document could not be observed'}
+ return $document
+}
+function Get-DocumentIdentity($document) {
+ $identity=$document.GetRuntimeId() -join '.'
+ if(-not $identity){throw 'Composer document identity could not be observed'}
+ return $identity
 }
 function Check-NoAttachments($window) {
  # Conservative: expose positive attachment controls; no file-selection action.
@@ -402,8 +433,9 @@ function Test-SameWorkerTurn($first,$second) {
          $first['latest_user_digest'] -ceq $second['latest_user_digest'])
 }
 
-function Test-FreshWorkerCompletion($original,$fresh) {
+function Test-FreshWorkerCompletion($original,$fresh,[string[]]$consumedResponses=@()) {
  if(-not $fresh.ready -or -not $original['latest_user_digest'] -or
+    -not $fresh['response_id'] -or $consumedResponses -ccontains $fresh['response_id'] -or
     $original['latest_user_digest'] -cne $fresh['latest_user_digest'] -or
     $original.user_turn_count -ne $fresh.user_turn_count){return $false}
  if($original.ready){return $fresh.assistant_turn_count -gt $original.assistant_turn_count}
@@ -445,6 +477,16 @@ function Recover-SavedWorkerView {
   return @{recovery_status='restored';window_handle=[long]$matchesFound[0].window.Current.NativeWindowHandle}
  }
  if($Recovery -eq 'stale'){
+  if(-not $WorkerJournalPath -or -not [IO.File]::Exists($WorkerJournalPath)){
+   throw 'Stale recovery needs the registered worker journal'
+  }
+  $journal=[IO.File]::ReadAllText($WorkerJournalPath,[Text.Encoding]::UTF8) | ConvertFrom-Json
+  if($journal.state.current_chat_id -cne $ChatId -or $journal.state.pending){
+   throw 'Stale recovery requires the current worker without a pending Send'
+  }
+  $consumedResponses=@(foreach($anchor in $journal.state.consumed_responses){
+   if($anchor[0] -ceq $ChatId){[string]$anchor[1]}
+  })
   if($WindowHandle -le 0){throw 'Stale view recovery needs the original window handle'}
   if($matchesFound.Count -ne 1 -or $matchesFound[0].window.Current.NativeWindowHandle -ne $WindowHandle){
    return @{recovery_status='waiting';reason='Original saved worker window changed'}
@@ -490,7 +532,7 @@ function Recover-SavedWorkerView {
     $retainProbe=$true
     return @{recovery_status='restored';window_handle=$probeHandle}
    }
-   if(Test-FreshWorkerCompletion $originalTurn $fresh){
+   if(Test-FreshWorkerCompletion $originalTurn $fresh $consumedResponses){
     if($null -ne $priorFresh -and (Test-SameWorkerTurn $priorFresh $fresh)){
      $provedCompletion=$true
      break
@@ -522,7 +564,7 @@ function Recover-SavedWorkerView {
  }
  Assert-EmptyWorkerComposer $original
  if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
- if((Get-Address $original.window) -cne $original.url){
+ if((Get-Address $original.window) -cne $original.url -or -not (Test-WindowProfile $original.window)){
   return @{recovery_status='waiting';reason='Original saved worker address changed before reload'}
  }
  $reloadPattern.Invoke()
@@ -642,6 +684,9 @@ if($Mode -eq 'ObserveReentry') {
    $_.Current.Name -cmatch '^Reload(?: this page)?$'
   })
   if($reload.Count -ne 1){throw 'The worker advanced but Chrome reload was not uniquely available'}
+  if((Get-Address $existing.window) -cne $existing.url -or -not (Test-WindowProfile $existing.window)){
+   throw 'The saved worker destination changed before re-entry reload'
+  }
   $reload[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
  }
  @{disposition=$verdict;project=$ProjectId;chat_id=$ChatId} | ConvertTo-Json -Compress
@@ -729,6 +774,7 @@ if($Mode -eq 'Prepare') {
  @{
   project=$ProjectId;current_chat_id=$target.chat
   private_window_handle=[long]$target.window.Current.NativeWindowHandle
+  document_id=(Get-DocumentIdentity (Get-ComposerDocument $editor))
   editable_text=$actual;uia_value=$value
   attachments_present=$attachments
   observed_url=$target.url
@@ -768,7 +814,8 @@ function Assert-PrivateDispatchReceipt {
      [long]$receipt.handle -ne $WindowHandle -or
      $receipt.message_sha256 -cne $digest -or
      [string]$receipt.route_receipt -cne $RouteReceipt -or
-     $receipt.source_response -cne $PendingResponseId){
+     $receipt.source_response -cne $PendingResponseId -or
+     -not $DocumentId -or $receipt.document_id -cne $DocumentId){
    throw 'Prepared action identity or route changed before browser dispatch'
   }
   if(-not $PendingResponseId -or ($Kind -eq 'CONTINUE_CURRENT' -and
@@ -788,14 +835,15 @@ function Assert-PrivateDispatchReceipt {
    finally{$hasher.Dispose()}
    if($intent.run_id -cne $BootstrapRunId -or
       [string]$intent.route_receipt -cne $RouteReceipt -or
-      $intent.message_sha256 -cne $digest){
-    throw 'Bootstrap run, route or message digest changed'
+      $intent.message_sha256 -cne $digest -or
+      $BootstrapActionId -cnotmatch '^[0-9a-f]{32}$' -or $intent.action_id -cne $BootstrapActionId){
+    throw 'Bootstrap run, action, route or message digest changed'
    }
   }elseif($Mode -eq 'Send'){
    throw 'New initial Send requires a bound durable request identity'
   }
-  if($Mode -eq 'Send' -and (-not $intent.action_id -or $intent.action_id -cnotmatch '^[0-9a-f]{32}$')){
-   throw 'Bootstrap dispatch requires a persisted unique action ID'
+  if($Mode -eq 'Send' -and (-not $DocumentId -or $intent.document_id -cne $DocumentId)){
+   throw 'Bootstrap dispatch requires the same prepared document'
   }
   return
  }
@@ -824,9 +872,12 @@ if($Mode -eq 'Send') {
    throw 'Triggering assistant response could not be confirmed before typing'
   }
  }
- if($Kind -eq 'LAUNCH_SUCCESSOR' -and $null -ne $target.chat){throw 'Successor composer already saved before Send'}
+ if($Kind -eq 'LAUNCH_SUCCESSOR' -and $target.url -cnotmatch '/project/?$'){
+  throw 'The prepared successor is no longer on a fresh Project composer'
+ }
  $editorName=if($Kind -eq 'CONTINUE_CURRENT'){'Ask ChatGPT'}else{'New chat in ' + $ProjectName}
  $editor=Find-Composer $target.window $editorName
+ if((Get-DocumentIdentity (Get-ComposerDocument $editor)) -cne $DocumentId){Hold-ForChangedDestination}
  if(-not (Check-NoAttachments $target.window)){throw 'Attachment exists; hold before typing'}
  if($AlreadyTyped){
   # Explicit manual recovery after positive evidence of no prior click.
@@ -841,7 +892,9 @@ if($Mode -eq 'Send') {
    throw 'Composer is not verified empty; hold before typing'
   }
   Hold-IfOwnerPaused
-  if((Get-Address $target.window) -cne $target.url){Hold-ForChangedDestination}
+  if((Get-Address $target.window) -cne $target.url -or -not (Test-WindowProfile $target.window)){
+   Hold-ForChangedDestination
+  }
   $pattern.SetValue($Message)
  }
  $typed=''
@@ -873,16 +926,14 @@ if($Mode -eq 'Send') {
   if(-not [System.Windows.Automation.Automation]::Compare($editor,$liveEditor) -or
      $liveValue.TrimEnd([char]13,[char]10) -cne $Message -or
      -not (Check-NoAttachments $target.window)){Hold-ForChangedDestination}
-  $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
-  $document=$walker.GetParent($liveEditor)
-  while($null -ne $document -and $document.Current.ControlType -ne [System.Windows.Automation.ControlType]::Document){
-   $document=$walker.GetParent($document)
-  }
-  if($null -eq $document){Hold-ForChangedDestination}
+  $document=Get-ComposerDocument $liveEditor
+  if((Get-DocumentIdentity $document) -cne $DocumentId){Hold-ForChangedDestination}
   $sendButtons=@(Find-EnabledSendButtons $document)
   if($sendButtons.Count -ne 1){Hold-ForChangedDestination}
   $send=$sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
-  if((Get-Address $target.window) -cne $target.url){Hold-ForChangedDestination}
+  if((Get-Address $target.window) -cne $target.url -or -not (Test-WindowProfile $target.window)){
+   Hold-ForChangedDestination
+  }
  } catch {Hold-ForChangedDestination}
  Assert-PrivateDispatchReceipt
  Hold-IfOwnerPaused

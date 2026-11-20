@@ -61,6 +61,7 @@ class Reader:
             raise PublishedStateError("Injected remote fetch outage")
         class O: pass
         o = O()
+        o.run_id = expected_run
         o.commit = "a" * 40  # Exact synthetic fetched SHA for L05 diagnostics.
         o.view = RepoView(CFG.repo, CFG.branch, "chat-first",
                           self.programme_complete,

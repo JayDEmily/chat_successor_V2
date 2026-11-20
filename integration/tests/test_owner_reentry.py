@@ -119,6 +119,21 @@ class ReentryTests(unittest.TestCase):
         self.assertIsNone(Controller.load(self.state).state.pending)
         self.browser.prepare.assert_not_called()
 
+    def test_missing_owner_input_holds_before_browser_dispatch(self):
+        self.resume(owner_context=self.context)
+        controller = Controller.load(self.state)
+        action = controller.state.pending
+        self.state.with_name(f"owner-{REQUEST_ID}.json").unlink()
+        self.browser.reset_mock()
+        self.assertEqual(cycle(controller, self.browser, self.reader, "c" * 24, self.state), Action.HOLD)
+        self.browser.reentry_disposition.assert_not_called()
+        self.browser.prepare.assert_not_called()
+        self.browser.send_once.assert_not_called()
+        saved = Controller.load(self.state)
+        self.assertEqual(saved.state.pending.action_id, action.action_id)
+        self.assertEqual(saved.state.pending.phase, "prepared")
+        self.assertEqual(saved.unique_count, 1)
+
     def test_uncertain_owner_send_requires_positive_reconciliation(self):
         self.resume(owner_context=self.context)
         controller = Controller.load(self.state)

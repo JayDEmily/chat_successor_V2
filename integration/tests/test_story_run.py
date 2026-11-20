@@ -81,6 +81,25 @@ class StoryTests(unittest.TestCase):
         with self.assertRaisesRegex(PublishedStateError, "without gaps"):
             self.reader.read("story")
 
+    def test_wrong_story_worker_receipt_is_held_without_consuming_turn(self):
+        path = self.root / "controller.json"
+        controller = initialise(path, Config(PROJECT, STORY_REPO, "main", 4), CHATS[0])
+        browser = Mock()
+        browser.observe.return_value = Response(
+            CHATS[0], "turn-first", "CHAT_STATUS: TASK_COMPLETE", project=PROJECT)
+        self.publish(0, chat_id=CHATS[1])
+        with self.assertLogs(level="INFO") as captured:
+            decision = cycle(controller, browser, self.reader, "story", path)
+        self.assertEqual(decision, Action.HOLD)
+        from succession.core import Controller
+        saved = Controller.load(path)
+        self.assertEqual(saved.state.consumed_responses, [])
+        self.assertIsNone(saved.state.pending)
+        self.assertTrue(any("publication_receipt_rejected" in row for row in captured.output))
+        self.assertFalse(any("publication_receipt_adopted" in row for row in captured.output))
+        browser.prepare.assert_not_called()
+        browser.send_once.assert_not_called()
+
     def test_duplicate_worker_holds(self):
         self.publish(0)
         self.publish(1, chat_id=CHATS[0])
@@ -199,7 +218,7 @@ class BootstrapTests(unittest.TestCase):
             reader.heads.return_value = {"main": "seed"}
             browser.project = PROJECT
             browser.prepare.return_value = Destination(
-                PROJECT, None, ComposerObservation(editable_text="", attachments_present=False), 10)
+                PROJECT, None, ComposerObservation(editable_text="", attachments_present=False), 10, "42.10")
             browser._invoke.return_value = {}
             with self.assertRaisesRegex(RuntimeError, "Initial Send is held"):
                 bootstrap(cfg, path, browser, reader)
@@ -210,6 +229,9 @@ class BootstrapTests(unittest.TestCase):
             }
             result = bootstrap(cfg, path, browser, reader)
             self.assertEqual([call.args[0] for call in browser._invoke.call_args_list], ["Send", "Reconcile"])
+            first, reconciliation = browser._invoke.call_args_list
+            self.assertEqual(first.kwargs["BootstrapActionId"], reconciliation.kwargs["BootstrapActionId"])
+            self.assertEqual(first.kwargs["DocumentId"], "42.10")
             self.assertEqual(result["current_chat_id"], CHATS[0])
             self.assertEqual(result["unique_chat_count"], 1)
 
@@ -222,7 +244,7 @@ class BootstrapTests(unittest.TestCase):
             reader.heads.return_value = {"main": "seed"}
             browser.project = PROJECT
             browser.prepare.return_value = Destination(
-                PROJECT, None, ComposerObservation(editable_text="", attachments_present=False), 10)
+                PROJECT, None, ComposerObservation(editable_text="", attachments_present=False), 10, "42.10")
             browser._invoke.return_value = {"paused_before_click": True}
             with self.assertRaisesRegex(RuntimeError, "Owner paused before initial Send"):
                 bootstrap(cfg, path, browser, reader)

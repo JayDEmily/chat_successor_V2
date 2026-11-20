@@ -23,17 +23,21 @@ log = logging.getLogger(__name__)
 
 STALE_VIEW_SECONDS = 120
 VIEW_PROBE_INTERVAL_SECONDS = 300
+_SAVED_CHAT_ID = re.compile(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}")
+
+
+def is_saved_chat_id(value: object) -> bool:
+    return isinstance(value, str) and _SAVED_CHAT_ID.fullmatch(value) is not None
 
 
 def saved_chat_url(project: str, project_url: str | None, chat_id: str) -> str | None:
-    if not isinstance(project_url, str) or not isinstance(chat_id, str):
+    if not isinstance(project_url, str) or not is_saved_chat_id(chat_id):
         return None
     landing = re.fullmatch(
         r"(https://chatgpt[.]com/g/(g-p-[a-f0-9]+)(?:-[A-Za-z0-9-]+)?)/project/?",
         project_url,
     )
-    if (landing is None or landing[2] != project
-            or not re.fullmatch(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", chat_id)):
+    if landing is None or landing[2] != project:
         return None
     return f"{landing[1]}/c/{chat_id}"
 
@@ -45,11 +49,14 @@ class BrowserObservationError(RuntimeError):
 class WindowsUIA(Browser):
     def __init__(self, project: str, project_name: str, script: Path,
                  state_path: Path, *, powershell: str = "powershell.exe",
-                 project_url: str | None = None, profile_path: str | None = None):
+                 project_url: str | None = None, profile_path: str | None = None,
+                 chrome_app_id: str | None = None, route_receipt: str | None = None):
         self.project = project
         self.project_name = project_name
         self.project_url = project_url
         self.profile_path = profile_path
+        self.chrome_app_id = chrome_app_id
+        self.route_receipt = route_receipt
         self.script = Path(script)
         self.state_path = Path(state_path)
         self.target_path = self.state_path.with_suffix(".uia-target.json")
@@ -59,10 +66,14 @@ class WindowsUIA(Browser):
         self._last_view_probe: dict[str, float] = {}
 
     def _invoke(self, mode: str, **arguments) -> dict:
+        if self.route_receipt is not None:
+            self._route_receipt()
         cmd = [self.powershell, "-STA", "-NoProfile",
                "-NonInteractive", "-ExecutionPolicy", "Bypass",
                "-File", str(self.script), "-Mode", mode,
                "-ProjectId", self.project, "-ProjectName", self.project_name]
+        if self.chrome_app_id:
+            cmd.extend(["-ChromeAppId", self.chrome_app_id])
         for name, value in arguments.items():
             if type(value) is bool:
                 # PowerShell switch parameters are flags, not "-Flag True".
@@ -169,7 +180,8 @@ class WindowsUIA(Browser):
             return False
         self._last_view_probe[chat_id] = now
         status = self._recover_view(chat_id, "stale", WindowHandle=handle,
-                                    SourceResponse=turn.get("response_id"))
+                                    SourceResponse=turn.get("response_id"),
+                                    WorkerJournalPath=self.state_path.resolve())
         if status == "refreshed":
             self._progress = None
         return True
@@ -200,16 +212,22 @@ class WindowsUIA(Browser):
 
     def _route_receipt(self) -> str | None:
         cfg_path = self.state_path.with_name("config.json")
-        if not cfg_path.is_file():
+        if not cfg_path.is_file() and self.route_receipt is None:
             return None
         try:
             cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+            if not isinstance(cfg, dict):
+                raise ValueError("Private run config must be an object")
             value = cfg.get("route_receipt")
         except (OSError, ValueError) as exc:
             raise BrowserObservationError("Private account route configuration unavailable") from exc
-        if (value is not None and (not isinstance(value, str) or not value.strip())) or (
-                cfg.get("account_key") and (not isinstance(value, str) or
-                                            not re.fullmatch(r"[a-f0-9]{64}", value))):
+        if cfg.get("account_key") or self.route_receipt is not None:
+            if (not isinstance(value, str) or not re.fullmatch(r"[a-f0-9]{64}", value)
+                    or value != self.route_receipt or not self.chrome_app_id or not self.profile_path
+                    or cfg.get("chrome_profile_path") != self.profile_path
+                    or cfg.get("chrome_app_id") != self.chrome_app_id):
+                raise BrowserObservationError("Invalid private account route receipt")
+        elif value is not None:
             raise BrowserObservationError("Invalid private account route receipt")
         return value
 
@@ -227,10 +245,13 @@ class WindowsUIA(Browser):
             raise BrowserObservationError("Prepared action does not match persisted action identity")
         return p
 
-    def _validate_action_target(self, record: dict, p: dict, handle: int) -> None:
+    def _validate_action_target(self, record: dict, p: dict, handle: int, document_id: str | None) -> None:
+        if type(handle) is not int or handle <= 0 or not isinstance(document_id, str) or not document_id:
+            raise BrowserObservationError("Prepared window/document identity missing")
         expected = {
             "project": self.project,
             "handle": handle,
+            "document_id": document_id,
             "kind": p.get("kind"),
             "source": p.get("source_chat_id"),
             "source_response": p.get("response_id"),
@@ -244,27 +265,21 @@ class WindowsUIA(Browser):
     def prepare(self, kind: str, current_chat_id: str | None) -> Destination:
         pending = self._pending_action(kind, current_chat_id)
         navigation = {}
-        if kind == "LAUNCH_SUCCESSOR" and current_chat_id is not None and self.state_path.exists():
-            state = json.loads(self.state_path.read_text(encoding="utf-8"))["state"]
-            pending = state.get("pending")
-            if (pending and pending["kind"] == kind and pending["source_chat_id"] == current_chat_id
-                    and pending["phase"] == "prepared"):
-                navigation = {
-                    "SourceResponse": pending["response_id"], "PrepareAction": pending["action_id"],
-                    "PrepareTargetPath": self.target_path.resolve(),
-                }
-                if self.target_path.exists():
-                    previous = json.loads(self.target_path.read_text(encoding="utf-8"))
-                    if (previous.get("kind") == kind and previous.get("source") == current_chat_id
-                            and previous.get("action_id") == pending["action_id"]
-                            and type(previous.get("handle")) is int and previous["handle"] > 0):
-                        try:
-                            self._validate_action_target(previous, pending, previous["handle"])
-                        except BrowserObservationError:
-                            # A stale or legacy receipt cannot supply a window handle.
-                            pass
-                        else:
-                            navigation["WindowHandle"] = previous["handle"]
+        if kind == "LAUNCH_SUCCESSOR" and pending is not None:
+            navigation = {
+                "SourceResponse": pending["response_id"], "PrepareAction": pending["action_id"],
+                "PrepareTargetPath": self.target_path.resolve(),
+            }
+            if self.target_path.exists():
+                previous = json.loads(self.target_path.read_text(encoding="utf-8"))
+                try:
+                    self._validate_action_target(previous, pending, previous.get("handle"),
+                                                 previous.get("document_id"))
+                except BrowserObservationError:
+                    # A stale or legacy receipt cannot supply a window handle.
+                    pass
+                else:
+                    navigation["WindowHandle"] = previous["handle"]
         arguments = {"Kind": kind, "ProjectUrl": self.project_url, **navigation}
         if kind == "CONTINUE_CURRENT" and current_chat_id:
             payload = self._read_or_restore_worker("Prepare", current_chat_id, **arguments)
@@ -275,6 +290,12 @@ class WindowsUIA(Browser):
         handle = payload.get("private_window_handle")
         if type(handle) is not int or handle <= 0:
             raise BrowserObservationError("Prepared window handle absent")
+        document_id = payload.get("document_id")
+        if not isinstance(document_id, str) or not document_id:
+            raise BrowserObservationError("Prepared composer document absent")
+        if (navigation.get("WindowHandle") == handle
+                and document_id != previous["document_id"]):
+            raise BrowserObservationError("The prepared window changed documents")
         expected_chat = current_chat_id if kind == "CONTINUE_CURRENT" else None
         if payload.get("current_chat_id") != expected_chat:
             raise BrowserObservationError("Prepared composer does not belong to the nominated destination")
@@ -284,9 +305,10 @@ class WindowsUIA(Browser):
                                  editable_text=payload.get("editable_text"),
                                  uia_value=payload.get("uia_value"),
                                  attachments_present=payload.get("attachments_present", None)),
-                             private_window_handle=handle)
+                             private_window_handle=handle,
+                             private_document_id=document_id)
         record = {"kind": kind, "source": current_chat_id,
-                  "handle": target.private_window_handle}
+                  "handle": handle, "document_id": document_id}
         if pending is not None:
             latest = self._pending_action(kind, current_chat_id)
             if latest != pending:
@@ -340,7 +362,7 @@ class WindowsUIA(Browser):
                 target.private_window_handle <= 0):
             raise BrowserObservationError("Prepared destination does not match the sending action")
         record = json.loads(self.target_path.read_text(encoding="utf-8"))
-        self._validate_action_target(record, p, target.private_window_handle)
+        self._validate_action_target(record, p, target.private_window_handle, target.private_document_id)
         # L09 test-only fault points. Set this only for a bounded test CLI
         # process; normal controller runs have no injection.
         fault = os.environ.get("ASTRA_L09_FAULT", "")
@@ -352,6 +374,7 @@ class WindowsUIA(Browser):
         result = self._invoke(
             "Send", Kind=p["kind"], ChatId=p["source_chat_id"],
             WindowHandle=target.private_window_handle, Message=message,
+            DocumentId=target.private_document_id,
             PrepareAction=p["action_id"], PrepareTargetPath=self.target_path.resolve(),
             RouteReceipt=record.get("route_receipt") or "",
             PendingResponseId=p["response_id"],
@@ -364,10 +387,7 @@ class WindowsUIA(Browser):
             raise SendBlockedBeforeClick("Chrome destination changed before Send. Preserve any draft.")
         if result.get("worker_advanced_before_click") is True:
             raise WorkerAdvancedBeforeClick()
-        return Submitted(project=result.get("project", ""),
-                         chat_id=result.get("chat_id"),
-                         submitted_text=result.get("submitted_text"),
-                         posted_message_observed=result.get("posted_message_observed") is True)
+        return self._submission(result)
 
     def reconcile_readonly(self) -> Submitted:
         saved = Controller.load(self.state_path)
@@ -379,8 +399,9 @@ class WindowsUIA(Browser):
             "kind": p.kind, "source_chat_id": p.source_chat_id,
             "response_id": p.response_id, "action_id": p.action_id,
             "message": p.message,
-        }, record.get("handle"))
+        }, record.get("handle"), record.get("document_id"))
         result = self._invoke("Reconcile", WindowHandle=record["handle"],
+                              DocumentId=record["document_id"],
                               PrepareAction=p.action_id,
                               PrepareTargetPath=self.target_path.resolve(),
                               RouteReceipt=record.get("route_receipt") or "",
@@ -388,7 +409,13 @@ class WindowsUIA(Browser):
                               Kind=p.kind, ChatId=p.source_chat_id,
                               SourceResponse=p.response_id if p.kind == "CONTINUE_CURRENT" else None,
                               Message=p.message)
+        return self._submission(result)
+
+    def _submission(self, result: dict) -> Submitted:
+        chat_id = result.get("chat_id")
+        if not is_saved_chat_id(chat_id):
+            return Submitted(result.get("project", ""), None, None, False)
         return Submitted(project=result.get("project", ""),
-                         chat_id=result.get("chat_id"),
+                         chat_id=chat_id,
                          submitted_text=result.get("submitted_text"),
                          posted_message_observed=result.get("posted_message_observed") is True)

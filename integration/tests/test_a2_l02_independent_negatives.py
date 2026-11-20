@@ -24,6 +24,7 @@ class A2L02StrictReviewTests(unittest.TestCase):
 
     def entry(self, profile):
         return {"install_root": str(self.install), "profile_path": profile,
+                "chrome_app_id": "Chrome.Test",
                 "plugin_id": "plugins_12345678",
                 "backend_commit": "a" * 40}
 
@@ -61,6 +62,14 @@ class A2L02StrictReviewTests(unittest.TestCase):
         self.assertTrue(info["pause_acknowledged"])
         self.assertEqual(state.read_bytes(), before)
         self.assertEqual(marker.read_text(), "Owner pause gate 1")
+
+    def test_shared_window_profile_identity_holds_even_with_different_paths(self):
+        self.route_file.write_text(json.dumps({"schema": 1, "accounts": {
+            "shoco": self.entry("C:\\Chrome\\Profile11"),
+            "james-student": {**self.entry("C:\\Chrome\\Profile13"), "plugin_id": "plugins_abcdefgh"},
+        }}))
+        with self.assertRaisesRegex(ValueError, "share a Chrome window identity"):
+            require_route(self.install, "shoco")
 
 
 if __name__ == "__main__":
