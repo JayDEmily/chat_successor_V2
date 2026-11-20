@@ -261,7 +261,8 @@ def inspect_state(state_path: Path) -> dict:
         },
         "halted": c.state.halted,
         "pause_requested": paused,
-        "pause_acknowledged": paused and c.state.halted == "Operator pause requested",
+        "pause_acknowledged": (paused and isinstance(c.state.halted, str)
+                               and c.state.halted.startswith("Operator pause requested")),
         "account_key": account_key,
         "route_receipt": route_receipt,
         "publication_commit": None,  # not persisted; never invent a live Git receipt

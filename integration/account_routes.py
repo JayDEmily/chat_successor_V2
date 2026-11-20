@@ -16,6 +16,15 @@ import re
 _ACCOUNT = re.compile(r"[a-z][a-z0-9-]{1,39}\Z")
 
 
+def _reject_duplicate_json_keys(pairs):
+    value = {}
+    for key, item in pairs:
+        if key in value:
+            raise ValueError("Conflicting duplicate account route key")
+        value[key] = item
+    return value
+
+
 def require_route(install_root: Path, account_key: str | None) -> dict | None:
     base = install_root.resolve()
     marker = base / "account-routing-required"
@@ -27,11 +36,26 @@ def require_route(install_root: Path, account_key: str | None) -> dict | None:
         raise ValueError("A verified account route key is required before any browser effect")
     path = base / "account_routes.json"
     try:
-        raw = json.loads(path.read_text(encoding="utf-8"))
+        raw = json.loads(path.read_text(encoding="utf-8"),
+                         object_pairs_hook=_reject_duplicate_json_keys)
     except (OSError, ValueError) as exc:
         raise ValueError("Account routes are unavailable or malformed") from exc
     if not isinstance(raw, dict) or raw.get("schema") != 1 or not isinstance(raw.get("accounts"), dict):
         raise ValueError("Unsupported account route document")
+    # A single signed-in Chrome profile cannot independently represent two
+    # distinct ChatGPT accounts. Reject ambiguous sibling routes before any
+    # login/browser operation, including Windows case/slash variants.
+    seen_profiles = {}
+    for sibling_key, sibling in raw["accounts"].items():
+        if (not isinstance(sibling_key, str) or not _ACCOUNT.fullmatch(sibling_key)
+                or not isinstance(sibling, dict)
+                or not isinstance(sibling.get("profile_path"), str)
+                or not sibling["profile_path"].strip()):
+            raise ValueError("Invalid account route sibling entry")
+        profile_key = ntpath.normcase(ntpath.normpath(sibling["profile_path"])).casefold()
+        if profile_key in seen_profiles:
+            raise ValueError("Conflicting account routes share one Chrome profile")
+        seen_profiles[profile_key] = sibling_key
     entry = raw["accounts"].get(account_key)
     if not isinstance(entry, dict):
         raise ValueError("Unknown account route; refusing implicit fallback")

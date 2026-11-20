@@ -14,6 +14,10 @@ The owner has accepted the [bounded ADR 0002 implementation](../../adr/0002-acco
 | A2-G5 / L09 | **NOT_RUN** | Measured resource/concurrency capacity; budget/thresholds frozen before test |
 | A2-G6 / L10 | **NOT_RUN** | Independent closeout, release matrix and verified start/pause/resume/check |
 
+## L02 negative-review follow-up
+
+[Three negative contract gaps and targeted correction](../../../evidence/astra-adr-0002-20261120/implementation/L02_20261120/review_20261120/NEGATIVE_REVIEW.md) were reproduced after the original 79-test candidate. Post-repair offline suites: 82 integration and 119 reference PASS; independent final acceptance and installation remain open. No change to A2-G1 or A2-G2 NOT_RUN dispositions.
+
 ## Management commitments
 
 Keep a single approved development branch rather than one branch per leaf. Commit exact leaf evidence and source as distinct reviewable checkpoints. Apply independent review at appropriate gates. Capture candidate SHA, test runs, raw outputs, observed Windows readbacks, run/fixture IDs, pending actions and real limitations. Do not substitute a model's claim or offline proxy for actual Windows acceptance. Confirm all remote pushes and final Git readbacks.

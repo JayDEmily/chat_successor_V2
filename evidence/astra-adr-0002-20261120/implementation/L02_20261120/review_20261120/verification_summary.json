@@ -1,0 +1,21 @@
+{
+  "baseline_commit": "3f9715e2b34755c0bc2bbf2c0b23dd3d2dfa6c8c",
+  "baseline_integration_79_PASS": true,
+  "original_negative_probes_observed": {
+    "duplicate_account_key_accepted": true,
+    "same_chrome_profile_two_accounts_accepted": [
+      true,
+      true
+    ],
+    "paused_before_send_acknowledged": false
+  },
+  "targeted_new_regressions": 3,
+  "post_fix_integration_count": 82,
+  "post_fix_integration_pass": true,
+  "reference_count": 119,
+  "reference_pass": true,
+  "diff_check": "PASS",
+  "live_acceptance": "NOT_RUN",
+  "independent_of_original_candidate_review": true,
+  "post_fix_independent_acceptance": "NOT_CLAIMED"
+}
