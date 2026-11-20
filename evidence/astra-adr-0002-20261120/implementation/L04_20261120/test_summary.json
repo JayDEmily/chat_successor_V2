@@ -1,0 +1,10 @@
+{
+  "base_candidate": "6dac237",
+  "L04_new_mock_view_cases": 7,
+  "integration_98": "PASS",
+  "windows_powershell_pure_view_helper_checks": "PASS",
+  "reference_119": "CARRIED_FORWARD_UNCHANGED_KIT_FROM_L02_PEER",
+  "code_changed_in_L04": false,
+  "native_chrome_positive_stale": "NOT_RUN",
+  "installed_account_route": "NOT_RUN"
+}

@@ -1,5 +1,13 @@
 # Progress
 
+## ADR 0002 L04 offline saved-view qualification — 20 November 2026
+
+Existing Chrome recovery logic retained after [7 positive/negative mocked
+view cases and native Windows PowerShell helper checks](evidence/astra-adr-0002-20261120/implementation/L04_20261120/L04_RESULT.md):
+98/98 total integration PASS. No existing recovery-code deficiency demonstrated.
+Real positive automatic stale recovery and account-specific installed tests
+remain NOT_RUN. Next A2-L05; G1 remains open.
+
 ## ADR 0002 L03 offline action-identity candidate — 20 November 2026
 
 The final Windows UIA adapter now verifies the same persisted action ID,

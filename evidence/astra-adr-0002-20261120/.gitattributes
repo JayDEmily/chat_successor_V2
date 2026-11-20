@@ -1,3 +1,4 @@
 # Preserve extracted Astra evidence bytes, including original CRLF; treat CR as EOL for whitespace checks.
 package/** whitespace=cr-at-eol
 implementation/L03_20261120/windows_ps_action_gate.log whitespace=cr-at-eol
+implementation/L04_20261120/windows_ps_view_helpers.log whitespace=cr-at-eol

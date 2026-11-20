@@ -1,0 +1,3 @@
+﻿powershell.exe -NoProfile -ExecutionPolicy Bypass -File \\wsl.localhost\Ubuntu\home\jds\chat_successor_astra_adr0002_intake_20261120\integration\tests\test_a2_l04_ps_view_helpers.ps1
+PASS: PS recovery helpers; positive newer completed same-user, negative streaming/user-anchor/count, stable fresh pair, rejected changed response, durable pause marker.
+EXIT_CODE=0
