@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G1 complete transcript verification — 20 November 2026
+
+Source `0b6bfa3e935e713fe2f36afd8da79c2befab9a42` holds on any unverified top-level article so a newer unidentified turn cannot expose an older Send receipt or assistant status. [Corrective evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/corrective-0b6bfa3/RESULT.md) records 113/113 integration on both hosts and three native Windows PowerShell passes.
+
+**Next eligible work** is independent A2-G1 review of the source pin. A2-G2–G6 are NOT_RUN.
+
 ## ADR 0002 A2-G1 independent review of c605c5f — 20 November 2026
 
 **A2-G1 OFFLINE HOLD** on `c605c5fafe4d3cfefe4173f04a53ebf0d1943d59`. [Independent review, exact case matrix and raw repro](evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-c605c5f/REPORT.md). Both hosts pass 113 integration and 119 reference tests, and the three native suites pass. All five in-body labels are now preserved. A newer article without a verified role can still be omitted while an older status or posted body is accepted, holding S01, S05, S06 and O04.
