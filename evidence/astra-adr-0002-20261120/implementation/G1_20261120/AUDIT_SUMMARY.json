@@ -1,0 +1,13 @@
+{
+  "reviewed_exact_head": "9a2fc382049a548adfefb5ed26a202c715988ca2",
+  "cases_checked": 24,
+  "selected_existing_test_names": 49,
+  "integration": 106,
+  "reference": 119,
+  "native_ps_action_gate": "PASS",
+  "native_ps_view_helper": "PASS",
+  "published_changes_made": false,
+  "git_fsck": "PASS",
+  "gate": "PENDING_SEPARATE_REVIEW",
+  "installed_and_live": "NOT_RUN"
+}

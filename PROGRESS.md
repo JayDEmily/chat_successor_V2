@@ -1,5 +1,10 @@
 # Progress
 
+## ADR 0002 G1 fresh receiver precheck — 20 November 2026
+
+Clean clone of 9a2fc382 verified [24-case G1 receiver matrix](evidence/astra-adr-0002-20261120/implementation/G1_20261120/RECEIVER_AUDIT.md), 106 integration + 119 reference, and native PowerShell action/view helper tests PASS. [A strictly independent separate-review commission](docs/astra-succession/adr-0002/G1_STRICT_REVIEW_COMMISSION.md) is ready; A2-G1 remains PENDING separate reviewer. A2-G2–G6 NOT_RUN; no installed changes or active project restarts.
+
+
 ## ADR 0002 L05 scoped approval and publication — 20 November 2026
 
 [L05 implementation and test matrix](evidence/astra-adr-0002-20261120/implementation/L05_20261120/L05_RESULT.md): distinguish worker advancement from verified owner approval delivery, and log the exact published Git SHA/ref before and after adoption. **106/106 integration + 119/119 reference PASS**, plus two Windows PowerShell helper tests; no installed, browser or iPhone tests. L02–L05 offline implementation is ready for separate **A2-G1 independent review**, not yet released. Active Rowing and SolidWorks runs remain paused.
