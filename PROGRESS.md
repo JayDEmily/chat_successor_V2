@@ -1,10 +1,10 @@
 # Progress
 
-## ADR 0002 A2-G2 staged Windows preflight for both accounts — 20 November 2026
+## ADR 0002 A2-G2 installed Windows routes and recovery hold — 20 November 2026
 
-A2-G1 remains independently accepted for `0b6bfa3`. The [A2-G2 checkpoint](evidence/astra-adr-0002-20261120/implementation/G2_20261120/PREFLIGHT.md) records live **staged no-Send PASS** for Shoco's Finish Test Project and James Student's `test_folder_2` in Chat mode. Each verified the exact published fixture SHA `b91b00f`. The unknown account and a stock draft both held. The before/after staged and installed state hashes matched.
+A2-G1 remains independently accepted for `0b6bfa3`. Both separate Remote Desktop Commander accounts read the same `codex/chat-succession-finish` tip at `8f33cc5`. The installed Windows launcher now uses the two verified `USERPROFILE` selectors. **Both installed no-Send preflights and the concurrent-window/mutex checks passed.** The installed [A2-G2 evidence](evidence/astra-adr-0002-20261120/implementation/G2_20261120/PREFLIGHT.md) records the pin, rollback hash, both route receipts, exact fixture SHA `b91b00f`, and matching before/after state.
 
-**A2-G2 is HOLD.** James Student's signed-in browser shows its own Chat Succession 0.4.2 with Remote Desktop Commander connected. The available Plugin Creator connection could not read that private release. The available Remote Desktop Commander connection found the canonical wrapper under native Windows LocalAppData. The per-account connector selectors and installed candidate still need verification. W02/W03 installed acceptance and A2-G3–G6 are NOT_RUN.
+**A2-G2 is HOLD.** Windows PowerShell checks passed, but saved-chat recovery timed out on the completed approval fixture. A manual view verified the saved chat and profile. The current Chat renderer exposes virtualized groups without the article boundaries required by the native adapter. Wrong-profile and duplicate-view checks held as expected. A2-G3–G6 are NOT_RUN. The next action is to qualify a reliable latest-turn boundary and rerun read-only recovery on the exact candidate.
 
 ## ADR 0002 A2-G1 independent acceptance — 20 November 2026
 
