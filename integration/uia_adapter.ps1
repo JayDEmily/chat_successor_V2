@@ -224,6 +224,48 @@ function Find-EnabledSendButtons($window) {
   }catch{}
  }
 }
+function Get-AccessibilityParent($element) {
+ return [System.Windows.Automation.TreeWalker]::RawViewWalker.GetParent($element)
+}
+
+function Get-ConversationRole($element) {
+ $name=$element.Current.Name
+ if($name -cnotin @('You said:','ChatGPT said:')){return}
+ $heading=$false
+ # Only the application's role heading establishes a turn. Identical text
+ # in a message body remains content.
+ for($i=0;$i -lt 24 -and $null -ne $element;$i++){
+  $current=$element.Current
+  if($current.LocalizedControlType -eq 'heading' -and
+     $current.ClassName -match '(?:^|\s)sr-only(?:\s|$)' -and $current.Name -ceq $name){
+   $heading=$true
+  }
+  if($current.LocalizedControlType -eq 'article'){
+   if(-not $heading){return}
+   $id=$element.GetRuntimeId() -join '.'
+   if(-not $id){throw 'Conversation article identity unavailable'}
+   return @{article=$element; id=$id; role=$(if($name -ceq 'You said:'){'user'}else{'assistant'})}
+  }
+  $element=Get-AccessibilityParent $element
+ }
+ if($heading){throw 'Conversation role heading has no verified article'}
+}
+
+function Get-ConversationTurns($all) {
+ $seen=@{}
+ foreach($element in $all){
+  if($element.Current.Name -cnotin @('You said:','ChatGPT said:')){continue}
+  $turn=Get-ConversationRole $element
+  if($null -eq $turn){continue}
+  if($seen.ContainsKey($turn.id)){
+   if($seen[$turn.id] -cne $turn.role){throw 'Conflicting role headings in a conversation article'}
+   continue
+  }
+  $seen[$turn.id]=$turn.role
+  $turn
+ }
+}
+
 function Find-PostedMessage($window,$expected,[string]$afterResponse='') {
  # The complete latest user turn must match. For continuation, also bind
  # the immediately preceding assistant turn to the triggering response.
@@ -232,34 +274,22 @@ function Find-PostedMessage($window,$expected,[string]$afterResponse='') {
   if($afterResponse -cnotmatch '^uia-turn-([1-9][0-9]*)-[a-f0-9]{20}$'){return $false}
   $afterOrdinal=[int]$Matches[1]
  }
- $all=Desc $window
- $assistantCount=0
- $lastAssistant=-1
- $lastUser=-1
- $userAnchor=-1
- $userAnchorOrdinal=0
- for($i=0;$i -lt $all.Count;$i++) {
-  $el=$all[$i]
-  try{
-   if($el.Current.ControlType -ne [System.Windows.Automation.ControlType]::Text){continue}
-   $name=$el.Current.Name
-   if($name -ceq 'You said:'){
-    $lastUser=$i
-    $userAnchor=$lastAssistant
-    $userAnchorOrdinal=$assistantCount
-   }elseif($name -ceq 'ChatGPT said:'){
-    $lastAssistant=$i
-    $assistantCount++
-   }
-  }catch{return $false}
- }
- if($lastUser -lt 0){return $false}
  try{
-  if($afterOrdinal -gt 0 -and ($userAnchor -lt 0 -or $userAnchorOrdinal -ne $afterOrdinal -or
-     (Read-AssistantContent $all $userAnchor $userAnchorOrdinal -Strict).response_id -cne $afterResponse)){
+  $turns=@(Get-ConversationTurns (Desc $window))
+  $lastUser=-1
+  $assistantCount=0
+  $userAnchorOrdinal=0
+  for($i=0;$i -lt $turns.Count;$i++){
+   if($turns[$i].role -ceq 'assistant'){$assistantCount++}
+   else{$lastUser=$i;$userAnchorOrdinal=$assistantCount}
+  }
+  if($lastUser -lt 0){return $false}
+  if($afterOrdinal -gt 0 -and ($lastUser -eq 0 -or $userAnchorOrdinal -ne $afterOrdinal -or
+     $turns[$lastUser-1].role -cne 'assistant' -or
+     (Read-ConversationContent $turns[$lastUser-1] $afterOrdinal).response_id -cne $afterResponse)){
    return $false
   }
-  return ((Read-AssistantContent $all $lastUser 0 -Strict).text -ceq $expected)
+  return ((Read-ConversationContent $turns[$lastUser] 0).text -ceq $expected)
  }catch{return $false}
 }
 
@@ -343,27 +373,24 @@ function Compare-OwnerTurn($turn,[string]$anchor) {
  return 'unknown'
 }
 
-function Read-AssistantContent($all,[int]$header,[int]$ordinal,[switch]$Strict) {
+function Read-ConversationContent($turn,[int]$ordinal) {
  $parts=@()
  $locatorProse=$false
  $finalProse=$false
- for($i=$header+1;$i -lt $all.Count;$i++){
-  $el=$all[$i]
-  try {
-   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text) {
-    $name=$el.Current.Name
-    if($name -ceq 'You said:' -or $name -ceq 'ChatGPT said:' -or
-       $name -ceq 'ChatGPT can make mistakes. Check important info.' -or
-       $name -ceq 'Latest response' -or $name -ceq 'Ask ChatGPT'){break}
-    if($name){
-     $parts+= $name
-     $finalProse=$false
-     if($name -cmatch '^CHAT_HANDOFF_BRANCH: '){$locatorProse=Test-AssistantProse $el}
-     $finalProse=($name -cmatch '^(?:CHAT_STATUS: )?(?:NEED_MORE_TIME|TASK_COMPLETE|ERROR)$' -and
-                  (Test-AssistantProse $el))
-    }
+ # Article membership bounds the body. Browser labels and role-like strings
+ # inside that article cannot truncate it.
+ foreach($el in (Desc $turn.article)){
+  if($el.Current.ControlType -ne [System.Windows.Automation.ControlType]::Text){continue}
+  $name=$el.Current.Name
+  if(-not $name -or (Get-ConversationRole $el)){continue}
+  $parts+= $name
+  $finalProse=$false
+  if($turn.role -ceq 'assistant'){
+   if($name -cmatch '^CHAT_HANDOFF_BRANCH: '){$locatorProse=Test-AssistantProse $el}
+   if($name -cmatch '^(?:CHAT_STATUS: )?(?:NEED_MORE_TIME|TASK_COMPLETE|ERROR)$'){
+    $finalProse=Test-AssistantProse $el
    }
-  }catch{if($Strict){throw}}
+  }
  }
  $body=$parts -join [Environment]::NewLine
  $sha=[Security.Cryptography.SHA256]::Create()
@@ -375,44 +402,39 @@ function Read-AssistantContent($all,[int]$header,[int]$ordinal,[switch]$Strict) 
 
 function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
  $all=Desc $target.window
- $last=-1
- $lastUser=-1
- $assistantCount=0
- $userCount=0
+ $turns=@(Get-ConversationTurns $all)
+ $assistant=@($turns | Where-Object {$_.role -ceq 'assistant'})
+ $user=@($turns | Where-Object {$_.role -ceq 'user'})
  $stop=$false
- for($i=0;$i -lt $all.Count;$i++){
-  $el=$all[$i]
+ foreach($el in $all){
   try{
-   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
-      $el.Current.Name -ceq 'ChatGPT said:'){$assistantCount++;$last=$i}
-   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
-      $el.Current.Name -ceq 'You said:'){$userCount++;$lastUser=$i}
    if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
       $el.Current.Name -ceq 'Stop' -and $el.Current.IsEnabled){$stop=$true}
   }catch{}
  }
- if($last -lt 0){
+ if(-not $assistant.Count){
   $turn=@{ready=$false;reason='No assistant turn observed';chat_id=$target.chat
-          stop_control=$stop;user_after_assistant=$false;user_turn_seen=($lastUser -ge 0)}
+          stop_control=$stop;user_after_assistant=$false;user_turn_seen=($user.Count -gt 0)}
  }else{
-  $content=Read-AssistantContent $all $last $assistantCount
+  $content=Read-ConversationContent $assistant[-1] $assistant.Count
   # No automatic turn completion until a final status line and no active Stop.
   $terminal=$content.final_status_verified
-  $ready=$terminal -and -not $stop -and $last -gt $lastUser
+  $userAfter=$turns[-1].role -ceq 'user'
+  $ready=$terminal -and -not $stop -and -not $userAfter
   $turn=@{
    ready=$ready;chat_id=$target.chat;project=$ProjectId;role='assistant'
    response_id=$content.response_id
    text=$content.text;complete=$ready;reason=$(if($stop){'Streaming/Stop control present'}elseif(-not $terminal){'No final status in verified assistant prose'}else{'Completed status observed in assistant prose'})
    method='UIA_ACCESSIBILITY_TEXT';stop_control=$stop
-   user_after_assistant=($lastUser -gt $last);user_turn_seen=($lastUser -ge 0)
+   user_after_assistant=$userAfter;user_turn_seen=($user.Count -gt 0)
    handoff_locator_verified=$content.handoff_locator_verified
   }
  }
  if($IncludeUserAnchor){
-  $turn['assistant_turn_count']=$assistantCount
-  $turn['user_turn_count']=$userCount
-  if($lastUser -ge 0){
-   $lastUserContent=Read-AssistantContent $all $lastUser $userCount
+  $turn['assistant_turn_count']=$assistant.Count
+  $turn['user_turn_count']=$user.Count
+  if($user.Count){
+   $lastUserContent=Read-ConversationContent $user[-1] $user.Count
    if($lastUserContent.text){$turn['latest_user_digest']=$lastUserContent.digest}
   }
  }

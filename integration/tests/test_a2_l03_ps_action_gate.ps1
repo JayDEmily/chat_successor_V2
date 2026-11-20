@@ -103,7 +103,8 @@ try {
   if($BootstrapIntentPath){ Remove-Item -LiteralPath $BootstrapIntentPath -Force -ErrorAction SilentlyContinue }
 }
 
-foreach ($name in @('Find-PostedMessage', 'Read-AssistantContent', 'Read-CurrentTurn')) {
+foreach ($name in @('Get-ConversationRole', 'Get-ConversationTurns', 'Find-PostedMessage',
+                   'Read-ConversationContent', 'Read-CurrentTurn')) {
   $definition = $ast.Find({
     param($node)
     $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name
@@ -112,30 +113,72 @@ foreach ($name in @('Find-PostedMessage', 'Read-AssistantContent', 'Read-Current
   . ([scriptblock]::Create($definition.Extent.Text))
 }
 Add-Type -AssemblyName UIAutomationTypes
-function Desc($window){return $window}
+function Desc($element){return $element.Children}
+function Get-AccessibilityParent($element){return $element.Parent}
 function Test-AssistantProse($element){return $element.Prose}
 function Text-Leaf($name,[bool]$prose=$false){
-  return @{Current=@{Name=$name; ControlType=[System.Windows.Automation.ControlType]::Text}; Prose=$prose}
+  return @{Current=@{Name=$name; ControlType=[System.Windows.Automation.ControlType]::Text
+                     LocalizedControlType='text'; ClassName=''}
+           Prose=$prose; Parent=$null}
 }
-$history=@(
-  Text-Leaf 'You said:'
-  Text-Leaf $Message
-  Text-Leaf 'ChatGPT said:'
-  Text-Leaf 'CHAT_STATUS: NEED_MORE_TIME' $true
-)
-$anchor=(Read-AssistantContent $history 2 1).response_id
+function Turn-Article([int]$index,[string]$label,[object[]]$body){
+  $article=[pscustomobject]@{
+    Current=@{Name=''; ControlType=[System.Windows.Automation.ControlType]::Group
+              LocalizedControlType='article'; ClassName=''}
+    Id=$index; Children=@(); Parent=$null
+  }
+  $article | Add-Member ScriptMethod GetRuntimeId { return @(42,$this.Id) }
+  $heading=Text-Leaf $label
+  $heading.Current.LocalizedControlType='heading'
+  $heading.Current.ClassName='sr-only'
+  $heading.Parent=$article
+  $labelLeaf=Text-Leaf $label
+  $labelLeaf.Parent=$heading
+  foreach($leaf in $body){$leaf.Parent=$article}
+  $article.Children=@($heading,$labelLeaf)+$body
+  return $article
+}
+function Transcript-Window([object[]]$articles){
+  $children=@(foreach($article in $articles){$article;$article.Children})
+  return @{Children=$children+@(Text-Leaf 'Ask ChatGPT'; Text-Leaf 'Chrome text outside the articles')}
+}
+$initial=Turn-Article 1 'You said:' @((Text-Leaf $Message))
+$assistant=Turn-Article 2 'ChatGPT said:' @((Text-Leaf 'CHAT_STATUS: NEED_MORE_TIME' $true))
+$assistantTurn=Get-ConversationRole $assistant.Children[0]
+$anchor=(Read-ConversationContent $assistantTurn 1).response_id
+$history=Transcript-Window @($initial,$assistant)
 if(Find-PostedMessage $history $Message $anchor){throw 'Older identical post acknowledged'}
-$exact=$history+@(Text-Leaf 'You said:'; Text-Leaf $Message)
-$longer=$history+@(Text-Leaf 'You said:'; Text-Leaf 'Additional text'; Text-Leaf $Message)
+$exact=Transcript-Window @($initial,$assistant,(Turn-Article 3 'You said:' @((Text-Leaf $Message))))
+$longer=Transcript-Window @($initial,$assistant,(Turn-Article 3 'You said:' @(
+  Text-Leaf 'Additional text'
+  Text-Leaf $Message
+)))
 if(-not (Find-PostedMessage $exact $Message $anchor)){throw 'Exact anchored body rejected'}
 if(-not (Find-PostedMessage $exact $Message)){throw 'Exact successor body rejected'}
 if(Find-PostedMessage $longer $Message $anchor){throw 'Longer anchored body acknowledged'}
 if(Find-PostedMessage $longer $Message){throw 'Longer successor body acknowledged'}
-foreach($status in @('CHAT_STATUS: NEED_MORE_TIME','CHAT_STATUS: TASK_COMPLETE','ERROR')){
-  $other=$history.Clone()
-  $other[3]=Text-Leaf $status
-  if((Read-CurrentTurn @{window=$other; chat=$ChatId}).ready){throw 'Non-prose status became actionable'}
-  $other[3]=Text-Leaf $status $true
-  if(-not (Read-CurrentTurn @{window=$other; chat=$ChatId}).ready){throw 'Verified prose status was rejected'}
+$labels=@('Ask ChatGPT','Latest response','You said:','ChatGPT said:',
+          'ChatGPT can make mistakes. Check important info.')
+foreach($label in $labels){
+  $body=@(Text-Leaf $Message; Text-Leaf $label; Text-Leaf 'Discuss the sample only')
+  $longer=Transcript-Window @($initial,$assistant,(Turn-Article 3 'You said:' $body))
+  if(Find-PostedMessage $longer $Message $anchor){throw "Anchored message truncated at $label"}
+  if(Find-PostedMessage $longer $Message){throw "Successor message truncated at $label"}
+  $tail=@(Text-Leaf 'CHAT_STATUS: NEED_MORE_TIME' $true; Text-Leaf $label; Text-Leaf 'Further prose')
+  $window=Transcript-Window @($initial,(Turn-Article 2 'ChatGPT said:' $tail))
+  if((Read-CurrentTurn @{window=$window; chat=$ChatId}).ready){throw "Assistant message truncated at $label"}
 }
-Write-Output 'PASS: Windows PowerShell action, whole user-turn acknowledgement, prose status and owner receipt checks.'
+$twoUserTurns=Transcript-Window @($initial,$assistant,
+  (Turn-Article 3 'You said:' @((Text-Leaf 'Different message'))),
+  (Turn-Article 4 'You said:' @((Text-Leaf $Message))))
+if(Find-PostedMessage $twoUserTurns $Message $anchor){throw 'Non-adjacent user turn acknowledged'}
+if(Find-PostedMessage @{Children=@(Text-Leaf 'You said:'; Text-Leaf $Message)} $Message){
+  throw 'An unverified conversation structure acknowledged a post'
+}
+foreach($status in @('CHAT_STATUS: NEED_MORE_TIME','CHAT_STATUS: TASK_COMPLETE','ERROR')){
+  $window=Transcript-Window @($initial,(Turn-Article 2 'ChatGPT said:' @((Text-Leaf $status))))
+  if((Read-CurrentTurn @{window=$window; chat=$ChatId}).ready){throw 'Non-prose status became actionable'}
+  $window=Transcript-Window @($initial,(Turn-Article 2 'ChatGPT said:' @((Text-Leaf $status $true))))
+  if(-not (Read-CurrentTurn @{window=$window; chat=$ChatId}).ready){throw 'Verified prose status was rejected'}
+}
+Write-Output 'PASS: Windows PowerShell action, structurally bounded full turns, prose status and owner receipt checks.'
