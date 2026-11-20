@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G1 second corrective candidate — 20 November 2026
+
+Candidate `9e6421112286f7e993d7e91a3e63fbfea0a0c206` addresses the five findings from the separate review below. [Corrective evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/corrective-9e64211/RESULT.md) records 113 integration and 119 reference passes on Windows and Ubuntu plus three native PowerShell passes. The checks cover exact pause acknowledgement, prose status, repaired publication, whole posted-turn receipts and durable owner scope.
+
+**Next eligible work** is the separate A2-G1 re-review of this pin. A2-G2–G6 are NOT_RUN.
+
 ## ADR 0002 A2-G1 independent re-review — 20 November 2026
 
 **A2-G1 OFFLINE HOLD** on corrective candidate `66f4b94dc6fa94c708b42c11d2681da291dd9d99`. The [independent 24-case review and raw evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-66f4b94/REPORT.md) reproduce 111 integration and 119 reference passes on each of Windows and Ubuntu and three native PowerShell passes. New local-Git, journal and native helper probes hold seven cases involving pause acknowledgement, actionable non-prose status, publication repair, exact posted-turn acknowledgement and replaced owner scope.
