@@ -878,32 +878,8 @@ function Recover-SavedWorkerView {
  return @{recovery_status='refreshed';window_handle=$WindowHandle}
 }
 
-function Get-ProjectNavigation($source) {
- $links=@(foreach($el in (Desc $source.window)){
-  if($el.Current.ControlType -ne [System.Windows.Automation.ControlType]::Hyperlink -or
-     $el.Current.Name -cne $ProjectName -or $el.Current.IsOffscreen -or -not $el.Current.IsEnabled){continue}
-  $linkValue=$null
-  $invoke=$null
-  if($el.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern,[ref]$linkValue) -and
-     (Check-Project $linkValue.Current.Value) -and $linkValue.Current.Value -cmatch '/project$' -and
-     $el.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$invoke)){$invoke}
- })
- if($links.Count -eq 1){return $links[0]}
- return $null
-}
-
-function Test-SourceComposerForNavigation($source) {
- $turn=Read-CurrentTurn $source
- if(-not $turn.ready -or $turn.response_id -cne $SourceResponse){
-  throw 'The saved worker no longer shows the verified completion for this successor'
- }
- $editor=Find-Composer $source.window 'Ask ChatGPT'
- $value=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
- return ((Read-ComposerText $editor $value) -ceq '' -and (Check-NoAttachments $source.window) -and
-         @(Find-EnabledSendButtons $source.window).Count -eq 0)
-}
-
 function Get-VerifiedSuccessorSource([string]$responseId) {
+ if(-not $ChatId -or -not $responseId){throw 'Successor needs a saved worker and reply'}
  $source=Get-TargetWindow $ChatId 0
  $turn=Read-CurrentTurn $source
  if(-not $turn.ready -or $turn.response_id -cne $responseId -or
@@ -911,21 +887,6 @@ function Get-VerifiedSuccessorSource([string]$responseId) {
   throw 'The saved worker no longer shows the verified completion for this successor'
  }
  return $source
-}
-
-function Save-NavigationTarget($source) {
- $record=@{kind='LAUNCH_SUCCESSOR';source=$ChatId;handle=[long]$source.window.Current.NativeWindowHandle
-           action_id=$PrepareAction} | ConvertTo-Json -Compress
- $temp=$PrepareTargetPath + '.' + [guid]::NewGuid().ToString('N') + '.tmp'
- try {
-  $bytes=[Text.Encoding]::UTF8.GetBytes($record)
-  $stream=[IO.File]::Open($temp,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write)
-  try {$stream.Write($bytes,0,$bytes.Length);$stream.Flush($true)} finally {$stream.Dispose()}
-  if([IO.File]::Exists($PrepareTargetPath)){[IO.File]::Replace($temp,$PrepareTargetPath,[NullString]::Value)}
-  else{[IO.File]::Move($temp,$PrepareTargetPath)}
- } finally {
-  if([IO.File]::Exists($temp)){[IO.File]::Delete($temp)}
- }
 }
 
 if($Mode -eq 'Observe') {
@@ -1048,7 +1009,7 @@ if($Mode -eq 'Prepare') {
     if($uniquePages.Count -ne 1){throw 'No unique independently observed target Project URL'}
     $projectPage=$uniquePages[0]
    }
-  $source=if($ChatId -and $SourceResponse){Get-VerifiedSuccessorSource $SourceResponse}
+  if($ChatId -and $SourceResponse){$null=Get-VerifiedSuccessorSource $SourceResponse}
   $new=$null
   if($ChatId -and $WindowHandle -gt 0){
    try {
@@ -1058,20 +1019,7 @@ if($Mode -eq 'Prepare') {
     }
    }catch{}
   }
-  if($null -ne $source -and $SourceResponse -cmatch '^uia-turn-' -and
-     $PrepareAction -and $PrepareTargetPath -and $null -eq $new){
-   $navigation=$null
-   try {
-    $navigation=Get-ProjectNavigation $source
-   }catch{}
-   if($null -ne $navigation -and (Test-SourceComposerForNavigation $source)){
-    # The prior worker is saved. Follow its verified Project link in-place
-    # so a new chat does not require a new Chrome renderer.
-    Save-NavigationTarget $source
-    $navigation.Invoke()
-    $new=$source.window
-   }
-  }
+  # Keep the source view available for the final Send check and pause/resume.
   if($null -eq $new){$new=Open-ChromeWindow $projectPage}
   if($Preflight){$preflightWindow=$new.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)}
   $target=$null
@@ -1188,8 +1136,8 @@ if($Mode -eq 'Send') {
   throw 'Continuation needs the saved chat and triggering response'
  }
  $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
- $chromeSuccessor=$Kind -eq 'LAUNCH_SUCCESSOR' -and $PendingResponseId -cmatch '^chrome-turn-'
- if($chromeSuccessor){
+ $hasSuccessorSource=$Kind -eq 'LAUNCH_SUCCESSOR' -and $PendingResponseId
+ if($hasSuccessorSource){
   try{$null=Get-VerifiedSuccessorSource $PendingResponseId}catch{Hold-ForChangedDestination}
  }
  if($Kind -eq 'CONTINUE_CURRENT'){
@@ -1226,7 +1174,6 @@ if($Mode -eq 'Send') {
   if((Get-Address $target.window) -cne $target.url -or -not (Test-WindowProfile $target.window)){
    Hold-ForChangedDestination
   }
-  if($chromeSuccessor){$null=Get-VerifiedSuccessorSource $PendingResponseId}
   $pattern.SetValue($Message)
  }
  $typed=''
@@ -1263,6 +1210,7 @@ if($Mode -eq 'Send') {
   $sendButtons=@(Find-EnabledSendButtons $document)
   if($sendButtons.Count -ne 1){Hold-ForChangedDestination}
   $send=$sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+  if($hasSuccessorSource){$null=Get-VerifiedSuccessorSource $PendingResponseId}
   if((Get-Address $target.window) -cne $target.url -or -not (Test-WindowProfile $target.window)){
    Hold-ForChangedDestination
   }
