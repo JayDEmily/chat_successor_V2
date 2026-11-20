@@ -27,7 +27,8 @@ class WorkerViewTests(unittest.TestCase):
         self.restored = {**self.identity, "recovery_status": "restored"}
         self.partial = {**self.identity, "view_status": "observed", "window_handle": 45,
                         "ready": False, "stop_control": True,
-                        "response_id": "uia-turn-1-63adfe00000000000000"}
+                        "response_id": "uia-turn-1-63adfe00000000000000",
+                        "latest_user_digest": "63adef00000000000000"}
         self.ready = {**self.partial, "ready": True, "stop_control": False,
                       "role": "assistant", "text": "CHAT_STATUS: TASK_COMPLETE"}
 
@@ -87,6 +88,19 @@ class WorkerViewTests(unittest.TestCase):
             self.assertEqual(probe.kwargs["Recovery"], "stale")
             self.assertEqual(probe.kwargs["WindowHandle"], 45)
             self.assertEqual(probe.kwargs["SourceResponse"], later["response_id"])
+
+    def test_reopened_view_without_turn_anchors_cannot_arm_a_stale_probe(self):
+        unqualified = {**self.identity, "view_status": "observed", "window_handle": 45,
+                       "ready": False}
+        self.adapter.side_effect = [self.missing, self.restored, unqualified,
+                                    unqualified, unqualified]
+        with patch("windows_backend.time.monotonic") as clock:
+            for _ in range(3):
+                self.assertIsNone(self.bridge.observe(self.chat))
+            clock.assert_not_called()
+        self.assertEqual([call.args[0] for call in self.adapter.call_args_list],
+                         ["Observe", "RecoverView", "Observe", "Observe", "Observe"])
+        self.assertIsNone(self.bridge._progress)
 
     def test_consumed_completed_view_can_be_stale_without_replaying_response(self):
         state = {"state": {"consumed_responses": [[self.chat, self.ready["response_id"]]]}}

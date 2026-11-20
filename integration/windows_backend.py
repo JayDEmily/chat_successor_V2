@@ -166,7 +166,9 @@ class WindowsUIA(Browser):
 
     def _probe_stale_view(self, chat_id: str, turn: dict) -> bool:
         handle = turn.get("window_handle")
-        if type(handle) is not int or handle <= 0:
+        if (type(handle) is not int or handle <= 0
+                or not turn.get("response_id") or not turn.get("latest_user_digest")):
+            self._progress = None
             return False
         fingerprint = (chat_id, handle, turn.get("response_id"), turn.get("ready"),
                        turn.get("stop_control"), turn.get("user_after_assistant"),

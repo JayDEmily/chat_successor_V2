@@ -228,6 +228,13 @@ function Get-AccessibilityParent($element) {
  return [System.Windows.Automation.TreeWalker]::RawViewWalker.GetParent($element)
 }
 
+function Get-AccessibilityChildren($element) {
+ $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
+ for($child=$walker.GetFirstChild($element);$null -ne $child;$child=$walker.GetNextSibling($child)){
+  $child
+ }
+}
+
 function Test-TranscriptRegion($element) {
  $current=$element.Current
  return ($current.LocalizedControlType -eq 'region' -and
@@ -475,6 +482,81 @@ function Read-SavedWorkerView($target) {
  return $turn
 }
 
+function Get-VirtualizedSavedUserHeading($document) {
+ $threads=@((Desc $document) | Where-Object {Test-TranscriptRegion $_})
+ if($threads.Count -ne 1){throw 'A single saved conversation transcript could not be established'}
+ $layouts=@((Get-AccessibilityChildren $threads[0]) | Where-Object {
+  $_.Current.LocalizedControlType -ceq 'group' -and
+  $_.Current.ClassName -cmatch '(?:^|\s)transcriptContent-[\w-]+(?:\s|$)'
+ })
+ if($layouts.Count -eq 0){return}
+ if($layouts.Count -ne 1){throw 'The saved conversation layout is ambiguous'}
+ $groups=@(Get-AccessibilityChildren $layouts[0])
+ if($groups.Count -ne 1 -or $groups[0].Current.LocalizedControlType -cne 'group' -or
+    $groups[0].Current.ClassName -cne 'relative shrink-0'){
+  throw 'The saved conversation message group could not be verified'
+ }
+ $children=@(Get-AccessibilityChildren $groups[0])
+ for($i=0;$i+1 -lt $children.Count;$i++){
+  $heading=$children[$i].Current
+  $body=$children[$i+1].Current
+  if($heading.LocalizedControlType -ceq 'heading' -and $heading.Name -ceq 'You said:' -and
+     $heading.ClassName -cmatch '(?:^|\s)sr-only(?:\s|$)' -and
+     $body.LocalizedControlType -ceq 'group' -and
+     $body.ClassName -cmatch '(?:^|\s)bg-user-message(?:\s|$)' -and
+     $body.ClassName -cmatch '(?:^|\s)text-user-message(?:\s|$)'){
+   return $children[$i]
+  }
+ }
+ throw 'A loaded user message could not be verified in the saved conversation'
+}
+
+function Read-SavedWorkerIdentity($target) {
+ $document=Get-ComposerDocument (Find-Composer $target.window 'Ask ChatGPT')
+ $heading=Get-VirtualizedSavedUserHeading $document
+ $marker=''
+ if($null -eq $heading){
+  $null=Read-SavedWorkerView $target
+ }else{
+  if(-not $ChromeAppId){throw 'The virtualized saved conversation needs a verified Chrome profile'}
+  $marker=Get-DocumentIdentity $heading
+ }
+ $documentId=Get-DocumentIdentity $document
+ $address=Get-Address $target.window
+ if($address -cne $target.url -or (Chat-FromUrl $address) -cne $ChatId -or
+    -not (Test-WindowProfile $target.window)){
+  throw 'Saved worker address or profile changed during recovery'
+ }
+ return @{url=$address;document_id=$documentId;user_heading_id=$marker}
+}
+
+function Wait-VerifiedSavedWorker([long]$handle) {
+ $prior=$null
+ for($i=0;$i -lt 25;$i++){
+  Start-Sleep -Milliseconds 400
+  if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
+  try {
+   $identity=Read-SavedWorkerIdentity (Get-TargetWindow $ChatId $handle)
+  }catch{
+   $prior=$null
+   continue
+  }
+  if($null -ne $prior -and $identity.url -ceq $prior.url -and
+     $identity.document_id -ceq $prior.document_id -and
+     $identity.user_heading_id -ceq $prior.user_heading_id){
+   $active=@(Find-TargetWindows $ChatId 0)
+   if($active.Count -ne 1 -or $active[0].window.Current.NativeWindowHandle -ne $handle -or
+      $active[0].url -cne $identity.url){
+    throw 'The recovered view is not the unique accessible saved worker'
+   }
+   if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
+   return @{recovery_status='restored';window_handle=$handle}
+  }
+  $prior=$identity
+ }
+ throw 'The exact saved chat did not load in the recovery window'
+}
+
 function Test-SameWorkerTurn($first,$second) {
  return ($first['response_id'] -ceq $second['response_id'] -and
          $first.ready -eq $second.ready -and $first.stop_control -eq $second.stop_control -and
@@ -524,8 +606,7 @@ function Recover-SavedWorkerView {
  $original=$null
  $originalTurn=$null
  if($Recovery -eq 'missing' -and $matchesFound.Count -eq 1){
-  $null=Read-SavedWorkerView $matchesFound[0]
-  return @{recovery_status='restored';window_handle=[long]$matchesFound[0].window.Current.NativeWindowHandle}
+  return (Wait-VerifiedSavedWorker $matchesFound[0].window.Current.NativeWindowHandle)
  }
  if($Recovery -eq 'stale'){
   if(-not $WorkerJournalPath -or -not [IO.File]::Exists($WorkerJournalPath)){
@@ -563,6 +644,11 @@ function Recover-SavedWorkerView {
  $retainProbe=$false
  $provedCompletion=$false
  try {
+  if($Recovery -eq 'missing'){
+   $result=Wait-VerifiedSavedWorker $probeHandle
+   $retainProbe=$result.recovery_status -ceq 'restored'
+   return $result
+  }
   $priorFresh=$null
   for($i=0;$i -lt 25;$i++){
    Start-Sleep -Milliseconds 400
@@ -573,15 +659,6 @@ function Recover-SavedWorkerView {
    }catch{
     $priorFresh=$null
     continue
-   }
-   if($Recovery -eq 'missing'){
-    $active=@(Find-TargetWindows $ChatId 0)
-    if($active.Count -ne 1 -or $active[0].window.Current.NativeWindowHandle -ne $probeHandle){
-     throw 'The recovered view is not the unique accessible saved worker'
-    }
-    if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
-    $retainProbe=$true
-    return @{recovery_status='restored';window_handle=$probeHandle}
    }
    if(Test-FreshWorkerCompletion $originalTurn $fresh $consumedResponses){
     if($null -ne $priorFresh -and (Test-SameWorkerTurn $priorFresh $fresh)){
@@ -595,7 +672,6 @@ function Recover-SavedWorkerView {
  } finally {
   if(-not $retainProbe){$probeWindow.Close()}
  }
- if($Recovery -eq 'missing'){throw 'The exact saved chat did not load in the recovery window'}
  if(-not $provedCompletion){return @{recovery_status='waiting';reason='Fresh view did not verify a completed reply to the same user turn'}}
  if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
  # Close the duplicate first. Only the original, still unchanged target may reload.

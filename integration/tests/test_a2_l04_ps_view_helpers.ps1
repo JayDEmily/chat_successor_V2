@@ -6,7 +6,9 @@ $errors=$null
 $tree=[Management.Automation.Language.Parser]::ParseFile($path,[ref]$tokens,[ref]$errors)
 if($errors.Count -ne 0){throw 'UIA adapter PowerShell syntax failed'}
 foreach($name in @('Test-SameWorkerTurn','Test-FreshWorkerCompletion','Test-ViewRecoveryPaused',
-                   'Check-Project','Chat-FromUrl','Find-TargetWindows','Get-TargetWindow')){
+                   'Check-Project','Chat-FromUrl','Find-TargetWindows','Get-TargetWindow',
+                   'Test-TranscriptRegion','Get-VirtualizedSavedUserHeading',
+                   'Read-SavedWorkerIdentity','Wait-VerifiedSavedWorker')){
  $found=@($tree.FindAll({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq $name},$true))
  if($found.Count -ne 1){throw "Function definition missing or ambiguous: $name"}
  Invoke-Expression $found[0].Extent.Text
@@ -55,4 +57,68 @@ if(-not $wrongProfileHeld){throw 'Wrong Chrome profile selected by URL and handl
 $window.Profile='Chrome.Nominated'
 if((Get-TargetWindow $worker 55).chat -cne $worker){throw 'Verified profile target refused'}
 if(Chat-FromUrl "https://chatgpt.com/g/$ProjectId/c/local-chatgpt"){throw 'Provisional successor treated as saved'}
-Write-Output 'PASS: PS recovery comparisons and explicit holds for consumed replies, wrong Chrome profiles and provisional chat IDs.'
+
+$ChatId=$worker
+$ChromeAppId='Chrome.Nominated'
+$script:targetWindows=@($window)
+function Get-ChromeWindows { return $script:targetWindows }
+function Saved-ViewNode($kind,$class,$identity,$name='',[object[]]$children=@()){
+ return @{Current=@{LocalizedControlType=$kind; ClassName=$class; Name=$name}
+          Identity=$identity; Children=$children}
+}
+$userHeading=Saved-ViewNode 'heading' 'sr-only print:not-sr-only' 'user-label' 'You said:'
+$userBody=Saved-ViewNode 'group' 'bg-user-message text-user-message rounded-2xl' 'user-body'
+$messageGroup=Saved-ViewNode 'group' 'relative shrink-0' 'turns' -children @($userHeading,$userBody)
+$layout=Saved-ViewNode 'group' 'relative flex transcriptContent-kMyLayout w-full' 'content' -children @($messageGroup)
+$thread=Saved-ViewNode 'region' 'thread-scroll-container' 'thread' -children @($layout)
+$document=Saved-ViewNode 'document' '' 'first-document' -children @($thread)
+$script:documentReads=0
+function Desc($element){return $element.Children}
+function Get-AccessibilityChildren($element){return $element.Children}
+function Find-Composer($item,$name){return @{window=$item;expectation=$name}}
+function Get-ComposerDocument($editor){
+ $script:documentReads++
+ $document.Identity=if($script:documentReads -eq 1){'first-document'}else{'stable-document'}
+ return $document
+}
+function Get-DocumentIdentity($node){return $node.Identity}
+function Read-SavedWorkerView {throw 'The strict turn reader was called on a loaded virtualized view'}
+function Start-Sleep([int]$Milliseconds){ }
+
+$target=Get-TargetWindow $worker 55
+$read=Read-SavedWorkerIdentity $target
+if($read.user_heading_id -cne 'user-label' -or $read.ContainsKey('response_id')){
+ throw 'Loaded view identity was confused with a response receipt'
+}
+$messageGroup.Children=@($userHeading)
+$missingBodyHeld=$false
+try{$null=Read-SavedWorkerIdentity $target}catch{
+ $missingBodyHeld=$_.Exception.Message -like '*loaded user message could not be verified*'
+}
+if(-not $missingBodyHeld){throw 'A standalone role label established a loaded view'}
+$messageGroup.Children=@($userHeading,$userBody)
+$ChromeAppId=''
+$unboundHeld=$false
+try{$null=Read-SavedWorkerIdentity $target}catch{
+ $unboundHeld=$_.Exception.Message -like '*needs a verified Chrome profile*'
+}
+if(-not $unboundHeld){throw 'An unbound virtualized view was accepted'}
+$ChromeAppId='Chrome.Nominated'
+$script:documentReads=0
+$restored=Wait-VerifiedSavedWorker 55
+if($restored.recovery_status -cne 'restored' -or $script:documentReads -ne 3){
+ throw 'Changed document was accepted before two stable identity reads'
+}
+$script:targetWindows=@($window,@{Current=@{NativeWindowHandle=56}; Profile='Chrome.Nominated'})
+$duplicateHeld=$false
+try{$null=Wait-VerifiedSavedWorker 55}catch{
+ $duplicateHeld=$_.Exception.Message -like '*not the unique accessible saved worker*'
+}
+if(-not $duplicateHeld){throw 'A duplicate saved window was accepted at final validation'}
+$script:targetWindows=@($window)
+$script:pauseChecks=0
+function Test-ViewRecoveryPaused {$script:pauseChecks++;return $script:pauseChecks -ge 3}
+if((Wait-VerifiedSavedWorker 55).recovery_status -cne 'paused'){
+ throw 'A pause before recovery completion was ignored'
+}
+Write-Output 'PASS: PS recovery comparisons, stable loaded-view recovery, and pause/duplicate/identity holds.'
