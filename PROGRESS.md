@@ -1,5 +1,16 @@
 # Progress
 
+## ADR 0002 L02 offline account-routing candidate — 20 November 2026
+
+Added explicit account/native installation/private profile binding to the
+existing controller (new `integration/account_routes.py` and small changes
+to the launcher/CLI/Windows UIA/status). The opt-in native marker is deliberately
+**not installed**. [Implementation and raw results](evidence/astra-adr-0002-20261120/implementation/L02_20261120/L02_RESULT.md):
+79/79 integration tests (63 baseline + 16 new) and 119/119 unchanged reference
+tests pass on Ubuntu, with mocked wrong-route no-Send holds and preserved
+legacy pause handling. No real account/plugin installation or browser Send.
+Next leaf is A2-L03; A2-G1 remains open.
+
 ## ADR 0002 mock-fixture isolation — 20 November 2026
 
 The owner expressly replaced Rowing and SolidWorks as live-test workloads with disposable mocks. A private `JayDEmily/rowing-clone-test` repository has been created with a prepared pinned `main@5b04bd24` source snapshot under `snapshot/`; published remote `main@f2c28775532bc3f828af95edd6c61258f6313496` with exact source-tree equality and GitHub API readback, READY for fresh isolated fixture branches. Existing Cat/Dog, Bird/Pig and approval fixtures provide the complementary finish, cap and phone cases. [Mock fixture register](docs/astra-succession/adr-0002/MOCK_FIXTURES.md). Real Rowing/SolidWorks remain paused.

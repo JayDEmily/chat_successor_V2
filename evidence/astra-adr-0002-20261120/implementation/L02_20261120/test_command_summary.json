@@ -1,0 +1,16 @@
+{
+  "host": "Ubuntu WSL",
+  "python": "Python 3.14.4",
+  "baseline": "d13b1e267d6ea748c01e1a2ffd7de66317422c01",
+  "source_candidate": "CURRENT_WORKTREE_BEFORE_L02_COMMIT",
+  "original_integration_test_count": 63,
+  "new_l02_tests": 16,
+  "combined_integration": 79,
+  "reference_test_count": 119,
+  "full_integration_pass": true,
+  "reference_suite_pass": true,
+  "git_diff_check": "PASS",
+  "installation": "NOT_RUN",
+  "live_browser": "NOT_RUN",
+  "account_login_verification": "NOT_RUN"
+}

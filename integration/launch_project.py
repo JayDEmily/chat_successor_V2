@@ -10,6 +10,7 @@ import re
 import subprocess
 
 from cli import create_dependencies, exclusive_lock, load_config
+from account_routes import require_route, verify_saved_binding, bound_config_fields
 from launch_story import check_bootstrap_journal, launch, start_controller
 from owner_reentry import owner_context, record_context, resume_request
 from repo_reader import GitHandoffReader, HANDOFF_WORKFLOW, validate_github_repo
@@ -43,8 +44,6 @@ def read_request(path: Path) -> dict:
     for key in ("run_id", "job_id"):
         if key in data and (not isinstance(data[key], str) or not RUN_ID.fullmatch(data[key])):
             raise ValueError(f"Invalid {key}")
-    if operation == "new" and "job_id" not in data:
-        raise ValueError("An explicit new job needs a stable job ID")
     if type(data.get("release_pause", False)) is not bool:
         raise ValueError("release_pause must be boolean")
     if "owner_context" in data:
@@ -85,12 +84,13 @@ def provision_reader(repo: str, branch: str, run_id: str) -> str:
     return path
 
 
-def resolve_project(request: dict, state_path: Path) -> tuple[str, str, str]:
+def resolve_project(request: dict, state_path: Path, route: dict | None = None) -> tuple[str, str, str]:
     if "project_url" in request:
         url = request["project_url"]
         match = PROJECT_URL.fullmatch(url)
         return match[1], request["project_name"], url
-    browser = WindowsUIA("", request["project_name"], Path(__file__).with_name("uia_adapter.ps1"), state_path)
+    browser = WindowsUIA("", request["project_name"], Path(__file__).with_name("uia_adapter.ps1"),
+                         state_path, profile_path=route["profile_path"] if route else None)
     resolved = browser._invoke("ResolveProject")
     url = resolved.get("project_url", "")
     match = PROJECT_URL.fullmatch(url)
@@ -101,7 +101,7 @@ def resolve_project(request: dict, state_path: Path) -> tuple[str, str, str]:
     return match[1], name, url
 
 
-def preflight_request(request: dict, state_path: Path) -> dict:
+def preflight_request(request: dict, state_path: Path, route: dict | None = None) -> dict:
     branch = request.get("branch")
     if branch is None:
         raise ValueError("Preflight requires the published work branch")
@@ -113,9 +113,10 @@ def preflight_request(request: dict, state_path: Path) -> dict:
     if observed_ref != ref or not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", commit):
         raise RuntimeError("Ubuntu Git did not verify the exact published work branch")
 
-    project, name, url = resolve_project(request, state_path)
+    project, name, url = resolve_project(request, state_path, route)
     browser = WindowsUIA(project, name, Path(__file__).with_name("uia_adapter.ps1"),
-                         state_path, project_url=url)
+                         state_path, project_url=url,
+                         profile_path=route["profile_path"] if route else None)
     observed = browser._invoke("Prepare", Kind=Action.LAUNCH_SUCCESSOR.value,
                                ProjectUrl=url, Preflight=True)
     observed_url = observed.get("observed_url", "")
@@ -134,12 +135,18 @@ def preflight_request(request: dict, state_path: Path) -> dict:
             "branch": branch, "published_commit": commit}
 
 
-def matching_runs(runs, project, repo):
+def matching_runs(runs, project, repo, route=None):
     matches = {}
     for path in sorted(runs.glob("*/config.json")):
         cfg = load_config(path)
         if cfg["project"] != project or cfg["repo"].casefold() != repo:
             continue
+        # Different explicitly bound accounts are independent. An unbound
+        # legacy match must hold rather than being silently adopted.
+        if (route is not None and cfg.get("account_key") is not None
+                and cfg["account_key"] != route["account_key"]):
+            continue
+        verify_saved_binding(cfg, route)
         if cfg["run_id"] != path.parent.name or cfg.get("workflow") != HANDOFF_WORKFLOW:
             raise RuntimeError("Saved run configuration is inconsistent")
         state = path.with_name("controller.json")
@@ -151,6 +158,9 @@ def matching_runs(runs, project, repo):
             "halted": "Initial Send requires reconciliation" if stage == "initial_send_pending" else None,
             "project": project, "repo": cfg["repo"], "branch": cfg["branch"],
             "initial_branch": cfg["branch"], "max_unique_chats": cfg["max_unique_chats"],
+            "pause_requested": state.with_suffix(".pause").is_file(),
+            "pause_acknowledged": False, "account_key": cfg.get("account_key"),
+            "route_receipt": cfg.get("route_receipt"),
         }
         if any(summary[k] != cfg[v] for k, v in (("project", "project"), ("repo", "repo"),
                                                ("initial_branch", "branch"), ("max_unique_chats", "max_unique_chats"))):
@@ -159,22 +169,29 @@ def matching_runs(runs, project, repo):
     return matches
 
 
-def launch_request(path: Path, base: Path, *, check_only: bool = False) -> dict:
+def launch_request(path: Path, base: Path, *, check_only: bool = False,
+                   account_key: str | None = None) -> dict:
+    route = require_route(base, account_key)
     request = read_request(path)
     if check_only:
-        return preflight_request(request, base / "controller.json")
-    project, name, url = resolve_project(request, base / "controller.json")
-    identity = project, request["repo"].casefold()
+        return preflight_request(request, base / "controller.json", route)
+    project, name, url = resolve_project(request, base / "controller.json", route)
+    identity = ((route["account_key"], project, request["repo"].casefold())
+                if route else (project, request["repo"].casefold()))
     key = hashlib.sha256(json.dumps(identity).encode()).hexdigest()[:24]
     operation = request["operation"]
     context = request.get("owner_context")
     terminal = ("programme_finished", "chat_cap")
     runs = base / "Runs"
     with exclusive_lock(base / "Locks" / f"{key}.json"):
-        matches = matching_runs(runs, *identity)
+        matches = matching_runs(runs, project, request["repo"].casefold(), route)
         active = {ident: item for ident, item in matches.items() if item[1]["halted"] not in terminal}
         run_id = request.get("run_id")
-        new_id = hashlib.sha256(f"{key}:{request['job_id']}".encode()).hexdigest()[:24] if operation == "new" else None
+        job_id = request.get("job_id")
+        if operation == "new" and job_id is None:
+            # Stable for a retried private request file, without a user-invented ID.
+            job_id = hashlib.sha256(str(path.resolve()).encode()).hexdigest()[:24]
+        new_id = hashlib.sha256(f"{key}:{job_id}".encode()).hexdigest()[:24] if operation == "new" else None
         if new_id in matches:
             return {**matches[new_id][1], "event": "existing_run"}
         if run_id is not None and run_id not in matches:
@@ -214,6 +231,8 @@ def launch_request(path: Path, base: Path, *, check_only: bool = False) -> dict:
                    "repo": request["repo"], "branch": branch, "repo_dir_wsl": checkout,
                    "run_id": run_id, "max_unique_chats": request.get("max_unique_chats", 5),
                    "workflow": HANDOFF_WORKFLOW}
+            if route is not None:
+                cfg.update(bound_config_fields(route))
             pending = cfg_path.with_suffix(".tmp")
             pending.write_text(json.dumps(cfg), encoding="utf-8")
             pending.replace(cfg_path)
@@ -231,13 +250,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--request", required=True, type=Path)
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--account-key",
+                        help="Explicit non-secret account key from installed wrapper")
     parser.add_argument("--install-root", type=Path,
                         help="Private Chat Succession installation directory")
     args = parser.parse_args()
     base = (args.install_root.resolve() if args.install_root is not None
             else Path(os.environ["LOCALAPPDATA"]) / "ChatSuccession")
     try:
-        print(json.dumps(launch_request(args.request, base, check_only=args.check)))
+        kwargs = {"check_only": args.check}
+        if args.account_key is not None:
+            kwargs["account_key"] = args.account_key
+        print(json.dumps(launch_request(args.request, base, **kwargs)))
     except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as exc:
         print(json.dumps({"event": "launch_held", "reason": str(exc)}))
         raise SystemExit(1)

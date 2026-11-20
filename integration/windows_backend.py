@@ -43,10 +43,12 @@ class BrowserObservationError(RuntimeError):
 
 class WindowsUIA(Browser):
     def __init__(self, project: str, project_name: str, script: Path,
-                 state_path: Path, *, powershell: str = "powershell.exe", project_url: str | None = None):
+                 state_path: Path, *, powershell: str = "powershell.exe",
+                 project_url: str | None = None, profile_path: str | None = None):
         self.project = project
         self.project_name = project_name
         self.project_url = project_url
+        self.profile_path = profile_path
         self.script = Path(script)
         self.state_path = Path(state_path)
         self.target_path = self.state_path.with_suffix(".uia-target.json")
@@ -71,8 +73,13 @@ class WindowsUIA(Browser):
         for attempt in range(2):
             log.info("uia_start mode=%s chat=%s", mode, chat)
             started = time.monotonic()
+            environment = None
+            if self.profile_path is not None:
+                environment = os.environ.copy()
+                environment["CHAT_SUCCESSION_CHROME_PROFILE_PATH"] = self.profile_path
             result = subprocess.run(cmd, text=True, capture_output=True,
-                                    encoding="utf-8", errors="replace", timeout=90)
+                                    encoding="utf-8", errors="replace", timeout=90,
+                                    **({"env": environment} if environment is not None else {}))
             log.info("uia_exit mode=%s chat=%s seconds=%.2f code=%d",
                      mode, chat, time.monotonic() - started, result.returncode)
             if result.returncode:

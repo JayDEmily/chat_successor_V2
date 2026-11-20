@@ -233,6 +233,18 @@ def initialise(state_path: Path, config: Config, observed_chat_id: str) -> Contr
 
 def inspect_state(state_path: Path) -> dict:
     c = Controller.load(state_path)
+    marker = state_path.with_suffix(".pause")
+    paused = marker.is_file()
+    cfg_path = state_path.with_name("config.json")
+    account_key = None
+    route_receipt = None
+    if cfg_path.is_file():
+        try:
+            cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+        except (ValueError, OSError) as exc:
+            raise ValueError("Private run account configuration unreadable") from exc
+        account_key = cfg.get("account_key")
+        route_receipt = cfg.get("route_receipt")
     return {
         "project": c.config.project,
         "repo": c.config.repo,
@@ -248,4 +260,9 @@ def inspect_state(state_path: Path) -> dict:
             "action_id": c.state.pending.action_id,
         },
         "halted": c.state.halted,
+        "pause_requested": paused,
+        "pause_acknowledged": paused and c.state.halted == "Operator pause requested",
+        "account_key": account_key,
+        "route_receipt": route_receipt,
+        "publication_commit": None,  # not persisted; never invent a live Git receipt
     }

@@ -20,6 +20,7 @@ import time
 from uuid import uuid4
 
 from runner import cycle, initialise, inspect_state
+from account_routes import require_route, verify_saved_binding
 from repo_reader import (
     GitHandoffReader, GitPublishedReader, GitStoryReader, HANDOFF_WORKFLOW, STORY_REPO, STORY_TURNS,
     validate_github_repo,
@@ -80,7 +81,9 @@ def load_config(path: Path) -> dict:
     cfg = json.loads(path.read_text(encoding="utf-8"))
     fields = {"project", "repo", "branch", "max_unique_chats",
               "run_id", "project_name", "repo_dir_wsl"}
-    optional = {"poll_seconds", "response_wait_minutes", "fixture_path", "project_url", "workflow"}
+    optional = {"poll_seconds", "response_wait_minutes", "fixture_path", "project_url", "workflow",
+                "account_key", "chrome_profile_path", "install_root",
+                "route_backend_commit", "route_plugin_id", "route_receipt"}
     if not isinstance(cfg, dict) or not fields <= cfg.keys() <= fields | optional:
         raise ValueError("Private run config requires the documented fields")
     poll_seconds = cfg.get("poll_seconds", DEFAULT_POLL_SECONDS)
@@ -90,6 +93,10 @@ def load_config(path: Path) -> dict:
     if wait_minutes is not None and (
             type(wait_minutes) not in (int, float) or not 0 < wait_minutes < float("inf") / 60):
         raise ValueError("response_wait_minutes must be a positive number or null")
+    required_route = {"account_key", "chrome_profile_path", "install_root",
+                      "route_backend_commit", "route_plugin_id", "route_receipt"}
+    if required_route & cfg.keys() and not required_route <= cfg.keys():
+        raise ValueError("Incomplete saved account route")
     if cfg.get("workflow") == HANDOFF_WORKFLOW:
         validate_github_repo(cfg["repo"])
         if not cfg.get("project_url") or "fixture_path" in cfg:
@@ -110,10 +117,23 @@ def load_config(path: Path) -> dict:
 
 
 def create_dependencies(cfg: dict, state_path: Path):
+    # Direct CLI/restart routes must not bypass the installed launcher binding.
+    # New installations enable required account routing only after G2 installs
+    # their private account_routes.json and marker.
+    native_root = state_path.parent.parent.parent
+    if (native_root / "account-routing-required").is_file() and not cfg.get("account_key"):
+        raise ValueError("Unbound legacy run under required account routing; hold for verified binding")
+    if cfg.get("account_key"):
+        route = require_route(Path(cfg["install_root"]), cfg["account_key"])
+        verify_saved_binding(cfg, route)
+        expected_dir = Path(cfg["install_root"]).resolve() / "Runs" / cfg["run_id"]
+        if state_path.parent.resolve() != expected_dir:
+            raise ValueError("Account bound state is outside its verified native installation")
     browser = WindowsUIA(
         cfg["project"], cfg["project_name"],
         Path(__file__).resolve().with_name("uia_adapter.ps1"), state_path,
-        project_url=cfg.get("project_url"))
+        project_url=cfg.get("project_url"),
+        profile_path=cfg.get("chrome_profile_path"))
     checkout = Path(cfg["repo_dir_wsl"])
     git_command = ("wsl.exe", "-d", "Ubuntu", "--exec", "/usr/bin/git")
     if cfg.get("workflow") == HANDOFF_WORKFLOW:
