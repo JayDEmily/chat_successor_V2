@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G2 Shoco Windows preflight — 20 November 2026
+
+A2-G1 remains independently accepted for `0b6bfa3`. The [A2-G2 checkpoint](evidence/astra-adr-0002-20261120/implementation/G2_20261120/PREFLIGHT.md) records a live **staged Shoco no-Send PASS** on the isolated Finish Test Project, exact published fixture SHA `b91b00f`, wrong-key HOLD and matching before/after staged and installed state. The active Shoco Chrome Project was left open.
+
+**A2-G2 is HOLD** pending the signed-in James Student private plugin and both actual connector routes. Automatic approval review blocked the James window launch and the existing browser tab was unreadable through the browser connection. W02/W03 installed acceptance and A2-G3–G6 are NOT_RUN.
+
 ## ADR 0002 A2-G1 independent acceptance — 20 November 2026
 
 **A2-G1 OFFLINE ACCEPT** on `0b6bfa3e935e713fe2f36afd8da79c2befab9a42`. The [independent report, 24-case matrix and raw evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-0b6bfa3/REPORT.md) confirm all 24 offline cases, 113 integration and 119 reference tests on both hosts, and three native Windows PowerShell passes. The trailing unverified article now blocks older acknowledgement and status. Exact complete and streaming controls pass.

@@ -13,16 +13,12 @@ the owner to create and operate new mock Projects and repositories applies.
 | Cap with eligible third step | `JayDEmily/chat-succession-bird-pig` | Existing disposable story fixture; use fresh branch and verified current Project |
 | Phone approval | `JayDEmily/chat-succession-trial-approval` | Existing approval seed branch `codex/g2-iphone-approval-shoco-20261120`; verify it remains clean before use |
 
-### Proposed new ChatGPT Project names
+### ChatGPT Project allocation
 
-- `Chat Succession ADR2 — Finish Test`
-- `Chat Succession ADR2 — Cap Test`
-- `Chat Succession ADR2 — Approval Test`
+- `Chat Succession ADR2 — Finish Test` exists in Shoco and passed staged no-Send preflight. The exact landing URL is recorded privately on Windows. [Preflight evidence](../../../evidence/astra-adr-0002-20261120/implementation/G2_20261120/PREFLIGHT.md)
+- `Chat Succession ADR2 — Cap Test` and `Chat Succession ADR2 — Approval Test` are proposed names. Record their actual account, Project IDs and URLs privately when created.
 
-These are **proposed names, not claims that the Projects currently exist**.
-They will be created in the verified intended account and their exact URLs
-and IDs recorded privately. A test is not authorised merely by a matching
-display name; positively verify the Project identity and account/profile.
+A test requires a positively verified Project identity and account/profile.
 
 ## Explicit non-targets
 
