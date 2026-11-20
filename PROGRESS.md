@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G1 conversation readback correction — 20 November 2026
+
+Candidate `c605c5fafe4d3cfefe4173f04a53ebf0d1943d59` corrects the shared accessibility text-boundary fault found below. [Corrective evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/corrective-c605c5f/RESULT.md) records 113/113 integration on Windows and Ubuntu and three native Windows PowerShell passes. The native test covers all five former literal delimiters, whole anchored acknowledgement, and genuine final prose status.
+
+**Next eligible work** is a separate A2-G1 decision for the new source pin. A2-G2–G6 are NOT_RUN.
+
 ## ADR 0002 A2-G1 independent review of 9e64211 — 20 November 2026
 
 **A2-G1 OFFLINE HOLD** on `9e6421112286f7e993d7e91a3e63fbfea0a0c206`. The [independent review, 24-case matrix and raw repro](evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-9e64211/REPORT.md) verify 113 integration and 119 reference passes on both hosts and all three native helper suites. The five earlier findings pass their independent repros. An in-body UIA text delimiter can truncate the assistant or posted user turn, holding S01, S05, S06 and O04.
