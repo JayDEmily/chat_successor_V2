@@ -493,6 +493,9 @@ function Test-AssistantProse($element) {
 }
 
 function Compare-OwnerTurn($turn,[string]$anchor) {
+ if($anchor -and (($anchor -cmatch '^chrome-turn-') -ne ($turn['method'] -ceq 'CHROME_DOM'))){
+  return 'unknown'
+ }
  if($turn.stop_control -or $turn.user_after_assistant){return 'advanced'}
  if(-not $turn.ready -or -not $turn.user_turn_seen){return 'unknown'}
  if($turn.response_id -ceq $anchor){return 'idle'}

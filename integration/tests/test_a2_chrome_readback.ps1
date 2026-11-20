@@ -8,7 +8,8 @@ $tokens = $null
 $script = Join-Path $PSScriptRoot '..\uia_adapter.ps1'
 $tree = [Management.Automation.Language.Parser]::ParseFile($script,[ref]$tokens,[ref]$parserErrors)
 if($parserErrors.Count){throw 'Windows adapter did not parse'}
-foreach($name in @('Check-Project','Chat-FromUrl','Read-ChromeTurnSnapshot','Get-ChromeResponseId','Read-CurrentTurn','Find-PostedMessage')){
+foreach($name in @('Check-Project','Chat-FromUrl','Read-ChromeTurnSnapshot','Get-ChromeResponseId','Read-CurrentTurn',
+                   'Find-PostedMessage','Compare-OwnerTurn')){
  $nodes=@($tree.FindAll({
   param($node)
   $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name
@@ -96,3 +97,9 @@ Check (Find-PostedMessage $target.window $snapshot.user '' $target.url) 'exact i
 $snapshot.previous=$null
 $element.Payload=$snapshot | ConvertTo-Json -Compress
 Check (-not (Find-PostedMessage $target.window $snapshot.user $first.response_id $target.url)) 'a missing preceding turn does not acknowledge a continuation'
+
+$legacy='uia-turn-1-aaaaaaaaaaaaaaaaaaaa'
+$moving=@{ready=$false;user_after_assistant=$true;stop_control=$true;method='CHROME_DOM'}
+Check ((Compare-OwnerTurn $moving $legacy) -ceq 'unknown') 'a legacy pending anchor holds even while Chrome is streaming'
+$moving.method='UIA_ACCESSIBILITY_TEXT'
+Check ((Compare-OwnerTurn $moving $first.response_id) -ceq 'unknown') 'a Chrome pending anchor holds if the native reader takes over'

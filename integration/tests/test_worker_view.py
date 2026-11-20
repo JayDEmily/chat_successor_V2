@@ -65,6 +65,21 @@ class WorkerViewTests(unittest.TestCase):
             self.assertIsNone(self.bridge.observe(self.chat))
             self.assertEqual(self.bridge.observe(self.chat).response_id, first["response_id"])
 
+    def test_saved_reply_identity_holds_reader_changes_and_regeneration(self):
+        chrome_turn = "chrome-turn-11111111-1111-1111-1111-111111111111-22222222-2222-2222-2222-222222222222"
+        regenerated = "chrome-turn-11111111-1111-1111-1111-111111111111-33333333-3333-3333-3333-333333333333"
+        legacy_turn = self.ready["response_id"]
+        for consumed, current in ((legacy_turn, chrome_turn), (chrome_turn, legacy_turn),
+                                  (chrome_turn, regenerated)):
+            with self.subTest(consumed=consumed, current=current):
+                state = {"state": {"consumed_responses": [[self.chat, consumed]]}}
+                self.bridge.state_path.write_text(json.dumps(state), encoding="utf-8")
+                self.adapter.side_effect = [{**self.ready, "response_id": current}]
+                with self.assertRaises(BrowserObservationError) as hold:
+                    self.bridge.observe(self.chat)
+                self.assertIn(self.worker_url, str(hold.exception))
+                self.assertEqual(json.loads(self.bridge.state_path.read_text()), state)
+
     def test_unqualified_view_waits_for_streaming_then_saves_hold(self):
         state = self.bridge.state_path
         controller = initialise(state, Config(self.project, "example/fixture", "work/test", 2), self.chat)

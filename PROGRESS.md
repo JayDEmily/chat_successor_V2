@@ -1,5 +1,13 @@
 # Progress
 
+## Lean ADR 0002 L08 — Saved identity compatibility candidate (21 November 2026)
+
+- **Base:** `e63c315`.
+- **Implementation:** an existing saved worker holds if the readback identity changes between native and Chrome readers, or if Chrome replaces the reply to an already-consumed input. A pending action stays held if its anchor belongs to the other reader. Journal format and contents are preserved.
+- **Focused offline evidence:** eighteen Windows Chrome-readback assertions and eleven Python worker-view tests passed. The new reader-change and regeneration assertions reproduced the missing holds before the repair.
+- **Limit:** candidate only. The scoped Shoko Yumi Chrome installation confirmation, positive Windows fixture observations, and independent LEAN-G1 review are pending.
+- **Next:** qualify the live reader and receipts before installing the desktop trial backend.
+
 ## Lean ADR 0002 L07 — Exact Chrome posted-message receipt (21 November 2026)
 
 - **Base:** `e42d67d`.

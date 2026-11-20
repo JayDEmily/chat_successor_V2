@@ -162,7 +162,17 @@ class WindowsUIA(Browser):
         if not response_id or not self.state_path.exists():
             return False
         state = json.loads(self.state_path.read_text(encoding="utf-8"))["state"]
-        return [chat_id, response_id] in state.get("consumed_responses", ())
+        consumed = [identity for worker, identity in state.get("consumed_responses", ())
+                    if worker == chat_id]
+        chrome_read = response_id.startswith("chrome-turn-")
+        if any(identity.startswith("chrome-turn-") != chrome_read for identity in consumed):
+            raise self._worker_error(chat_id, "The saved worker uses a different turn reader.")
+        # Chrome IDs end in the assistant UUID. A regenerated reply to the
+        # same already-consumed user turn must not trigger another dispatch.
+        if chrome_read and response_id not in consumed and any(
+                identity.startswith(response_id[:-36]) for identity in consumed):
+            raise self._worker_error(chat_id, "A consumed Chrome turn has a replacement reply.")
+        return response_id in consumed
 
     def _probe_stale_view(self, chat_id: str, turn: dict) -> bool:
         handle = turn.get("window_handle")
