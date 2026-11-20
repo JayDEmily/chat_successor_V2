@@ -203,10 +203,13 @@ class WindowsUIA(Browser):
         if not cfg_path.is_file():
             return None
         try:
-            value = json.loads(cfg_path.read_text(encoding="utf-8")).get("route_receipt")
+            cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+            value = cfg.get("route_receipt")
         except (OSError, ValueError) as exc:
             raise BrowserObservationError("Private account route configuration unavailable") from exc
-        if value is not None and (not isinstance(value, str) or not value.strip()):
+        if (value is not None and (not isinstance(value, str) or not value.strip())) or (
+                cfg.get("account_key") and (not isinstance(value, str) or
+                                            not re.fullmatch(r"[a-f0-9]{64}", value))):
             raise BrowserObservationError("Invalid private account route receipt")
         return value
 
@@ -255,7 +258,13 @@ class WindowsUIA(Browser):
                     if (previous.get("kind") == kind and previous.get("source") == current_chat_id
                             and previous.get("action_id") == pending["action_id"]
                             and type(previous.get("handle")) is int and previous["handle"] > 0):
-                        navigation["WindowHandle"] = previous["handle"]
+                        try:
+                            self._validate_action_target(previous, pending, previous["handle"])
+                        except BrowserObservationError:
+                            # A stale or legacy receipt cannot supply a window handle.
+                            pass
+                        else:
+                            navigation["WindowHandle"] = previous["handle"]
         arguments = {"Kind": kind, "ProjectUrl": self.project_url, **navigation}
         if kind == "CONTINUE_CURRENT" and current_chat_id:
             payload = self._read_or_restore_worker("Prepare", current_chat_id, **arguments)
@@ -279,6 +288,9 @@ class WindowsUIA(Browser):
         record = {"kind": kind, "source": current_chat_id,
                   "handle": target.private_window_handle}
         if pending is not None:
+            latest = self._pending_action(kind, current_chat_id)
+            if latest != pending:
+                raise BrowserObservationError("Pending action changed during composer preparation")
             record.update({"project": self.project,
                            "action_id": pending["action_id"],
                            "source_response": pending["response_id"],
@@ -322,6 +334,11 @@ class WindowsUIA(Browser):
         if (not isinstance(p, dict) or p.get("phase") != "sending" or
                 p.get("message") != message or state.get("halted")):
             raise BrowserObservationError("No matching persisted sending phase")
+        expected_chat = p["source_chat_id"] if p["kind"] == "CONTINUE_CURRENT" else None
+        if (target.project != self.project or target.current_chat_id != expected_chat or
+                type(target.private_window_handle) is not int or
+                target.private_window_handle <= 0):
+            raise BrowserObservationError("Prepared destination does not match the sending action")
         record = json.loads(self.target_path.read_text(encoding="utf-8"))
         self._validate_action_target(record, p, target.private_window_handle)
         # L09 test-only fault points. Set this only for a bounded test CLI
@@ -336,6 +353,8 @@ class WindowsUIA(Browser):
             "Send", Kind=p["kind"], ChatId=p["source_chat_id"],
             WindowHandle=target.private_window_handle, Message=message,
             PrepareAction=p["action_id"], PrepareTargetPath=self.target_path.resolve(),
+            RouteReceipt=record.get("route_receipt") or "",
+            PendingResponseId=p["response_id"],
             PausePath=self.state_path.with_suffix(".pause").resolve(),
             SourceResponse=p["response_id"] if p["kind"] == "CONTINUE_CURRENT" else None,
             L09Fault="after_click" if fault == "after_click" else None)
@@ -364,6 +383,8 @@ class WindowsUIA(Browser):
         result = self._invoke("Reconcile", WindowHandle=record["handle"],
                               PrepareAction=p.action_id,
                               PrepareTargetPath=self.target_path.resolve(),
+                              RouteReceipt=record.get("route_receipt") or "",
+                              PendingResponseId=p.response_id,
                               Kind=p.kind, ChatId=p.source_chat_id,
                               SourceResponse=p.response_id if p.kind == "CONTINUE_CURRENT" else None,
                               Message=p.message)

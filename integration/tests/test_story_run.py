@@ -193,7 +193,8 @@ class BootstrapTests(unittest.TestCase):
     def test_lost_initial_acknowledgement_reconciles_without_resending(self):
         with TemporaryDirectory() as temp:
             path = Path(temp) / "controller.json"
-            cfg = {"project": PROJECT, "max_unique_chats": 4, "repo": STORY_REPO, "branch": "main"}
+            cfg = {"project": PROJECT, "max_unique_chats": 4, "repo": STORY_REPO,
+                   "branch": "main", "run_id": "a" * 24}
             reader, browser = Mock(), Mock()
             reader.heads.return_value = {"main": "seed"}
             browser.project = PROJECT
@@ -212,29 +213,34 @@ class BootstrapTests(unittest.TestCase):
             self.assertEqual(result["current_chat_id"], CHATS[0])
             self.assertEqual(result["unique_chat_count"], 1)
 
-    def test_verified_initial_pause_does_not_require_reconciliation(self):
+    def test_verified_initial_pause_requires_readonly_reconciliation(self):
         with TemporaryDirectory() as temp:
             path = Path(temp) / "controller.json"
-            cfg = {"project": PROJECT, "max_unique_chats": 4, "repo": STORY_REPO, "branch": "main"}
+            cfg = {"project": PROJECT, "max_unique_chats": 4, "repo": STORY_REPO,
+                   "branch": "main", "run_id": "a" * 24}
             reader, browser = Mock(), Mock()
             reader.heads.return_value = {"main": "seed"}
             browser.project = PROJECT
             browser.prepare.return_value = Destination(
                 PROJECT, None, ComposerObservation(editable_text="", attachments_present=False), 10)
             browser._invoke.return_value = {"paused_before_click": True}
-            with self.assertRaisesRegex(RuntimeError, "Owner paused before the initial Send"):
+            with self.assertRaisesRegex(RuntimeError, "Owner paused before initial Send"):
                 bootstrap(cfg, path, browser, reader)
-            self.assertFalse(path.with_name("bootstrap-intent.json").exists())
+            intent_path = path.with_name("bootstrap-intent.json")
+            self.assertTrue(intent_path.exists())
+            saved_intent = intent_path.read_bytes()
             pointer = browser._invoke.call_args.kwargs["Message"]
             path.with_suffix(".pause").touch()
-            with self.assertRaisesRegex(RuntimeError, "Owner paused before the initial Send"):
+            with self.assertRaisesRegex(RuntimeError, "Initial Send is held"):
                 bootstrap(cfg, path, browser, reader)
             self.assertEqual(browser.prepare.call_count, 1)
+            self.assertEqual(intent_path.read_bytes(), saved_intent)
             path.with_suffix(".pause").unlink()
             browser._invoke.return_value = {
                 "posted_message_observed": True, "project": PROJECT,
                 "chat_id": CHATS[0], "submitted_text": pointer,
             }
             result = bootstrap(cfg, path, browser, reader)
-            self.assertEqual([call.args[0] for call in browser._invoke.call_args_list], ["Send", "Send"])
+            self.assertEqual([call.args[0] for call in browser._invoke.call_args_list],
+                             ["Send", "Reconcile", "Reconcile"])
             self.assertEqual(result["current_chat_id"], CHATS[0])

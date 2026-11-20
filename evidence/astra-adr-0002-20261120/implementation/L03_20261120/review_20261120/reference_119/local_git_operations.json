@@ -1,0 +1,1474 @@
+{
+  "mode": "REAL_LOCAL_GIT_ONLY",
+  "network_protocols_allowed": [
+    "file"
+  ],
+  "operations": [
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--bare",
+        "--template=",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/remote.git/\n",
+      "stderr": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--template=",
+        "-b",
+        "test/succession",
+        "<TEMP>/worker1"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/worker1/.git/\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Seed bounded test workload"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession (root-commit) de382c8] Seed bounded test workload\n 5 files changed, 334 insertions(+)\n create mode 100644 fixture/INSTRUCTIONS.md\n create mode 100644 fixture/RESULTS.json\n create mode 100644 fixture/RUN.json\n create mode 100644 fixture/STATE.json\n create mode 100644 fixture/fixture_tools.py\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "remote",
+        "add",
+        "origin",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "-u",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "branch 'test/succession' set up to track 'origin/test/succession'.\n",
+      "stderr": "To <TEMP>/remote.git\n * [new branch]      test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "symbolic-ref",
+        "HEAD",
+        "refs/heads/test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Publish first slice"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession a804fce] Publish first slice\n 2 files changed, 26 insertions(+), 5 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n   de382c8..a804fce  test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "clone",
+        "--template=",
+        "--branch",
+        "test/succession",
+        "<TEMP>/remote.git",
+        "<TEMP>/worker2"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Cloning into '<TEMP>/worker2'...\ndone.\n"
+    },
+    {
+      "test": "test_G01_push_then_fresh_worker_reads_durable_handoff",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "show",
+        "refs/heads/test/succession:fixture/STATE.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"completed_steps\": 1,\n  \"last_chat_id\": \"c1\",\n  \"next_task\": \"Process fixture slice 2 of 3; read RUN.json and verify RESULTS.json.\",\n  \"programme_complete\": false,\n  \"progress_summary\": \"Completed slice 1 of 3.\",\n  \"run_id\": \"local-git-test\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G02_local_commit_without_push_is_not_a_handover",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--bare",
+        "--template=",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/remote.git/\n",
+      "stderr": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+    },
+    {
+      "test": "test_G02_local_commit_without_push_is_not_a_handover",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--template=",
+        "-b",
+        "test/succession",
+        "<TEMP>/worker1"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/worker1/.git/\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G02_local_commit_without_push_is_not_a_handover",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G02_local_commit_without_push_is_not_a_handover",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Seed bounded test workload"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession (root-commit) de382c8] Seed bounded test workload\n 5 files changed, 334 insertions(+)\n create mode 100644 fixture/INSTRUCTIONS.md\n create mode 100644 fixture/RESULTS.json\n create mode 100644 fixture/RUN.json\n create mode 100644 fixture/STATE.json\n create mode 100644 fixture/fixture_tools.py\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G02_local_commit_without_push_is_not_a_handover",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "remote",
+        "add",
+        "origin",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G02_local_commit_without_push_is_not_a_handover",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "-u",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "branch 'test/succession' set up to track 'origin/test/succession'.\n",
+      "stderr": "To <TEMP>/remote.git\n * [new branch]      test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G02_local_commit_without_push_is_not_a_handover",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "symbolic-ref",
+        "HEAD",
+        "refs/heads/test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G02_local_commit_without_push_is_not_a_handover",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G02_local_commit_without_push_is_not_a_handover",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Local only"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession 6da2745] Local only\n 2 files changed, 26 insertions(+), 5 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G02_local_commit_without_push_is_not_a_handover",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "show",
+        "refs/heads/test/succession:fixture/STATE.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"completed_steps\": 0,\n  \"last_chat_id\": null,\n  \"next_task\": \"Process fixture slice 1 of 3; read RUN.json and verify RESULTS.json.\",\n  \"programme_complete\": false,\n  \"progress_summary\": \"Fixture seeded; no worker has performed a slice.\",\n  \"run_id\": \"local-git-test\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--bare",
+        "--template=",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/remote.git/\n",
+      "stderr": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--template=",
+        "-b",
+        "test/succession",
+        "<TEMP>/worker1"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/worker1/.git/\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Seed bounded test workload"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession (root-commit) de382c8] Seed bounded test workload\n 5 files changed, 334 insertions(+)\n create mode 100644 fixture/INSTRUCTIONS.md\n create mode 100644 fixture/RESULTS.json\n create mode 100644 fixture/RUN.json\n create mode 100644 fixture/STATE.json\n create mode 100644 fixture/fixture_tools.py\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "remote",
+        "add",
+        "origin",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "-u",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "branch 'test/succession' set up to track 'origin/test/succession'.\n",
+      "stderr": "To <TEMP>/remote.git\n * [new branch]      test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "symbolic-ref",
+        "HEAD",
+        "refs/heads/test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "switch",
+        "-c",
+        "test/other-branch"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Switched to a new branch 'test/other-branch'\n"
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Wrong-branch fixture update"
+      ],
+      "returncode": 0,
+      "stdout": "[test/other-branch 1083c4b] Wrong-branch fixture update\n 2 files changed, 26 insertions(+), 5 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "origin",
+        "test/other-branch"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n * [new branch]      test/other-branch -> test/other-branch\n"
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "show",
+        "refs/heads/test/succession:fixture/STATE.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"completed_steps\": 0,\n  \"last_chat_id\": null,\n  \"next_task\": \"Process fixture slice 1 of 3; read RUN.json and verify RESULTS.json.\",\n  \"programme_complete\": false,\n  \"progress_summary\": \"Fixture seeded; no worker has performed a slice.\",\n  \"run_id\": \"local-git-test\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G03_wrong_branch_publication_does_not_update_nominated_branch",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "show",
+        "refs/heads/test/succession:fixture/STATE.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"completed_steps\": 0,\n  \"last_chat_id\": null,\n  \"next_task\": \"Process fixture slice 1 of 3; read RUN.json and verify RESULTS.json.\",\n  \"programme_complete\": false,\n  \"progress_summary\": \"Fixture seeded; no worker has performed a slice.\",\n  \"run_id\": \"local-git-test\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--bare",
+        "--template=",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/remote.git/\n",
+      "stderr": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--template=",
+        "-b",
+        "test/succession",
+        "<TEMP>/worker1"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/worker1/.git/\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Seed bounded test workload"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession (root-commit) de382c8] Seed bounded test workload\n 5 files changed, 334 insertions(+)\n create mode 100644 fixture/INSTRUCTIONS.md\n create mode 100644 fixture/RESULTS.json\n create mode 100644 fixture/RUN.json\n create mode 100644 fixture/STATE.json\n create mode 100644 fixture/fixture_tools.py\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "remote",
+        "add",
+        "origin",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "-u",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "branch 'test/succession' set up to track 'origin/test/succession'.\n",
+      "stderr": "To <TEMP>/remote.git\n * [new branch]      test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "symbolic-ref",
+        "HEAD",
+        "refs/heads/test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "clone",
+        "--template=",
+        "--branch",
+        "test/succession",
+        "<TEMP>/remote.git",
+        "<TEMP>/competing"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Cloning into '<TEMP>/competing'...\ndone.\n"
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/competing",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/competing",
+      "args": [
+        "commit",
+        "-m",
+        "Other writer changed the next repository-only probe"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession 9651a57] Other writer changed the next repository-only probe\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/competing",
+      "args": [
+        "push",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n   de382c8..9651a57  test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Now-stale local worker"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession 2d9b659] Now-stale local worker\n 2 files changed, 26 insertions(+), 5 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n ! [rejected]        test/succession -> test/succession (fetch first)\nerror: failed to push some refs to '<TEMP>/remote.git'\nhint: Updates were rejected because the remote contains work that you do not\nhint: have locally. This is usually caused by another repository pushing to\nhint: the same ref. If you want to integrate the remote changes, use\nhint: 'git pull' before pushing again.\nhint: See the 'Note about fast-forwards' in 'git push --help' for details.\n"
+    },
+    {
+      "test": "test_G04_rejected_push_is_not_completion",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "show",
+        "refs/heads/test/succession:fixture/STATE.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"completed_steps\": 0,\n  \"last_chat_id\": null,\n  \"next_task\": \"Process fixture slice 1 of 3; read RUN.json and verify RESULTS.json.\",\n  \"programme_complete\": false,\n  \"progress_summary\": \"Fixture seeded; no worker has performed a slice.\",\n  \"run_id\": \"local-git-test\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--bare",
+        "--template=",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/remote.git/\n",
+      "stderr": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--template=",
+        "-b",
+        "test/succession",
+        "<TEMP>/worker1"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/worker1/.git/\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Seed bounded test workload"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession (root-commit) de382c8] Seed bounded test workload\n 5 files changed, 334 insertions(+)\n create mode 100644 fixture/INSTRUCTIONS.md\n create mode 100644 fixture/RESULTS.json\n create mode 100644 fixture/RUN.json\n create mode 100644 fixture/STATE.json\n create mode 100644 fixture/fixture_tools.py\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "remote",
+        "add",
+        "origin",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "-u",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "branch 'test/succession' set up to track 'origin/test/succession'.\n",
+      "stderr": "To <TEMP>/remote.git\n * [new branch]      test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "symbolic-ref",
+        "HEAD",
+        "refs/heads/test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "First handover"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession 6b58ce6] First handover\n 2 files changed, 26 insertions(+), 5 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n   de382c8..6b58ce6  test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Owner adds next probe"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession 305ef6b] Owner adds next probe\n 1 file changed, 1 insertion(+), 1 deletion(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n   6b58ce6..305ef6b  test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "clone",
+        "--template=",
+        "--branch",
+        "test/succession",
+        "<TEMP>/remote.git",
+        "<TEMP>/worker2"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Cloning into '<TEMP>/worker2'...\ndone.\n"
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker2",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker2",
+      "args": [
+        "commit",
+        "-m",
+        "Second handover from fresh workspace"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession 6416040] Second handover from fresh workspace\n 2 files changed, 24 insertions(+), 4 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker2",
+      "args": [
+        "push",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n   305ef6b..6416040  test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G05_repo_only_fresh_probe_observed_after_previous_worker_ends",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "show",
+        "refs/heads/test/succession:fixture/STATE.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"completed_steps\": 2,\n  \"last_chat_id\": \"c2\",\n  \"next_task\": \"Process fixture slice 3 of 3; read RUN.json and verify RESULTS.json.\",\n  \"programme_complete\": false,\n  \"progress_summary\": \"Completed slice 2 of 3.\",\n  \"run_id\": \"local-git-test\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--bare",
+        "--template=",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/remote.git/\n",
+      "stderr": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--template=",
+        "-b",
+        "test/succession",
+        "<TEMP>/worker1"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/worker1/.git/\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Seed bounded test workload"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession (root-commit) 64ce212] Seed bounded test workload\n 5 files changed, 334 insertions(+)\n create mode 100644 fixture/INSTRUCTIONS.md\n create mode 100644 fixture/RESULTS.json\n create mode 100644 fixture/RUN.json\n create mode 100644 fixture/STATE.json\n create mode 100644 fixture/fixture_tools.py\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "remote",
+        "add",
+        "origin",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "-u",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "branch 'test/succession' set up to track 'origin/test/succession'.\n",
+      "stderr": "To <TEMP>/remote.git\n * [new branch]      test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "symbolic-ref",
+        "HEAD",
+        "refs/heads/test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Mock worker slice 1"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession 76b3bcd] Mock worker slice 1\n 2 files changed, 26 insertions(+), 5 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n   64ce212..76b3bcd  test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "show",
+        "refs/heads/test/succession:fixture/STATE.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"completed_steps\": 1,\n  \"last_chat_id\": \"c1\",\n  \"next_task\": \"Process fixture slice 2 of 3; read RUN.json and verify RESULTS.json.\",\n  \"programme_complete\": false,\n  \"progress_summary\": \"Completed slice 1 of 3.\",\n  \"run_id\": \"local-git-test\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "clone",
+        "--template=",
+        "--branch",
+        "test/succession",
+        "<TEMP>/remote.git",
+        "<TEMP>/worker2"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Cloning into '<TEMP>/worker2'...\ndone.\n"
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker2",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker2",
+      "args": [
+        "commit",
+        "-m",
+        "Mock worker slice 2"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession 50b6f6c] Mock worker slice 2\n 2 files changed, 24 insertions(+), 4 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker2",
+      "args": [
+        "push",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n   76b3bcd..50b6f6c  test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "show",
+        "refs/heads/test/succession:fixture/STATE.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"completed_steps\": 2,\n  \"last_chat_id\": \"c2\",\n  \"next_task\": \"Process fixture slice 3 of 3; read RUN.json and verify RESULTS.json.\",\n  \"programme_complete\": false,\n  \"progress_summary\": \"Completed slice 2 of 3.\",\n  \"run_id\": \"local-git-test\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "clone",
+        "--template=",
+        "--branch",
+        "test/succession",
+        "<TEMP>/remote.git",
+        "<TEMP>/worker3"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Cloning into '<TEMP>/worker3'...\ndone.\n"
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker3",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker3",
+      "args": [
+        "commit",
+        "-m",
+        "Mock worker slice 3"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession 136b4a8] Mock worker slice 3\n 2 files changed, 25 insertions(+), 5 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker3",
+      "args": [
+        "push",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n   50b6f6c..136b4a8  test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G06_three_mock_workers_continue_using_only_repository",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "show",
+        "refs/heads/test/succession:fixture/STATE.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"completed_steps\": 3,\n  \"last_chat_id\": \"c3\",\n  \"next_task\": null,\n  \"programme_complete\": true,\n  \"progress_summary\": \"Completed slice 3 of 3.\",\n  \"run_id\": \"local-git-test\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G07_remote_unavailable_does_not_trigger_next_chat",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--bare",
+        "--template=",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/remote.git/\n",
+      "stderr": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+    },
+    {
+      "test": "test_G07_remote_unavailable_does_not_trigger_next_chat",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--template=",
+        "-b",
+        "test/succession",
+        "<TEMP>/worker1"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/worker1/.git/\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G07_remote_unavailable_does_not_trigger_next_chat",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G07_remote_unavailable_does_not_trigger_next_chat",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Seed bounded test workload"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession (root-commit) 64ce212] Seed bounded test workload\n 5 files changed, 334 insertions(+)\n create mode 100644 fixture/INSTRUCTIONS.md\n create mode 100644 fixture/RESULTS.json\n create mode 100644 fixture/RUN.json\n create mode 100644 fixture/STATE.json\n create mode 100644 fixture/fixture_tools.py\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G07_remote_unavailable_does_not_trigger_next_chat",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "remote",
+        "add",
+        "origin",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G07_remote_unavailable_does_not_trigger_next_chat",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "-u",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "branch 'test/succession' set up to track 'origin/test/succession'.\n",
+      "stderr": "To <TEMP>/remote.git\n * [new branch]      test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G07_remote_unavailable_does_not_trigger_next_chat",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "symbolic-ref",
+        "HEAD",
+        "refs/heads/test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G07_remote_unavailable_does_not_trigger_next_chat",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "fetch",
+        "<TEMP>/not-a-repo"
+      ],
+      "returncode": 128,
+      "stdout": "",
+      "stderr": "fatal: '<TEMP>/not-a-repo' does not appear to be a git repository\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists.\n"
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--bare",
+        "--template=",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/remote.git/\n",
+      "stderr": "hint: Using 'master' as the name for the initial branch. This default branch name\nhint: will change to \"main\" in Git 3.0. To configure the initial branch name\nhint: to use in all of your new repositories, which will suppress this warning,\nhint: call:\nhint:\nhint: \tgit config --global init.defaultBranch <name>\nhint:\nhint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\nhint: 'development'. The just-created branch can be renamed via this command:\nhint:\nhint: \tgit branch -m <name>\nhint:\nhint: Disable this message with \"git config set advice.defaultBranchName false\"\n"
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "init",
+        "--template=",
+        "-b",
+        "test/succession",
+        "<TEMP>/worker1"
+      ],
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in <TEMP>/worker1/.git/\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Seed bounded test workload"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession (root-commit) 64ce212] Seed bounded test workload\n 5 files changed, 334 insertions(+)\n create mode 100644 fixture/INSTRUCTIONS.md\n create mode 100644 fixture/RESULTS.json\n create mode 100644 fixture/RUN.json\n create mode 100644 fixture/STATE.json\n create mode 100644 fixture/fixture_tools.py\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "remote",
+        "add",
+        "origin",
+        "<TEMP>/remote.git"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "-u",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "branch 'test/succession' set up to track 'origin/test/succession'.\n",
+      "stderr": "To <TEMP>/remote.git\n * [new branch]      test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "--git-dir",
+        "<TEMP>/remote.git",
+        "symbolic-ref",
+        "HEAD",
+        "refs/heads/test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "add",
+        "fixture"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "commit",
+        "-m",
+        "Deliberately incorrect test-only work"
+      ],
+      "returncode": 0,
+      "stdout": "[test/succession a835813] Deliberately incorrect test-only work\n 2 files changed, 5 insertions(+), 5 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>/worker1",
+      "args": [
+        "push",
+        "origin",
+        "test/succession"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "To <TEMP>/remote.git\n   64ce212..a835813  test/succession -> test/succession\n"
+    },
+    {
+      "test": "test_G08_corrupt_published_fixture_is_not_useful_progress",
+      "mode": "REAL_LOCAL_GIT_ONLY",
+      "cwd": "<TEMP>",
+      "args": [
+        "clone",
+        "--template=",
+        "--branch",
+        "test/succession",
+        "<TEMP>/remote.git",
+        "<TEMP>/worker2"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Cloning into '<TEMP>/worker2'...\ndone.\n"
+    }
+  ]
+}

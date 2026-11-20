@@ -9,6 +9,9 @@ $functions = @($ast.FindAll({ param($node) $node -is [System.Management.Automati
 if($functions.Count -ne 1){throw 'Exact action-check function not found once'}
 Invoke-Expression $functions[0].Extent.Text
 $PrepareAction = 'a2-action-id-1'
+$RouteReceipt = ''
+$PendingResponseId = 'uia-turn-1-aaa00000000000000000'
+$BootstrapRunId = ''
 $PrepareTargetPath = Join-Path $env:TEMP 'a2-ps-target-receipt-test.json'
 $BootstrapIntentPath = ''
 $ProjectId = 'g-p-TEST'
@@ -22,7 +25,7 @@ $hash = [Security.Cryptography.SHA256]::Create()
 try {
     $digest = [BitConverter]::ToString($hash.ComputeHash([Text.Encoding]::UTF8.GetBytes($Message))).Replace('-','').ToLowerInvariant()
 } finally { $hash.Dispose() }
-$record = [ordered]@{ action_id=$PrepareAction; project=$ProjectId; kind=$Kind; source=$ChatId; handle=$WindowHandle; message_sha256=$digest; source_response=$SourceResponse }
+$record = [ordered]@{ action_id=$PrepareAction; project=$ProjectId; kind=$Kind; source=$ChatId; handle=$WindowHandle; message_sha256=$digest; source_response=$SourceResponse; route_receipt=$RouteReceipt }
 try {
   [IO.File]::WriteAllText($PrepareTargetPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
   Assert-PrivateDispatchReceipt
@@ -37,17 +40,37 @@ try {
   $failed=$false
   try { Assert-PrivateDispatchReceipt } catch { $failed=$true }
   if(-not $failed){throw 'WRONG_MESSAGE_DIGEST_ACCEPTED'}
+  $record['message_sha256']=$digest
+  $record['route_receipt']='different-route'
+  [IO.File]::WriteAllText($PrepareTargetPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
+  $failed=$false
+  try { Assert-PrivateDispatchReceipt } catch { $failed=$true }
+  if(-not $failed){throw 'CHANGED_ACCOUNT_ROUTE_ACCEPTED'}
+  $record['route_receipt']=$RouteReceipt
+  $record['source_response']='wrong-response'
+  [IO.File]::WriteAllText($PrepareTargetPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
+  $failed=$false
+  try { Assert-PrivateDispatchReceipt } catch { $failed=$true }
+  if(-not $failed){throw 'CHANGED_SUCCESSOR_SOURCE_ANCHOR_ACCEPTED'}
+  $record['source_response']=$PendingResponseId
   $BootstrapIntentPath = Join-Path $env:TEMP 'a2-ps-bootstrap-intent-test.json'
   $PrepareAction = ''
-  $record = [ordered]@{ action_id=('b'*32); project=$ProjectId; handle=$WindowHandle; message=$Message }
+  $BootstrapRunId='a2-test-run-1'
+  $record = [ordered]@{ action_id=('b'*32); project=$ProjectId; handle=$WindowHandle; message=$Message; run_id=$BootstrapRunId; route_receipt=$RouteReceipt; message_sha256=$digest }
   [IO.File]::WriteAllText($BootstrapIntentPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
   Assert-PrivateDispatchReceipt
+  $record['route_receipt']='wrong-bootstrap-route'
+  [IO.File]::WriteAllText($BootstrapIntentPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
+  $failed=$false
+  try { Assert-PrivateDispatchReceipt } catch { $failed=$true }
+  if(-not $failed){throw 'CHANGED_BOOTSTRAP_ROUTE_ACCEPTED'}
+  $record['route_receipt']=$RouteReceipt
   $record.Remove('action_id')
   [IO.File]::WriteAllText($BootstrapIntentPath, ($record | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
   $failed=$false
   try { Assert-PrivateDispatchReceipt } catch { $failed=$true }
   if(-not $failed){throw 'BOOTSTRAP_WITHOUT_ACTION_ID_ACCEPTED'}
-  Write-Output 'PASS: Windows PowerShell AST parse; 1 positive follow-up action; 2 negative target identities; 1 positive bootstrap; 1 negative bootstrap.'
+  Write-Output 'PASS: Windows PowerShell AST parse; 1 positive follow-up action; 4 negative target identities; 1 positive bootstrap; 2 negative bootstrap.'
 } finally {
   Remove-Item -LiteralPath $PrepareTargetPath -Force -ErrorAction SilentlyContinue
   if($BootstrapIntentPath){ Remove-Item -LiteralPath $BootstrapIntentPath -Force -ErrorAction SilentlyContinue }

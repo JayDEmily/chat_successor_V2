@@ -1,5 +1,10 @@
 # Progress
 
+## ADR 0002 L03 safety repair on post-L04 baseline — 20 November 2026
+
+An independently reproduced [L03 negative review](evidence/astra-adr-0002-20261120/implementation/L03_20261120/review_20261120/NEGATIVE_REVIEW.md) corrected wrong-destination adapter entry, changed account-route bootstrap adoption and lost initial intent on pre-click pause. Full post-repair offline checks: 103 integration and 119 reference PASS, native Windows PowerShell action-check PASS. No desktop install or live Send. G1 remains in progress with L05 pending; G2–G6 remain NOT_RUN.
+
+
 ## ADR 0002 L04 offline saved-view qualification — 20 November 2026
 
 Existing Chrome recovery logic retained after [7 positive/negative mocked

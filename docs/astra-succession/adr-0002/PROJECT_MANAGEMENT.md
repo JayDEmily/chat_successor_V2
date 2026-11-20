@@ -18,7 +18,7 @@ The owner has accepted the [bounded ADR 0002 implementation](../../adr/0002-acco
 
 [Three negative contract gaps and targeted correction](../../../evidence/astra-adr-0002-20261120/implementation/L02_20261120/review_20261120/NEGATIVE_REVIEW.md) were reproduced after the original 79-test candidate. Post-repair offline suites: 82 integration and 119 reference PASS; independent final acceptance and installation remain open. No change to A2-G1 or A2-G2 NOT_RUN dispositions.
 
-## Management commitments
+## L03 independent negative review and corrective checkpoint\n\nA separate pinned-base review found changed-route bootstrap adoption, deleted initial intent on a pre-click pause, and wrong destination object reaching the adapter. [Before/after reproduction and 103+119 tests](../../../evidence/astra-adr-0002-20261120/implementation/L03_20261120/review_20261120/NEGATIVE_REVIEW.md). The corrections are an offline candidate only; G1/G2 and live fault checks remain open. Post-L04 integration cases continue to pass.\n\n## Management commitments
 
 Keep a single approved development branch rather than one branch per leaf. Commit exact leaf evidence and source as distinct reviewable checkpoints. Apply independent review at appropriate gates. Capture candidate SHA, test runs, raw outputs, observed Windows readbacks, run/fixture IDs, pending actions and real limitations. Do not substitute a model's claim or offline proxy for actual Windows acceptance. Confirm all remote pushes and final Git readbacks.
 

@@ -1,0 +1,1004 @@
+[
+  {
+    "id": "S01",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S01",
+        "event": 1,
+        "kind": "response",
+        "action": "CONTINUE_CURRENT",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S01",
+        "event": 2,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S01",
+        "event": 3,
+        "kind": "response",
+        "action": "IGNORE",
+        "reason": "Response event already consumed",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S01",
+        "event": 4,
+        "kind": "response",
+        "action": "LAUNCH_SUCCESSOR",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S01",
+        "event": 5,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 2,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S01",
+        "event": 6,
+        "kind": "response",
+        "action": "STOP_FINISHED",
+        "reason": "GitHub programme state is finished",
+        "count_before": 2,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 2,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": [
+      {
+        "action_id": "c1:r1:CONTINUE_CURRENT",
+        "chat_id": "c1",
+        "project": "project-nominated",
+        "message": "Okay, continue working.",
+        "kind": "CONTINUE_CURRENT"
+      },
+      {
+        "action_id": "c1:r2:LAUNCH_SUCCESSOR",
+        "chat_id": "c2",
+        "project": "project-nominated",
+        "message": "Continue the work in GitHub repo JayDEmily/chat_successor, branch test/succession. Read the current instructions, progress and next task there.",
+        "kind": "LAUNCH_SUCCESSOR"
+      }
+    ]
+  },
+  {
+    "id": "S02",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S02",
+        "event": 1,
+        "kind": "response",
+        "action": "HOLD",
+        "reason": "Worker reported ERROR; show its explanation to the owner",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S02",
+        "event": 2,
+        "kind": "response",
+        "action": "HOLD",
+        "reason": "Worker reported ERROR; show its explanation to the owner",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": []
+  },
+  {
+    "id": "S03",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S03",
+        "event": 1,
+        "kind": "response",
+        "action": "WAIT",
+        "reason": "Assistant response is still streaming",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S03",
+        "event": 2,
+        "kind": "response",
+        "action": "LAUNCH_SUCCESSOR",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S03",
+        "event": 3,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": [
+      {
+        "action_id": "c1:r1:LAUNCH_SUCCESSOR",
+        "chat_id": "c2",
+        "project": "project-nominated",
+        "message": "Continue the work in GitHub repo JayDEmily/chat_successor, branch test/succession. Read the current instructions, progress and next task there.",
+        "kind": "LAUNCH_SUCCESSOR"
+      }
+    ]
+  },
+  {
+    "id": "S04",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S04",
+        "event": 1,
+        "kind": "response",
+        "action": "LAUNCH_SUCCESSOR",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S04",
+        "event": 2,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": "uncertain",
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S04",
+        "event": 3,
+        "kind": "restart",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": "uncertain",
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S04",
+        "event": 4,
+        "kind": "reconcile",
+        "action": "WAIT",
+        "reason": "Submitted message observed; wait for its assistant response",
+        "count_before": 1,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S04",
+        "event": 5,
+        "kind": "response",
+        "action": "IGNORE",
+        "reason": "Response belongs to a different conversation",
+        "count_before": 2,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": [
+      {
+        "action_id": "c1:r1:LAUNCH_SUCCESSOR",
+        "chat_id": "c2",
+        "project": "project-nominated",
+        "message": "Continue the work in GitHub repo JayDEmily/chat_successor, branch test/succession. Read the current instructions, progress and next task there.",
+        "kind": "LAUNCH_SUCCESSOR"
+      }
+    ]
+  },
+  {
+    "id": "S05",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S05",
+        "event": 1,
+        "kind": "response",
+        "action": "CONTINUE_CURRENT",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S05",
+        "event": 2,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 0,
+        "pending_phase": "uncertain",
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S05",
+        "event": 3,
+        "kind": "restart",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 0,
+        "pending_phase": "uncertain",
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S05",
+        "event": 4,
+        "kind": "reconcile",
+        "action": "WAIT",
+        "reason": "Submitted message observed; wait for its assistant response",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S05",
+        "event": 5,
+        "kind": "response",
+        "action": "IGNORE",
+        "reason": "Response event already consumed",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": [
+      {
+        "action_id": "c1:r1:CONTINUE_CURRENT",
+        "chat_id": "c1",
+        "project": "project-nominated",
+        "message": "Okay, continue working.",
+        "kind": "CONTINUE_CURRENT"
+      }
+    ]
+  },
+  {
+    "id": "S06",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S06",
+        "event": 1,
+        "kind": "response",
+        "action": "STOP_CAP",
+        "reason": "Configured distinct-chat cap reached",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": []
+  },
+  {
+    "id": "S07",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S07",
+        "event": 1,
+        "kind": "response",
+        "action": "LAUNCH_SUCCESSOR",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S07",
+        "event": 2,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S07",
+        "event": 3,
+        "kind": "response",
+        "action": "CONTINUE_CURRENT",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 2,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S07",
+        "event": 4,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 2,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 2,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S07",
+        "event": 5,
+        "kind": "response",
+        "action": "STOP_CAP",
+        "reason": "Configured distinct-chat cap reached",
+        "count_before": 2,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 2,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": [
+      {
+        "action_id": "c1:r1:LAUNCH_SUCCESSOR",
+        "chat_id": "c2",
+        "project": "project-nominated",
+        "message": "Continue the work in GitHub repo JayDEmily/chat_successor, branch test/succession. Read the current instructions, progress and next task there.",
+        "kind": "LAUNCH_SUCCESSOR"
+      },
+      {
+        "action_id": "c2:r2:CONTINUE_CURRENT",
+        "chat_id": "c2",
+        "project": "project-nominated",
+        "message": "Okay, continue working.",
+        "kind": "CONTINUE_CURRENT"
+      }
+    ]
+  },
+  {
+    "id": "S08",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S08",
+        "event": 1,
+        "kind": "response",
+        "action": "HOLD",
+        "reason": "No unambiguous terminal status",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": []
+  },
+  {
+    "id": "S09",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S09",
+        "event": 1,
+        "kind": "response",
+        "action": "HOLD",
+        "reason": "Handover publication or programme state is unavailable",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": []
+  },
+  {
+    "id": "S10",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S10",
+        "event": 1,
+        "kind": "response",
+        "action": "HOLD",
+        "reason": "Repo state is stale or belongs to a different worker",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": []
+  },
+  {
+    "id": "S11",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S11",
+        "event": 1,
+        "kind": "response",
+        "action": "LAUNCH_SUCCESSOR",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S11",
+        "event": 2,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S11",
+        "event": 3,
+        "kind": "resume",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S11",
+        "event": 4,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": [
+      {
+        "action_id": "c1:r1:LAUNCH_SUCCESSOR",
+        "chat_id": "c2",
+        "project": "project-nominated",
+        "message": "Continue the work in GitHub repo JayDEmily/chat_successor, branch test/succession. Read the current instructions, progress and next task there.",
+        "kind": "LAUNCH_SUCCESSOR"
+      }
+    ]
+  },
+  {
+    "id": "S12",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S12",
+        "event": 1,
+        "kind": "response",
+        "action": "LAUNCH_SUCCESSOR",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S12",
+        "event": 2,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "uncertain",
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S12",
+        "event": 3,
+        "kind": "restart",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "uncertain",
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S12",
+        "event": 4,
+        "kind": "not_sent",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S12",
+        "event": 5,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": [
+      {
+        "action_id": "c1:r1:LAUNCH_SUCCESSOR",
+        "chat_id": "c2",
+        "project": "project-nominated",
+        "message": "Continue the work in GitHub repo JayDEmily/chat_successor, branch test/succession. Read the current instructions, progress and next task there.",
+        "kind": "LAUNCH_SUCCESSOR"
+      }
+    ]
+  },
+  {
+    "id": "S13",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S13",
+        "event": 1,
+        "kind": "response",
+        "action": "LAUNCH_SUCCESSOR",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S13",
+        "event": 2,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": [
+      {
+        "action_id": "c1:r1:LAUNCH_SUCCESSOR",
+        "chat_id": "c2",
+        "project": "project-nominated",
+        "message": "Continue the work in GitHub repo JayDEmily/chat_successor, branch test/succession. Read the current instructions, progress and next task there.",
+        "kind": "LAUNCH_SUCCESSOR"
+      }
+    ]
+  },
+  {
+    "id": "S14",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S14",
+        "event": 1,
+        "kind": "response",
+        "action": "LAUNCH_SUCCESSOR",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S14",
+        "event": 2,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": []
+  },
+  {
+    "id": "S15",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S15",
+        "event": 1,
+        "kind": "response",
+        "action": "LAUNCH_SUCCESSOR",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S15",
+        "event": 2,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": "sending",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S15",
+        "event": 3,
+        "kind": "restart",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": "sending",
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S15",
+        "event": 4,
+        "kind": "reconcile",
+        "action": "WAIT",
+        "reason": "Submitted message observed; wait for its assistant response",
+        "count_before": 1,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": [
+      {
+        "action_id": "c1:r1:LAUNCH_SUCCESSOR",
+        "chat_id": "c2",
+        "project": "project-nominated",
+        "message": "Continue the work in GitHub repo JayDEmily/chat_successor, branch test/succession. Read the current instructions, progress and next task there.",
+        "kind": "LAUNCH_SUCCESSOR"
+      }
+    ]
+  },
+  {
+    "id": "S16",
+    "outcome": "PASS",
+    "mode": "OFFLINE_SYNTHETIC",
+    "trace": [
+      {
+        "case_id": "S16",
+        "event": 1,
+        "kind": "pause",
+        "action": "HOLD",
+        "reason": "Owner stop",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S16",
+        "event": 2,
+        "kind": "response",
+        "action": "HOLD",
+        "reason": "Owner stop",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": true,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S16",
+        "event": 3,
+        "kind": "resume",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S16",
+        "event": 4,
+        "kind": "response",
+        "action": "LAUNCH_SUCCESSOR",
+        "reason": "Ready for one serialized adapter action",
+        "count_before": 1,
+        "count": 1,
+        "current_chat": "c1",
+        "sends": 0,
+        "opens": 0,
+        "pending_phase": "prepared",
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      },
+      {
+        "case_id": "S16",
+        "event": 5,
+        "kind": "dispatch",
+        "action": null,
+        "reason": "",
+        "count_before": 1,
+        "count": 2,
+        "current_chat": "c2",
+        "sends": 1,
+        "opens": 1,
+        "pending_phase": null,
+        "halted": false,
+        "mode": "OFFLINE_SYNTHETIC"
+      }
+    ],
+    "fake_sends": [
+      {
+        "action_id": "c1:r1:LAUNCH_SUCCESSOR",
+        "chat_id": "c2",
+        "project": "project-nominated",
+        "message": "Continue the work in GitHub repo JayDEmily/chat_successor, branch test/succession. Read the current instructions, progress and next task there.",
+        "kind": "LAUNCH_SUCCESSOR"
+      }
+    ]
+  }
+]

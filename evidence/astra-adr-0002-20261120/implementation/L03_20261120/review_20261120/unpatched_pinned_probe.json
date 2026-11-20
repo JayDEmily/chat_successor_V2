@@ -1,0 +1,7 @@
+{
+  "wrong_destination_adapter_called": true,
+  "initial_intent_has_route_receipt": false,
+  "initial_intent_has_run_id": false,
+  "changed_route_triggered_reconcile": true,
+  "initial_pause_preserved_intent": false
+}

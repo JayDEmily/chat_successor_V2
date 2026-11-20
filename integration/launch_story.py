@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -49,19 +50,36 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
         pointer += reader.instructions(cfg["run_id"], 1, owner_request_id)
     if intent_path.exists():
         intent = json.loads(intent_path.read_text(encoding="utf-8"))
-        if intent["project"] != cfg["project"]:
+        if (not isinstance(intent, dict) or intent.get("project") != cfg["project"]
+                or type(intent.get("handle")) is not int or intent["handle"] <= 0
+                or not isinstance(intent.get("message"), str) or not intent["message"]):
             raise RuntimeError("Existing initial Send intent belongs to a different run")
         pointer = intent["message"]
+        complete = "run_id" in intent
+        if complete:
+            if (intent.get("run_id") != cfg["run_id"] or
+                    intent.get("route_receipt", "") != (cfg.get("route_receipt") or "") or
+                    intent.get("message_sha256") != hashlib.sha256(pointer.encode("utf-8")).hexdigest() or
+                    not isinstance(intent.get("action_id"), str) or
+                    len(intent["action_id"]) != 32):
+                raise RuntimeError("Existing initial intent has a changed run, route or message identity")
+        elif cfg.get("account_key"):
+            raise RuntimeError("Bound initial Send cannot adopt an unbound legacy intent")
         receipt = browser._invoke("Reconcile", Kind=Action.LAUNCH_SUCCESSOR.value,
                                   WindowHandle=intent["handle"], Message=pointer,
-                                  BootstrapIntentPath=intent_path.resolve())
+                                  BootstrapIntentPath=intent_path.resolve(),
+                                  BootstrapRunId=cfg["run_id"] if complete else None,
+                                  RouteReceipt=cfg.get("route_receipt") or "")
     else:
         if pause_path.exists():
             raise RuntimeError("Owner paused before the initial Send")
         target = prepare_first(browser, reader)
         intent = {"handle": target.private_window_handle,
                   "project": target.project, "message": pointer,
-                  "action_id": uuid4().hex}
+                  "action_id": uuid4().hex,
+                  "run_id": cfg["run_id"],
+                  "route_receipt": cfg.get("route_receipt") or "",
+                  "message_sha256": hashlib.sha256(pointer.encode("utf-8")).hexdigest()}
         with intent_path.open("x", encoding="utf-8") as stream:
             json.dump(intent, stream)
             stream.flush()
@@ -69,13 +87,15 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
         receipt = browser._invoke("Send", Kind=Action.LAUNCH_SUCCESSOR.value,
                                   WindowHandle=intent["handle"], Message=pointer,
                                   BootstrapIntentPath=intent_path.resolve(),
+                                  BootstrapRunId=cfg["run_id"],
+                                  RouteReceipt=cfg.get("route_receipt") or "",
                                   PausePath=pause_path)
         if receipt == {"paused_before_click": True}:
-            intent_path.unlink()
-            raise RuntimeError("Owner paused before the initial Send")
+            # Keep the original action record. A restart may reconcile read-only,
+            # but must not silently invoke a second initial Send.
+            raise RuntimeError("Owner paused before initial Send; durable intent retained")
         if receipt == {"destination_changed_before_click": True}:
-            intent_path.unlink()
-            raise RuntimeError("The initial destination changed before Send. No click was made; preserve any draft.")
+            raise RuntimeError("Initial destination changed before Send; durable intent retained")
 
     if (receipt.get("posted_message_observed") is not True
             or receipt.get("project") != cfg["project"]

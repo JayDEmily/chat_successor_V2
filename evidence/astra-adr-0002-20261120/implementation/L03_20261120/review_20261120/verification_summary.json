@@ -1,0 +1,13 @@
+{
+  "reviewed_exact_base": "9424740882e01f3c8beb04b4a65caafe512a4b85",
+  "integration_tests": 103,
+  "integration": "PASS",
+  "reference_tests": 119,
+  "reference": "PASS",
+  "native_windows_powershell_gate": "PASS",
+  "native_gate_browser_opened": false,
+  "git_diff_check": "PASS",
+  "windows_installed_release_changed": false,
+  "live_chrome_or_phone_runs": "NOT_RUN",
+  "duration_seconds": 3.794
+}

@@ -114,7 +114,11 @@ class WindowsBridgeTests(unittest.TestCase):
                        "message": "Next worker instruction"}
             state.write_text(json.dumps({"state": {"pending": pending}}))
             w._atomic_target_write({"kind": "LAUNCH_SUCCESSOR", "source": "chat-first", "handle": 12,
-                                    "action_id": "action-one"})
+                                    "action_id": "action-one", "project": "g-p-TEST",
+                                    "source_response": "turn-one",
+                                    "message_sha256": hashlib.sha256(
+                                        pending["message"].encode()).hexdigest(),
+                                    "route_receipt": None})
             w.prepare("LAUNCH_SUCCESSOR", "chat-first")
             self.assertEqual(w._invoke.call_args.kwargs["WindowHandle"], 12)
             self.assertEqual(w._invoke.call_args.kwargs["SourceResponse"], "turn-one")

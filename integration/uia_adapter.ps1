@@ -15,6 +15,9 @@ param(
  [string]$PrepareAction = '',
  [string]$PrepareTargetPath = '',
  [string]$BootstrapIntentPath = '',
+ [string]$RouteReceipt = '',
+ [string]$PendingResponseId = '',
+ [string]$BootstrapRunId = '',
  [string]$L09Fault = '',
  [string]$PausePath = '',
  [ValidateSet('missing','stale')][string]$Recovery,
@@ -763,10 +766,13 @@ function Assert-PrivateDispatchReceipt {
   if($receipt.action_id -cne $PrepareAction -or $receipt.project -cne $ProjectId -or
      $receipt.kind -cne $Kind -or $receipt.source -cne $ChatId -or
      [long]$receipt.handle -ne $WindowHandle -or
-     $receipt.message_sha256 -cne $digest){
-   throw 'Prepared action identity changed before browser dispatch'
+     $receipt.message_sha256 -cne $digest -or
+     [string]$receipt.route_receipt -cne $RouteReceipt -or
+     $receipt.source_response -cne $PendingResponseId){
+   throw 'Prepared action identity or route changed before browser dispatch'
   }
-  if($Kind -eq 'CONTINUE_CURRENT' -and $receipt.source_response -cne $SourceResponse){
+  if(-not $PendingResponseId -or ($Kind -eq 'CONTINUE_CURRENT' -and
+      $receipt.source_response -cne $SourceResponse)){
    throw 'Prepared source response changed before browser dispatch'
   }
   return
@@ -776,6 +782,18 @@ function Assert-PrivateDispatchReceipt {
   $intent=[IO.File]::ReadAllText($BootstrapIntentPath,[Text.Encoding]::UTF8) | ConvertFrom-Json
   if($intent.project -cne $ProjectId -or [long]$intent.handle -ne $WindowHandle -or
      $intent.message -cne $Message){throw 'Bootstrap intent identity changed'}
+  if($BootstrapRunId){
+   $hasher=[Security.Cryptography.SHA256]::Create()
+   try{$digest=[BitConverter]::ToString($hasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($Message))).Replace('-','').ToLowerInvariant()}
+   finally{$hasher.Dispose()}
+   if($intent.run_id -cne $BootstrapRunId -or
+      [string]$intent.route_receipt -cne $RouteReceipt -or
+      $intent.message_sha256 -cne $digest){
+    throw 'Bootstrap run, route or message digest changed'
+   }
+  }elseif($Mode -eq 'Send'){
+   throw 'New initial Send requires a bound durable request identity'
+  }
   if($Mode -eq 'Send' -and (-not $intent.action_id -or $intent.action_id -cnotmatch '^[0-9a-f]{32}$')){
    throw 'Bootstrap dispatch requires a persisted unique action ID'
   }
