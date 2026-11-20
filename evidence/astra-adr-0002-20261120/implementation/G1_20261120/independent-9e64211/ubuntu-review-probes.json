@@ -1,0 +1,24 @@
+{
+  "S02_blank_published_continuation": {
+    "bad_commit": "26bba010b581b4008c7b46dcc3e9efeb3fb1cf59",
+    "repair_commit": "80407ab82b4e13e4388210f04f867b86958af1fa",
+    "invalid_result": "HOLD",
+    "consumed_before_repair": [],
+    "retry_same_response_result": "LAUNCH_SUCCESSOR",
+    "prepare_calls": 0,
+    "send_calls": 0
+  },
+  "O05_changed_owner_input_after_restart": {
+    "entry_event": "controller_resumed",
+    "dispatch_result": "HOLD",
+    "pending_action_id_preserved": true,
+    "phase_after": "prepared",
+    "prepare_calls": 0,
+    "send_calls": 0
+  },
+  "R04_new_pause_generation": {
+    "first_acknowledged": true,
+    "fresh_generation_before_observer_acknowledged": false,
+    "marker_preserved": true
+  }
+}

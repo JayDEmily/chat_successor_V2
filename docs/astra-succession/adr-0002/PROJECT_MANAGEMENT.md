@@ -7,7 +7,7 @@ The owner has accepted the [bounded ADR 0002 implementation](../../adr/0002-acco
 | Gate | Current disposition | Evidence and next action |
 | --- | --- | --- |
 | A2-G0 / L01 | **PASS — offline evidence and scoped authority** | [Fresh baseline](../../../evidence/astra-adr-0002-20261120/implementation/G0_20261120/BASELINE.md); continue A2-L02 |
-| A2-G1 / L02–L05 | **SECOND CORRECTIVE CANDIDATE PENDING REVIEW** | [Independent hold on 66f4b94](../../../evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-66f4b94/REPORT.md) · [New source pin and corrective evidence](../../../evidence/astra-adr-0002-20261120/implementation/G1_20261120/corrective-9e64211/RESULT.md). |
+| A2-G1 / L02–L05 | **OFFLINE HOLD** | [Independent review of 9e64211](../../../evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-9e64211/REPORT.md). Correct the reproduced native text boundary and re-review. |
 | A2-G2 / L06 | **NOT_RUN** | Windows installation/account route verification after G1 |
 | A2-G3 / L07 | **NOT_RUN** | Two independent disposable mock Projects/repos, proven stale recovery |
 | A2-G4 / L08 | **NOT_RUN** | Actual Shoco iPhone approval and account re-entry |

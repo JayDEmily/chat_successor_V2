@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G1 independent review of 9e64211 — 20 November 2026
+
+**A2-G1 OFFLINE HOLD** on `9e6421112286f7e993d7e91a3e63fbfea0a0c206`. The [independent review, 24-case matrix and raw repro](evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-9e64211/REPORT.md) verify 113 integration and 119 reference passes on both hosts and all three native helper suites. The five earlier findings pass their independent repros. An in-body UIA text delimiter can truncate the assistant or posted user turn, holding S01, S05, S06 and O04.
+
+**Next eligible work** is targeted correction of that native text boundary and independent re-review at the new pin. A2-G2–G6 are NOT_RUN.
+
 ## ADR 0002 A2-G1 second corrective candidate — 20 November 2026
 
 Candidate `9e6421112286f7e993d7e91a3e63fbfea0a0c206` addresses the five findings from the separate review below. [Corrective evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/corrective-9e64211/RESULT.md) records 113 integration and 119 reference passes on Windows and Ubuntu plus three native PowerShell passes. The checks cover exact pause acknowledgement, prose status, repaired publication, whole posted-turn receipts and durable owner scope.

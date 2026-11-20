@@ -1,0 +1,9 @@
+{
+    "S05_anchor_verified":  true,
+    "S05_exact_post_accepted":  true,
+    "S05_fragment_from_different_body_accepted":  false,
+    "S06_fragment_from_different_body_accepted":  false,
+    "S01_non_prose_status_marked_ready":  false,
+    "S01_non_prose_status_kept_in_response":  true,
+    "S01_complete_status_ready_with_prose_flag_false":  false
+}

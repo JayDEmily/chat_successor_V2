@@ -1,0 +1,10 @@
+{
+    "non_final_status_marked_ready":  true,
+    "assistant_tail_seen":  false,
+    "exact_anchored_accepted":  true,
+    "ordinary_longer_rejected":  true,
+    "body_with_literal_ask_chatgpt_accepted_anchored":  true,
+    "body_with_literal_ask_chatgpt_accepted_unanchored":  true,
+    "body_text_seen_at_acknowledgement":  "Okay, continue working.",
+    "total_synthetic_user_body_text_nodes":  3
+}
