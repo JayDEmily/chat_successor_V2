@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G3 native UIA metadata follow-up — 20 November 2026
+
+A [source-pinned, read-only Windows metadata probe](evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/NODE_METADATA_FINDINGS.md) checked the four verified virtualized user/assistant heading/body nodes. All exposed empty AutomationId, ItemType, ItemStatus and HelpText, and no absolute turn-position property was listed. Their runtime IDs are UIA element-instance identities, not verified persistent response or user-turn IDs. The [redacted raw output](evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/node-metadata-readback.json) contains no conversation body. **No new actionability was established.**
+
+The `e33ae7a` fail-closed source, independent review commission and existing G3 NOT_RUN hold stand. The next legitimate work requires a separately verifiable full-turn/ordinal source rather than constructing a receipt from visible virtualized text.
+
 ## ADR 0002 A2-L07 published exact-SHA candidate and review commission — 20 November 2026
 
 The fail-closed virtualized-turn reader and raw test evidence are now published at **`e33ae7ad49e3510bf3021c552184cbb9d0e05758`**, with an exact [source and evidence report](evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/CANDIDATE_RESULT.md). A fresh clean GitHub clone matched the SHA, passed `git fsck --full`, 114/114 Windows integration tests and both targeted native action/virtualized suites. The implementing worker's fresh-clone tests do **not** substitute for the separate reviewer. The [independent exact-source commission](docs/astra-succession/adr-0002/G3_VIRTUALIZED_REVIEW_COMMISSION.md) is prepared.

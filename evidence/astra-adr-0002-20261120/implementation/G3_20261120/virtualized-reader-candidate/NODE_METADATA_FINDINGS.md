@@ -1,0 +1,11 @@
+# A2-G3 read-only message-node metadata investigation
+
+**Date:** 20 November 2026 AEDT. **Source:** canonical installed `5c86ad6` used only to select the completed disposable James Student saved chat; the published parser review candidate is `e33ae7ad49e3510bf3021c552184cbb9d0e05758`.
+
+A read-only Windows UI Automation probe selected exactly **one** existing authenticated test window. Its conversation had **zero** article nodes and **14** direct virtualized transcript children, including the verified user heading/body and assistant heading/body. The journal contained one consumed response for that saved chat, but the naive visible-text digest still failed to match its previously recorded receipt. No navigation, browser Send or state mutation occurred.
+
+The four verified message nodes at indices 1, 2, 7 and 8 were checked for automation identity, item type, item status, help text and supported properties/patterns. **All four have empty AutomationId, ItemType, ItemStatus and HelpText values.** Each returns a six-part Windows UIA runtime ID, which identifies an accessibility element instance but is not proven to be a durable ChatGPT turn ordinal. Headings advertise ScrollPattern and ScrollItemPattern; bodies advertise ScrollItemPattern. **No absolute position-in-set or turn-index property was exposed in the supported-property list.**
+
+The [redacted raw output](node-metadata-readback.json) contains only structural counts, property names, pattern names, field lengths and flags, not chat text or private message identifiers. The private probe script, including the exact test-chat locator, stays under Windows LocalAppData Temp.
+
+**Conclusion limited to this inspected fixture:** these UIA properties do not supply the missing durable latest-turn identity or a verified Send receipt. This does not establish that all browser interfaces lack such an identity. An alternative *authoritative* source for the full current turn/history and its persistent ID remains an explicit dependency before positive G3 advancement. Continue to refuse automatic Send or stale reload on the current virtualized view. The separate independent review of `e33ae7a` remains pending, and G3 stays NOT_RUN.

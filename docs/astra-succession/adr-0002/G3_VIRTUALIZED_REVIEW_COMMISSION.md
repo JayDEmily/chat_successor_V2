@@ -8,7 +8,7 @@
 
 - `AGENTS.md`, `PROGRESS.md`, `docs/adr/0002-account-bound-resumable-runs.md`, `evidence/astra-adr-0002-20261120/package/acceptance/GATES.md`, and `package/docs/leaves/07-two-run-acceptance.md`.
 - Source diff against the parent in `integration/uia_adapter.ps1`. Check the legacy article branch, the new `Get-VirtualizedConversationTurns`, `Get-ConversationTurns`, `Read-ConversationContent`, `Read-CurrentTurn` and `Find-PostedMessage`.
-- Native test changes in `integration/tests/test_a2_l03_ps_action_gate.ps1` and `integration/tests/test_a2_g3_ps_virtualized_turns.ps1`, plus the [candidate report and raw tests](../../../evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/CANDIDATE_RESULT.md).
+- Native test changes in `integration/tests/test_a2_l03_ps_action_gate.ps1` and `integration/tests/test_a2_g3_ps_virtualized_turns.ps1`, plus the [candidate report and raw tests](../../../evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/CANDIDATE_RESULT.md). The later [read-only UIA node-property investigation](../../../evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/NODE_METADATA_FINDINGS.md) found no native message ID or absolute ordinal in the inspected nodes; do not treat a UIA runtime ID as a durable ChatGPT turn ID.
 
 ## Mandatory independent challenges
 
