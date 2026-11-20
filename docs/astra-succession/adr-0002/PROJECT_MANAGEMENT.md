@@ -1,10 +1,18 @@
 # ADR 0002 — Project execution and acceptance
 
+## Current execution scope
+
+The owner accepted the [lean ADR 0002 programme](https://github.com/JayDEmily/chat_successor/blob/9c9372165938e027c973c4acf22dba104cda15dc/evidence/astra-adr-0002-20261120/lean-astra-output-20261120/cfile_6b002c5ddcb88191802a51dfb2a8b583-PROGRAM.md) for Shoko Yumi. The sequence is browser qualification, one useful Shoko Yumi desktop run, Shoko Yumi iPhone start and scoped approval (L17–L18), then two overlapping runs in the same signed-in profile (L16) and closeout (L20). Use the Shoko Yumi route for L10. Carry forward the James Student evidence and defer live James Student checks, account switching (L19), and cross-account overlap. Automatic stale recovery and larger capacity also remain later work.
+
+Use `codex/chat-succession-finish` and take one leaf at a time from [PROGRESS.md](../../../PROGRESS.md). Pause for owner approval before adding a structural script, service, state-format change, or broader reader design. Keep the original Rowing and SolidWorks runs paused.
+
+## Earlier ADR 0002 record
+
 **Execution branch:** `codex/chat-succession-finish`; keep `main` unchanged. **Baseline source:** `283e6c17bf3359c203a362fd6593563480eeea5f`; runtime/plugin candidate `2c29406b1c43904c5ead79064fe7856971e0aa2e` (0.4.3); Astra intake `b3daeda63643b9ad8d8860fb5cc99a3e4ef400c7`.
 
-The owner has accepted the [bounded ADR 0002 implementation](../../adr/0002-account-bound-resumable-runs.md) with a standing grant on 20 November 2026. [The original ten leaves](../../../evidence/astra-adr-0002-20261120/package/docs/IMPLEMENTATION_PLAN.md) and [A2 acceptance gates](../../../evidence/astra-adr-0002-20261120/package/acceptance/GATES.md) remain the operative procedure, not this status summary.
+The owner accepted the [bounded ADR 0002 implementation](../../adr/0002-account-bound-resumable-runs.md) with a standing grant on 20 November 2026. The [original ten leaves](../../../evidence/astra-adr-0002-20261120/package/docs/IMPLEMENTATION_PLAN.md) and [A2 acceptance gates](../../../evidence/astra-adr-0002-20261120/package/acceptance/GATES.md) retain their historical scope and evidence.
 
-| Gate | Current disposition | Evidence and next action |
+| Gate | Historical disposition | Evidence and then-next action |
 | --- | --- | --- |
 | A2-G0 / L01 | **PASS — offline evidence and scoped authority** | [Fresh baseline](../../../evidence/astra-adr-0002-20261120/implementation/G0_20261120/BASELINE.md); continue A2-L02 |
 | A2-G1 / L02–L05 | **OFFLINE ACCEPT** | [Independent review of 0b6bfa3](../../../evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-0b6bfa3/REPORT.md). Proceed to installed A2-G2 checks on this pin. |

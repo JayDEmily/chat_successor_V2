@@ -1,10 +1,10 @@
 # Astra chat succession execution plan
 
-The current generic-entry increment follows the [19 November implementation plan](generic-entry-plan-20261119.md) and [ADR 0001](../adr/0001-generic-entry-and-re-entry.md). The sections below preserve the earlier bounded acceptance record.
+For current work, use the [Shoko Yumi ADR 0002 execution scope](adr-0002/PROJECT_MANAGEMENT.md) and pick up the next leaf in [PROGRESS.md](../../PROGRESS.md). The [19 November implementation plan](generic-entry-plan-20261119.md) and [ADR 0001](../adr/0001-generic-entry-and-re-entry.md) document the earlier generic-entry increment.
 
-This is the entry point for implementing Astra's continuing loop. Follow the [source plan](../../astra/2026-11-17/artifacts/cfile_6afc507495a08191817cbc9fc1e77b63-chat_succession_test_plan_20261117.md), [adapter contract](../../astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/PROTOCOL_AND_ADAPTER.md) and [owner runbook](../../astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/OWNER_RUNBOOK.md) imported at `44c0d5948318e305c42fb0ac4f463e77f90531bc`. The [three-chat exploration](../superpowers/plans/2026-11-17-chat-succession.md) documents the earlier trial.
+The earlier bounded trial followed the [source plan](../../astra/2026-11-17/artifacts/cfile_6afc507495a08191817cbc9fc1e77b63-chat_succession_test_plan_20261117.md), [adapter contract](../../astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/PROTOCOL_AND_ADAPTER.md) and [owner runbook](../../astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/OWNER_RUNBOOK.md) imported at `44c0d5948318e305c42fb0ac4f463e77f90531bc`. The [three-chat exploration](../superpowers/plans/2026-11-17-chat-succession.md) documents that trial.
 
-## Start here
+## Earlier bounded trial setup
 
 1. Read [AGENTS.md](../../AGENTS.md), [PROGRESS.md](../../PROGRESS.md) and the leaf for the assigned work.
 2. Carry forward G0 and start Leaf 01. Use the existing offline suite and live procedures. Leaf checks reference Astra's cases. A recorded reference pass already establishes that case's reference-model result. Record what was actually observed through the live adapter using Astra's live procedures.

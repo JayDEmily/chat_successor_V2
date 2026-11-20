@@ -1,5 +1,13 @@
 # Progress
 
+## Lean ADR 0002 L01 — Windows regression baseline (21 November 2026)
+
+- **Base and candidate:** published `beacfae4790c2ec4f390e90ad0bd214fe6a1ef05` and a byte-identical copy of the interrupted adapter, SHA-256 `dfed13f20650162de74500eb4806dc884ea3effef868dbccc4c3b02193e9b769`.
+- **Behavior:** added Astra's native regression with an actual older identical continuation. Adopted the [Shoko Yumi execution scope](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md).
+- **Windows PowerShell 5.1:** `test_a2_transcript_boundary.ps1 -RepoRoot <snapshot>` exited 1 on the published reader (12/27 pass) and the interrupted copy (18/27 pass). All controls passed. The published reader failed status/user-anchor, anchored acknowledgement, and unanchored acknowledgement for each of five shapes. The interrupted copy passed the opaque group and changed-heading cases and failed all three assertions for each of pane, custom, and list. Raw outputs and the interrupted patch are saved privately.
+- **Limit:** synthetic observations only. The working adapter still matches the interrupted snapshot at this checkpoint. LEAN-G1 remains open.
+- **Next:** L02, close the mixed-transcript gap in `Get-ConversationTurns`.
+
 ## ADR 0002 A2-G3 native UIA metadata follow-up — 20 November 2026
 
 A [source-pinned, read-only Windows metadata probe](evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/NODE_METADATA_FINDINGS.md) checked the four verified virtualized user/assistant heading/body nodes. All exposed empty AutomationId, ItemType, ItemStatus and HelpText, and no absolute turn-position property was listed. Their runtime IDs are UIA element-instance identities, not verified persistent response or user-turn IDs. The [redacted raw output](evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/node-metadata-readback.json) contains no conversation body. **No new actionability was established.**
