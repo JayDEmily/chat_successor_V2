@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import hashlib
 from unittest.mock import Mock, patch
 import os
 import sys
@@ -44,7 +45,12 @@ class L09AdapterFaultTests(unittest.TestCase):
         self.c.begin_send(decision.action_id)
         self.c.save(self.path)
         self.w._atomic_target_write({"kind": kind.value,
-                                     "source": "chat-first", "handle": 1234})
+                                     "source": "chat-first", "handle": 1234,
+                                     "project": self.cfg.project,
+                                     "action_id": decision.action_id,
+                                     "source_response": "turn-1",
+                                     "message_sha256": hashlib.sha256(decision.message.encode()).hexdigest(),
+                                     "route_receipt": None})
         target = Destination(self.cfg.project, chat_id,
                              ComposerObservation(editable_text=""),
                              private_window_handle=1234)

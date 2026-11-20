@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import hashlib
 import json
 import sys
 import tempfile
@@ -109,7 +110,8 @@ class WindowsBridgeTests(unittest.TestCase):
                                           "private_window_handle": 34, "editable_text": "",
                                           "attachments_present": False})
             pending = {"kind": "LAUNCH_SUCCESSOR", "source_chat_id": "chat-first", "phase": "prepared",
-                       "response_id": "turn-one", "action_id": "action-one"}
+                       "response_id": "turn-one", "action_id": "action-one",
+                       "message": "Next worker instruction"}
             state.write_text(json.dumps({"state": {"pending": pending}}))
             w._atomic_target_write({"kind": "LAUNCH_SUCCESSOR", "source": "chat-first", "handle": 12,
                                     "action_id": "action-one"})
@@ -120,11 +122,13 @@ class WindowsBridgeTests(unittest.TestCase):
             state.write_text(json.dumps({"state": {"pending": pending}}))
             w.prepare("LAUNCH_SUCCESSOR", "chat-first")
             self.assertNotIn("WindowHandle", w._invoke.call_args.kwargs)
-            w.prepare("LAUNCH_SUCCESSOR", "chat-second")
-            self.assertNotIn("WindowHandle", w._invoke.call_args.kwargs)
+            # A different triggering worker or action kind is a hard hold,
+            # not an opportunity to prepare another window.
+            with self.assertRaisesRegex(BrowserObservationError, "persisted action identity"):
+                w.prepare("LAUNCH_SUCCESSOR", "chat-second")
             w._invoke.return_value["current_chat_id"] = "chat-second"
-            w.prepare("CONTINUE_CURRENT", "chat-second")
-            self.assertNotIn("WindowHandle", w._invoke.call_args.kwargs)
+            with self.assertRaisesRegex(BrowserObservationError, "persisted action identity"):
+                w.prepare("CONTINUE_CURRENT", "chat-second")
 
     def test_send_only_after_disk_recorded_sending(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -139,7 +143,11 @@ class WindowsBridgeTests(unittest.TestCase):
             c.save(state)
             t = Destination(cfg.project, "chat-first", ComposerObservation(editable_text=""), 1234)
             w._atomic_target_write({"kind": "CONTINUE_CURRENT",
-                                    "source": "chat-first", "handle": 1234})
+                                    "source": "chat-first", "handle": 1234,
+                                    "project": cfg.project, "action_id": d.action_id,
+                                    "source_response": "turn1",
+                                    "message_sha256": hashlib.sha256(d.message.encode()).hexdigest(),
+                                    "route_receipt": None})
             w._invoke = Mock(return_value={"project": cfg.project, "chat_id": "chat-first",
                                            "submitted_text": d.message,
                                            "posted_message_observed": True})

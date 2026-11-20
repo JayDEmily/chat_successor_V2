@@ -1,0 +1,16 @@
+{
+  "host": "Ubuntu WSL plus native Windows PowerShell",
+  "python": "Python 3.14.4",
+  "parent_candidate": "3f9715e",
+  "regressions_integration_total": 88,
+  "new_l03_tests": 9,
+  "previous_l02_tests": 16,
+  "original_baseline_integration_tests": 63,
+  "integration_result": "PASS",
+  "reference_119": "CARRIED_FORWARD_FROM_SAME_UNCHANGED_KIT_L02",
+  "native_powershell_ast_parse": "PASS",
+  "native_powershell_action_gate_mock_positive_negative": "PASS",
+  "git_diff_check": "PASS",
+  "actual_chrome_send": "NOT_RUN",
+  "installation": "NOT_RUN"
+}

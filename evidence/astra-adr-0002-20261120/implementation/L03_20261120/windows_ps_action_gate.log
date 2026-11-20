@@ -1,0 +1,3 @@
+﻿& powershell.exe -NoProfile -ExecutionPolicy Bypass -File \\wsl.localhost\Ubuntu\home\jds\chat_successor_astra_adr0002_intake_20261120\integration\tests\test_a2_l03_ps_action_gate.ps1
+PASS: Windows PowerShell AST parse; 1 positive follow-up action; 2 negative target identities; 1 positive bootstrap; 1 negative bootstrap.
+EXIT_CODE=0

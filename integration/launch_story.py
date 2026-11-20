@@ -53,19 +53,22 @@ def bootstrap(cfg: dict, state_path: Path, browser, reader, *, owner_request_id=
             raise RuntimeError("Existing initial Send intent belongs to a different run")
         pointer = intent["message"]
         receipt = browser._invoke("Reconcile", Kind=Action.LAUNCH_SUCCESSOR.value,
-                                  WindowHandle=intent["handle"], Message=pointer)
+                                  WindowHandle=intent["handle"], Message=pointer,
+                                  BootstrapIntentPath=intent_path.resolve())
     else:
         if pause_path.exists():
             raise RuntimeError("Owner paused before the initial Send")
         target = prepare_first(browser, reader)
         intent = {"handle": target.private_window_handle,
-                  "project": target.project, "message": pointer}
+                  "project": target.project, "message": pointer,
+                  "action_id": uuid4().hex}
         with intent_path.open("x", encoding="utf-8") as stream:
             json.dump(intent, stream)
             stream.flush()
             os.fsync(stream.fileno())
         receipt = browser._invoke("Send", Kind=Action.LAUNCH_SUCCESSOR.value,
                                   WindowHandle=intent["handle"], Message=pointer,
+                                  BootstrapIntentPath=intent_path.resolve(),
                                   PausePath=pause_path)
         if receipt == {"paused_before_click": True}:
             intent_path.unlink()

@@ -1,0 +1,12 @@
+{
+  "parent_updated_to": "77ffd1b31e3bf774e8683cab83ff3a4ccbc0cd60",
+  "integration_tests": 91,
+  "original_cases": 63,
+  "L02_first_new": 16,
+  "L02_peer_negatives": 3,
+  "L03_new": 9,
+  "integration_status": "PASS",
+  "native_windows_powershell_action_gate": "PASS",
+  "reference_119": "PASS_IN_PEER_L02_REVIEW_UNCHANGED_REFERENCE_KIT",
+  "installed_live_browser": "NOT_RUN"
+}

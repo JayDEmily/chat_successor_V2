@@ -1,5 +1,14 @@
 # Progress
 
+## ADR 0002 L03 offline action-identity candidate — 20 November 2026
+
+The final Windows UIA adapter now verifies the same persisted action ID,
+response, source, project, window, message digest and route receipt before
+Send; read-only uncertain reconciliation also refuses a stale target.
+New bootstrap intents carry their own UUID identity. [L03 evidence](evidence/astra-adr-0002-20261120/implementation/L03_20261120/L03_RESULT.md):
+91/91 integration tests after integrating independently reviewed L02 fixes (retained prior 88/88 result), and native Windows PowerShell AST plus positive/negative
+action-record checks PASS. No browser Send or installation; L03 live faults
+remain NOT_RUN. Next A2-L04, while G1 remains open.
 ## ADR 0002 L02 — independent negative review and targeted repair (20 November 2026)
 
 The published `3f9715e` account-route implementation passed its 79 integration tests, but a fresh independent review reproduced three untested edge cases: duplicate JSON route keys resolved by last-write-wins, two account records accepted with the same Chrome profile, and a pre-Send operator pause not shown as acknowledged. [Exact probes, repairs and 82+119 fresh tests](evidence/astra-adr-0002-20261120/implementation/L02_20261120/review_20261120/NEGATIVE_REVIEW.md). Corrections are deliberately limited to private route ambiguity and pause-status readback; no installed Windows candidate was changed. A2-L02 remains offline only, and A2-G1/G2 are not accepted.

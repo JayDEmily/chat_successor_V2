@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import hashlib
 import json
 import logging
 import os
@@ -197,7 +198,48 @@ class WindowsUIA(Browser):
                         role=second["role"], project=second["project"],
                         handoff_locator_verified=second.get("handoff_locator_verified") is True)
 
+    def _route_receipt(self) -> str | None:
+        cfg_path = self.state_path.with_name("config.json")
+        if not cfg_path.is_file():
+            return None
+        try:
+            value = json.loads(cfg_path.read_text(encoding="utf-8")).get("route_receipt")
+        except (OSError, ValueError) as exc:
+            raise BrowserObservationError("Private account route configuration unavailable") from exc
+        if value is not None and (not isinstance(value, str) or not value.strip()):
+            raise BrowserObservationError("Invalid private account route receipt")
+        return value
+
+    def _pending_action(self, kind: str, current_chat_id: str | None) -> dict | None:
+        if not self.state_path.is_file():
+            return None  # initial bootstrap has its own independent intent
+        raw = json.loads(self.state_path.read_text(encoding="utf-8"))
+        p = raw.get("state", {}).get("pending")
+        if p is None:
+            return None
+        if (p.get("kind") != kind or p.get("source_chat_id") != current_chat_id
+                or p.get("phase") != "prepared" or not p.get("action_id")
+                or not isinstance(p.get("message"), str)
+                or not isinstance(p.get("response_id"), str)):
+            raise BrowserObservationError("Prepared action does not match persisted action identity")
+        return p
+
+    def _validate_action_target(self, record: dict, p: dict, handle: int) -> None:
+        expected = {
+            "project": self.project,
+            "handle": handle,
+            "kind": p.get("kind"),
+            "source": p.get("source_chat_id"),
+            "source_response": p.get("response_id"),
+            "action_id": p.get("action_id"),
+            "message_sha256": hashlib.sha256(p["message"].encode("utf-8")).hexdigest(),
+            "route_receipt": self._route_receipt(),
+        }
+        if any(record.get(key) != value for key, value in expected.items()):
+            raise BrowserObservationError("Prepared action/target/route identity mismatch")
+
     def prepare(self, kind: str, current_chat_id: str | None) -> Destination:
+        pending = self._pending_action(kind, current_chat_id)
         navigation = {}
         if kind == "LAUNCH_SUCCESSOR" and current_chat_id is not None and self.state_path.exists():
             state = json.loads(self.state_path.read_text(encoding="utf-8"))["state"]
@@ -234,9 +276,15 @@ class WindowsUIA(Browser):
                                  uia_value=payload.get("uia_value"),
                                  attachments_present=payload.get("attachments_present", None)),
                              private_window_handle=handle)
-        record = {"kind": kind, "source": current_chat_id, "handle": target.private_window_handle}
-        if navigation:
-            record["action_id"] = navigation["PrepareAction"]
+        record = {"kind": kind, "source": current_chat_id,
+                  "handle": target.private_window_handle}
+        if pending is not None:
+            record.update({"project": self.project,
+                           "action_id": pending["action_id"],
+                           "source_response": pending["response_id"],
+                           "message_sha256": hashlib.sha256(
+                               pending["message"].encode("utf-8")).hexdigest(),
+                           "route_receipt": self._route_receipt()})
         self._atomic_target_write(record)
         return target
 
@@ -275,10 +323,7 @@ class WindowsUIA(Browser):
                 p.get("message") != message or state.get("halted")):
             raise BrowserObservationError("No matching persisted sending phase")
         record = json.loads(self.target_path.read_text(encoding="utf-8"))
-        if (record.get("handle") != target.private_window_handle or
-                record.get("kind") != p["kind"] or
-                record.get("source") != p["source_chat_id"]):
-            raise BrowserObservationError("Prepared window identity mismatch")
+        self._validate_action_target(record, p, target.private_window_handle)
         # L09 test-only fault points. Set this only for a bounded test CLI
         # process; normal controller runs have no injection.
         fault = os.environ.get("ASTRA_L09_FAULT", "")
@@ -290,6 +335,7 @@ class WindowsUIA(Browser):
         result = self._invoke(
             "Send", Kind=p["kind"], ChatId=p["source_chat_id"],
             WindowHandle=target.private_window_handle, Message=message,
+            PrepareAction=p["action_id"], PrepareTargetPath=self.target_path.resolve(),
             PausePath=self.state_path.with_suffix(".pause").resolve(),
             SourceResponse=p["response_id"] if p["kind"] == "CONTINUE_CURRENT" else None,
             L09Fault="after_click" if fault == "after_click" else None)
@@ -310,9 +356,14 @@ class WindowsUIA(Browser):
         if p is None or p.phase not in ("sending", "uncertain"):
             raise BrowserObservationError("No possibly sent action to reconcile")
         record = json.loads(self.target_path.read_text(encoding="utf-8"))
-        if record.get("source") != p.source_chat_id or record.get("kind") != p.kind:
-            raise BrowserObservationError("Saved target is for a different action")
+        self._validate_action_target(record, {
+            "kind": p.kind, "source_chat_id": p.source_chat_id,
+            "response_id": p.response_id, "action_id": p.action_id,
+            "message": p.message,
+        }, record.get("handle"))
         result = self._invoke("Reconcile", WindowHandle=record["handle"],
+                              PrepareAction=p.action_id,
+                              PrepareTargetPath=self.target_path.resolve(),
                               Kind=p.kind, ChatId=p.source_chat_id,
                               SourceResponse=p.response_id if p.kind == "CONTINUE_CURRENT" else None,
                               Message=p.message)

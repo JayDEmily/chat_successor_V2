@@ -14,6 +14,7 @@ param(
  [string]$SourceResponse = '',
  [string]$PrepareAction = '',
  [string]$PrepareTargetPath = '',
+ [string]$BootstrapIntentPath = '',
  [string]$L09Fault = '',
  [string]$PausePath = '',
  [ValidateSet('missing','stale')][string]$Recovery,
@@ -747,7 +748,44 @@ function Hold-ForChangedDestination {
  exit 0
 }
 
+function Assert-PrivateDispatchReceipt {
+ # Revalidate the exact persisted action at the actual native browser
+ # boundary. An old handle/source pair is never sufficient to authorize Send.
+ if($PrepareAction){
+  if(-not $PrepareTargetPath -or -not [IO.File]::Exists($PrepareTargetPath)){
+   throw 'Prepared action record unavailable'
+  }
+  $receipt=[IO.File]::ReadAllText($PrepareTargetPath,[Text.Encoding]::UTF8) | ConvertFrom-Json
+  $hasher=[Security.Cryptography.SHA256]::Create()
+  try{
+   $digest=[BitConverter]::ToString($hasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($Message))).Replace('-','').ToLowerInvariant()
+  }finally{$hasher.Dispose()}
+  if($receipt.action_id -cne $PrepareAction -or $receipt.project -cne $ProjectId -or
+     $receipt.kind -cne $Kind -or $receipt.source -cne $ChatId -or
+     [long]$receipt.handle -ne $WindowHandle -or
+     $receipt.message_sha256 -cne $digest){
+   throw 'Prepared action identity changed before browser dispatch'
+  }
+  if($Kind -eq 'CONTINUE_CURRENT' -and $receipt.source_response -cne $SourceResponse){
+   throw 'Prepared source response changed before browser dispatch'
+  }
+  return
+ }
+ if($BootstrapIntentPath){
+  if(-not [IO.File]::Exists($BootstrapIntentPath)){throw 'Bootstrap intent unavailable'}
+  $intent=[IO.File]::ReadAllText($BootstrapIntentPath,[Text.Encoding]::UTF8) | ConvertFrom-Json
+  if($intent.project -cne $ProjectId -or [long]$intent.handle -ne $WindowHandle -or
+     $intent.message -cne $Message){throw 'Bootstrap intent identity changed'}
+  if($Mode -eq 'Send' -and (-not $intent.action_id -or $intent.action_id -cnotmatch '^[0-9a-f]{32}$')){
+   throw 'Bootstrap dispatch requires a persisted unique action ID'
+  }
+  return
+ }
+ throw 'No persisted dispatch action identity at browser boundary'
+}
+
 if($Mode -eq 'Send') {
+ Assert-PrivateDispatchReceipt
  Hold-IfOwnerPaused
  if($WindowHandle -le 0){throw 'Saved prepared window handle required'}
  if($Message -cnotmatch '^[A-Za-z0-9 .,/_:-]+$'){throw 'Unsupported message characters'}
@@ -828,6 +866,7 @@ if($Mode -eq 'Send') {
   $send=$sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
   if((Get-Address $target.window) -cne $target.url){Hold-ForChangedDestination}
  } catch {Hold-ForChangedDestination}
+ Assert-PrivateDispatchReceipt
  Hold-IfOwnerPaused
  # One native UIA Invoke. Reconcile if its acknowledgement is lost.
  $send.Invoke()
@@ -847,6 +886,7 @@ if($Mode -eq 'Send') {
  throw 'Send attempted but exact posted message + saved ID not both observed'
 }
 if($Mode -eq 'Reconcile') {
+ Assert-PrivateDispatchReceipt
  if($Kind -eq 'CONTINUE_CURRENT' -and -not ($ChatId -and $SourceResponse)){
   throw 'Reconcile needs the saved chat and triggering response'
  }
