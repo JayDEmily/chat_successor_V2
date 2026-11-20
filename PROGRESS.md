@@ -1,5 +1,13 @@
 # Progress
 
+## ADR 0002 A2-L07 fail-closed virtualized-turn reader candidate — 20 November 2026
+
+A bounded [source and native-test candidate](evidence/astra-adr-0002-20261120/implementation/G3_20261120/virtualized-reader-candidate/CANDIDATE_RESULT.md) now recognises the verified virtualized user/assistant heading/body structure without treating visible terminal text as an authenticated latest-turn receipt. Mixed article/virtualized layouts, missing or duplicate headings, changed body classes, nested labels, streaming and posted-message acknowledgements hold safely. **No response ID, absolute count, owner input anchor, stale reload or Send receipt is issued by this fallback.** The existing article-based path is preserved.
+
+Both hosts passed 114/114 integration tests and 119/119 reference tests. Four native Windows PowerShell suites passed, including the new negative matrix. A real read-only check of an already-finished disposable James Student chat produced two matching unqualified observations, no actionable receipt, and unchanged protected state. The canonical installed backend remains `5c86ad6`, and both original Rowing/SolidWorks pause markers remain present.
+
+**Disposition:** source candidate verified locally; *separate independent review pending*. A2-G3 D01–D03, positive stale V03 and live Send remain NOT_RUN, as do G4–G6. Do not install or start new workers on the basis of this read-only candidate. Next action is to commission exact-SHA independent review and qualify an absolute latest-turn anchor before a live test.
+
 ## ADR 0002 A2-G3 read-only virtualized-turn discovery — 20 November 2026
 
 [A2-G3 native accessibility evidence](evidence/astra-adr-0002-20261120/implementation/G3_20261120/VIRTUALIZED_TURN_DISCOVERY.md) was collected on the installed `5c86ad6` backend and an already-completed disposable Bird and Pig chat. The exact account, Project and one saved view were verified without any navigation or Send. Chrome exposed zero conversation article nodes, one user/assistant heading-and-body pair, and one terminal-status text node. A naive visible-body text digest did not match the previous saved response receipt, so this is discovery only: an actionable assistant status and verified user anchor are **not** established.

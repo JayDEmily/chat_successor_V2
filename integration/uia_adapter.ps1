@@ -266,11 +266,102 @@ function Get-ConversationRole($element) {
  if($heading){throw 'Conversation role heading has no verified article'}
 }
 
+function Get-VirtualizedConversationTurns($thread) {
+ # Chrome's visible-message groups do not expose absolute history ordinals.
+ # Recognise only bounded, immediate heading/body pairs; never certify a
+ # response/Send receipt from this view without a separately proven history.
+ $layouts=@((Get-AccessibilityChildren $thread) | Where-Object {
+  $_.Current.LocalizedControlType -ceq 'group' -and
+  $_.Current.ClassName -cmatch '(?:^|\s)transcriptContent-[\w-]+(?:\s|$)'
+ })
+ if($layouts.Count -ne 1){throw 'Virtualized transcript layout is not unique'}
+ $wrappers=@(Get-AccessibilityChildren $layouts[0])
+ if($wrappers.Count -ne 1 -or $wrappers[0].Current.LocalizedControlType -cne 'group' -or
+    $wrappers[0].Current.ClassName -cne 'relative shrink-0'){
+  throw 'Virtualized transcript message wrapper is unverified'
+ }
+ $children=@(Get-AccessibilityChildren $wrappers[0])
+ $turns=@()
+ for($i=0;$i -lt $children.Count;$i++){
+  $current=$children[$i].Current
+  if($current.LocalizedControlType -ceq 'heading' -and
+     $current.Name -cin @('You said:','ChatGPT said:')){
+   if($current.ClassName -cnotmatch '(?:^|\s)sr-only(?:\s|$)' -or
+      $i+1 -ge $children.Count){throw 'Virtualized role heading is unpaired'}
+   $role=if($current.Name -ceq 'You said:'){'user'}else{'assistant'}
+   $body=$children[$i+1]
+   $bodyCurrent=$body.Current
+   if($bodyCurrent.LocalizedControlType -cne 'group'){throw 'Virtualized role has no direct body group'}
+   if($role -ceq 'user'){
+    if($bodyCurrent.ClassName -cnotmatch '(?:^|\s)bg-user-message(?:\s|$)' -or
+       $bodyCurrent.ClassName -cnotmatch '(?:^|\s)text-user-message(?:\s|$)'){
+     throw 'Virtualized user body is not verified'
+    }
+   }elseif($bodyCurrent.ClassName -cnotmatch '(?:^|\s)Renderer-[\w-]+(?:\s|$)'){
+    throw 'Virtualized assistant renderer is not verified'
+   }
+   $nestedHeadings=@((Desc $body) | Where-Object {
+    $_.Current.LocalizedControlType -ceq 'heading' -and
+    $_.Current.ClassName -cmatch '(?:^|\s)sr-only(?:\s|$)' -and
+    $_.Current.Name -cin @('You said:','ChatGPT said:')
+   })
+   if($nestedHeadings.Count){throw 'Nested virtualized application role heading'}
+   if($turns.Count -and $turns[-1].role -ceq $role){
+    throw 'Consecutive virtualized headings have the same role'
+   }
+   $turns+=@{role=$role;article=$body;virtualized=$true}
+   $i++
+   continue
+  }
+  if(($current.LocalizedControlType -ceq 'heading' -and
+      $current.ClassName -cmatch '(?:^|\s)sr-only(?:\s|$)') -or
+     ($current.LocalizedControlType -ceq 'group' -and
+      $current.ClassName -cmatch '(?:^|\s)(?:Renderer-[\w-]+|bg-user-message)(?:\s|$)')){
+   throw 'Unpaired virtualized heading or message body'
+  }
+  if($current.LocalizedControlType -cnotin @('separator','button','toggle button','group')){
+   throw 'Unexpected virtualized transcript sibling'
+  }
+  $buriedHeadings=@((Desc $children[$i]) | Where-Object {
+   $_.Current.LocalizedControlType -ceq 'heading' -and
+   $_.Current.ClassName -cmatch '(?:^|\s)sr-only(?:\s|$)'
+  })
+  if($buriedHeadings.Count){throw 'Unverified role heading outside message body'}
+ }
+ if(-not $turns.Count -or $turns[0].role -cne 'user'){
+  throw 'Virtualized transcript has no verified leading user turn'
+ }
+ $turns
+}
+
 function Get-ConversationTurns($all) {
  $threads=@($all | Where-Object {Test-TranscriptRegion $_})
  if($threads.Count -ne 1){throw 'A single conversation transcript could not be established'}
- foreach($article in (Desc $threads[0])){
-  if($article.Current.LocalizedControlType -ne 'article'){continue}
+ $articles=@((Desc $threads[0]) | Where-Object {
+  $_.Current.LocalizedControlType -ceq 'article'
+ })
+ if($articles.Count -eq 0){
+  Get-VirtualizedConversationTurns $threads[0]
+  return
+ }
+ # A trailing virtualized row beside historical article nodes must not let an
+ # older verified article appear to be the newest turn.
+ foreach($element in (Desc $threads[0])){
+  $current=$element.Current
+  $isRoleHeading=($current.LocalizedControlType -ceq 'heading' -and
+                  $current.ClassName -cmatch '(?:^|\s)sr-only(?:\s|$)' -and
+                  $current.Name -cin @('You said:','ChatGPT said:'))
+  $isMessageBody=($current.LocalizedControlType -ceq 'group' -and
+                  $current.ClassName -cmatch '(?:^|\s)(?:Renderer-[\w-]+|bg-user-message)(?:\s|$)')
+  if(-not ($isRoleHeading -or $isMessageBody)){continue}
+  $insideArticle=$false
+  for($parent=Get-AccessibilityParent $element;$null -ne $parent;$parent=Get-AccessibilityParent $parent){
+   if($parent.Current.LocalizedControlType -ceq 'article'){$insideArticle=$true;break}
+   if(Test-TranscriptRegion $parent){break}
+  }
+  if(-not $insideArticle){throw 'Article transcript has an unverified virtualized row'}
+ }
+ foreach($article in $articles){
   for($parent=Get-AccessibilityParent $article; $null -ne $parent; $parent=Get-AccessibilityParent $parent){
    if($parent.Current.LocalizedControlType -eq 'article' -or (Test-TranscriptRegion $parent)){break}
   }
@@ -309,7 +400,7 @@ function Find-PostedMessage($window,$expected,[string]$afterResponse='') {
    if($turns[$i].role -ceq 'assistant'){$assistantCount++}
    else{$lastUser=$i;$userAnchorOrdinal=$assistantCount}
   }
-  if($lastUser -lt 0){return $false}
+  if($lastUser -lt 0 -or @($turns | Where-Object {$_.ContainsKey('virtualized') -and $_['virtualized']}).Count){return $false}
   if($afterOrdinal -gt 0 -and ($lastUser -eq 0 -or $userAnchorOrdinal -ne $afterOrdinal -or
      $turns[$lastUser-1].role -cne 'assistant' -or
      (Read-ConversationContent $turns[$lastUser-1] $afterOrdinal).response_id -cne $afterResponse)){
@@ -408,7 +499,7 @@ function Read-ConversationContent($turn,[int]$ordinal) {
  foreach($el in (Desc $turn.article)){
   if($el.Current.ControlType -ne [System.Windows.Automation.ControlType]::Text){continue}
   $name=$el.Current.Name
-  if(-not $name -or (Get-ConversationRole $el)){continue}
+  if(-not $name -or (-not $turn.ContainsKey('virtualized') -and (Get-ConversationRole $el))){continue}
   $parts+= $name
   $finalProse=$false
   if($turn.role -ceq 'assistant'){
@@ -442,6 +533,7 @@ function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
            user_turn_seen=$false;user_after_assistant=$false
            reason='Streaming conversation structure is incomplete'}
  }
+ $virtualized=@($turns | Where-Object {$_.ContainsKey('virtualized') -and $_['virtualized']}).Count -gt 0
  $assistant=@($turns | Where-Object {$_.role -ceq 'assistant'})
  $user=@($turns | Where-Object {$_.role -ceq 'user'})
  if(-not $assistant.Count){
@@ -452,20 +544,23 @@ function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
   # No automatic turn completion until a final status line and no active Stop.
   $terminal=$content.final_status_verified
   $userAfter=$turns[-1].role -ceq 'user'
-  $ready=$terminal -and -not $stop -and -not $userAfter
+  $ready=$terminal -and -not $stop -and -not $userAfter -and -not $virtualized
   $turn=@{
    ready=$ready;chat_id=$target.chat;project=$ProjectId;role='assistant'
-   response_id=$content.response_id
-   text=$content.text;complete=$ready;reason=$(if($stop){'Streaming/Stop control present'}elseif(-not $terminal){'No final status in verified assistant prose'}else{'Completed status observed in assistant prose'})
-   method='UIA_ACCESSIBILITY_TEXT';stop_control=$stop
+   response_id=$(if($virtualized){$null}else{$content.response_id})
+   text=$(if($virtualized){''}else{$content.text});complete=$ready
+   reason=$(if($virtualized){'Virtualized view lacks verified absolute turn identity'}elseif($stop){'Streaming/Stop control present'}elseif(-not $terminal){'No final status in verified assistant prose'}else{'Completed status observed in assistant prose'})
+   method=$(if($virtualized){'UIA_VIRTUALIZED_UNQUALIFIED'}else{'UIA_ACCESSIBILITY_TEXT'});stop_control=$stop
    user_after_assistant=$userAfter;user_turn_seen=($user.Count -gt 0)
    handoff_locator_verified=$content.handoff_locator_verified
   }
  }
  if($IncludeUserAnchor){
-  $turn['assistant_turn_count']=$assistant.Count
-  $turn['user_turn_count']=$user.Count
-  if($user.Count){
+  # Visible virtualized rows may omit prior user/assistant turns. Do not
+  # infer absolute ordinals or a user anchor for the journal/stale timer.
+  $turn['assistant_turn_count']=if($virtualized){$null}else{$assistant.Count}
+  $turn['user_turn_count']=if($virtualized){$null}else{$user.Count}
+  if($user.Count -and -not $virtualized){
    $lastUserContent=Read-ConversationContent $user[-1] $user.Count
    if($lastUserContent.text){$turn['latest_user_digest']=$lastUserContent.digest}
   }

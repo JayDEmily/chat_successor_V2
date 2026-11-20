@@ -1,0 +1,11 @@
+{
+  "candidate_working_branch": "codex/chat-succession-finish (uncommitted virtual reader)",
+  "source_baseline": "34c8b790492f0e07d016f869350cf65aa46001da",
+  "account_route_verified": true,
+  "fixture_is_completed": true,
+  "stable_two_reads": true,
+  "qualified_virtualized_identity_only": true,
+  "no_response_id_or_send_receipt": true,
+  "original_pause_files_unchanged": true,
+  "no_browser_navigation_or_send": true
+}

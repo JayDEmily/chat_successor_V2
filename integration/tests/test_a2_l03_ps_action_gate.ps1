@@ -204,4 +204,19 @@ foreach($status in @('CHAT_STATUS: NEED_MORE_TIME','CHAT_STATUS: TASK_COMPLETE',
   $window=Transcript-Window @($initial,(Turn-Article 2 'ChatGPT said:' @((Text-Leaf $status $true))))
   if(-not (Read-CurrentTurn @{window=$window; chat=$ChatId}).ready){throw 'Verified prose status was rejected'}
 }
+# Mixed legacy articles and newer virtualized role headings cannot
+# silently fall back to an older, otherwise verified assistant article.
+$mixed=Transcript-Window @($initial,(Turn-Article 2 'ChatGPT said:' @(
+  (Text-Leaf 'CHAT_STATUS: TASK_COMPLETE' $true)
+)))
+$virtualTail=Text-Leaf 'You said:'
+$virtualTail.Current.LocalizedControlType='heading'
+$virtualTail.Current.ClassName='sr-only'
+$virtualTail.Parent=$mixed.Children[0]
+$mixed.Children[0].Children+=@($virtualTail)
+$mixed.Children+=@($virtualTail)
+$mixedHeld=$false
+try{$null=Read-CurrentTurn @{window=$mixed;chat=$ChatId}}
+catch{$mixedHeld=$_.Exception.Message -like '*unverified virtualized row*'}
+if(-not $mixedHeld){throw 'Mixed article and trailing virtualized turn accepted an older status'}
 Write-Output 'PASS: Windows PowerShell action, structurally bounded full turns, prose status and owner receipt checks.'
