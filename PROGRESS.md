@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G3 read-only virtualized-turn discovery — 20 November 2026
+
+[A2-G3 native accessibility evidence](evidence/astra-adr-0002-20261120/implementation/G3_20261120/VIRTUALIZED_TURN_DISCOVERY.md) was collected on the installed `5c86ad6` backend and an already-completed disposable Bird and Pig chat. The exact account, Project and one saved view were verified without any navigation or Send. Chrome exposed zero conversation article nodes, one user/assistant heading-and-body pair, and one terminal-status text node. A naive visible-body text digest did not match the previous saved response receipt, so this is discovery only: an actionable assistant status and verified user anchor are **not** established.
+
+**A2-G3 remains NOT_RUN; no new paired controller/worker was launched.** The next leaf action is a bounded, fail-closed virtualized-turn readback repair with native negative tests and independent acceptance before live D01–D03/V03/S05–S06 actions. Do not equate the G2 identity-only recovery pass with a G3 message/receipt pass.
+
 ## ADR 0002 A2-G2 source-pinned Windows read-only recovery follow-up — 20 November 2026
 
 **A2-G2 PASS for installed Windows account routing, no-Send preflight and read-only saved-view recovery on `5c86ad6d735b4c0626c49aedfdb93aeb95e6199b`.** The prior W01 and W02 observations and the new W03 read-only recovery are reconciled in [the exact-candidate receipt](evidence/astra-adr-0002-20261120/implementation/G2_20261120/RECOVERY_RECONCILIATION_5C86AD6.md). The separate [independent OFFLINE ACCEPT](evidence/astra-adr-0002-20261120/implementation/G2_20261120/recovery-review-5c86ad6/REPORT.md) covered 114 integration and 119 reference tests per host, three native PowerShell suites and fail-closed virtualized-view negatives. W02's two-window/mutex live evidence was carried forward from the unchanged code path on the preceding installed candidate; it was not freshly repeated on `5c86ad6`.
