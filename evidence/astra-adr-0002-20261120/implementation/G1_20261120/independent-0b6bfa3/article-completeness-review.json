@@ -1,0 +1,51 @@
+{
+    "exact_anchored_accepted":  true,
+    "exact_unanchored_accepted":  true,
+    "final_prose_status_ready":  true,
+    "literal_label_cases":  [
+                                {
+                                    "literal_label":  "Ask ChatGPT",
+                                    "anchored_wrong_body_accepted":  false,
+                                    "unanchored_wrong_body_accepted":  false,
+                                    "assistant_non_final_marked_ready":  false,
+                                    "assistant_tail_retained":  true
+                                },
+                                {
+                                    "literal_label":  "Latest response",
+                                    "anchored_wrong_body_accepted":  false,
+                                    "unanchored_wrong_body_accepted":  false,
+                                    "assistant_non_final_marked_ready":  false,
+                                    "assistant_tail_retained":  true
+                                },
+                                {
+                                    "literal_label":  "You said:",
+                                    "anchored_wrong_body_accepted":  false,
+                                    "unanchored_wrong_body_accepted":  false,
+                                    "assistant_non_final_marked_ready":  false,
+                                    "assistant_tail_retained":  true
+                                },
+                                {
+                                    "literal_label":  "ChatGPT said:",
+                                    "anchored_wrong_body_accepted":  false,
+                                    "unanchored_wrong_body_accepted":  false,
+                                    "assistant_non_final_marked_ready":  false,
+                                    "assistant_tail_retained":  true
+                                },
+                                {
+                                    "literal_label":  "ChatGPT can make mistakes. Check important info.",
+                                    "anchored_wrong_body_accepted":  false,
+                                    "unanchored_wrong_body_accepted":  false,
+                                    "assistant_non_final_marked_ready":  false,
+                                    "assistant_tail_retained":  true
+                                }
+                            ],
+    "anchored_receipt_despite_newer_unverified_article":  false,
+    "unanchored_receipt_despite_newer_unverified_article":  false,
+    "unverified_article_holds_earlier_status":  true,
+    "duplicate_same_role_heading_holds":  true,
+    "conflicting_role_headings_hold":  true,
+    "multiple_transcripts_refuse_acknowledgement":  true,
+    "multiple_transcripts_hold_status":  true,
+    "known_streaming_status_remains_unready":  true,
+    "incomplete_streaming_waits":  true
+}

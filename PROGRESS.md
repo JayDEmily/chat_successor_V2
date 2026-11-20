@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G1 independent acceptance — 20 November 2026
+
+**A2-G1 OFFLINE ACCEPT** on `0b6bfa3e935e713fe2f36afd8da79c2befab9a42`. The [independent report, 24-case matrix and raw evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent-0b6bfa3/REPORT.md) confirm all 24 offline cases, 113 integration and 119 reference tests on both hosts, and three native Windows PowerShell passes. The trailing unverified article now blocks older acknowledgement and status. Exact complete and streaming controls pass.
+
+**Next eligible work** is A2-L06 / A2-G2 installed Windows account and no-Send verification on this pin. A2-G2–G6 are NOT_RUN.
+
 ## ADR 0002 A2-G1 complete transcript verification — 20 November 2026
 
 Source `0b6bfa3e935e713fe2f36afd8da79c2befab9a42` holds on any unverified top-level article so a newer unidentified turn cannot expose an older Send receipt or assistant status. [Corrective evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/corrective-0b6bfa3/RESULT.md) records 113/113 integration on both hosts and three native Windows PowerShell passes.
