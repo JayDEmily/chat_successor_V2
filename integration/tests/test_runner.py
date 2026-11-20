@@ -1,6 +1,7 @@
 """Local simulated integration checks; none are live ChatGPT evidence."""
 from __future__ import annotations
 
+from dataclasses import asdict
 from pathlib import Path
 import sys
 import tempfile
@@ -114,6 +115,24 @@ class IntegrationTests(unittest.TestCase):
         saved = Controller.load(self.path)
         self.assertEqual(saved.state.pending.phase, "prepared")
         self.assertEqual(saved.unique_count, 1)
+        self.assertEqual(state_path.with_suffix(".pause").read_text(encoding="utf-8"),
+                         "Operator pause")
+
+    def test_existing_pause_prevents_browser_preparation(self):
+        self.controller.consume(self.response("CHAT_STATUS: NEED_MORE_TIME"))
+        self.controller.save(self.path)
+        pending = asdict(self.controller.state.pending)
+        marker = self.path.with_suffix(".pause")
+        marker.write_text("Pause generation one", encoding="utf-8")
+        browser = SyntheticBrowser()
+
+        self.assertEqual(dispatch_prepared(self.controller, browser, self.path), Action.HOLD)
+        self.assertEqual(browser.calls, [])
+        saved = Controller.load(self.path)
+        self.assertEqual(asdict(saved.state.pending), pending)
+        self.assertEqual(saved.unique_count, 1)
+        self.assertEqual(marker.read_text(encoding="utf-8"), "Pause generation one")
+        self.assertTrue(inspect_state(self.path)["pause_acknowledged"])
 
     def test_adapter_pause_receipt_preserves_prepared_action(self):
         class PausingBrowser(SyntheticBrowser):

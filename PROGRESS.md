@@ -1,5 +1,13 @@
 # Progress
 
+## Lean ADR 0002 L04 — Pause before preparation (21 November 2026)
+
+- **Base and candidate:** `7258fff` to runner blob `5a5252b70ab961a6b6d95a11f86874e71590f399`.
+- **Behavior:** direct dispatch acknowledges an existing pause before browser preparation or owner re-entry. The later pause checks still protect the click boundary.
+- **Windows `test_runner.py`:** before the fix 15/16, with one unexpected prepare call. After the fix 16/16, exit 0. An existing marker caused zero browser calls. A marker written during prepare blocked Send. The pending action, count, and marker survived.
+- **Limit:** mock dispatch and temporary saved state. No live Send or installation evidence.
+- **Next:** L05, read-only Shoko Yumi observation of the current input and response.
+
 ## Lean ADR 0002 L03 — Durable unsupported-reader hold (21 November 2026)
 
 - **Base and candidate:** `1eafce8` to Windows backend blob `b351141db970d18176cb463748e99c1a3ec00fd1`.

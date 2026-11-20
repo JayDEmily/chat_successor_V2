@@ -120,6 +120,10 @@ def dispatch_prepared(controller: Controller, browser: Browser, state_path: Path
         return Action.WAIT
     if p.phase != "prepared" or controller.state.halted:
         return Action.HOLD
+    if state_path.with_suffix(".pause").exists():
+        controller.pause(owner_pause_reason(state_path, "Operator pause requested before preparation"))
+        controller.save(state_path)
+        return Action.HOLD
     try:
         context = None
         if p.owner_request_id:
