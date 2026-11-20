@@ -1,5 +1,11 @@
 # Progress
 
+## ADR 0002 A2-G1 corrective candidate — 20 November 2026
+
+Corrected L02–L05 at `66f4b94dc6fa94c708b42c11d2681da291dd9d99` against the independent hold below. [Source-pinned corrections and raw checks](evidence/astra-adr-0002-20261120/implementation/G1_20261120/corrective/RESULT.md) record 111 integration and 119 reference passes with zero skips on both Windows and Ubuntu, plus three native Windows PowerShell helper tests. The account, browser, publication and owner-input regressions cover the nine held cases.
+
+**Next eligible work** is independent A2-G1 review of the corrected candidate. The candidate is pending review. A2-G2–G6 are NOT_RUN.
+
 ## ADR 0002 A2-G1 independent review — 20 November 2026
 
 **A2-G1 OFFLINE HOLD** on candidate `9a2fc382049a548adfefb5ed26a202c715988ca2`. The separate review reproduced 106 integration and 119 reference passes on each of Windows CPython 3.13.15 and Ubuntu CPython 3.14.4, plus all three native PowerShell helper tests. The [independent review, 24-case matrix and raw evidence](evidence/astra-adr-0002-20261120/implementation/G1_20261120/independent/REPORT.md) record 15 offline passes and 9 holds. The negative probes reproduce unverified routing, a mismatched bootstrap action, provisional successor adoption, stale-view and publication gaps, and dispatch with absent private owner context.
