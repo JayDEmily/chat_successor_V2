@@ -1,0 +1,8 @@
+gate_id,title,current_status,leaves,scope_note
+A2-G0,Evidence and authority,OFFLINE_REVIEW_COMPLETE_OWNER_DECISION_PENDING,L01,V01-V07; no live authority inferred
+A2-G1,Minimal offline implementation,NOT_RUN,L02-L05,Old 182 tests pass; proposed deltas not implemented
+A2-G2,Installed Windows/account route,NOT_RUN,L06,Windows/PowerShell/private plugins not accessed
+A2-G3,Two-run isolation/recovery/stops,NOT_RUN,L07,Historical pair is not this new target acceptance
+A2-G4,Shoco iPhone and account switch,NOT_RUN,L08,Shoco branch staged only in supplied evidence
+A2-G5,Measured practical concurrency,NOT_RUN,L09,No measurements above two; no ceiling known
+A2-G6,Scoped release/operator closeout,NOT_RUN,L10,Proposed ADR not owner-approved or deployed

@@ -1,0 +1,25 @@
+{
+  "zip_sha256": "184b3032b156fb2a5e9779a7f8464462c06acca10e2ea6bb3cadb73f0134aeca",
+  "files": [
+    {
+      "path": ".app.json",
+      "sha256": "e88cf292449d38a23c00c8359cf728d423a88d5283b8fa70807ae0e4f9b3ce38",
+      "matches_source": true
+    },
+    {
+      "path": "plugin.json",
+      "sha256": "b138fda8f9c437391f1b5913c113f18d06d4f5e5c06246f69a9e3ad4462c4487",
+      "matches_source": true
+    },
+    {
+      "path": "skills/start-chat-succession/SKILL.md",
+      "sha256": "ee33ecfb9d56ec2bcc30ca44733969198e4318f6a2df97eeab14e6d063d859ab",
+      "matches_source": true
+    },
+    {
+      "path": "skills/start-chat-succession/agents/openai.yaml",
+      "sha256": "63136e0cff9d2b9d61dc567045ddcc5f76cca66c4f35a323f24d3a41877e785a",
+      "matches_source": true
+    }
+  ]
+}

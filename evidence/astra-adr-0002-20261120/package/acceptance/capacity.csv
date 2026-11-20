@@ -1,0 +1,6 @@
+stage,target_N,planned_cohorts,actual_cohorts,peak_N_observing,peak_N_open,caps_finish_and_cap_fixture,run_ids,candidate_commit,pc_configuration_ref,latency_n,latency_median_s,latency_p95_s,latency_max_s,pause_ack_max_s,min_available_ram_gib,max_commit_ratio,cpu_p95_percent,unexpected_holds,duplicate_sends,misroutes,orphaned_owned_probes,healthy_runs_expected,healthy_runs_terminal,unplanned_interventions,verdict,limiting_reason,evidence_path
+1,2,3,,,,3;2,,,,,,,,,,,,,,,,,,,NOT_RUN,,
+2,3,3,,,,3;2,,,,,,,,,,,,,,,,,,,NOT_RUN,,
+3,4,3,,,,3;2,,,,,,,,,,,,,,,,,,,NOT_RUN,,
+4,6,3,,,,3;2,,,,,,,,,,,,,,,,,,,NOT_RUN,,
+5,8,3,,,,3;2,,,,,,,,,,,,,,,,,,,NOT_RUN,,

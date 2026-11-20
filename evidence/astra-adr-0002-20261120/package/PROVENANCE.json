@@ -1,0 +1,28 @@
+{
+  "deliverable_kind": "Proposed ADR, ordered implementation leaves, acceptance gates, operator procedure and offline evidence",
+  "reference_date": "2026-11-20",
+  "source_archive_sha256": "473876c6b0fffa1f55ef68ad9da62bda0e949295808f899d502edd68ab5f3945",
+  "source_snapshot_commit": "283e6c17bf3359c203a362fd6593563480eeea5f",
+  "runtime_candidate_commit": "2c29406b1c43904c5ead79064fe7856971e0aa2e",
+  "plugin_baseline_version": "0.4.3",
+  "plugin_zip_sha256": "184b3032b156fb2a5e9779a7f8464462c06acca10e2ea6bb3cadb73f0134aeca",
+  "implementation_modified": false,
+  "existing_repository_modified": false,
+  "original_archive_preserved_byte_for_byte": true,
+  "mcp_used": false,
+  "network_used": false,
+  "live_sends": 0,
+  "owner_approval_of_new_adr": "PENDING",
+  "authored_leaves": 10,
+  "authored_gates": 7,
+  "acceptance_cases": 41,
+  "live_acceptance_performed": false,
+  "original_source_copies": 45,
+  "evidence_classifications": [
+    "VERIFIED_LOCAL",
+    "STATIC_FINDING",
+    "ARCHIVED_LIVE",
+    "UNVERIFIED",
+    "PROPOSED"
+  ]
+}

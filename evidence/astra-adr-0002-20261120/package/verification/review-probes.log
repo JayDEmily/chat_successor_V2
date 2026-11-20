@@ -1,0 +1,14 @@
+test_P01_cap_stop_survives_restart (__main__.BaselineProbes.test_P01_cap_stop_survives_restart) ... ok
+test_P02_finish_before_cap (__main__.BaselineProbes.test_P02_finish_before_cap) ... ok
+test_P03_continue_at_cap_and_deduplicate (__main__.BaselineProbes.test_P03_continue_at_cap_and_deduplicate) ... ok
+test_P04_pause_after_prepare_survives_restart (__main__.BaselineProbes.test_P04_pause_after_prepare_survives_restart) ... ok
+test_P05_uncertain_action_is_not_retried (__main__.BaselineProbes.test_P05_uncertain_action_is_not_retried) ... ok
+test_P06_job_id_contract (__main__.BaselineProbes.test_P06_job_id_contract) ... ok
+test_P07_characterize_absent_account_binding_schema (__main__.BaselineProbes.test_P07_characterize_absent_account_binding_schema) ... ok
+test_P08_characterize_unchecked_target_action_id (__main__.BaselineProbes.test_P08_characterize_unchecked_target_action_id) ... ok
+test_P09_characterize_pause_status_omission (__main__.BaselineProbes.test_P09_characterize_pause_status_omission) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.015s
+
+OK

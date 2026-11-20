@@ -1,0 +1,43 @@
+{
+  "pause_requested_at": "2026-11-20T08:49:10+11:00",
+  "readback_at": "2026-11-19T21:55:18.7022142+00:00",
+  "trial_controller_processes": 0,
+  "worker_labels_redacted": true,
+  "runs": [
+    {
+      "run_id": "b401f984a1927f6979067d07",
+      "repo": "JayDEmily/rowing2026",
+      "project": "Project A Test",
+      "initial_branch": "work/bio2-golden-yaml-24-integrated-workstation-20261119",
+      "effective_branch": "work/chat-succession-audit-rowing-20261119",
+      "cap": 2,
+      "workers": [
+        "ROWING-1",
+        "ROWING-2"
+      ],
+      "current_worker": "ROWING-2",
+      "last_consumed_status": "TASK_COMPLETE",
+      "pending_action": null,
+      "halted": "Operator pause requested",
+      "pause_marker": true,
+      "first_published_receipt": "acbf989ffefed1771f9fd9d08261bdb9d2e4bce0"
+    },
+    {
+      "run_id": "271867d56ebd3443a4b40fa6",
+      "repo": "JayDEmily/sw_v1",
+      "project": "Project B Test",
+      "initial_branch": "work/sw2021-full-source-library-20261119",
+      "effective_branch": "work/sw2021-full-source-library-20261119",
+      "cap": 2,
+      "workers": [
+        "SOLIDWORKS-1"
+      ],
+      "current_worker": "SOLIDWORKS-1",
+      "last_consumed_status": null,
+      "pending_action": null,
+      "halted": "Operator pause requested",
+      "pause_marker": true,
+      "first_published_receipt": "b6579ae8dc308ad4912ede85530056d53566bc8a"
+    }
+  ]
+}

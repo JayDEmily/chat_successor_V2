@@ -1,0 +1,30 @@
+.........................................................E
+======================================================================
+ERROR: test_tables (unittest.loader._FailedTest.test_tables)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_tables
+Traceback (most recent call last):
+  File "C:\Program Files\Python313\Lib\unittest\loader.py", line 403, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Program Files\Python313\Lib\unittest\loader.py", line 346, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "C:\Users\james\AppData\Local\Temp\chat-succession-export-9f124568eee84f59b329961aa7ba4daf\chat-succession-astra-handoff-2026-11-20\source\astra\2026-11-17\unpacked\chat_succession_test_kit_20261117\tests\test_tables.py", line 25, in <module>
+    for case in json.loads((ROOT / "fixtures/parser_cases.json").read_text()):
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Program Files\Python313\Lib\pathlib\_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python313\Lib\pathlib\_abc.py", line 633, in read_text
+    return f.read()
+           ~~~~~~^^
+  File "C:\Program Files\Python313\Lib\encodings\cp1252.py", line 23, in decode
+    return codecs.charmap_decode(input,self.errors,decoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeDecodeError: 'charmap' codec can't decode byte 0x90 in position 6583: character maps to <undefined>
+
+
+----------------------------------------------------------------------
+Ran 58 tests in 14.905s
+
+FAILED (errors=1)

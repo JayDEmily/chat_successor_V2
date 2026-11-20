@@ -1,0 +1,5 @@
+PASS initial ERROR holds after worker 1 and repeated launch returns the existing hold
+PASS explicit resume watches the original worker and ignores the old ERROR and another chat
+PASS published receipt on a different branch is invisible to the original run
+PASS launching with the changed branch takes the separate fresh bootstrap path
+PASS same-worker completion and correct checkpoint reach STOP_FINISHED with no browser Send

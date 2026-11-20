@@ -1,0 +1,66 @@
+{
+  "mode": "OFFLINE_CHARACTERIZATION_ONLY",
+  "tests_run": 9,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "probes": [
+    {
+      "probe_id": "P01",
+      "classification": "INVARIANT_CHECK",
+      "assertion_result": "PASS",
+      "description": "Cap stop with an eligible next assignment survives reload and refuses resume."
+    },
+    {
+      "probe_id": "P02",
+      "classification": "INVARIANT_CHECK",
+      "assertion_result": "PASS",
+      "description": "FINISHED takes precedence over cap when the published programme is complete."
+    },
+    {
+      "probe_id": "P03",
+      "classification": "INVARIANT_CHECK",
+      "assertion_result": "PASS",
+      "description": "NEED_MORE_TIME at the cap continues the same chat; repeated response is ignored."
+    },
+    {
+      "probe_id": "P04",
+      "classification": "INVARIANT_CHECK",
+      "assertion_result": "PASS",
+      "description": "A durable pause marker blocks dispatch after preparation; pending action/count survive reload."
+    },
+    {
+      "probe_id": "P05",
+      "classification": "INVARIANT_CHECK",
+      "assertion_result": "PASS",
+      "description": "Restart with a possibly sent action holds; positive adoption counts once and does not Send."
+    },
+    {
+      "probe_id": "P06",
+      "classification": "INPUT_CONTRACT",
+      "assertion_result": "PASS",
+      "description": "New job IDs accept 24 lowercase alphanumerics and reject a 32-character ID."
+    },
+    {
+      "probe_id": "P07",
+      "classification": "LIMITATION_REPRODUCED",
+      "assertion_result": "PASS",
+      "description": "The baseline config schema rejects proposed account/profile binding fields."
+    },
+    {
+      "probe_id": "P08",
+      "classification": "LIMITATION_REPRODUCED",
+      "assertion_result": "PASS",
+      "description": "With browser invocation mocked, send_once accepts a target record with a different action_id when handle/source/kind match."
+    },
+    {
+      "probe_id": "P09",
+      "classification": "LIMITATION_REPRODUCED",
+      "assertion_result": "PASS",
+      "description": "inspect_state alone does not expose a pause marker before controller acknowledgement."
+    }
+  ],
+  "browser_calls_real": 0,
+  "network_calls": 0,
+  "warning": "P07-P09 PASS means a baseline limitation was reproduced, not that it is fixed."
+}

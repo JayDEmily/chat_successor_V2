@@ -1,0 +1,39 @@
+{
+  "captured_utc": "2026-11-19T05:20:02+00:00",
+  "repo": "JayDEmily/my-cat-and-dog",
+  "main": "94eee8b6162520fc0f75f355bdac6e778310c50b",
+  "turns": [
+    {
+      "branch": "codex/story-01-scruffy",
+      "commit": "1bff919d7eddd7855032b8dcf0423639f5c15357",
+      "parent": "94eee8b6162520fc0f75f355bdac6e778310c50b",
+      "worker": "story-worker-1",
+      "file": "STORY.md",
+      "added_lines": 1
+    },
+    {
+      "branch": "codex/story-02-bluey",
+      "commit": "4061a7f4507a491d568b31afc3c0d3b20058dba5",
+      "parent": "1bff919d7eddd7855032b8dcf0423639f5c15357",
+      "worker": "story-worker-2",
+      "file": "STORY.md",
+      "added_lines": 1
+    },
+    {
+      "branch": "codex/story-03-scruffy",
+      "commit": "9916752677e8dc3fd1706f1abc56bb1fd7c3733e",
+      "parent": "4061a7f4507a491d568b31afc3c0d3b20058dba5",
+      "worker": "story-worker-3",
+      "file": "STORY.md",
+      "added_lines": 1
+    },
+    {
+      "branch": "codex/story-04-bluey",
+      "commit": "9b0180354fc1a6e127c9982dd44fb4b17f5716a9",
+      "parent": "9916752677e8dc3fd1706f1abc56bb1fd7c3733e",
+      "worker": "story-worker-4",
+      "file": "STORY.md",
+      "added_lines": 1
+    }
+  ]
+}

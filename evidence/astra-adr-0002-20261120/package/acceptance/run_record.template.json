@@ -1,0 +1,146 @@
+{
+  "template": true,
+  "result": "NOT_RUN",
+  "case_ids": [],
+  "cohort_id": null,
+  "scope": "owner-authorized disposable fixture only",
+  "authority": {
+    "owner_decision_reference": null,
+    "approved_work_scope": null,
+    "approved_fault_boundary": null,
+    "pause_release_reference": null
+  },
+  "candidate": {
+    "plugin_version": null,
+    "plugin_private_id_alias": null,
+    "package_sha256": null,
+    "backend_commit": null,
+    "wrapper_sha256": null,
+    "windows_version": null,
+    "chrome_version": null,
+    "python_version": null
+  },
+  "route": {
+    "account_alias": null,
+    "account_identity_verified_privately": null,
+    "profile_binding_evidence": null,
+    "native_install_root_private_reference": null,
+    "project_id": null,
+    "project_url_private_reference": null,
+    "repo": null
+  },
+  "run": {
+    "run_id": null,
+    "job_id": null,
+    "entry_branch": null,
+    "effective_branch": null,
+    "instruction_base_sha": null,
+    "immutable_worker_cap": null,
+    "request_chat_is_counted": false,
+    "worker_ids_or_consistent_labels": [],
+    "current_worker": null,
+    "initial_count": null,
+    "final_count": null
+  },
+  "expected": {
+    "fixture_kind": null,
+    "final_worker_count": null,
+    "successor_count": null,
+    "same_chat_continuation_count": null,
+    "terminal_action": null,
+    "eligible_next_task_at_cap": null,
+    "allowed_files": []
+  },
+  "pause": {
+    "requested_at_utc": null,
+    "generation_private_reference": null,
+    "acknowledged_at_utc": null,
+    "present_after_restart": null,
+    "released_generation_matches": null,
+    "in_flight_action_at_request": null
+  },
+  "events": [],
+  "event_required_fields": [
+    "timestamp_utc",
+    "monotonic_elapsed_seconds",
+    "run_id",
+    "account_alias",
+    "worker_id_or_label",
+    "action_id",
+    "response_id",
+    "phase",
+    "operation",
+    "project_id",
+    "target_handle_private_reference",
+    "message_digest",
+    "posted_after_anchor",
+    "observed_saved_id_or_label",
+    "git_sha",
+    "outcome",
+    "evidence_path"
+  ],
+  "view_recovery": {
+    "kind": null,
+    "original_fingerprint_reference": null,
+    "fresh_fingerprint_reference": null,
+    "same_latest_user_turn": null,
+    "two_stable_fresh_reads": null,
+    "composer_empty_and_no_attachments": null,
+    "owned_probe_closed_at_utc": null,
+    "reload_invoked_at_utc": null,
+    "normal_completed_read_after_reload": null,
+    "worker_count_unchanged_by_view_recovery": null
+  },
+  "publications": [],
+  "publication_required_fields": [
+    "worker_id_or_label",
+    "run_trailer",
+    "branch",
+    "sha",
+    "parent_sha",
+    "changed_paths",
+    "verified_expected_content",
+    "next_trailer",
+    "fetched_at_utc",
+    "verified_before_successor_click"
+  ],
+  "concurrency": {
+    "open_run_intervals": [],
+    "observing_intervals": [],
+    "peer_progress_during_pause_evidence": null,
+    "all_run_overlap_seconds": null
+  },
+  "resources": {
+    "raw_samples_path": null,
+    "threshold_series_reference": null
+  },
+  "counts": {
+    "actual_click_attempts": null,
+    "posted_user_turns_confirmed": null,
+    "successors_confirmed": null,
+    "same_chat_inputs_confirmed": null,
+    "duplicate_sends": null,
+    "misroutes": null,
+    "wrong_account_inputs": null,
+    "count_breaches": null,
+    "unplanned_holds": null
+  },
+  "terminal": {
+    "action": null,
+    "halted_reason": null,
+    "pending_action": null,
+    "pause_marker_present": null,
+    "last_verified_git_sha": null,
+    "unused_eligible_work": null
+  },
+  "operator_interventions": [],
+  "independent_review": {
+    "reviewer": null,
+    "private_identity_join_checked": null,
+    "outcome": null,
+    "limitations": [],
+    "next_permitted_action": null
+  },
+  "evidence_paths": [],
+  "notes": "Null and empty fields are unobserved, not zero or pass. Keep sensitive identifiers/content private."
+}

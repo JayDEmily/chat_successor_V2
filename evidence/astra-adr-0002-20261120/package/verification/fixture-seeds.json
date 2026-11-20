@@ -1,0 +1,48 @@
+[
+  {
+    "repository": "chat-succession-bird-pig",
+    "seed": "5f43b42123c2ffdc3521285f866c31a60c2b3710",
+    "tracked_paths": [
+      "README.md"
+    ],
+    "expected_absent": [
+      "STORY.md"
+    ],
+    "clean": true
+  },
+  {
+    "repository": "chat-succession-cat-dog-pair",
+    "seed": "6d844f19f3a81752fe2c1bbb02caccb6f8a097f7",
+    "tracked_paths": [
+      "README.md"
+    ],
+    "expected_absent": [
+      "STORY.md"
+    ],
+    "clean": true
+  },
+  {
+    "repository": "chat-succession-trial-approval",
+    "seed": "b91b00fe75be2ca011eac1ad1cc0d668ffd8d8bf",
+    "tracked_paths": [
+      "README.md"
+    ],
+    "expected_absent": [
+      "NOTES.md"
+    ],
+    "clean": true
+  },
+  {
+    "repository": "chat-succession-trial-rotation",
+    "seed": "75e5d27480e5b0d01fd07d6a11efe05e52498697",
+    "tracked_paths": [
+      "MISSION.txt",
+      "README.md"
+    ],
+    "expected_absent": [
+      "CHECKLIST.md",
+      "REVIEW.md"
+    ],
+    "clean": true
+  }
+]

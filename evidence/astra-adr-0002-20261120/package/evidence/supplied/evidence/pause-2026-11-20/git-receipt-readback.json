@@ -1,0 +1,71 @@
+{
+  "at_pause": [
+    {
+      "repository": "JayDEmily/rowing2026",
+      "baseline": "993741f947aba6e622cf97d233c4f85836671d13",
+      "receipt": "acbf989ffefed1771f9fd9d08261bdb9d2e4bce0",
+      "merge_base": "993741f947aba6e622cf97d233c4f85836671d13",
+      "commits_ahead": 1,
+      "commits_behind": 0,
+      "paths": [
+        {
+          "filename": "verification/chat_succession/SHOCO_DESKTOP_TRIAL_20261120.md",
+          "status": "added",
+          "additions": 21,
+          "deletions": 0,
+          "changes": 21,
+          "previous_filename": null
+        }
+      ],
+      "run_id": "b401f984a1927f6979067d07",
+      "worker": "ROWING-1",
+      "next": "Verify the one-file Rowing receipt, append one line, and finish."
+    },
+    {
+      "repository": "JayDEmily/sw_v1",
+      "baseline": "bb258b66d311f3a5a8c2d5eea83310d41dfdce6a",
+      "receipt": "b6579ae8dc308ad4912ede85530056d53566bc8a",
+      "merge_base": "bb258b66d311f3a5a8c2d5eea83310d41dfdce6a",
+      "commits_ahead": 1,
+      "commits_behind": 0,
+      "paths": [
+        {
+          "filename": "docs/CHAT_SUCCESSION_SHOCO_TRIAL_20261120.md",
+          "status": "added",
+          "additions": 21,
+          "deletions": 0,
+          "changes": 21,
+          "previous_filename": null
+        }
+      ],
+      "run_id": "271867d56ebd3443a4b40fa6",
+      "worker": "SOLIDWORKS-1",
+      "next": "Verify the lookup receipt and leave a third evidence review eligible."
+    }
+  ],
+  "after_pause": [
+    {
+      "repository": "JayDEmily/rowing2026",
+      "baseline": "acbf989ffefed1771f9fd9d08261bdb9d2e4bce0",
+      "receipt": "1eadc9d8b5486aecf13b312a0d02737b3cf8a35f",
+      "merge_base": "acbf989ffefed1771f9fd9d08261bdb9d2e4bce0",
+      "commits_ahead": 1,
+      "commits_behind": 0,
+      "paths": [
+        {
+          "filename": "verification/chat_succession/SHOCO_DESKTOP_TRIAL_20261120.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0,
+          "changes": 1,
+          "previous_filename": null
+        }
+      ],
+      "run_id": "b401f984a1927f6979067d07",
+      "worker": "ROWING-2",
+      "next": "FINISHED",
+      "recorded_commit_time": "2026-11-20T08:55:28+11:00",
+      "controller_acknowledgement": "Operator pause requested"
+    }
+  ]
+}

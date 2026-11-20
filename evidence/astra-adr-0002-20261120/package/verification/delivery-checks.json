@@ -1,0 +1,48 @@
+{
+  "reference_date": "2026-11-20",
+  "status": "PASS",
+  "authored_markdown_files_checked": 23,
+  "authored_local_links_checked": 114,
+  "broken_authored_local_links": [],
+  "authored_python_tools_parse_errors": [],
+  "json_files_parsed": 24,
+  "json_parse_errors": [],
+  "csv_registers": [
+    {
+      "file": "acceptance/gate_results.csv",
+      "rows": 7,
+      "column_shape_valid": true
+    },
+    {
+      "file": "acceptance/capacity.csv",
+      "rows": 5,
+      "column_shape_valid": true
+    },
+    {
+      "file": "acceptance/cases.csv",
+      "rows": 41,
+      "column_shape_valid": true
+    }
+  ],
+  "implementation_leaf_count": 10,
+  "acceptance_gate_count": 7,
+  "acceptance_case_count": 41,
+  "unknown_case_references": [],
+  "case_required_field_gaps": [],
+  "supplied_copies_verified": 45,
+  "supplied_copy_mismatches": [],
+  "input_paths_changed": [],
+  "original_archive_byte_match": true,
+  "reproducer_returncode": 0,
+  "network_or_mcp_used": false,
+  "existing_repository_modified": false,
+  "archive_roundtrip_status": "PASS",
+  "note": "Preserved supplied documents keep their original historical links; authored document links were checked.",
+  "archive_roundtrip_checks": {
+    "regular_files": 95,
+    "manifest_entries_checked": 94,
+    "tar_members": 136,
+    "unsafe_members": [],
+    "original_archive_match": true
+  }
+}

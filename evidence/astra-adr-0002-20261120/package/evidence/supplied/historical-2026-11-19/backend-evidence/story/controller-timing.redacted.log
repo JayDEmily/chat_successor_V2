@@ -1,0 +1,120 @@
+2026-11-19T03:26:32Z run_started chat=story-worker-1 poll_seconds=20 response_wait_minutes=None
+2026-11-19T03:26:32Z uia_start mode=Observe chat=story-worker-1
+2026-11-19T03:26:36Z uia_exit mode=Observe chat=story-worker-1 seconds=3.71 code=0
+2026-11-19T03:26:36Z observation chat=story-worker-1 ready=False reason=Streaming/Stop control present
+2026-11-19T03:26:36Z cycle_result action=WAIT chat=story-worker-1
+2026-11-19T03:26:56Z uia_start mode=Observe chat=story-worker-1
+2026-11-19T03:26:59Z uia_exit mode=Observe chat=story-worker-1 seconds=3.29 code=0
+2026-11-19T03:26:59Z observation chat=story-worker-1 ready=False reason=Streaming/Stop control present
+2026-11-19T03:26:59Z cycle_result action=WAIT chat=story-worker-1
+2026-11-19T03:27:19Z uia_start mode=Observe chat=story-worker-1
+2026-11-19T03:27:23Z uia_exit mode=Observe chat=story-worker-1 seconds=3.45 code=0
+2026-11-19T03:27:23Z observation chat=story-worker-1 ready=False reason=Streaming/Stop control present
+2026-11-19T03:27:23Z cycle_result action=WAIT chat=story-worker-1
+2026-11-19T03:27:43Z uia_start mode=Observe chat=story-worker-1
+2026-11-19T03:27:46Z uia_exit mode=Observe chat=story-worker-1 seconds=3.32 code=0
+2026-11-19T03:27:46Z observation chat=story-worker-1 ready=False reason=Streaming/Stop control present
+2026-11-19T03:27:46Z cycle_result action=WAIT chat=story-worker-1
+2026-11-19T03:28:06Z uia_start mode=Observe chat=story-worker-1
+2026-11-19T03:28:09Z uia_exit mode=Observe chat=story-worker-1 seconds=3.32 code=0
+2026-11-19T03:28:09Z observation chat=story-worker-1 ready=False reason=Streaming/Stop control present
+2026-11-19T03:28:09Z cycle_result action=WAIT chat=story-worker-1
+2026-11-19T03:28:29Z uia_start mode=Observe chat=story-worker-1
+2026-11-19T03:28:33Z uia_exit mode=Observe chat=story-worker-1 seconds=3.37 code=0
+2026-11-19T03:28:33Z observation chat=story-worker-1 ready=True reason=Completed marker candidate; UIA hierarchy validation pending
+2026-11-19T03:28:34Z uia_start mode=Observe chat=story-worker-1
+2026-11-19T03:28:37Z uia_exit mode=Observe chat=story-worker-1 seconds=3.43 code=0
+2026-11-19T03:28:37Z observation chat=story-worker-1 ready=True reason=Completed marker candidate; UIA hierarchy validation pending
+2026-11-19T03:28:37Z publication_check_start chat=story-worker-1
+2026-11-19T03:28:45Z publication_check_finished chat=story-worker-1
+2026-11-19T03:28:45Z uia_start mode=Prepare chat=story-worker-1
+2026-11-19T03:28:52Z uia_exit mode=Prepare chat=story-worker-1 seconds=6.70 code=0
+2026-11-19T03:28:52Z uia_start mode=Send chat=story-worker-1
+2026-11-19T03:28:59Z uia_exit mode=Send chat=story-worker-1 seconds=7.35 code=0
+2026-11-19T03:28:59Z submission_confirmed chat=story-worker-2
+2026-11-19T03:28:59Z cycle_result action=WAIT chat=story-worker-2
+2026-11-19T03:29:19Z uia_start mode=Observe chat=story-worker-2
+2026-11-19T03:29:23Z uia_exit mode=Observe chat=story-worker-2 seconds=3.61 code=0
+2026-11-19T03:29:23Z observation chat=story-worker-2 ready=False reason=Streaming/Stop control present
+2026-11-19T03:29:23Z cycle_result action=WAIT chat=story-worker-2
+2026-11-19T03:29:43Z uia_start mode=Observe chat=story-worker-2
+2026-11-19T03:29:46Z uia_exit mode=Observe chat=story-worker-2 seconds=3.68 code=0
+2026-11-19T03:29:46Z observation chat=story-worker-2 ready=False reason=Streaming/Stop control present
+2026-11-19T03:29:46Z cycle_result action=WAIT chat=story-worker-2
+2026-11-19T03:30:06Z uia_start mode=Observe chat=story-worker-2
+2026-11-19T03:30:10Z uia_exit mode=Observe chat=story-worker-2 seconds=3.86 code=0
+2026-11-19T03:30:10Z observation chat=story-worker-2 ready=False reason=Streaming/Stop control present
+2026-11-19T03:30:10Z cycle_result action=WAIT chat=story-worker-2
+2026-11-19T03:30:30Z uia_start mode=Observe chat=story-worker-2
+2026-11-19T03:30:34Z uia_exit mode=Observe chat=story-worker-2 seconds=3.75 code=0
+2026-11-19T03:30:34Z observation chat=story-worker-2 ready=False reason=Streaming/Stop control present
+2026-11-19T03:30:34Z cycle_result action=WAIT chat=story-worker-2
+2026-11-19T03:30:54Z uia_start mode=Observe chat=story-worker-2
+2026-11-19T03:30:58Z uia_exit mode=Observe chat=story-worker-2 seconds=3.77 code=0
+2026-11-19T03:30:58Z observation chat=story-worker-2 ready=False reason=Streaming/Stop control present
+2026-11-19T03:30:58Z cycle_result action=WAIT chat=story-worker-2
+2026-11-19T03:31:18Z uia_start mode=Observe chat=story-worker-2
+2026-11-19T03:31:21Z uia_exit mode=Observe chat=story-worker-2 seconds=3.68 code=0
+2026-11-19T03:31:21Z observation chat=story-worker-2 ready=True reason=Completed marker candidate; UIA hierarchy validation pending
+2026-11-19T03:31:23Z uia_start mode=Observe chat=story-worker-2
+2026-11-19T03:31:26Z uia_exit mode=Observe chat=story-worker-2 seconds=3.56 code=0
+2026-11-19T03:31:26Z observation chat=story-worker-2 ready=True reason=Completed marker candidate; UIA hierarchy validation pending
+2026-11-19T03:31:26Z publication_check_start chat=story-worker-2
+2026-11-19T03:31:36Z publication_check_finished chat=story-worker-2
+2026-11-19T03:31:36Z uia_start mode=Prepare chat=story-worker-2
+2026-11-19T03:31:45Z uia_exit mode=Prepare chat=story-worker-2 seconds=8.28 code=0
+2026-11-19T03:31:45Z uia_start mode=Send chat=story-worker-2
+2026-11-19T03:31:54Z uia_exit mode=Send chat=story-worker-2 seconds=9.56 code=0
+2026-11-19T03:31:54Z submission_confirmed chat=story-worker-3
+2026-11-19T03:31:54Z cycle_result action=WAIT chat=story-worker-3
+2026-11-19T03:32:14Z uia_start mode=Observe chat=story-worker-3
+2026-11-19T03:32:18Z uia_exit mode=Observe chat=story-worker-3 seconds=4.13 code=0
+2026-11-19T03:32:18Z observation chat=story-worker-3 ready=False reason=Streaming/Stop control present
+2026-11-19T03:32:18Z cycle_result action=WAIT chat=story-worker-3
+2026-11-19T03:32:38Z uia_start mode=Observe chat=story-worker-3
+2026-11-19T03:32:43Z uia_exit mode=Observe chat=story-worker-3 seconds=4.32 code=0
+2026-11-19T03:32:43Z observation chat=story-worker-3 ready=False reason=Streaming/Stop control present
+2026-11-19T03:32:43Z cycle_result action=WAIT chat=story-worker-3
+2026-11-19T03:33:03Z uia_start mode=Observe chat=story-worker-3
+2026-11-19T03:33:07Z uia_exit mode=Observe chat=story-worker-3 seconds=3.98 code=0
+2026-11-19T03:33:07Z observation chat=story-worker-3 ready=False reason=Streaming/Stop control present
+2026-11-19T03:33:07Z cycle_result action=WAIT chat=story-worker-3
+2026-11-19T03:33:27Z uia_start mode=Observe chat=story-worker-3
+2026-11-19T03:33:31Z uia_exit mode=Observe chat=story-worker-3 seconds=3.85 code=0
+2026-11-19T03:33:31Z observation chat=story-worker-3 ready=False reason=Streaming/Stop control present
+2026-11-19T03:33:31Z cycle_result action=WAIT chat=story-worker-3
+2026-11-19T03:33:51Z uia_start mode=Observe chat=story-worker-3
+2026-11-19T03:33:54Z uia_exit mode=Observe chat=story-worker-3 seconds=3.85 code=0
+2026-11-19T03:33:54Z observation chat=story-worker-3 ready=True reason=Completed marker candidate; UIA hierarchy validation pending
+2026-11-19T03:33:56Z uia_start mode=Observe chat=story-worker-3
+2026-11-19T03:33:59Z uia_exit mode=Observe chat=story-worker-3 seconds=3.71 code=0
+2026-11-19T03:33:59Z observation chat=story-worker-3 ready=True reason=Completed marker candidate; UIA hierarchy validation pending
+2026-11-19T03:33:59Z publication_check_start chat=story-worker-3
+2026-11-19T03:34:10Z publication_check_finished chat=story-worker-3
+2026-11-19T03:34:10Z uia_start mode=Prepare chat=story-worker-3
+2026-11-19T03:34:18Z uia_exit mode=Prepare chat=story-worker-3 seconds=7.74 code=0
+2026-11-19T03:34:18Z uia_start mode=Send chat=story-worker-3
+2026-11-19T03:34:26Z uia_exit mode=Send chat=story-worker-3 seconds=7.35 code=0
+2026-11-19T03:34:26Z submission_confirmed chat=story-worker-4
+2026-11-19T03:34:26Z cycle_result action=WAIT chat=story-worker-4
+2026-11-19T03:34:46Z uia_start mode=Observe chat=story-worker-4
+2026-11-19T03:34:50Z uia_exit mode=Observe chat=story-worker-4 seconds=4.07 code=0
+2026-11-19T03:34:50Z observation chat=story-worker-4 ready=False reason=Streaming/Stop control present
+2026-11-19T03:34:50Z cycle_result action=WAIT chat=story-worker-4
+2026-11-19T03:35:10Z uia_start mode=Observe chat=story-worker-4
+2026-11-19T03:35:14Z uia_exit mode=Observe chat=story-worker-4 seconds=4.02 code=0
+2026-11-19T03:35:14Z observation chat=story-worker-4 ready=False reason=Streaming/Stop control present
+2026-11-19T03:35:14Z cycle_result action=WAIT chat=story-worker-4
+2026-11-19T03:35:34Z uia_start mode=Observe chat=story-worker-4
+2026-11-19T03:35:38Z uia_exit mode=Observe chat=story-worker-4 seconds=3.98 code=0
+2026-11-19T03:35:38Z observation chat=story-worker-4 ready=False reason=Streaming/Stop control present
+2026-11-19T03:35:38Z cycle_result action=WAIT chat=story-worker-4
+2026-11-19T03:35:58Z uia_start mode=Observe chat=story-worker-4
+2026-11-19T03:36:02Z uia_exit mode=Observe chat=story-worker-4 seconds=4.59 code=0
+2026-11-19T03:36:02Z observation chat=story-worker-4 ready=True reason=Completed marker candidate; UIA hierarchy validation pending
+2026-11-19T03:36:03Z uia_start mode=Observe chat=story-worker-4
+2026-11-19T03:36:08Z uia_exit mode=Observe chat=story-worker-4 seconds=4.15 code=0
+2026-11-19T03:36:08Z observation chat=story-worker-4 ready=True reason=Completed marker candidate; UIA hierarchy validation pending
+2026-11-19T03:36:08Z publication_check_start chat=story-worker-4
+2026-11-19T03:36:20Z publication_check_finished chat=story-worker-4
+2026-11-19T03:36:20Z cycle_result action=STOP_FINISHED chat=story-worker-4

@@ -1,0 +1,33 @@
+AUTHORIZED BRANCH-ROTATION FIXTURE — TEMPLATE ONLY
+
+The owner must approve and publish this instruction on a fresh <ENTRY_BRANCH>
+in an existing disposable repository/Project. Replace both placeholders first.
+Cap: 2. The only permitted write route is <REVIEW_BRANCH>. Do not write the
+entry branch after staging.
+
+Worker one:
+Read the actual project rules and this mission. If CHECKLIST.md is absent,
+create <REVIEW_BRANCH> from the published <ENTRY_BRANCH> base. Write exactly:
+Check that the bicycle bell rings clearly when operated.
+to CHECKLIST.md. Make one commit changing only that file, publish and read
+back the remote commit. Include the actual Chat-Succession-Run and registered
+saved Chat-ID trailers plus:
+Chat-Succession-Next: Review the checklist and record the result
+End with these final two plain lines using the actual branch value:
+CHAT_HANDOFF_BRANCH: <REVIEW_BRANCH>
+CHAT_STATUS: TASK_COMPLETE
+
+Worker two:
+Only after reading the published first commit on <REVIEW_BRANCH>, verify the
+one-line checklist and write exactly:
+Verified the published bicycle-bell checklist.
+to REVIEW.md. Make one commit directly on the first commit, changing only
+REVIEW.md; publish and verify. Use the same run ID, your own saved Chat-ID and:
+Chat-Succession-Next: FINISHED
+End with CHAT_STATUS: TASK_COMPLETE as the final plain line.
+
+Unexpected files, authority, identity or publication are ERROR holds, not
+permission for more work. The controller owns all successor launches.
+Expected result: effective checkpoint changes only after first receipt
+verification; entry branch, run ID and cap remain unchanged; one successor
+and STOP_FINISHED at two saved workers.

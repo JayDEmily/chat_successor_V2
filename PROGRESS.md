@@ -1,5 +1,12 @@
 # Progress
 
+## Astra ADR 0002 review intake — 20 November 2026
+
+The complete 13:09 AEDT Astra response has been preserved verbatim on this branch: [intake and checksums](evidence/astra-adr-0002-20261120/INTAKE.md), [proposed ADR](evidence/astra-adr-0002-20261120/package/docs/adr/0002-account-bound-resumable-runs.md), [implementation plan](evidence/astra-adr-0002-20261120/package/docs/IMPLEMENTATION_PLAN.md) and [acceptance gates](evidence/astra-adr-0002-20261120/package/acceptance/GATES.md).
+
+Disposition is **review received; proposed ADR pending owner decision**. This intake adds only documentation, evidence and the unmodified source archive. It does not change controller/plugin source, current trial state, an installed release or live acceptance. All 94 package-manifest entries were verified locally before commit.
+
+
 ## Shoco rollout — 20 November 2026
 
 Resumed at `30f5757` on `codex/chat-succession-finish`. At the owner's direction, the rollout now targets the Shoco account. [Finish plan](docs/astra-succession/finish-chat-succession.md)

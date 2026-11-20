@@ -1,0 +1,21 @@
+2026-11-19T21:36:31Z run_started chat=ROWING-1 poll_seconds=20 response_wait_minutes=None
+2026-11-19T21:37:54Z run_started chat=ROWING-1 poll_seconds=20 response_wait_minutes=None
+2026-11-19T21:37:57Z uia_start mode=RecoverView chat=ROWING-1
+2026-11-19T21:38:08Z uia_exit mode=RecoverView chat=ROWING-1 seconds=11.12 code=0
+2026-11-19T21:38:08Z worker_view_recovery chat=ROWING-1 outcome=restored
+2026-11-19T21:45:18Z uia_start mode=RecoverView chat=ROWING-1
+2026-11-19T21:46:01Z uia_exit mode=RecoverView chat=ROWING-1 seconds=43.56 code=0
+2026-11-19T21:46:01Z worker_view_recovery chat=ROWING-1 outcome=waiting
+2026-11-19T21:47:21Z publication_check_finished chat=ROWING-1
+2026-11-19T21:47:21Z uia_start mode=Prepare chat=ROWING-1
+2026-11-19T21:47:27Z uia_exit mode=Prepare chat=ROWING-1 seconds=6.12 code=0
+2026-11-19T21:47:27Z uia_start mode=Send chat=ROWING-1
+2026-11-19T21:47:34Z uia_exit mode=Send chat=ROWING-1 seconds=6.64 code=0
+2026-11-19T21:47:34Z submission_confirmed chat=ROWING-2
+2026-11-19T21:48:43Z uia_exit mode=Observe chat=ROWING-2 seconds=2.94 code=0
+2026-11-19T21:48:43Z observation chat=ROWING-2 ready=False reason=Streaming/Stop control present
+2026-11-19T21:48:43Z cycle_result action=WAIT chat=ROWING-2
+2026-11-19T21:49:03Z uia_start mode=Observe chat=ROWING-2
+2026-11-19T21:49:06Z uia_exit mode=Observe chat=ROWING-2 seconds=3.30 code=0
+2026-11-19T21:49:06Z observation chat=ROWING-2 ready=False reason=Streaming/Stop control present
+2026-11-19T21:49:06Z cycle_result action=WAIT chat=ROWING-2

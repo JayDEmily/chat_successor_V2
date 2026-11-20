@@ -1,0 +1,68 @@
+{
+  "status": "PROPOSED_NOT_MEASURED",
+  "owner_approved": false,
+  "series_id": null,
+  "candidate_commit": null,
+  "account_profile_configuration": null,
+  "pc_configuration_evidence": null,
+  "freeze_before_first_cohort": true,
+  "stage_targets": [
+    2,
+    3,
+    4,
+    6,
+    8
+  ],
+  "additional_increment_after_8": 2,
+  "healthy_cohorts_per_level": 3,
+  "confirmation_cohorts_at_last_good": 1,
+  "minimum_all_observers_overlap_seconds": 40,
+  "tightly_grouped_launch_request_spread_max_seconds": 1,
+  "resource_sample_interval_seconds": 5,
+  "worker_caps": {
+    "two_slice_finish": 3,
+    "two_slice_with_eligible_review": 2
+  },
+  "poll_seconds": 20,
+  "stale_trigger_seconds": 120,
+  "stale_probe_interval_seconds": 300,
+  "latency": {
+    "metric": "confirmed saved successor time minus stable source-completion observation time",
+    "exclusions": "Only exact logged intentional owner-pause intervals; retain raw values.",
+    "percentile_method": "nearest_rank",
+    "n2_baseline_p95_seconds": null,
+    "p95_limit_formula": "max(90, 2 * n2_baseline_p95_seconds)",
+    "individual_max_seconds": 180,
+    "pause_ack_max_seconds": 120,
+    "positive_fresh_proof_to_ready_max_seconds": 180
+  },
+  "resources": {
+    "available_ram_floor_formula": "max(2 GiB, 0.10 * installed_physical_RAM)",
+    "ram_below_floor_failure_duration_seconds": 30,
+    "commit_ratio_ceiling": 0.9,
+    "commit_above_ceiling_failure_duration_seconds": 30,
+    "whole_pc_cpu_p95_ceiling_percent": 85,
+    "max_steady_owned_worker_windows_per_open_run": 1,
+    "max_owned_temporary_probe_windows_per_open_run": 1,
+    "owned_probe_windows_left_after_case": 0
+  },
+  "current_command_timeouts_seconds": {
+    "chrome_window_mutex": 30,
+    "uia_subprocess": 90,
+    "git_command": 45
+  },
+  "safety_tolerance": {
+    "duplicate_sends": 0,
+    "misroutes": 0,
+    "wrong_account_inputs": 0,
+    "cap_breaches": 0,
+    "lost_pauses": 0,
+    "overwritten_drafts": 0
+  },
+  "healthy_cohort_expected_success_rate": 1.0,
+  "unexpected_holds_allowed_in_healthy_cohorts": 0,
+  "first_failing_level": null,
+  "last_passing_level": null,
+  "selected_operating_level": null,
+  "if_budget_ends_before_failure": "Report tested lower bound only; practical ceiling remains unmeasured."
+}

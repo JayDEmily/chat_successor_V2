@@ -1,0 +1,14 @@
+Installed launcher SHA256: A52548403B71A9D1CE029ADBAE0AAF6A9FDA2734C8BC062A079F292992096900
+Original launcher backup SHA256: 0BCE4BA3B91683F1313DD5797F538BAF30325CAA85783A66E28B58CF350C1514
+User paths redacted in the captured body below.
+
+@echo off
+setlocal
+if /I "%LOCALAPPDATA%"=="<windows-user-home>\AppData\Local\DesktopCommander\Shoko\AppData\Local" goto shoco
+"C:\Program Files\Python313\python.exe" -B -X utf8 "\\wsl.localhost\Ubuntu\home\<ubuntu-user>\chat_successor_usage_template_20261119\integration\launch_project.py" %*
+exit /b %ERRORLEVEL%
+
+:shoco
+set "CHAT_SUCCESSION_CHROME_PROFILE_PATH=<windows-user-home>\AppData\Local\Google\Chrome\User Data\Profile 11"
+"C:\Program Files\Python313\python.exe" -B -X utf8 "\\wsl.localhost\Ubuntu\home\<ubuntu-user>\chat_successor_finish_2c29406\integration\launch_project.py" --install-root "%~dp0." %*
+exit /b %ERRORLEVEL%

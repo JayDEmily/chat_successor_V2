@@ -1,0 +1,25 @@
+{
+  "repo": "JayDEmily/my-cat-and-dog",
+  "branch": "main",
+  "max_unique_chats": 4,
+  "current_saved_worker": "story-worker-4",
+  "saved_workers": [
+    "story-worker-1",
+    "story-worker-2",
+    "story-worker-3",
+    "story-worker-4"
+  ],
+  "last_status": "TASK_COMPLETE",
+  "pending_action": null,
+  "halt_reason": "programme_finished",
+  "consumed_response_sources": [
+    "story-worker-1",
+    "story-worker-2",
+    "story-worker-3",
+    "story-worker-4"
+  ],
+  "controller_log_last_write_utc": "2026-11-19T03:36:20.987729+00:00",
+  "confirmed_successor_send_count": 3,
+  "publication_checks_begun": 4,
+  "separate_bare_reader": false
+}
