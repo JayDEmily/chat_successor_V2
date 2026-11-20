@@ -1,5 +1,9 @@
 # Progress
 
+## ADR 0002 mock-fixture isolation — 20 November 2026
+
+The owner expressly replaced Rowing and SolidWorks as live-test workloads with disposable mocks. A private `JayDEmily/rowing-clone-test` repository has been created with a prepared pinned `main@5b04bd24` source snapshot under `snapshot/`; published remote `main@f2c28775532bc3f828af95edd6c61258f6313496` with exact source-tree equality and GitHub API readback, READY for fresh isolated fixture branches. Existing Cat/Dog, Bird/Pig and approval fixtures provide the complementary finish, cap and phone cases. [Mock fixture register](docs/astra-succession/adr-0002/MOCK_FIXTURES.md). Real Rowing/SolidWorks remain paused.
+
 ## ADR 0002 programme — 20 November 2026
 
 Owner accepted the bounded ten-leaf implementation with standing authority (no repeat routine approvals). [Operative ADR](docs/adr/0002-account-bound-resumable-runs.md) · [Management and gates](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) · [G0 baseline](evidence/astra-adr-0002-20261120/implementation/G0_20261120/BASELINE.md). A2-G0 PASS via fresh Ubuntu 295/295 manifest, 63+119 suites, six Git histories and 13 fixtures. The paused Rowing and SolidWorks runs remain untouched. Next eligible leaf: A2-L02.
