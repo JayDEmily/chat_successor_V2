@@ -9,6 +9,7 @@
 - **Successor follow-up:** source and destination stay in separate ordinary Chrome windows so a paused preparation can be resumed with source proof. The native Send path verifies the source again after typed readback. The twenty-five native readback assertions still pass.
 - **Offline acceptance:** the independent reviewer confirmed the final successor fixes at `2348046`. The full Windows run passed 118 integration and 119 reference cases. [Independent review](evidence/astra-adr-0002-20261120/implementation/G3_20261120/LEAN_L06_L08_REVIEW.md)
 - **Limit:** the privately scoped Chrome package is staged. The fixture still returns `UIA_VIRTUALIZED_UNQUALIFIED` through the standalone Windows reader. Chrome installation confirmation and positive live qualification remain pending.
+- **iPhone entry observation:** the owner supplied screenshots from the Shoko Yumi Qualification Project showing a successful Remote Desktop Commander lookup and `no_run`. The Windows request was independently found as `inspect` for `JayDEmily/chat_successor`, with no registered run for the Project. The Shoko launcher still selects `5c86ad6`. This establishes a read-only phone invocation. Live Cat/Dog uses its separate fixture repository and fresh branch after qualification.
 - **Next:** qualify the live reader and receipts before installing the desktop trial backend.
 
 ## Lean ADR 0002 L07 — Exact Chrome posted-message receipt (21 November 2026)
