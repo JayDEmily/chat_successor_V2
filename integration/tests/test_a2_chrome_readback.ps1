@@ -104,7 +104,7 @@ $element.Payload=$snapshot | ConvertTo-Json -Compress
 Check (-not (Find-PostedMessage $target.window $snapshot.user $first.response_id $target.url)) 'a missing preceding turn does not acknowledge a continuation'
 
 $legacy='uia-turn-1-aaaaaaaaaaaaaaaaaaaa'
-$moving=@{ready=$false;user_after_assistant=$true;stop_control=$true;method='CHROME_DOM'}
+$moving=@{ready=$false;user_after_assistant=$true;stop_control=$true;method='CHROME_DOM';chrome_read_at=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()}
 Check ((Compare-OwnerTurn $moving $legacy) -ceq 'unknown') 'a legacy pending anchor holds even while Chrome is streaming'
 $moving.method='UIA_ACCESSIBILITY_TEXT'
 Check ((Compare-OwnerTurn $moving $first.response_id) -ceq 'unknown') 'a Chrome pending anchor holds if the native reader takes over'
@@ -116,6 +116,9 @@ Check (-not (Find-PostedMessage $target.window $snapshot.user '' $target.url $le
 
 function Get-ObservableSavedTarget {return $target}
 function Get-TargetWindow($expectedChat,$handle){return $target}
+function Request-FreshSuccessorReadback($source) {
+ if($source.chat -cne $chat){throw 'Synthetic source mismatch'}
+}
 function Open-ChromeWindow($url){throw 'Unexpected browser open in source validation test'}
 function Read-CurrentTurn($view){return $moving}
 function Invoke-AdapterMode([string]$name){

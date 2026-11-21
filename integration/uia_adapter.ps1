@@ -904,14 +904,68 @@ function Recover-SavedWorkerView {
  return @{recovery_status='refreshed';window_handle=$WindowHandle}
 }
 
+function Request-FreshSuccessorReadback($source) {
+ # Query the verified source document through its own extension control.
+ # The control only recomputes the readonly field; it cannot Send or navigate.
+ if(-not $ChromeAppId -or -not $source.chat -or
+    (Get-Address $source.window) -cne $source.url -or
+    -not (Test-WindowProfile $source.window)){
+  throw 'On-demand source view identity unavailable'
+ }
+ $controls=@()
+ $fields=@()
+ foreach($el in (Desc $source.window)){
+  try {
+   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
+      $el.Current.Name -ceq 'Chat Succession refresh source readback' -and
+      $el.Current.ClassName -ceq 'chat-succession-source-refresh' -and
+      $el.Current.IsEnabled){$controls+= $el}
+   if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit -and
+      $el.Current.Name -ceq 'Chat Succession Chrome readback' -and
+      $el.Current.ClassName -ceq 'chat-succession-readback'){$fields+= $el}
+  }catch{}
+ }
+ if($controls.Count -ne 1 -or $fields.Count -ne 1){
+  throw 'On-demand source readback control is missing or ambiguous'
+ }
+ $reader=$fields[0].GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+ if(-not $reader.Current.IsReadOnly){throw 'On-demand source readback is not readonly'}
+ $before=$reader.Current.Value | ConvertFrom-Json
+ if($before.project -cne $ProjectId -or $before.chat -cne $source.chat -or
+    $before.observedAt -isnot [long]){
+  throw 'On-demand source readback has wrong origin'
+ }
+ $controls[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+ $fresh=$false
+ for($i=0;$i -lt 8;$i++){
+  $after=$reader.Current.Value | ConvertFrom-Json
+  $age=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds() - $after.observedAt
+  if($after.project -cne $ProjectId -or $after.chat -cne $source.chat){
+   throw 'On-demand source readback changed origin'
+  }
+  if($after.observedAt -is [long] -and $after.observedAt -gt $before.observedAt -and
+     $age -ge 0 -and $age -le 5000){$fresh=$true;break}
+  Start-Sleep -Milliseconds 100
+ }
+ if(-not $fresh){throw 'On-demand source readback did not advance'}
+ if((Get-Address $source.window) -cne $source.url -or
+    -not (Test-WindowProfile $source.window)){
+  throw 'On-demand source view identity changed'
+ }
+}
 function Get-VerifiedSuccessorSource([string]$responseId) {
  if(-not $ChatId -or -not $responseId){throw 'Successor needs a saved worker and reply'}
  $source=Get-TargetWindow $ChatId 0
+ Request-FreshSuccessorReadback $source
  $turn=Read-CurrentTurn $source
  if(-not $turn.ready -or $turn.response_id -cne $responseId -or
     (Get-Address $source.window) -cne $source.url -or -not (Test-WindowProfile $source.window)){
   throw 'The saved worker no longer shows the verified completion for this successor'
  }
+ if($turn['method'] -cne 'CHROME_DOM' -or $turn['chrome_read_at'] -isnot [long]){
+  throw 'The saved worker source readback lacks a verified Chrome timestamp'
+ }
+ $source['verified_source_at']=$turn['chrome_read_at']
  return $source
 }
 
@@ -1079,8 +1133,21 @@ function Hold-IfOwnerPaused {
  }
 }
 
-function Hold-ForChangedDestination {
- @{destination_changed_before_click=$true} | ConvertTo-Json -Compress
+function Get-SafeSourcePreClickReason([string]$detail) {
+ # Only fixed reason codes leave the native boundary; never emit a prompt,
+ # arbitrary exception detail, account path or saved message text.
+ if($detail -eq 'Chrome readback sample has expired'){return 'source_sample_expired'}
+ if($detail -eq 'On-demand source readback did not advance'){return 'source_refresh_stalled'}
+ if($detail -like 'On-demand source readback*' -or $detail -like 'On-demand source view*'){
+  return 'source_refresh_unavailable'
+ }
+ if($detail -eq 'Chrome readback could not establish the latest visible turn'){return 'source_unqualified'}
+ if($detail -eq 'The saved worker no longer shows the verified completion for this successor'){return 'source_identity_changed'}
+ if($detail -like '*Chrome readback*' -or $detail -like '*saved worker*'){return 'source_readback_unavailable'}
+ return 'source_verification_failed'
+}
+function Hold-ForChangedDestination([string]$Reason='unknown_preclick') {
+ @{destination_changed_before_click=$true;pre_click_reason=$Reason} | ConvertTo-Json -Compress
  exit 0
 }
 
@@ -1157,7 +1224,8 @@ if($Mode -eq 'Send') {
  $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
  $hasSuccessorSource=$Kind -eq 'LAUNCH_SUCCESSOR' -and $PendingResponseId
  if($hasSuccessorSource){
-  try{$null=Get-VerifiedSuccessorSource $PendingResponseId}catch{Hold-ForChangedDestination}
+  try{$null=Get-VerifiedSuccessorSource $PendingResponseId}
+  catch{Hold-ForChangedDestination (Get-SafeSourcePreClickReason ([string]$_.Exception.Message))}
  }
  if($Kind -eq 'CONTINUE_CURRENT'){
   $turn=Read-CurrentTurn $target
@@ -1216,24 +1284,46 @@ if($Mode -eq 'Send') {
    throw 'The triggering response could not be verified after typing. Preserve the composer and reconcile.'
   }
  }
- # Bind the button to the same document as the exact verified composer. A
- # tab switch after typing must not select the new tab's Send button.
+ # The read-only source refresh may foreground the source Chrome window.
+ # Verify it first, then rebind the target's exact editor/document/Send button.
+ # A tab/window switch must never select a different Send button.
+ $preClickStage='source_verification'
  try {
+  $sourceEvidence=$null
+  if($hasSuccessorSource){
+   try{$sourceEvidence=Get-VerifiedSuccessorSource $PendingResponseId}
+   catch{Hold-ForChangedDestination (Get-SafeSourcePreClickReason ([string]$_.Exception.Message))}
+  }
+  $preClickStage='live_editor'
   $liveEditor=Find-Composer $target.window $editorName
   $liveValue=$liveEditor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
-  if(-not [System.Windows.Automation.Automation]::Compare($editor,$liveEditor) -or
-     $liveValue.TrimEnd([char]13,[char]10) -cne $Message -or
-     -not (Check-NoAttachments $target.window)){Hold-ForChangedDestination}
-  $document=Get-ComposerDocument $liveEditor
-  if((Get-DocumentIdentity $document) -cne $DocumentId){Hold-ForChangedDestination}
-  $sendButtons=@(Find-EnabledSendButtons $document)
-  if($sendButtons.Count -ne 1){Hold-ForChangedDestination}
-  $send=$sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
-  if($hasSuccessorSource){$null=Get-VerifiedSuccessorSource $PendingResponseId}
-  if((Get-Address $target.window) -cne $target.url -or -not (Test-WindowProfile $target.window)){
-   Hold-ForChangedDestination
+  if(-not [System.Windows.Automation.Automation]::Compare($editor,$liveEditor)){
+   Hold-ForChangedDestination 'editor_identity_changed'
   }
- } catch {Hold-ForChangedDestination}
+  if($liveValue.TrimEnd([char]13,[char]10) -cne $Message){
+   Hold-ForChangedDestination 'draft_changed'
+  }
+  $preClickStage='attachment_check'
+  if(-not (Check-NoAttachments $target.window)){Hold-ForChangedDestination 'attachments_present'}
+  $preClickStage='document_check'
+  $document=Get-ComposerDocument $liveEditor
+  if((Get-DocumentIdentity $document) -cne $DocumentId){Hold-ForChangedDestination 'document_changed'}
+  $preClickStage='send_button_check'
+  $sendButtons=@(Find-EnabledSendButtons $document)
+  if($sendButtons.Count -ne 1){Hold-ForChangedDestination 'send_button_ambiguous'}
+  $send=$sendButtons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+  $preClickStage='address_profile_check'
+  if((Get-Address $target.window) -cne $target.url -or -not (Test-WindowProfile $target.window)){
+   Hold-ForChangedDestination 'url_or_profile_changed'
+  }
+  if($hasSuccessorSource){
+   $preClickStage='source_age_check'
+   $sampleAge=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds() - $sourceEvidence['verified_source_at']
+   if($sampleAge -lt 0 -or $sampleAge -gt 5000){
+    Hold-ForChangedDestination 'source_sample_expired_after_target'
+   }
+  }
+ } catch {Hold-ForChangedDestination $preClickStage}
  Assert-PrivateDispatchReceipt
  Hold-IfOwnerPaused
  # One native UIA Invoke. Reconcile if its acknowledgement is lost.

@@ -1,0 +1,79 @@
+name: Chat Succession L12 offline candidate
+on:
+  pull_request:
+    branches: [codex/chat-succession-finish]
+    paths:
+      - 'integration/**'
+      - '.github/workflows/l12-offline-ci.yml'
+  push:
+    branches: [work/ci-l12-source-refresh-public-20261122]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: l12-offline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python reference and integration (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Validate integration and action-state invariants (offline)
+        run: python -X utf8 -m unittest discover -s integration/tests -v
+      - name: Run bundled deterministic reference suite
+        run: python -X utf8 astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/run_offline.py --out reference-ci
+
+  native-windows:
+    name: Windows UIA source and receipt guards (synthetic only)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute native Windows PowerShell guards
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tests = @(
+            'integration/tests/test_a2_l03_ps_action_gate.ps1',
+            'integration/tests/test_a2_l04_ps_view_helpers.ps1',
+            'integration/tests/test_a2_g3_ps_virtualized_turns.ps1',
+            'integration/tests/test_a2_chrome_readback.ps1',
+            'integration/tests/test_a2_transcript_boundary.ps1',
+            'integration/tests/test_worker_view_recovery.ps1',
+            'integration/tests/test_a2_l12_source_refresh.ps1'
+          )
+          foreach ($test in $tests) {
+            Write-Host "Running $test"
+            & "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $test
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed native PowerShell test: $test ($LASTEXITCODE)"
+            }
+          }
+
+  headless-chrome:
+    name: Headless Chrome source refresh (no network, no Send)
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      CHROME_BIN: C:\Program Files\Google\Chrome\Application\chrome.exe
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install pinned browser-test dependency
+        run: npm ci --prefix integration/tests --ignore-scripts --no-audit --no-fund
+      - name: Run network-intercepted readback fixture
+        run: node integration/tests/test_a2_l12_on_demand.js

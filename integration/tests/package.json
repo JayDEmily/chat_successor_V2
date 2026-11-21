@@ -1,0 +1,9 @@
+{
+  "name": "chat-succession-browser-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline-only browser fixtures; no access to authenticated ChatGPT",
+  "dependencies": {
+    "puppeteer-core": "25.18.1"
+  }
+}
