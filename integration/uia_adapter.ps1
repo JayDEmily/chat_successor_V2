@@ -101,18 +101,16 @@ function Maximize-ChromeWorkerWindow($window) {
  $pattern=$null
  try {
   if(-not $window.TryGetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern,[ref]$pattern)){
-   return $false
+   return
   }
   $current=$pattern.Current
   if(-not $current.CanMaximize -or $current.IsModal -or
      $current.WindowVisualState -eq [System.Windows.Automation.WindowVisualState]::Maximized){
-   return $false
+   return
   }
   $pattern.SetWindowVisualState([System.Windows.Automation.WindowVisualState]::Maximized)
-  return $true
  }catch{
   Write-Verbose ('Could not maximize the new Chrome worker window: ' + $_.Exception.Message)
-  return $false
  }
 }
 function Get-Address($window) {
@@ -741,7 +739,8 @@ function Wait-VerifiedSavedWorker([long]$handle,[switch]$Maximize) {
    $target=Get-TargetWindow $ChatId $handle
    if($Maximize){
     $Maximize=$false
-    if(Maximize-ChromeWorkerWindow $target.window){continue}
+    Maximize-ChromeWorkerWindow $target.window
+    continue
    }
    $identity=Read-SavedWorkerIdentity $target
   }catch{
@@ -1041,7 +1040,9 @@ if($Mode -eq 'Prepare') {
     if($maximizeNewWindow){
      if(-not (Test-WindowProfile $new)){throw 'Fresh Project window profile could not be verified'}
      $maximizeNewWindow=$false
-     if(Maximize-ChromeWorkerWindow $new){continue}
+     Maximize-ChromeWorkerWindow $new
+     # The provider can change geometry before reporting a failure.
+     continue
     }
     try {$editor=Find-Composer $new ('New chat in ' + $ProjectName)
          $target=@{window=$new;url=$url;chat=$null};break}catch{}

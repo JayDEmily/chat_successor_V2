@@ -109,7 +109,6 @@ $script:maximizedHandles=@()
 function Maximize-ChromeWorkerWindow($item){
  $script:maximizedHandles+= $item.Current.NativeWindowHandle
  $script:readsAtMaximize=$script:documentReads
- return $true
 }
 $restored=Wait-VerifiedSavedWorker 55
 if($restored.recovery_status -cne 'restored' -or $script:documentReads -ne 3){

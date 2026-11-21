@@ -178,10 +178,16 @@ Check ($element.Payload -ceq 'Owner draft entered during the fresh read') 'advan
 
 $visualState=[System.Windows.Automation.WindowVisualState]
 $pattern=[pscustomobject]@{Current=@{CanMaximize=$true;IsModal=$false;WindowVisualState=$visualState::Normal};Requests=0}
+$script:changeRouteOnMaximize=$false
+$script:observedProjectUrl=$ProjectUrl
 $pattern | Add-Member ScriptMethod SetWindowVisualState {
  param($state)
  $this.Current.WindowVisualState=$state
  $this.Requests++
+ if($script:changeRouteOnMaximize){
+  $script:observedProjectUrl='https://chatgpt.com/g/g-p-00000000000000000000000000000000/project'
+  throw [InvalidOperationException]::new('Window provider failed after changing geometry')
+ }
 }
 $workerWindow=[pscustomobject]@{Current=@{NativeWindowHandle=124};Pattern=$pattern}
 $workerWindow | Add-Member ScriptMethod TryGetCurrentPattern {
@@ -191,7 +197,7 @@ $workerWindow | Add-Member ScriptMethod TryGetCurrentPattern {
 }
 $script:opens=0
 function Open-ChromeWindow($url){$script:opens++;return $workerWindow}
-function Get-Address($window){return $ProjectUrl}
+function Get-Address($window){return $script:observedProjectUrl}
 function Get-TargetWindow($expectedChat,$handle){return @{window=$workerWindow;chat=$null;url=$ProjectUrl}}
 function Get-ComposerDocument($editor){return $editor}
 function Get-DocumentIdentity($document){return 'worker-composer'}
@@ -215,3 +221,7 @@ $WindowHandle=0
 $workerWindow.Pattern=$null
 $unsupported=Invoke-AdapterMode $Mode | ConvertFrom-Json
 Check ($unsupported.private_window_handle -eq 124 -and $script:opens -eq 2 -and $pattern.Requests -eq 1) 'fresh composer can still verify without a window pattern'
+
+$workerWindow.Pattern=$pattern
+$script:changeRouteOnMaximize=$true
+Expect-Hold {Invoke-AdapterMode $Mode} 'Fresh Project composer not established'
