@@ -1,5 +1,11 @@
 # Progress
 
+## Lean ADR 0002 L10d — Shoko no-Send safeguards (21 November 2026)
+
+- Installed Shoko pin `9f6c13a2f0300bdcc7e9f783bfb6bf293c58bbf9` held on the synthetic wrong-profile identity, duplicate saved views, an ordinary draft and a draft equal to the live placeholder. Both drafts stayed exact through the installed checks. Only the diagnostic duplicate and the verified test drafts were removed. All 145 run and lock files matched.
+- Live attachment setup is `NOT_RUN`. The existing browser connector rejected local file selection, leaving the owned composer blank. The installed attachment guard passed its regression and the unchanged native detector has prior [attachment-only live evidence](evidence/astra-l07-20261118-a/attempt4.json). No full V05 pass is claimed.
+- Next is L11, launch the published Cat/Dog fixture once through the installed Shoko wrapper with cap three.
+
 ## Lean ADR 0002 L10c — Installed Shoko saved view restored (21 November 2026)
 
 - On installed Shoko pin `9f6c13a2f0300bdcc7e9f783bfb6bf293c58bbf9`, one guarded close removed only the owned disposable window. Observe reported the saved view missing. The ordinary installed recovery reopened it in one Shoko window. The complete reply, both causal IDs and saved identity matched the pre-close observations.
