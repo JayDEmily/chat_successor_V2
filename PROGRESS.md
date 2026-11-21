@@ -1,6 +1,14 @@
 # Progress
 
-The [Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) defines the current scope and acceptance order. Implementation is paused at the Cat/Dog attempt below.
+The [Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) defines the current scope and acceptance order. L11 is held at the registered Cat/Dog worker.
+
+## Lean ADR 0002 L11 — Original Cat/Dog Send reconciled, worker held (21 November 2026)
+
+- Read-only inspection verified the one posted user message in the original saved Shoko chat. Its full 1,659-character body matched the preserved intent’s SHA-256 digest. Reloading the saved view restored its app-rendered conversation ID. The existing reader then included the ellipsis and “Show more” or the “Show less” label in the posted text.
+- The scoped Chrome reader correction extracts the complete prompt in both display states and holds when the controls or text differ from the verified layout. Six headless Chrome checks passed, including a completed first post, an anchored continuation and a provisional-ID hold. The 118 Windows integration cases, 119 reference cases and six native PowerShell suites passed. The integration rerun removed an inherited Git override from the test process after ten disposable repository setups failed. [Reader correction](https://github.com/JayDEmily/chat_successor/commit/6df0b93a19264dd195a08d5872a27e22a86beb49)
+- The existing Shoko extension loaded that script with the same Project scope and a private copy of the previous script for rollback. The installed `9f6c13a2f0300bdcc7e9f783bfb6bf293c58bbf9` backend verified the exact receipt and read the completed reply twice. Its normal bootstrap reconciliation registered the original saved chat as worker 1/3. The original intent stayed byte-identical.
+- The worker had already reported `CHAT_STATUS: ERROR` because its controller journal was unavailable during its reply. The controller recorded `HOLD` after two `Observe` calls, with an empty pending-action slot. Reconciliation made zero Sends and opened zero successors. The Cat/Dog fixture remains at its empty-story seed `4c7a2fd5a4e70704d3a38adefbcad5ae6d3dc37a`. [Fixture tip](https://github.com/JayDEmily/chat-succession-cat-dog-pair/tree/4c7a2fd5a4e70704d3a38adefbcad5ae6d3dc37a)
+- **Next:** surface the worker’s error for an owner decision on recovering the registered worker. L11’s two story commits, one successor and `STOP_FINISHED` at 2/3 remain pending.
 
 ## Lean ADR 0002 L11 — Cat/Dog initial Send held (21 November 2026)
 
