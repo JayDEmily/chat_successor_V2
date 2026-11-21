@@ -959,8 +959,10 @@ if($Mode -eq 'ObserveReentry') {
  try {
   for($i=0;$i -lt 25;$i++){
    Start-Sleep -Milliseconds 400
-   try {$target=Get-TargetWindow $ChatId $freshHandle} catch {continue}
-   $snapshot=Read-CurrentTurn $target
+   try {
+    $target=Get-TargetWindow $ChatId $freshHandle
+    $snapshot=Read-CurrentTurn $target
+   } catch {continue}
    $comparison=Compare-OwnerTurn $snapshot $OwnerAnchor
    if($comparison -eq 'advanced'){
     $verdict='advanced'

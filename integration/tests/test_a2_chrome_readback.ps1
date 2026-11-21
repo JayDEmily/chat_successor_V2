@@ -176,6 +176,28 @@ $freshResult=Invoke-AdapterMode $Mode | ConvertFrom-Json
 Check ($freshResult.disposition -ceq 'advanced' -and $fresh.Closed) 'fresh advancement closes only its comparison view'
 Check ($element.Payload -ceq 'Owner draft entered during the fresh read') 'advanced re-entry leaves the original draft intact'
 
+$element.Payload=''
+$fresh.Closed=$false
+$script:freshReadCount=0
+$script:unavailableFreshReads=1
+function Open-ChromeWindow($url){return $fresh}
+function Read-CurrentTurn($view){
+ if($view.window -eq $fresh){
+  $script:freshReadCount++
+  if($script:freshReadCount -le $script:unavailableFreshReads){
+   throw 'A single conversation transcript could not be established'
+  }
+ }
+ return $first
+}
+$loaded=Invoke-AdapterMode $Mode | ConvertFrom-Json
+Check ($loaded.disposition -ceq 'idle' -and $script:freshReadCount -eq 2 -and $fresh.Closed) 'fresh re-entry waits for the same comparison view to load'
+$fresh.Closed=$false
+$script:freshReadCount=0
+$script:unavailableFreshReads=25
+Expect-Hold {Invoke-AdapterMode $Mode} 'A fresh view of the exact held worker could not be verified'
+Check ($script:freshReadCount -eq 25 -and $fresh.Closed) 'unreadable comparison view holds and closes after the bounded wait'
+
 $visualState=[System.Windows.Automation.WindowVisualState]
 $pattern=[pscustomobject]@{Current=@{CanMaximize=$true;IsModal=$false;WindowVisualState=$visualState::Normal};Requests=0}
 $script:changeRouteOnMaximize=$false
