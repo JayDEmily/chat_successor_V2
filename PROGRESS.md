@@ -1,5 +1,11 @@
 # Progress
 
+## Lean ADR 0002 L10a — Shoko installation pinned (21 November 2026)
+
+- The canonical Shoko launcher and route now select the clean published backend `2c2c5f7c06f64b54441de19cfb6cd176bca1c576`. Its installed entry and backend binding were verified on Windows. The James Student launcher line and route still select `5c86ad6d735b4c0626c49aedfdb93aeb95e6199b`.
+- There were no active native controllers. All run files matched before and after staging, including the original pause markers and legacy pending state. The versioned rollback pair `start-project.pre-lean-2c2c5f7.cmd` and `account_routes.pre-lean-2c2c5f7.json` match the previous installation byte-for-byte. The previous backend checkout remains available.
+- Next is L10b, verify the installed Shoko route and exact Cat/Dog fixture ref with `--check` before any worker starts.
+
 ## Lean ADR 0002 L09 — Automatic stale recovery disabled (21 November 2026)
 
 - Candidate `2c2c5f7c06f64b54441de19cfb6cd176bca1c576` holds after 120 seconds of unchanged verified progress and includes the saved-chat link. Automatic observation opens a window only for missing-view recovery. Verified owner re-entry advancement returns observation-only and leaves the original draft intact. An explicit re-entry still verifies a fresh view before treating a worker as idle.
