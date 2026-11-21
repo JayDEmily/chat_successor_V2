@@ -1,5 +1,12 @@
 # Progress
 
+## Lean ADR 0002 L10b — Installed Shoko preflight passed (21 November 2026)
+
+- The installed Shoko wrapper at `2c2c5f7` held on an empty composer. Native readback showed the same verified placeholder tree with a duplicate label clipped at 15 characters. The earlier empty view clipped it at 52. The reviewed `9f6c13a2f0300bdcc7e9f783bfb6bf293c58bbf9` candidate accepts an exact ellipsized prefix while retaining the existing tree, draft and attachment gates. All 118 Windows integration tests and six native PowerShell suites passed.
+- The Shoko wrapper now selects `9f6c13a`. Its previous route and wrapper were retained under `pre-lean-9f6c13a`. The original rollback remains available.
+- The authenticated Shoko connector ran the installed `--check` and returned `preflight_passed` at the exact Project and Cat/Dog fixture tip `4c7a2fd5a4e70704d3a38adefbcad5ae6d3dc37a`. The fresh branch starts from the empty story seed and names its own publication ref. All 145 native run and lock files matched before and after. [Cat/Dog fixture](https://github.com/JayDEmily/chat-succession-cat-dog-pair/tree/4c7a2fd5a4e70704d3a38adefbcad5ae6d3dc37a)
+- Next is L10c, restore the completed disposable saved view through the installed reader.
+
 ## Lean ADR 0002 L10a — Shoko installation pinned (21 November 2026)
 
 - The canonical Shoko launcher and route now select the clean published backend `2c2c5f7c06f64b54441de19cfb6cd176bca1c576`. Its installed entry and backend binding were verified on Windows. The James Student launcher line and route still select `5c86ad6d735b4c0626c49aedfdb93aeb95e6199b`.
