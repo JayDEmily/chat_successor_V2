@@ -1,0 +1,90 @@
+
+$ErrorActionPreference='Stop'
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+$base=Join-Path $env:LOCALAPPDATA 'ChatSuccession'
+$old=Get-Content (Join-Path $base 'Requests\ltm-v2-reviewer-inspect-20261121.json') -Raw -Encoding UTF8|ConvertFrom-Json
+$intentPath=Join-Path $base 'Requests\ltm-v2-d27-g2-fresh-review-intent.json'
+if(Test-Path -LiteralPath $intentPath){throw 'Existing review Send intent; reconcile rather than resend'}
+$message=@'
+Independent engineering review - LTM-RAG V2 G2 repair, revised candidate commit d27acd1ab6d06031ffc773c855907cfd8362027a, parent 65820f3c36d59d5636cc03e260e1666e6ca5836e, repository JayDEmily/LTM_RAG_V2, branch work/v2-capture-index-integrity-20261121. You are a FRESH INDEPENDENT TESTER, not the implementing worker. Read actual GitHub source, AGENTS.md, GUARDRAILS.md, vnext/AGENTS.md, G2/G5 and prior review issue https://github.com/JayDEmily/LTM_RAG_V2/issues/1. The previous independent review returned RETURN_TO_WORKER for inconsistent version_id and is NOT acceptance of this revision. Independently inspect source and new diff, derive meaningful fault tests beyond worker tests: tampered source_id/message_id/version_id versus immutable local_id; reservation rollback, late acknowledgement, snapshot, verify_synthetic, existing text/role/hash cases and concurrency. Run a suitable reproducible test suite and report exact counts/limitations. Publish a fresh attributable PASS, RETURN_TO_WORKER or BLOCKED review with evidence as a COMMENT on issue #1, pinned to d27acd1, without modifying the candidate or main. Do not create a PR, merge, deploy, use credentials, call paid inference or import private conversations. Do not rely on a Chat Succession controller (its initial review run was held on UIA acknowledgement). Finish with verdict and GitHub evidence link.
+'@.Trim()
+$root=[System.Windows.Automation.AutomationElement]::RootElement
+$w=$null
+foreach($x in $root.FindAll([System.Windows.Automation.TreeScope]::Children,[System.Windows.Automation.Condition]::TrueCondition)){if($x.Current.NativeWindowHandle -eq 4263418){$w=$x;break}}
+if(-not $w){throw 'Fresh Project window missing'}
+function Get-UIA-Address($window){
+ foreach($e in $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+  try{if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit -and $e.Current.Name -eq 'Address and search bar'){return $e.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value}}catch{}
+ }
+ return ''
+}
+$expectUrl=$old.project_url.Replace('https://','')
+if((Get-UIA-Address $w) -cne $expectUrl){throw 'Not on the exact fresh Project landing URL'}
+$all=$w.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)
+$editor=@()
+$stop=0
+$enabledSend=0
+$attachments=0
+foreach($e in $all){
+ try{
+  $n=$e.Current.Name
+  if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit -and $n -ceq ('New chat in '+$old.project_name) -and $e.Current.IsEnabled){$editor+=,$e}
+  if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and $n -eq 'Stop' -and $e.Current.IsEnabled){$stop++}
+  if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and $n -eq 'Send' -and $e.Current.IsEnabled){$enabledSend++}
+  if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and $n -match '^(Remove |Delete attachment)'){$attachments++}
+ }catch{}
+}
+if($editor.Count -ne 1 -or $stop -ne 0 -or $enabledSend -ne 0 -or $attachments -ne 0){throw 'Fresh composer not uniquely empty/safe'}
+$initial=$editor[0].GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+if($initial -cne (('New chat in '+$old.project_name)+[char]10)){throw 'Fresh composer has a draft or unknown state'}
+$sha=[Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes($message))
+$shahex=[BitConverter]::ToString($sha).Replace('-','').ToLowerInvariant()
+$intent=[ordered]@{status='PREPARED';project=$old.project_url;candidate='d27acd1ab6d06031ffc773c855907cfd8362027a';window_handle=4263418;message=$message;message_sha256=$shahex;created_at_utc=[DateTime]::UtcNow.ToString('o')}
+[IO.File]::WriteAllText($intentPath,($intent|ConvertTo-Json -Compress -Depth 5),[Text.UTF8Encoding]::new($false))
+$p=$editor[0].GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+$p.SetValue($message)
+$typed=''
+for($i=0;$i -lt 25;$i++){
+ Start-Sleep -Milliseconds 100
+ $typed=$editor[0].GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+ if($typed.TrimEnd([char]13,[char]10) -ceq $message){break}
+}
+if($typed.TrimEnd([char]13,[char]10) -cne $message){throw 'Pre-Send draft readback mismatched; intent retained without click'}
+if((Get-UIA-Address $w) -cne $expectUrl){throw 'Destination changed; no click'}
+$document=$editor[0]
+$walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
+while($null -ne $document -and $document.Current.ControlType -ne [System.Windows.Automation.ControlType]::Document){$document=$walker.GetParent($document)}
+if(-not $document){throw 'Composer document not found; no click'}
+$send=@()
+foreach($e in $document.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+ try{if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and $e.Current.Name -ceq 'Send' -and $e.Current.IsEnabled -and -not $e.Current.IsOffscreen){$send+=,$e}}catch{}
+}
+if($send.Count -ne 1){throw ('Expected one Send button; got '+$send.Count+'; no click')}
+$intent.status='CLICK_UNCERTAIN'
+$intent.click_intent_utc=[DateTime]::UtcNow.ToString('o')
+[IO.File]::WriteAllText($intentPath,($intent|ConvertTo-Json -Compress -Depth 5),[Text.UTF8Encoding]::new($false))
+Write-Output ('SEND_INTENT_RECORDED SHA256='+$shahex+' LENGTH='+$message.Length)
+$send[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Write-Output 'SEND_INVOKED_ONCE'
+$observed=$false
+$chatUrl=''
+for($i=0;$i -lt 65;$i++){
+ Start-Sleep -Milliseconds 350
+ $q=Get-UIA-Address $w
+ if($q -notmatch ('^chatgpt[.]com/g/g-p-6afcdd73d378819183078ded6b83fea4[^/]*/c/[a-zA-Z0-9-]+$')){continue}
+ $matched=0
+ foreach($el in $w.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+  try{if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and $el.Current.Name -ceq $message){$matched++}}catch{}
+ }
+ if($matched -eq 1){$observed=$true;$chatUrl=$q;break}
+}
+if($observed){
+ $intent.status='POSTED_EXACT_MATCH'
+ $intent.chat_url=$chatUrl
+ $intent.verified_utc=[DateTime]::UtcNow.ToString('o')
+ [IO.File]::WriteAllText($intentPath,($intent|ConvertTo-Json -Compress -Depth 5),[Text.UTF8Encoding]::new($false))
+ Write-Output ('POSTED_EXACT_MATCH CHAT_URL=https://'+$chatUrl)
+}else{
+ Write-Output 'POSTED_UNVERIFIED: do not repeat Send; reconcile saved intent and browser'
+}

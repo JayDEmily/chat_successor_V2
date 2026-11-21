@@ -1,5 +1,7 @@
 # Case study — repairing synthetic source fidelity through independent review
 
+**Verbatim correction:** [VERBATIM_SUPPLEMENT.md](VERBATIM_SUPPLEMENT.md) now preserves the full original reviewer prompts, PowerShell command arguments, account routing, run files, reviewer Python scripts and the recoverable 245-record tool trace. Earlier redacted representations and exclusion statements below describe the first publication and are superseded. No authentication-token substitutions were required; 32 large outputs were already unavailable from the history source.
+
 ## 1. Executive abstract and the engineering decision
 
 The engineering goal was deliberately narrow: harden the existing synthetic capture ledger so that source identities, exact text, authorship, index payloads, verification status, coverage and revocation snapshots could not silently diverge through plausible database corruption or an adversarially interleaved write.

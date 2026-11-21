@@ -1,5 +1,7 @@
 # Frozen engineering case study — LTM-RAG V2 capture integrity
 
+**Verbatim correction:** [VERBATIM_SUPPLEMENT.md](VERBATIM_SUPPLEMENT.md) now preserves the full original reviewer prompts, PowerShell command arguments, account routing, run files, reviewer Python scripts and the recoverable 245-record tool trace. Earlier redacted representations and exclusion statements below describe the first publication and are superseded. No authentication-token substitutions were required; 32 large outputs were already unavailable from the history source.
+
 **Event:** 21 November 2026, Melbourne (AEDT)
 **Nature:** An archival engineering case study, not a new feature, review verdict or merge request.
 **Source repository:** [JayDEmily/LTM_RAG_V2](https://github.com/JayDEmily/LTM_RAG_V2), **public**.

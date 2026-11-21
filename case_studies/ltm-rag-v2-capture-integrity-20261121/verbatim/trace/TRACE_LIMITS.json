@@ -1,0 +1,22 @@
+{
+  "available_tool_history_window": "11/21/2026 22:02:36 to 22:34:02 Australia/Melbourne",
+  "extracted_tool_records": 245,
+  "recorded_output_omission_marker_entries": 32,
+  "counts_by_tool": {
+    "start_process": 174,
+    "read_multiple_files": 4,
+    "read_process_output": 37,
+    "list_sessions": 1,
+    "read_file": 9,
+    "write_file": 12,
+    "list_directory": 5,
+    "edit_block": 3
+  },
+  "trace_sha256": "61c20f4942c3e7c9b6a42d07c75bc7f8ed00ac39d06fff72753a4ee143a23dd2",
+  "known_limitations": [
+    "The Desktop Commander tool-history source retains a rolling set of recent calls; earlier or later calls may not be available.",
+    "Output bodies over the source system limit were replaced with omission markers prior to archival; they cannot be recovered verbatim from this source.",
+    "This is a time-window record, not proof of a causally complete capture of all separate ChatGPT workers, all GitHub connector tool calls, or full browser DOM history."
+  ],
+  "record_scope": "Every available Desktop Commander tool event in the defined time window, including possibly unrelated concurrent operations; arguments and retained outputs are unmodified strings."
+}

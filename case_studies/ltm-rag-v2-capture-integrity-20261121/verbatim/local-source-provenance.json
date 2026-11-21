@@ -1,0 +1,116 @@
+{
+  "snapshot_type": "verbatim_original_bytes",
+  "source_count": 12,
+  "authentication_tokens_detected": 0,
+  "authentication_tokens_substituted": 0,
+  "records": [
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/account_routes.json",
+      "archive_relative_path": "local-originals/installation/account_routes.json",
+      "source_sha256": "81b729cffca095dcb3424bfdefac8b1057e62b01b717e6e6f1c3469841736a6e",
+      "archived_sha256": "81b729cffca095dcb3424bfdefac8b1057e62b01b717e6e6f1c3469841736a6e",
+      "source_bytes": 815,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Requests/ltm-v2-8d27-g2g5g9-review-intent.json",
+      "archive_relative_path": "local-originals/requests/ltm-v2-8d27-g2g5g9-review-intent.json",
+      "source_sha256": "566094c71abd3b6b6991fd4a79bd00a77732f8840ebe2599ef96aaeb384d864b",
+      "archived_sha256": "566094c71abd3b6b6991fd4a79bd00a77732f8840ebe2599ef96aaeb384d864b",
+      "source_bytes": 1791,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Requests/ltm-v2-d27-g2-fresh-review-intent.json",
+      "archive_relative_path": "local-originals/requests/ltm-v2-d27-g2-fresh-review-intent.json",
+      "source_sha256": "4e4dede966800d0745d908a999bdbe85c254b383c2acda23cdb2457466eaba0b",
+      "archived_sha256": "4e4dede966800d0745d908a999bdbe85c254b383c2acda23cdb2457466eaba0b",
+      "source_bytes": 1555,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Requests/ltm-v2-independent-review-resume-20261121.json",
+      "archive_relative_path": "local-originals/requests/ltm-v2-independent-review-resume-20261121.json",
+      "source_sha256": "51e9981aa8df4338f1c051bd3e80b01717d834429ead58733b2e542d6fad34b6",
+      "archived_sha256": "51e9981aa8df4338f1c051bd3e80b01717d834429ead58733b2e542d6fad34b6",
+      "source_bytes": 287,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Requests/ltm-v2-independent-review-start-20261121.json",
+      "archive_relative_path": "local-originals/requests/ltm-v2-independent-review-start-20261121.json",
+      "source_sha256": "c39de6472b456bb13333849800d64c3b5bc4a11a7d8d68f08ce0cc9e3aa0343d",
+      "archived_sha256": "c39de6472b456bb13333849800d64c3b5bc4a11a7d8d68f08ce0cc9e3aa0343d",
+      "source_bytes": 1908,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Requests/ltm-v2-reviewer-inspect-20261121.json",
+      "archive_relative_path": "local-originals/requests/ltm-v2-reviewer-inspect-20261121.json",
+      "source_sha256": "947426cc7f849a01198ed1c115c3149f7e66ddc3ada70b593993d804324f568b",
+      "archived_sha256": "947426cc7f849a01198ed1c115c3149f7e66ddc3ada70b593993d804324f568b",
+      "source_bytes": 231,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Runs/7d8b4ba389602e089d735e8a/bootstrap-intent.json",
+      "archive_relative_path": "local-originals/runs/7d8b4ba389602e089d735e8a/bootstrap-intent.json",
+      "source_sha256": "433c0fb79b20a8e1db7a8b245d27dabdba05c7d6f91207d89f014a5788b0bc63",
+      "archived_sha256": "433c0fb79b20a8e1db7a8b245d27dabdba05c7d6f91207d89f014a5788b0bc63",
+      "source_bytes": 2269,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Runs/7d8b4ba389602e089d735e8a/bootstrap.lock",
+      "archive_relative_path": "local-originals/runs/7d8b4ba389602e089d735e8a/bootstrap.lock",
+      "source_sha256": "ecc76c19c9f3c5108773d6c3a18a6c25c9bf1131c4e250b71213274e3b2b5d08",
+      "archived_sha256": "ecc76c19c9f3c5108773d6c3a18a6c25c9bf1131c4e250b71213274e3b2b5d08",
+      "source_bytes": 2,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Runs/7d8b4ba389602e089d735e8a/config.json",
+      "archive_relative_path": "local-originals/runs/7d8b4ba389602e089d735e8a/config.json",
+      "source_sha256": "209089e559a805d2902a9e7a223669cf08410758d5ea1279de2b21ad0d8167e0",
+      "archived_sha256": "209089e559a805d2902a9e7a223669cf08410758d5ea1279de2b21ad0d8167e0",
+      "source_bytes": 923,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Runs/7d8b4ba389602e089d735e8a/controller.uia-target.json",
+      "archive_relative_path": "local-originals/runs/7d8b4ba389602e089d735e8a/controller.uia-target.json",
+      "source_sha256": "3f4dc85d467b56a251368e7dd09c3ccb6ca6d6642daa1dde13ffcccd4406bc08",
+      "archived_sha256": "3f4dc85d467b56a251368e7dd09c3ccb6ca6d6642daa1dde13ffcccd4406bc08",
+      "source_bytes": 102,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Runs/7d8b4ba389602e089d735e8a/owner-ltmragv2review65820f3c20261121.json",
+      "archive_relative_path": "local-originals/runs/7d8b4ba389602e089d735e8a/owner-ltmragv2review65820f3c20261121.json",
+      "source_sha256": "e15725541ff2a9bcf523b0b0dfc4223fbc9e9f3a39513b78d9d8e1be0d0428b7",
+      "archived_sha256": "e15725541ff2a9bcf523b0b0dfc4223fbc9e9f3a39513b78d9d8e1be0d0428b7",
+      "source_bytes": 1648,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    },
+    {
+      "source_local_path": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Runs/7d8b4ba389602e089d735e8a/owner-ltmragv2review65820f3c20261121.sha256",
+      "archive_relative_path": "local-originals/runs/7d8b4ba389602e089d735e8a/owner-ltmragv2review65820f3c20261121.sha256",
+      "source_sha256": "ae1312dcf8c7239f81398c262c8a07d83d7c6588bda4bd9091e32500fab97cb9",
+      "archived_sha256": "ae1312dcf8c7239f81398c262c8a07d83d7c6588bda4bd9091e32500fab97cb9",
+      "source_bytes": 65,
+      "authentication_token_replacements": [],
+      "readback": "BYTE_EQUAL"
+    }
+  ]
+}

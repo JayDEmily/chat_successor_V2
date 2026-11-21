@@ -1,5 +1,7 @@
 # Reviewer automation — exact version, live operation and failure
 
+**Verbatim correction:** [VERBATIM_SUPPLEMENT.md](VERBATIM_SUPPLEMENT.md) now preserves the full original reviewer prompts, PowerShell command arguments, account routing, run files, reviewer Python scripts and the recoverable 245-record tool trace. Earlier redacted representations and exclusion statements below describe the first publication and are superseded. No authentication-token substitutions were required; 32 large outputs were already unavailable from the history source.
+
 ## 1. What automation actually ran
 
 The installed Chat Succession automation used by the initial LTM-RAG V2 reviewer bootstrap was in the **private** GitHub repository JayDEmily/chat_successor, at the detached installed checkout:

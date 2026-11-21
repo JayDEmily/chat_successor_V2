@@ -1,5 +1,7 @@
 # Reproducibility, code package and frozen integrity checks
 
+**Verbatim correction:** [VERBATIM_SUPPLEMENT.md](VERBATIM_SUPPLEMENT.md) now preserves the full original reviewer prompts, PowerShell command arguments, account routing, run files, reviewer Python scripts and the recoverable 245-record tool trace. Earlier redacted representations and exclusion statements below describe the first publication and are superseded. No authentication-token substitutions were required; 32 large outputs were already unavailable from the history source.
+
 ## 1. Obtain the case study
 
 The case-study branch is in the **private** automation repository so that the actual Chat Succession source used for the first reviewer launch is not disclosed in the public LTM-RAG V2 repository.

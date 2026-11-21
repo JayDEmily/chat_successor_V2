@@ -1,5 +1,7 @@
 # Evidence catalogue — commits, reviews, automation and hosted CI
 
+**Verbatim correction:** [VERBATIM_SUPPLEMENT.md](VERBATIM_SUPPLEMENT.md) now preserves the full original reviewer prompts, PowerShell command arguments, account routing, run files, reviewer Python scripts and the recoverable 245-record tool trace. Earlier redacted representations and exclusion statements below describe the first publication and are superseded. No authentication-token substitutions were required; 32 large outputs were already unavailable from the history source.
+
 This catalogue identifies **observed records**, **reported results**, **reproduced tests**, and **not-established capabilities** separately. The files under evidence/ are frozen copies of GitHub data at collection time, not a claim that a PR or external record will never subsequently change.
 
 ## A. Source-of-truth repository records

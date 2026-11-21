@@ -1,0 +1,72 @@
+
+$ErrorActionPreference='Stop'
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+$base=Join-Path $env:LOCALAPPDATA 'ChatSuccession'
+$req=Get-Content (Join-Path $base 'Requests\ltm-v2-reviewer-inspect-20261121.json') -Raw -Encoding UTF8|ConvertFrom-Json
+$marker=Join-Path $base 'Requests\ltm-v2-d27-g2-fresh-review-intent.json'
+if(Test-Path $marker){throw 'Existing intent: reconcile, never retry a Send'}
+$message=@'
+Independent engineering review of LTM-RAG V2 repair commit d27acd1ab6d06031ffc773c855907cfd8362027a, parent 65820f3c36d59d5636cc03e260e1666e6ca5836e, repo JayDEmily/LTM_RAG_V2, branch work/v2-capture-index-integrity-20261121. You are a NEW INDEPENDENT TESTER, not the worker. Read GitHub source and diff, AGENTS.md, GUARDRAILS.md, vnext/AGENTS.md, G2/G5 and previous RETURN_TO_WORKER evidence in https://github.com/JayDEmily/LTM_RAG_V2/issues/1. Independently derive tests for source_id/message_id/version_id tampering, rollback, late acknowledgement, snapshot, verification, existing text/role corruption and relevant concurrency. Inspect applicable requirements and run meaningful regressions with exact evidence. Publish a new PASS / RETURN_TO_WORKER / BLOCKED verdict, pinned to d27acd1, as a GitHub COMMENT on issue #1. Do not trust worker test claims. Do not modify source, main, candidate, PRs, credentials, native services or personal history; do not merge. The prior Chat Succession controller is held, so this is a standalone fresh reviewer chat rather than a controller handoff. Finish with the GitHub review comment link and verdict.
+'@.Trim()
+$root=[System.Windows.Automation.AutomationElement]::RootElement
+$win=$null
+foreach($q in $root.FindAll([System.Windows.Automation.TreeScope]::Children,[System.Windows.Automation.Condition]::TrueCondition)){if($q.Current.NativeWindowHandle -eq 4263418){$win=$q;break}}
+if(-not $win){throw 'Prepared Project browser missing'}
+function GetPageUrl($w){
+ foreach($x in $w.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+  try{if($x.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit -and $x.Current.Name -eq 'Address and search bar'){return $x.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value}}catch{}
+ }
+ return ''
+}
+$expectedUrl=$req.project_url.Replace('https://','')
+if((GetPageUrl $win) -cne $expectedUrl){throw 'Wrong Project landing URL'}
+$edits=@()
+$stop=0
+$send=0
+foreach($x in $win.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+ try{
+  if($x.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit -and $x.Current.Name -ceq ('New chat in '+$req.project_name) -and $x.Current.IsEnabled){$edits+=,$x}
+  if($x.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and $x.Current.Name -eq 'Stop' -and $x.Current.IsEnabled){$stop++}
+  if($x.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and $x.Current.Name -eq 'Send' -and $x.Current.IsEnabled){$send++}
+ }catch{}
+}
+if($edits.Count -ne 1 -or $stop -ne 0 -or $send -ne 0){throw 'Fresh editor/empty Send not verified'}
+$editor=$edits[0]
+$vp=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+if($vp.Current.Value -cne (('New chat in '+$req.project_name)+[char]10)){throw 'Draft present: no Send'}
+$h=[System.Security.Cryptography.SHA256]::Create()
+try{$digest=[BitConverter]::ToString($h.ComputeHash([Text.Encoding]::UTF8.GetBytes($message))).Replace('-','').ToLowerInvariant()}finally{$h.Dispose()}
+$state=[ordered]@{status='PREPARED';project_url=$req.project_url;candidate='d27acd1ab6d06031ffc773c855907cfd8362027a';window_handle=4263418;message=$message;sha256=$digest}
+[IO.File]::WriteAllText($marker,($state|ConvertTo-Json -Depth 4 -Compress),[Text.UTF8Encoding]::new($false))
+$vp.SetValue($message)
+$typed=$null
+for($i=0;$i -lt 25;$i++){Start-Sleep -Milliseconds 100;$typed=$vp.Current.Value;if($typed.TrimEnd([char]13,[char]10) -ceq $message){break}}
+if($typed.TrimEnd([char]13,[char]10) -cne $message){throw 'Typed prompt not exact, no click'}
+if((GetPageUrl $win) -cne $expectedUrl){throw 'Destination changed, no click'}
+$doc=$editor
+$walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
+while($null -ne $doc -and $doc.Current.ControlType -ne [System.Windows.Automation.ControlType]::Document){$doc=$walker.GetParent($doc)}
+if(-not $doc){throw 'Composer document absent, no click'}
+$buttons=@()
+foreach($x in $doc.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+ try{if($x.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and $x.Current.Name -eq 'Send' -and $x.Current.IsEnabled -and -not $x.Current.IsOffscreen){$buttons+=,$x}}catch{}
+}
+if($buttons.Count -ne 1){throw 'Send button is not unique in composer'}
+$state.status='CLICK_UNCERTAIN'
+[IO.File]::WriteAllText($marker,($state|ConvertTo-Json -Depth 4 -Compress),[Text.UTF8Encoding]::new($false))
+Write-Output ('EXACT_PRE_SEND_MATCH LENGTH='+$message.Length+' SHA256='+$digest)
+$buttons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Write-Output 'SEND_INVOKED_ONCE'
+$matched=$false;$url=''
+for($i=0;$i -lt 50;$i++){
+ Start-Sleep -Milliseconds 300
+ $url=GetPageUrl $win
+ if($url -notmatch '^chatgpt[.]com/g/g-p-6afcdd73d378819183078ded6b83fea4[^/]*/c/[0-9a-f-]+'){continue}
+ foreach($e in $win.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+  try{if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and $e.Current.Name -ceq $message){$matched=$true;break}}catch{}
+ }
+ if($matched){break}
+}
+if($matched){$state.status='POSTED_EXACT_MATCH';$state.chat_url='https://'+$url;[IO.File]::WriteAllText($marker,($state|ConvertTo-Json -Depth 4 -Compress),[Text.UTF8Encoding]::new($false));Write-Output ('POSTED_EXACT_MATCH URL=https://'+$url)}
+else{Write-Output ('POSTED_NOT_YET_VERIFIED URL='+$url+' -- do not retry')}

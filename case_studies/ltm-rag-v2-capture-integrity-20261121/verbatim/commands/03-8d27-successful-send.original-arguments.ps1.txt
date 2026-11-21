@@ -1,0 +1,77 @@
+
+$ErrorActionPreference='Stop'
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+$base=Join-Path $env:LOCALAPPDATA 'ChatSuccession'
+$req=Get-Content (Join-Path $base 'Requests\ltm-v2-reviewer-inspect-20261121.json') -Raw -Encoding UTF8|ConvertFrom-Json
+$marker=Join-Path $base 'Requests\ltm-v2-8d27-g2g5g9-review-intent.json'
+if(Test-Path $marker){throw 'Existing Send intent; reconcile, do not repeat'}
+$message=@'
+Fresh independent engineering review of LTM-RAG V2 repair commit 8d27bd55d4abf0c5f864b60a33f24d666920a130, parent d27acd1ab6d06031ffc773c855907cfd8362027a, branch work/v2-capture-index-integrity-20261121 in JayDEmily/LTM_RAG_V2. You are a SEPARATE independent reviewer, not the implementation worker. Read actual GitHub source, AGENTS.md, GUARDRAILS.md, vnext/AGENTS.md, and G2/G5/G9 requirements. Prior independent RETURN_TO_WORKER evidence is https://github.com/JayDEmily/LTM_RAG_V2/issues/1#issuecomment-7061870012. Independently derive meaningful tests for the 5 documented failures: verify_synthetic falsely certifying corrupt source text, role or outbox digest; mixed pre/post-revocation SQLite snapshot under WAL writer interleaving; orphaned OBSERVED coverage under changed source identity. Also check transaction rollback, original local_id identity, concurrency, normal successful paths and regressions. Do not trust worker's 285-test claim. Publish an evidence-backed PASS, RETURN_TO_WORKER or BLOCKED pinned to this exact head as a fresh GitHub COMMENT on issue #1, with test counts and limitations. Do not edit source, branches, PR, main, live services, credentials, or personal data; no paid inference or deployment; do not merge. Chat Succession controller registration is separately held; this is a fresh reviewer thread. End with verdict and GitHub evidence link.
+'@.Trim()
+$root=[System.Windows.Automation.AutomationElement]::RootElement
+$w=$null
+foreach($x in $root.FindAll([System.Windows.Automation.TreeScope]::Children,[System.Windows.Automation.Condition]::TrueCondition)){if($x.Current.NativeWindowHandle -eq 9637488){$w=$x;break}}
+if(-not $w){throw 'Reviewer window missing'}
+function GetUrl($window){
+ foreach($e in $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+  try{if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit -and $e.Current.Name -eq 'Address and search bar'){return $e.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value}}catch{}
+ }
+ return ''
+}
+$target=$req.project_url.Replace('https://','')
+if((GetUrl $w) -cne $target){throw 'Wrong Project landing'}
+$edit=@();$stops=0;$sends=0
+foreach($e in $w.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+ try{
+  $n=$e.Current.Name
+  if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit -and $n -ceq ('New chat in '+$req.project_name) -and $e.Current.IsEnabled){$edit+=,$e}
+  if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and $n -eq 'Stop' -and $e.Current.IsEnabled){$stops++}
+  if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and $n -eq 'Send' -and $e.Current.IsEnabled){$sends++}
+ }catch{}
+}
+if($edit.Count -ne 1 -or $sends -ne 0 -or $stops -ne 0){throw 'New chat composer not ready'}
+$editor=$edit[0]
+$vp=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+if($vp.Current.Value -cne (('New chat in '+$req.project_name)+[char]10)){throw 'Composer is not empty, no Send'}
+$h=[Security.Cryptography.SHA256]::Create()
+try{$digest=[BitConverter]::ToString($h.ComputeHash([Text.Encoding]::UTF8.GetBytes($message))).Replace('-','').ToLowerInvariant()}finally{$h.Dispose()}
+$state=[ordered]@{status='PREPARED';candidate='8d27bd55d4abf0c5f864b60a33f24d666920a130';project=$req.project_url;window_handle=9637488;message=$message;sha256=$digest}
+[IO.File]::WriteAllText($marker,($state|ConvertTo-Json -Compress -Depth 4),[Text.UTF8Encoding]::new($false))
+$vp.SetValue($message)
+$typed=''
+for($i=0;$i -lt 30;$i++){Start-Sleep -Milliseconds 100;$typed=$vp.Current.Value;if($typed.TrimEnd([char]13,[char]10) -ceq $message){break}}
+if($typed.TrimEnd([char]13,[char]10) -cne $message){throw 'Typed text is not exact; no click'}
+if((GetUrl $w) -cne $target){throw 'Page changed; no click'}
+$doc=$editor
+$walk=[System.Windows.Automation.TreeWalker]::RawViewWalker
+while($null -ne $doc -and $doc.Current.ControlType -ne [System.Windows.Automation.ControlType]::Document){$doc=$walk.GetParent($doc)}
+if(-not $doc){throw 'Composer Document absent'}
+$buttons=@()
+foreach($e in $doc.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+ try{if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and $e.Current.Name -ceq 'Send' -and $e.Current.IsEnabled -and -not $e.Current.IsOffscreen){$buttons+=,$e}}catch{}
+}
+if($buttons.Count -ne 1){throw 'No unique bound Send button, do not click'}
+$state.status='CLICK_UNCERTAIN'
+[IO.File]::WriteAllText($marker,($state|ConvertTo-Json -Compress -Depth 4),[Text.UTF8Encoding]::new($false))
+Write-Output ('EXACT_PRE_SEND_VERIFIED LENGTH='+$message.Length+' SHA256='+$digest)
+$buttons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+Write-Output 'SENT_ONCE'
+$seen=$false;$url=''
+for($i=0;$i -lt 65;$i++){
+ Start-Sleep -Milliseconds 300
+ $url=GetUrl $w
+ if($url -notmatch '^chatgpt[.]com/g/g-p-6afcdd73d378819183078ded6b83fea4[^/]*/c/[0-9a-f-]+'){continue}
+ foreach($e in $w.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)){
+  try{if($e.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and $e.Current.Name -ceq $message){$seen=$true;break}}catch{}
+ }
+ if($seen){break}
+}
+if($seen){
+ $state.status='POSTED_EXACT_MATCH'
+ $state.chat_url='https://'+$url
+ [IO.File]::WriteAllText($marker,($state|ConvertTo-Json -Compress -Depth 4),[Text.UTF8Encoding]::new($false))
+ Write-Output ('POSTED_EXACT_MATCH URL=https://'+$url)
+}else{
+ Write-Output ('POSTED_UNVERIFIED URL='+$url+' -- do not repeat')
+}

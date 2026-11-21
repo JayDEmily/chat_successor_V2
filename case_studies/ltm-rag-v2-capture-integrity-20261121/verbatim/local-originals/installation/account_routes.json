@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "accounts": {
+    "shoco": {
+      "backend_commit": "36b17092aa5fef09b5ac3747c03e5661be23559c",
+      "chrome_app_id": "Chrome.UserData.Profile11",
+      "plugin_id": "plugins_6aff6858ab788191a4a6b7c15a7216bc",
+      "install_root": "C:\\Users\\james\\AppData\\Local\\ChatSuccession",
+      "profile_path": "C:\\Users\\james\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 11"
+    },
+    "james-student": {
+      "install_root": "C:\\Users\\james\\AppData\\Local\\ChatSuccession",
+      "profile_path": "C:\\Users\\james\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 13",
+      "chrome_app_id": "Chrome.UserData.Profile13",
+      "plugin_id": "plugins_6afe6280c38c8191bd7cd2c85e17b602",
+      "backend_commit": "5c86ad6d735b4c0626c49aedfdb93aeb95e6199b"
+    }
+  }
+}

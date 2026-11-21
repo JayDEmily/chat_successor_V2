@@ -1,0 +1,64 @@
+{
+  "source_type": "Remote Desktop Commander get_recent_tool_calls, exact returned argument/output fields; selected 245 timestamped records",
+  "tool_records": 245,
+  "trace_sha256": "61c20f4942c3e7c9b6a42d07c75bc7f8ed00ac39d06fff72753a4ee143a23dd2",
+  "recorded_first": "11/21/2026, 22:02:36",
+  "recorded_last": "11/21/2026, 22:34:02",
+  "commands": [
+    {
+      "source_timestamp": "11/21/2026, 22:17:29",
+      "source_tool": "start_process",
+      "archive_command_path": "commands/01-pre-send-failed-sha256-api.original-arguments.ps1.txt",
+      "code_sha256": "0080721ac8fafaaf1c17c5ae017b2a51ecf358a51972dd02b0ef7526ec32451b",
+      "bytes": 7088,
+      "changes": "NONE",
+      "message_included_verbatim": true
+    },
+    {
+      "source_timestamp": "11/21/2026, 22:17:52",
+      "source_tool": "start_process",
+      "archive_command_path": "commands/02-d27-successful-send.original-arguments.ps1.txt",
+      "code_sha256": "37af52b302162f0b4e6dbc86edc70c4f6da06a9c0f30a652daf2391418ab9df4",
+      "bytes": 6131,
+      "changes": "NONE",
+      "message_included_verbatim": true
+    },
+    {
+      "source_timestamp": "11/21/2026, 22:27:18",
+      "source_tool": "start_process",
+      "archive_command_path": "commands/03-8d27-successful-send.original-arguments.ps1.txt",
+      "code_sha256": "15cac41fb9799c4d38d2f5ac71f83e650b8c7b1c58955e9c2926fbf4d39e50b5",
+      "bytes": 6255,
+      "changes": "NONE",
+      "message_included_verbatim": true
+    }
+  ],
+  "review_prompts": [
+    {
+      "path": "prompts/01-first-review-assignment.txt",
+      "source_local_file": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Runs/7d8b4ba389602e089d735e8a/bootstrap-intent.json",
+      "sha256": "65b18af0b052214bdc54efdcaef89e6e4604e855e1aaad4820f33a9e025aacc1",
+      "bytes": 1887,
+      "original_sha256_field": "message_sha256",
+      "changes": "NONE"
+    },
+    {
+      "path": "prompts/02-d27-review-assignment.txt",
+      "source_local_file": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Requests/ltm-v2-d27-g2-fresh-review-intent.json",
+      "sha256": "39bd5f72f0f122fc648b5b23f51b9a8ffa2d56fabe8097f1743fc1035e875956",
+      "bytes": 1145,
+      "original_sha256_field": "sha256",
+      "changes": "NONE"
+    },
+    {
+      "path": "prompts/03-8d27-review-assignment.txt",
+      "source_local_file": "/mnt/c/Users/james/AppData/Local/ChatSuccession/Requests/ltm-v2-8d27-g2g5g9-review-intent.json",
+      "sha256": "2cfd58b68c1dd9484d89404fb9a538b7ac48d00be37fc86f2e31b2200c751577",
+      "bytes": 1380,
+      "original_sha256_field": "sha256",
+      "changes": "NONE"
+    }
+  ],
+  "token_substitutions": [],
+  "qualification": "Historical tool outputs over 4KiB were already replaced by omission markers by the tool history source; the archived record faithfully preserves those markers, not the underlying unavailable output."
+}
