@@ -1,5 +1,11 @@
 # Progress
 
+## Lean ADR 0002 L09 — Automatic stale recovery disabled (21 November 2026)
+
+- Candidate `2c2c5f7c06f64b54441de19cfb6cd176bca1c576` holds after 120 seconds of unchanged verified progress and includes the saved-chat link. Automatic observation opens a window only for missing-view recovery. Verified owner re-entry advancement returns observation-only and leaves the original draft intact. An explicit re-entry still verifies a fresh view before treating a worker as idle.
+- The old code failed the stall and completed-advancement regressions. All 118 Windows integration cases, 119 reference cases, and six native PowerShell suites passed after the change. The independent reviewer accepted the identical runtime files at `abae7d9`. Source inspection also identified an inherited window-ownership race if a manual window opens in the same profile during the launcher’s acquisition. The L09 checks made no live browser action.
+- Next is L10a, stage the pinned Shoko installation with a compatible rollback.
+
 ## Shoko Yumi iPhone no-Send preflight — 21 November 2026
 
 - The phone's Cat/Dog request used `JayDEmily/chat-succession-cat-dog-pair@main` with a cap of three in the Shoko Yumi Qualification Project. The installed launcher returned `launch_held` at composer verification. The clean installed checkout and Shoko route both identify `5c86ad6d735b4c0626c49aedfdb93aeb95e6199b`. The preflight performed no Send.
