@@ -1,5 +1,11 @@
 # Progress
 
+## Lean ADR 0002 L11 — Cat/Dog initial Send held (21 November 2026)
+
+- The installed Shoko wrapper at `9f6c13a2f0300bdcc7e9f783bfb6bf293c58bbf9` verified a fresh run slot and attempted one initial Send to the Cat/Dog fixture, with cap three. It retained its original intent when the exact posted-message receipt timed out.
+- The existing read-only reconciliation verified a saved chat in the exact Shoko Project. The Chrome reader first reported the saved view offscreen. One scoped scroll to the bottom produced an unqualified read and the exact receipt still held. The original intent matched byte-for-byte and the controller journal remained absent. No repeat Send or controller start occurred.
+- The published fixture remains at its empty-story seed `4c7a2fd5a4e70704d3a38adefbcad5ae6d3dc37a`. Useful story commits, successor and terminal finish are pending. On resume, inspect the original saved view for the unqualified receipt and use the existing reconciliation path when the exact evidence is available.
+
 ## Lean ADR 0002 L10d — Shoko no-Send safeguards (21 November 2026)
 
 - Installed Shoko pin `9f6c13a2f0300bdcc7e9f783bfb6bf293c58bbf9` held on the synthetic wrong-profile identity, duplicate saved views, an ordinary draft and a draft equal to the live placeholder. Both drafts stayed exact through the installed checks. Only the diagnostic duplicate and the verified test drafts were removed. All 145 run and lock files matched.
