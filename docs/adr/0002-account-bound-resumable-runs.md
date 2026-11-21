@@ -4,7 +4,7 @@
 - **Authority:** Owner directed the developer/project-manager thread to work through all ten Astra leaves, with standing authorisation to make ordinary in-scope decisions, implement, test, independently verify, publish checkpoints and deploy validated candidate updates without repeated routine permission requests.
 - **Source:** [Astra's original, unchanged proposed ADR](../../evidence/astra-adr-0002-20261120/package/docs/adr/0002-account-bound-resumable-runs.md).
 - **Evidence baseline:** [G0 verified ledger](../../evidence/astra-adr-0002-20261120/implementation/G0_20261120/BASELINE.md).
-- **Programme:** [ADR 0002 management and gate status](../astra-succession/adr-0002/PROJECT_MANAGEMENT.md).
+- **Current programme:** [Shoko Yumi execution plan](../astra-succession/adr-0002/PROJECT_MANAGEMENT.md). Use its order and exit criteria for the owner’s limited release. The original ten-leaf scope below documents the broader ADR decision.
 - **Supersession:** Extends accepted [ADR 0001](0001-generic-entry-and-re-entry.md); no alteration to its established protocol.
 
 ## Accepted scope

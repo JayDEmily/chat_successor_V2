@@ -61,9 +61,9 @@ generic desktop trials verified hidden Project lookup, overlapping runs, and
 terminal stops. See the [live evidence](evidence/astra-generic-entry-20261119/live-acceptance.md)
 for current approval and branch-rotation results.
 
-- [ADR 0002 operative implementation and gate status](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md)
-- [Astra ADR 0002 independent review — proposed, 20 November](evidence/astra-adr-0002-20261120/INTAKE.md)
-- [Astra gates and leaves](docs/astra-succession/README.md)
-- [Validation results and handoff](PROGRESS.md)
+- [Current Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md)
+- [Current leaf, validation results and handoff](PROGRESS.md)
+- [Historical Astra ADR 0002 independent review](evidence/astra-adr-0002-20261120/INTAKE.md)
+- [Earlier Astra gates and leaves](docs/astra-succession/README.md)
 - [Controller operations](integration/README.md)
 - [Personal plugin source](plugins/chat-succession/)

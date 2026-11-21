@@ -1,5 +1,7 @@
 # Progress
 
+The [Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) defines the current scope and acceptance order. Implementation is paused at the Cat/Dog attempt below.
+
 ## Lean ADR 0002 L11 — Cat/Dog initial Send held (21 November 2026)
 
 - The installed Shoko wrapper at `9f6c13a2f0300bdcc7e9f783bfb6bf293c58bbf9` verified a fresh run slot and attempted one initial Send to the Cat/Dog fixture, with cap three. It retained its original intent when the exact posted-message receipt timed out.

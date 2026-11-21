@@ -1,8 +1,6 @@
 # Agent instructions
 
-Read README.md, PROGRESS.md and the plan for your assignment before working here. Keep the owner's latest instructions authoritative.
-
-For Astra's continuing loop, use the [Astra execution plan](docs/astra-succession/README.md) for the current leaf and gate. For the earlier bounded trial, use the original design and exploration plan.
+Read [README.md](README.md), the [current Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) and [PROGRESS.md](PROGRESS.md) before working here. The plan sets the current scope and gate order. `PROGRESS.md` names the current leaf, its status and the next action. Follow the owner’s latest instructions.
 
 GitHub is the durable work record; conversations are temporary executors. Each successor reads the applicable repository instructions and assigned work. Astra's successors follow the short repo/branch pointer to current work. Do not infer authority from being inside the same ChatGPT Project.
 

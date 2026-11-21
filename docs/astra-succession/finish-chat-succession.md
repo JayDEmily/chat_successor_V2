@@ -1,4 +1,6 @@
-# Finish Chat Succession
+# Earlier finish plan for Chat Succession
+
+This page records the earlier 0.4.3 rollout plan. Follow the [Shoko Yumi execution plan](adr-0002/PROJECT_MANAGEMENT.md) for current scope and order.
 
 ## Release goal
 
