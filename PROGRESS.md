@@ -1,6 +1,13 @@
 # Progress
 
-The [Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) defines the current scope and acceptance order. L11 is held at the registered Cat/Dog worker.
+The [Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) defines the scope and acceptance order. L11 Cat/Dog finished with assisted read-only receipt recovery; L12 Bird/Pig is next.
+
+## Lean ADR 0002 L11 — assisted Cat/Dog completion verified (21 November 2026)
+
+- The installed Shoko backend was repinned to \`36b17092aa5fef09b5ac3747c03e5661be23559c\` with matching route/config rollback. The [existing independent owner re-entry review](evidence/astra-adr-0002-20261120/implementation/G3_20261120/LEAN_L11_REENTRY_REVIEW.md) is now published. The previously registered worker remained the same; no new fixture run was created.
+- The original Cat/Dog run \`ae039421dbcc3f45bb4ae1f2\` published [opening commit \`e3d2aa4\`](https://github.com/JayDEmily/chat-succession-cat-dog-pair/commit/e3d2aa48cb991bbe340b5477c66f9025994dbf67), then one verified successor published [completion \`66b80b5\`](https://github.com/JayDEmily/chat-succession-cat-dog-pair/commit/66b80b5c3292338bd941f842158fffdcbf7b8cf9) on \`codex/lean-shoko-cat-dog-20261121\`. GitHub commit trailers match the run and distinct workers; remote branch readback matches \`66b80b5\`.
+- Native controller evidence at \`2026-11-21T10:32:37Z\` verified the final publication and recorded \`STOP_FINISHED\`. Its saved state records two unique workers of cap three, \`halted=programme_finished\` and no pending action. Earlier receipts required scoped manual scroll/refresh and read-only reconciliation. This passes the **assisted** Cat/Dog end-to-end result only; unattended provisional-to-saved convergence remains unverified. Do not repeat those Sends.
+- **Next: L12 Bird/Pig** under the published LEAN-G2 plan: a separate disposable run, cap two, with eligible work still remaining at \`STOP_CAP\`, followed by same-chat continuation. Preserve current installed-run identity and previously paused Rowing/SolidWorks runs. Astra's diagnostic proposal remains unadopted pending native verification.
 
 ## Astra L11 external receipt review received (21 November 2026)
 
