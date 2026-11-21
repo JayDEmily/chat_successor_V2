@@ -192,25 +192,29 @@ function Read-ComposerText($editor,[string]$value) {
  # ProseMirror marks its empty paragraph independently of the UIA Value.
  # Unknown structure stays unknown. A real draft may match the placeholder text.
  if(($editor.Current.ClassName -csplit '\s+') -cnotcontains 'ProseMirror'){return $null}
- $walker=[System.Windows.Automation.TreeWalker]::RawViewWalker
- $paragraph=$walker.GetFirstChild($editor)
- if($null -eq $paragraph){return $null}
+ $editorChildren=@(Get-AccessibilityChildren $editor)
+ if($editorChildren.Count -eq 0){return $null}
+ $paragraph=$editorChildren[0]
  if(($paragraph.Current.ClassName -csplit '\s+') -cnotcontains 'before:composer-placeholder'){
   if($value){return $value}
   return $null
  }
- if($null -ne $walker.GetNextSibling($paragraph) -or
-    $value -cne ($editor.Current.Name + [char]10)){return $null}
- $placeholder=$walker.GetFirstChild($paragraph)
- if($null -eq $placeholder){return $null}
- $text=$walker.GetFirstChild($placeholder)
- $trailingBreak=$walker.GetNextSibling($placeholder)
- if($null -ne $text -and $null -ne $trailingBreak -and
-    $text.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
-    $text.Current.Name -ceq $editor.Current.Name -and
-    $null -eq $walker.GetNextSibling($text) -and
-    $trailingBreak.Current.ClassName -ceq 'ProseMirror-trailingBreak' -and
-    $null -eq $walker.GetNextSibling($trailingBreak)){
+ $name=$editor.Current.Name
+ if($editorChildren.Count -ne 1 -or -not $name){return $null}
+ if($value -cne ($name + [char]10)){
+  # Chrome can append a clipped copy of the placeholder before the line break.
+  $prefixLength=$value.Length - $name.Length - 2
+  if($prefixLength -le 0 -or $prefixLength -ge $name.Length -or
+     $value -cne ($name + $name.Substring(0,$prefixLength) + [char]0x2026 + [char]10)){return $null}
+ }
+ $paragraphChildren=@(Get-AccessibilityChildren $paragraph)
+ if($paragraphChildren.Count -ne 2){return $null}
+ $placeholder,$trailingBreak=$paragraphChildren
+ $text=@(Get-AccessibilityChildren $placeholder)
+ if($text.Count -eq 1 -and
+    $text[0].Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and
+    $text[0].Current.Name -ceq $name -and
+    $trailingBreak.Current.ClassName -ceq 'ProseMirror-trailingBreak'){
   return ''
  }
  return $null

@@ -8,7 +8,7 @@ if($errors.Count -ne 0){throw 'UIA adapter PowerShell syntax failed'}
 foreach($name in @('Test-SameWorkerTurn','Test-FreshWorkerCompletion','Test-ViewRecoveryPaused',
                    'Check-Project','Chat-FromUrl','Find-TargetWindows','Get-TargetWindow',
                    'Test-TranscriptRegion','Get-VirtualizedSavedUserHeading',
-                   'Read-SavedWorkerIdentity','Wait-VerifiedSavedWorker')){
+                   'Read-SavedWorkerIdentity','Wait-VerifiedSavedWorker','Read-ComposerText')){
  $found=@($tree.FindAll({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq $name},$true))
  if($found.Count -ne 1){throw "Function definition missing or ambiguous: $name"}
  Invoke-Expression $found[0].Extent.Text
@@ -122,3 +122,28 @@ if((Wait-VerifiedSavedWorker 55).recovery_status -cne 'paused'){
  throw 'A pause before recovery completion was ignored'
 }
 Write-Output 'PASS: PS recovery comparisons, stable loaded-view recovery, and pause/duplicate/identity holds.'
+
+Add-Type -AssemblyName UIAutomationTypes
+$label='New chat in a disposable Project with a long label'
+$placeholderText=Saved-ViewNode 'text' '' 'placeholder-text' $label
+$placeholderText.Current.ControlType=[System.Windows.Automation.ControlType]::Text
+$placeholder=Saved-ViewNode 'group' '' 'placeholder' -children @($placeholderText)
+$break=Saved-ViewNode 'text' 'ProseMirror-trailingBreak' 'break'
+$paragraph=Saved-ViewNode 'group' 'placeholder before:composer-placeholder' 'empty-paragraph' -children @($placeholder,$break)
+$editor=Saved-ViewNode 'edit' 'ProseMirror' 'editor' $label -children @($paragraph)
+$plainValue=$label+[char]10
+$clippedValue=$label+$label.Substring(0,$label.Length-2)+[char]0x2026+[char]10
+if((Read-ComposerText $editor $plainValue) -cne ''){throw 'Original empty composer rejected'}
+if((Read-ComposerText $editor $clippedValue) -cne ''){throw 'Clipped duplicate placeholder rejected'}
+if($null -ne (Read-ComposerText $editor ($clippedValue+'x'))){throw 'Unrecognised value accepted as empty'}
+$editor.Children=@($paragraph,(Saved-ViewNode 'group' '' 'extra-paragraph'))
+if($null -ne (Read-ComposerText $editor $clippedValue)){throw 'Extra composer child accepted as empty'}
+$editor.Children=@($paragraph)
+$placeholder.Children=@($placeholderText,(Saved-ViewNode 'text' '' 'extra-text'))
+if($null -ne (Read-ComposerText $editor $clippedValue)){throw 'Extra placeholder text accepted as empty'}
+$placeholder.Children=@($placeholderText)
+$paragraph.Current.ClassName=''
+foreach($draft in @($label,$clippedValue)){
+ if((Read-ComposerText $editor $draft) -cne $draft){throw 'Draft mistaken for a placeholder'}
+}
+Write-Output 'PASS: Original and clipped placeholders, unknown composer shapes, and placeholder-like drafts.'
