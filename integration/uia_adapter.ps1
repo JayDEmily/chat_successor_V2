@@ -202,9 +202,10 @@ function Read-ComposerText($editor,[string]$value) {
  $name=$editor.Current.Name
  if($editorChildren.Count -ne 1 -or -not $name){return $null}
  if($value -cne ($name + [char]10)){
-  # Chrome also exposes an exact second copy with its last two characters replaced by an ellipsis.
-  if($name.Length -le 2 -or
-     $value -cne ($name + $name.Substring(0,$name.Length - 2) + [char]0x2026 + [char]10)){return $null}
+  # Chrome can append an ellipsized prefix of the same placeholder.
+  $prefixLength=$value.Length - $name.Length - 2
+  if($prefixLength -le 0 -or $prefixLength -ge $name.Length -or
+     $value -cne ($name + $name.Substring(0,$prefixLength) + [char]0x2026 + [char]10)){return $null}
  }
  $paragraphChildren=@(Get-AccessibilityChildren $paragraph)
  if($paragraphChildren.Count -ne 2){return $null}

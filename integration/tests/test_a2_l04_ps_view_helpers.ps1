@@ -133,12 +133,14 @@ $paragraph=Saved-ViewNode 'group' 'placeholder before:composer-placeholder' 'emp
 $editor=Saved-ViewNode 'edit' 'ProseMirror' 'editor' $label -children @($paragraph)
 $plainValue=$label+[char]10
 $clippedValue=$label+$label.Substring(0,$label.Length-2)+[char]0x2026+[char]10
+$narrowValue=$label+$label.Substring(0,15)+[char]0x2026+[char]10
 if((Read-ComposerText $editor $plainValue) -cne ''){throw 'Original empty composer rejected'}
 if((Read-ComposerText $editor $clippedValue) -cne ''){throw 'Clipped duplicate placeholder rejected'}
+if((Read-ComposerText $editor $narrowValue) -cne ''){throw 'Narrow clipped duplicate placeholder rejected'}
 if($null -ne (Read-ComposerText $editor ($clippedValue+'x'))){throw 'Unrecognised value accepted as empty'}
-foreach($clippedBy in @(1,3)){
- $otherValue=$label+$label.Substring(0,$label.Length-$clippedBy)+[char]0x2026+[char]10
- if($null -ne (Read-ComposerText $editor $otherValue)){throw 'Unrecognised clipping length accepted as empty'}
+foreach($unverifiedCopy in @('',($label.Substring(0,14)+'!'),$label)){
+ $otherValue=$label+$unverifiedCopy+[char]0x2026+[char]10
+ if($null -ne (Read-ComposerText $editor $otherValue)){throw 'Unrecognised placeholder copy accepted as empty'}
 }
 $editor.Children=@($paragraph,(Saved-ViewNode 'group' '' 'extra-paragraph'))
 if($null -ne (Read-ComposerText $editor $clippedValue)){throw 'Extra composer child accepted as empty'}
@@ -147,7 +149,7 @@ $placeholder.Children=@($placeholderText,(Saved-ViewNode 'text' '' 'extra-text')
 if($null -ne (Read-ComposerText $editor $clippedValue)){throw 'Extra placeholder text accepted as empty'}
 $placeholder.Children=@($placeholderText)
 $paragraph.Current.ClassName=''
-foreach($draft in @($label,$clippedValue)){
+foreach($draft in @($label,$clippedValue,$narrowValue)){
  if((Read-ComposerText $editor $draft) -cne $draft){throw 'Draft mistaken for a placeholder'}
 }
 Write-Output 'PASS: Original and clipped placeholders, unknown composer shapes, and placeholder-like drafts.'
