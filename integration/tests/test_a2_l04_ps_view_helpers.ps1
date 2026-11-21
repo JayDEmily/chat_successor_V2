@@ -136,6 +136,10 @@ $clippedValue=$label+$label.Substring(0,$label.Length-2)+[char]0x2026+[char]10
 if((Read-ComposerText $editor $plainValue) -cne ''){throw 'Original empty composer rejected'}
 if((Read-ComposerText $editor $clippedValue) -cne ''){throw 'Clipped duplicate placeholder rejected'}
 if($null -ne (Read-ComposerText $editor ($clippedValue+'x'))){throw 'Unrecognised value accepted as empty'}
+foreach($clippedBy in @(1,3)){
+ $otherValue=$label+$label.Substring(0,$label.Length-$clippedBy)+[char]0x2026+[char]10
+ if($null -ne (Read-ComposerText $editor $otherValue)){throw 'Unrecognised clipping length accepted as empty'}
+}
 $editor.Children=@($paragraph,(Saved-ViewNode 'group' '' 'extra-paragraph'))
 if($null -ne (Read-ComposerText $editor $clippedValue)){throw 'Extra composer child accepted as empty'}
 $editor.Children=@($paragraph)
