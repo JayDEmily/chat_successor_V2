@@ -1,5 +1,11 @@
 # Progress
 
+## Lean ADR 0002 L10c — Installed Shoko saved view restored (21 November 2026)
+
+- On installed Shoko pin `9f6c13a2f0300bdcc7e9f783bfb6bf293c58bbf9`, one guarded close removed only the owned disposable window. Observe reported the saved view missing. The ordinary installed recovery reopened it in one Shoko window. The complete reply, both causal IDs and saved identity matched the pre-close observations.
+- All 145 run and lock files, including both original pause markers, matched before and after. The other Chrome windows survived. The recovery performed no Send and created no journal.
+- Next is L10d, the selected-route no-Send unsafe-view checks.
+
 ## Lean ADR 0002 L10b — Installed Shoko preflight passed (21 November 2026)
 
 - The installed Shoko wrapper at `2c2c5f7` held on an empty composer. Native readback showed the same verified placeholder tree with a duplicate label clipped at 15 characters. The earlier empty view clipped it at 52. The reviewed `9f6c13a2f0300bdcc7e9f783bfb6bf293c58bbf9` candidate accepts an exact ellipsized prefix while retaining the existing tree, draft and attachment gates. All 118 Windows integration tests and six native PowerShell suites passed.
