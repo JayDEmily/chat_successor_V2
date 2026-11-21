@@ -44,7 +44,7 @@ class WorkerViewTests(unittest.TestCase):
         reopen = self.adapter.call_args_list[1].kwargs
         self.assertEqual(reopen["ProjectUrl"], self.url)
         self.assertEqual(reopen["Recovery"], "missing")
-        self.assertEqual(reopen["PausePath"], self.bridge.state_path.with_suffix(".pause"))
+        self.assertEqual(reopen["PausePath"], self.bridge.state_path.with_suffix(".pause").resolve())
         self.assertFalse(self.bridge.target_path.exists())
 
     def test_ambiguous_and_unverified_views_hold_with_saved_link(self):
