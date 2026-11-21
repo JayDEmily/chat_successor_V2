@@ -2,6 +2,14 @@
 
 The [Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) defines the current scope and acceptance order. L11 is held at the registered Cat/Dog worker.
 
+## Lean ADR 0002 L11 — Worker-window sizing and saved-ID regression (21 November 2026)
+
+- Candidate `23c66570a4bfd3c08158cf5c771b40e354c535d1` uses Windows `WindowPattern` to maximize newly opened worker windows after verifying their Project and profile. On initial candidate `808257175b235967964ad48a31fed843521623c9`, independent review found a window provider could resize and then throw, leaving preparation with the pre-resize address. The correction rereads the destination on the next ordinary poll after every resize attempt. [Microsoft window-state documentation](https://learn.microsoft.com/en-us/dotnet/api/system.windows.automation.windowpattern.setwindowvisualstate)
+- The new preparation and missing-view recovery regressions failed on the previous adapter and passed on the candidate. All 118 Windows integration cases, 119 reference cases, six native PowerShell suites and eight headless Chrome checks passed. The saved-ID regression held while either rendered ID was provisional on a saved URL, then accepted the same exact post once both matched. The native receipt check held an unqualified reader sample on the saved URL.
+- Independent review accepted `23c6657` offline after reproducing and verifying the resize-failure correction. The report records the inherited window acquisition and cleanup limits. [Independent review](evidence/astra-adr-0002-20261120/implementation/G3_20261120/LEAN_L11_WINDOW_REVIEW.md)
+- Both candidates passed live `Prepare -Preflight` in Shoko Chrome. Each temporary window reported `Normal` before sizing and `Maximized` at composer lookup, showed an empty composer, and closed. The original run, launcher and route files matched byte-for-byte. These were direct candidate checks. The installed route still points at `9f6c13a`.
+- The spontaneous transition on a fresh live Send remains unverified. The original Cat/Dog worker still reports `ERROR` at 1/3 with an empty pending slot. The next L11 action is the owner's recovery decision for that registered worker.
+
 ## Lean ADR 0002 L11 — Original Cat/Dog Send reconciled, worker held (21 November 2026)
 
 - Read-only inspection verified the one posted user message in the original saved Shoko chat. Its full 1,659-character body matched the preserved intent’s SHA-256 digest. Reloading the saved view restored its app-rendered conversation ID. The existing reader then included the ellipsis and “Show more” or the “Show less” label in the posted text.
