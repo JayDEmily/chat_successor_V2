@@ -1,0 +1,74 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Chrome user message readback regression</title>
+<style>
+    .message-text { white-space: pre-wrap; }
+    .overflow-hidden { height: 1em; overflow: hidden; }
+</style>
+<div class="thread-scroll-container" role="region" aria-label="Conversation">
+    <div id="turns"></div>
+</div>
+<pre id="result">PENDING</pre>
+<script>
+    const project = "g-p-00000000000000000000000000000000";
+    const chat = "00000000-0000-0000-0000-000000000001";
+    const first = "00000000-0000-0000-0000-000000000002";
+    const second = "00000000-0000-0000-0000-000000000003";
+    const reply = "00000000-0000-0000-0000-000000000004";
+    const prompt = "Keep this exact.\n…\nShow more\nShow less";
+    history.replaceState(null, "", `/g/${project}/c/${chat}`);
+    window.chrome.runtime = {getManifest: () => ({
+        content_scripts: [{matches: [`https://chatgpt.com/g/${project}*`]}]
+    })};
+
+    function turn(key, mode, status = "ERROR") {
+        const row = document.createElement("div");
+        row.dataset.virtualizedTurn = "";
+        const user = mode === "short" ? `<div class="message-text">${prompt}</div>` :
+            `<div><div><div class="${mode === "expanded" ? "" : "overflow-hidden"}">
+                <div class="message-text">${prompt}</div></div>${mode === "expanded" ? "" :
+                    '<span aria-hidden="true" style="display:block">…</span>'}</div>
+                <button aria-expanded="${mode === "expanded"}" style="display:block">${
+                    mode === "expanded" ? "Show less" : mode === "unknown" ? "Unknown" : "Show more"
+                }</button></div>`;
+        row.innerHTML = `<div data-turn-key="${key}" data-talvt-turn-state="complete"
+                              data-chatgpt-conversation-selection-target="${chat}">
+            <h4 data-conversation-role="user">You said:</h4>
+            <div data-user-message-bubble>${user}</div>
+            <h4 data-conversation-role="assistant">ChatGPT said:</h4>
+            <div data-response-body><div data-chatgpt-selection-message-id="${reply}"
+                data-chatgpt-selection-conversation-id="${chat}" data-dil-response data-dil-message-id="${reply}">
+                <div data-dil-source-message-id="${reply}" data-markdown-copy>
+                    <p data-d-text-flow data-d-component>CHAT_STATUS: ${status}</p></div></div></div></div>`;
+        return row;
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+        const result = document.querySelector("#result");
+        const list = document.querySelector("#turns");
+        const failures = [];
+        async function verify(label, rows, predicate) {
+            list.replaceChildren(...rows);
+            await Promise.resolve();
+            const sample = JSON.parse(document.querySelector(".chat-succession-readback").value);
+            if (!predicate(sample)) failures.push(label);
+        }
+
+        const exact = sample => sample.phase === "observed" && sample.user === prompt && sample.reply?.final;
+        const held = sample => sample.phase === "unqualified" && !sample.user;
+        await verify("plain message", [turn(first, "short")], exact);
+        await verify("collapsed first post", [turn(first, "collapsed")], sample => exact(sample) && !sample.previous);
+        await verify("expanded continuation", [turn(first, "short", "NEED_MORE_TIME"), turn(second, "expanded")],
+            sample => exact(sample) && sample.key === second && sample.previous?.key === first);
+        await verify("unknown control", [turn(first, "unknown")], held);
+        const unknownText = turn(first, "collapsed");
+        unknownText.querySelector("[data-user-message-bubble]").append("unexpected text");
+        await verify("unknown bubble text", [unknownText], held);
+        const local = turn(first, "collapsed");
+        local.querySelector("[data-chatgpt-conversation-selection-target]")
+            .setAttribute("data-chatgpt-conversation-selection-target", `local-chatgpt:${chat}`);
+        await verify("provisional conversation ID", [local], held);
+        result.textContent = failures.length ? `FAIL: ${failures.join(", ")}` : "PASS: 6 Chrome user-message checks";
+    });
+</script>
+<script defer src="/integration/chrome_reader/readback.js"></script>

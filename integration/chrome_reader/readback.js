@@ -10,6 +10,36 @@
     const userRoutes = new WeakMap();
     let field;
 
+    function readUserMessage(bubble) {
+        // Long prompts render their full body beside a display-only toggle.
+        const toggle = bubble?.querySelector("button[aria-expanded]");
+        if (!toggle) return bubble?.innerText;
+
+        const layout = toggle.parentElement;
+        const [wrapper, control] = layout.children;
+        if (layout.parentElement !== bubble || bubble.children.length !== 1 ||
+            layout.children.length !== 2 || control !== toggle) {
+            return null;
+        }
+
+        const [body, indicator] = wrapper.children;
+        if (!body?.matches("div") || body.querySelector("button")) return null;
+        const expanded = toggle.getAttribute("aria-expanded");
+        let displaySuffix;
+        if (expanded === "false" && toggle.innerText === "Show more" &&
+            wrapper.children.length === 2 && body.classList.contains("overflow-hidden") &&
+            indicator.matches('span[aria-hidden="true"]') && indicator.innerText === "…") {
+            displaySuffix = "\n…\nShow more";
+        } else if (expanded === "true" && toggle.innerText === "Show less" && wrapper.children.length === 1) {
+            displaySuffix = "\nShow less";
+        } else {
+            return null;
+        }
+
+        const text = body.innerText;
+        return bubble.innerText === text + displaySuffix ? text : null;
+    }
+
     function readTurn(turn, chat) {
         const userHeadings = turn.querySelectorAll('h4[data-conversation-role="user"]');
         const assistantHeadings = turn.querySelectorAll('h4[data-conversation-role="assistant"]');
@@ -22,7 +52,8 @@
         }
         const key = keys[0]?.getAttribute("data-turn-key");
         const bubble = users[0];
-        const user = bubble?.innerText;
+        const user = readUserMessage(bubble);
+        if (user === null) return {phase: "unqualified"};
         if (!messageId.test(key ?? "") || !user || userHeadings.length !== 1) {
             return {phase: "loading"};
         }
