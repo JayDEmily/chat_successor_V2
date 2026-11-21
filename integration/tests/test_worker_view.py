@@ -118,9 +118,12 @@ class WorkerViewTests(unittest.TestCase):
             self.bridge.observe(self.chat)
         self.assertEqual(self.adapter.call_count, 3)
 
-    def test_stale_detection_resets_on_progress_and_probes_at_agreed_interval(self):
+    def test_stall_timer_resets_on_progress_then_holds_without_a_probe(self):
+        state = self.bridge.state_path
+        controller = initialise(state, Config(self.project, "example/fixture", "work/test", 2), self.chat)
+        reader = Mock()
         later = {**self.partial, "response_id": "uia-turn-2-79adfe00000000000000"}
-        observations = iter([self.partial, self.partial] + [later] * 5)
+        observations = iter([self.partial, self.partial] + [later] * 3)
 
         def read(mode, **_kwargs):
             if mode == "Observe":
@@ -128,17 +131,20 @@ class WorkerViewTests(unittest.TestCase):
             return {**self.identity, "recovery_status": "waiting"}
 
         self.adapter.side_effect = read
-        with patch("windows_backend.time.monotonic", side_effect=[0, 119, 120, 239, 240, 539, 540]):
-            for _ in range(7):
-                self.assertIsNone(self.bridge.observe(self.chat))
-        probes = [call for call in self.adapter.call_args_list if call.args == ("RecoverView",)]
-        self.assertEqual(len(probes), 2)
-        for probe in probes:
-            self.assertEqual(probe.kwargs["Recovery"], "stale")
-            self.assertEqual(probe.kwargs["WindowHandle"], 45)
-            self.assertEqual(probe.kwargs["SourceResponse"], later["response_id"])
+        with patch("windows_backend.time.monotonic", side_effect=[0, 119, 120, 239, 240]):
+            for _ in range(4):
+                self.assertEqual(cycle(controller, self.bridge, reader, "test", state), Action.WAIT)
+            self.assertEqual(cycle(controller, self.bridge, reader, "test", state), Action.HOLD)
+        saved = Controller.load(state)
+        self.assertIn("stalled", saved.state.halted)
+        self.assertIn(self.worker_url, saved.state.halted)
+        self.assertIsNone(saved.state.pending)
+        self.assertEqual(saved.state.consumed_responses, [])
+        self.assertEqual(saved.unique_count, 1)
+        self.assertEqual([call.args[0] for call in self.adapter.call_args_list], ["Observe"] * 5)
+        reader.read.assert_not_called()
 
-    def test_reopened_view_without_turn_anchors_cannot_arm_a_stale_probe(self):
+    def test_reopened_view_without_turn_anchors_cannot_arm_the_stall_timer(self):
         unqualified = {**self.identity, "view_status": "observed", "window_handle": 45,
                        "ready": False}
         self.adapter.side_effect = [self.missing, self.restored, unqualified,
@@ -151,15 +157,19 @@ class WorkerViewTests(unittest.TestCase):
                          ["Observe", "RecoverView", "Observe", "Observe", "Observe"])
         self.assertIsNone(self.bridge._progress)
 
-    def test_consumed_completed_view_can_be_stale_without_replaying_response(self):
-        state = {"state": {"consumed_responses": [[self.chat, self.ready["response_id"]]]}}
+    def test_consumed_chrome_reply_holds_without_a_probe_or_state_change(self):
+        response_id = "chrome-turn-11111111-1111-1111-1111-111111111111-22222222-2222-2222-2222-222222222222"
+        turn = {**self.ready, "method": "CHROME_DOM", "response_id": response_id}
+        del turn["latest_user_digest"]
+        state = {"state": {"consumed_responses": [[self.chat, response_id]]}}
         self.bridge.state_path.write_text(json.dumps(state), encoding="utf-8")
-        refreshed = {**self.identity, "recovery_status": "refreshed"}
-        self.adapter.side_effect = [self.ready, self.ready, self.ready, refreshed]
+        self.adapter.side_effect = [{**turn, "chrome_read_at": timestamp} for timestamp in (1000, 2000, 3000, 4000)]
         with patch("windows_backend.time.monotonic", side_effect=[0, 120]), patch("windows_backend.time.sleep"):
-            self.assertEqual(self.bridge.observe(self.chat).response_id, self.ready["response_id"])
-            self.assertIsNone(self.bridge.observe(self.chat))
-        self.assertEqual(self.adapter.call_args.args, ("RecoverView",))
+            self.assertEqual(self.bridge.observe(self.chat).response_id, response_id)
+            with self.assertRaisesRegex(BrowserObservationError, "stalled") as hold:
+                self.bridge.observe(self.chat)
+        self.assertIn(self.worker_url, str(hold.exception))
+        self.assertEqual([call.args[0] for call in self.adapter.call_args_list], ["Observe"] * 3)
         self.assertEqual(json.loads(self.bridge.state_path.read_text()), state)
 
     def test_prepared_continuation_and_explicit_resume_restore_exact_worker(self):

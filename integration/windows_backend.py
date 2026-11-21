@@ -22,7 +22,6 @@ from succession.core import Controller, Response
 log = logging.getLogger(__name__)
 
 STALE_VIEW_SECONDS = 120
-VIEW_PROBE_INTERVAL_SECONDS = 300
 _SAVED_CHAT_ID = re.compile(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}")
 
 
@@ -63,7 +62,6 @@ class WindowsUIA(Browser):
         self.powershell = powershell
         self._progress = None
         self._progress_since = 0.0
-        self._last_view_probe: dict[str, float] = {}
 
     def _invoke(self, mode: str, **arguments) -> dict:
         if self.route_receipt is not None:
@@ -174,29 +172,23 @@ class WindowsUIA(Browser):
             raise self._worker_error(chat_id, "A consumed Chrome turn has a replacement reply.")
         return response_id in consumed
 
-    def _probe_stale_view(self, chat_id: str, turn: dict) -> bool:
+    def _hold_stalled_view(self, chat_id: str, turn: dict) -> None:
         handle = turn.get("window_handle")
-        if (type(handle) is not int or handle <= 0
-                or not turn.get("response_id") or not turn.get("latest_user_digest")):
+        response_id = turn.get("response_id")
+        user_digest = turn.get("latest_user_digest")
+        # Chrome response IDs already contain the verified user identity.
+        if (type(handle) is not int or handle <= 0 or not response_id
+                or (not user_digest and turn.get("method") != "CHROME_DOM")):
             self._progress = None
-            return False
-        fingerprint = (chat_id, handle, turn.get("response_id"), turn.get("ready"),
+            return
+        fingerprint = (chat_id, handle, response_id, turn.get("text"), turn.get("ready"),
                        turn.get("stop_control"), turn.get("user_after_assistant"),
-                       turn.get("user_turn_count"), turn.get("latest_user_digest"))
+                       turn.get("user_turn_count"), user_digest)
         now = time.monotonic()
         if fingerprint != self._progress:
             self._progress, self._progress_since = fingerprint, now
-            return False
-        if (now - self._progress_since < STALE_VIEW_SECONDS
-                or now - self._last_view_probe.get(chat_id, -float("inf")) < VIEW_PROBE_INTERVAL_SECONDS):
-            return False
-        self._last_view_probe[chat_id] = now
-        status = self._recover_view(chat_id, "stale", WindowHandle=handle,
-                                    SourceResponse=turn.get("response_id"),
-                                    WorkerJournalPath=self.state_path.resolve())
-        if status == "refreshed":
-            self._progress = None
-        return True
+        elif now - self._progress_since >= STALE_VIEW_SECONDS:
+            raise self._worker_error(chat_id, "Saved worker view stalled.")
 
     def observe(self, expected_chat_id: str) -> Response | None:
         first = self._read_or_restore_worker("Observe", expected_chat_id)
@@ -205,7 +197,8 @@ class WindowsUIA(Browser):
             raise self._worker_error(expected_chat_id, "Current-turn reader is unqualified.")
         ready = first.get("ready") is True
         if not ready or self._response_was_consumed(expected_chat_id, first.get("response_id")):
-            if self._probe_stale_view(expected_chat_id, first) or not ready:
+            self._hold_stalled_view(expected_chat_id, first)
+            if not ready:
                 return None
         else:
             self._progress = None

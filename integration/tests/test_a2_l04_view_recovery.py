@@ -62,33 +62,28 @@ class SavedViewQualification(unittest.TestCase):
         self.assertEqual(self.w._invoke.call_count,3)
         self.assertEqual(self.state.read_bytes(),self.before)
 
-    def test_v03_stale_original_then_newer_completed_read_is_consumable(self):
+    def test_stalled_view_holds_and_newer_completed_read_is_consumable(self):
         self.w._invoke=Mock(side_effect=[
-          self.partial,self.partial,
-          {**self.identity,"recovery_status":"refreshed"},
-          self.ready,self.ready])
+          self.partial,self.partial,self.ready,self.ready])
         with patch("windows_backend.time.monotonic",side_effect=[0,120]), \
              patch("windows_backend.time.sleep"):
             self.assertIsNone(self.w.observe(self.chat))
-            self.assertIsNone(self.w.observe(self.chat))
+            with self.assertRaisesRegex(BrowserObservationError,"stalled"):
+                self.w.observe(self.chat)
             observed=self.w.observe(self.chat)
         self.assertEqual(observed.response_id,self.ready["response_id"])
         self.assertEqual([x.args[0] for x in self.w._invoke.call_args_list],
-                         ["Observe","Observe","RecoverView","Observe","Observe"])
-        self.assertEqual(self.w._invoke.call_args_list[2].kwargs["SourceResponse"],
-                         self.partial["response_id"])
-        self.assertEqual(self.w._invoke.call_args_list[2].kwargs["WorkerJournalPath"],
-                         self.state.resolve())
+                         ["Observe","Observe","Observe","Observe"])
         self.assertEqual(self.state.read_bytes(),self.before)
 
-    def test_v04_uncompleted_fresh_probe_waits_without_send(self):
-        self.w._invoke=Mock(side_effect=[
-          self.partial,self.partial,{**self.identity,"recovery_status":"waiting"}])
+    def test_stalled_streaming_view_holds_without_probe_or_send(self):
+        self.w._invoke=Mock(return_value=self.partial)
         with patch("windows_backend.time.monotonic",side_effect=[0,120]):
             self.assertIsNone(self.w.observe(self.chat))
-            self.assertIsNone(self.w.observe(self.chat))
-        self.assertEqual(self.w._invoke.call_count,3)
-        self.assertEqual(self.w._progress[0],self.chat)
+            with self.assertRaisesRegex(BrowserObservationError,"stalled") as hold:
+                self.w.observe(self.chat)
+        self.assertIn(f"{self.url.removesuffix('/project')}/c/{self.chat}",str(hold.exception))
+        self.assertEqual([x.args[0] for x in self.w._invoke.call_args_list],["Observe","Observe"])
         self.assertEqual(self.state.read_bytes(),self.before)
 
     def test_v05_wrong_project_holds_before_recovery_or_send(self):

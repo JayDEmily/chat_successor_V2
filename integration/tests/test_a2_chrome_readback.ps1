@@ -139,3 +139,34 @@ $Preflight=$false
 foreach($WindowHandle in @(0,123)){
  Expect-Hold {Invoke-AdapterMode $Mode} 'no longer shows the verified completion'
 }
+
+$Mode='ObserveReentry'
+$OwnerAnchor=$first.response_id
+$moving.stop_control=$false
+$moving.user_after_assistant=$false
+$moving.response_id=$repeat.response_id
+$element.Payload=''
+function Find-Composer($window,$name){return $element}
+function Read-ComposerText($editor,$value){return $value}
+function Check-NoAttachments($window){return $true}
+function Find-EnabledSendButtons($window){}
+$visible=Invoke-AdapterMode $Mode | ConvertFrom-Json
+Check ($visible.disposition -ceq 'advanced') 'verified completed advancement is observation-only in the existing view'
+
+$fresh=[pscustomobject]@{Current=@{NativeWindowHandle=123};Closed=$false}
+$fresh | Add-Member ScriptMethod GetCurrentPattern {param($pattern) return $this}
+$fresh | Add-Member ScriptMethod Close {$this.Closed=$true}
+function Read-CurrentTurn($view){
+ if($view.window -eq $fresh){return $moving}
+ return $first
+}
+function Get-TargetWindow($expectedChat,$handle){return @{window=$fresh;chat=$chat;url=$target.url}}
+function Open-ChromeWindow($url){
+ $element.Payload='Owner draft entered during the fresh read'
+ return $fresh
+}
+function Start-Sleep([int]$Milliseconds){}
+function Desc($window){throw 'Unexpected Reload lookup during owner re-entry'}
+$freshResult=Invoke-AdapterMode $Mode | ConvertFrom-Json
+Check ($freshResult.disposition -ceq 'advanced' -and $fresh.Closed) 'fresh advancement closes only its comparison view'
+Check ($element.Payload -ceq 'Owner draft entered during the fresh read') 'advanced re-entry leaves the original draft intact'

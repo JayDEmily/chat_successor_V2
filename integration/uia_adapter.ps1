@@ -918,12 +918,12 @@ if($Mode -eq 'ObserveReentry') {
  $existing=Get-ObservableSavedTarget
  if($existing['view_status']){$existing | ConvertTo-Json -Compress;exit 0}
  $turn=Read-CurrentTurn $existing
- if($turn.stop_control -or $turn.user_after_assistant){
-  if((Compare-OwnerTurn $turn $OwnerAnchor) -cne 'advanced'){
-   throw 'The active reader could not verify advancement from the saved reply anchor'
-  }
+ if((Compare-OwnerTurn $turn $OwnerAnchor) -ceq 'advanced'){
   @{disposition='advanced';project=$ProjectId;chat_id=$ChatId} | ConvertTo-Json -Compress
   exit 0
+ }
+ if($turn.stop_control -or $turn.user_after_assistant){
+  throw 'The active reader could not verify advancement from the saved reply anchor'
  }
  $editor=Find-Composer $existing.window 'Ask ChatGPT'
  $value=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
@@ -956,23 +956,6 @@ if($Mode -eq 'ObserveReentry') {
   }
  } finally {$windowPattern.Close()}
  if(-not $verdict){throw 'A fresh view of the exact held worker could not be verified'}
- if($verdict -eq 'advanced'){
-  # Refresh only the same desktop view and only while its composer is empty.
-  $editor=Find-Composer $existing.window 'Ask ChatGPT'
-  $value=$editor.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
-  if((Read-ComposerText $editor $value) -cne '' -or -not (Check-NoAttachments $existing.window)){
-   throw 'The current worker advanced but the desktop view contains a draft or attachment'
-  }
-  $reload=@((Desc $existing.window) | Where-Object {
-   $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
-   $_.Current.Name -cmatch '^Reload(?: this page)?$'
-  })
-  if($reload.Count -ne 1){throw 'The worker advanced but Chrome reload was not uniquely available'}
-  if((Get-Address $existing.window) -cne $existing.url -or -not (Test-WindowProfile $existing.window)){
-   throw 'The saved worker destination changed before re-entry reload'
-  }
-  $reload[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
- }
  @{disposition=$verdict;project=$ProjectId;chat_id=$ChatId} | ConvertTo-Json -Compress
  exit 0
 }
