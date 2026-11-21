@@ -105,9 +105,22 @@ try{$null=Read-SavedWorkerIdentity $target}catch{
 if(-not $unboundHeld){throw 'An unbound virtualized view was accepted'}
 $ChromeAppId='Chrome.Nominated'
 $script:documentReads=0
+$script:maximizedHandles=@()
+function Maximize-ChromeWorkerWindow($item){
+ $script:maximizedHandles+= $item.Current.NativeWindowHandle
+ $script:readsAtMaximize=$script:documentReads
+ return $true
+}
 $restored=Wait-VerifiedSavedWorker 55
 if($restored.recovery_status -cne 'restored' -or $script:documentReads -ne 3){
  throw 'Changed document was accepted before two stable identity reads'
+}
+if($script:maximizedHandles.Count){throw 'An existing saved view was resized'}
+$script:documentReads=0
+$restored=Wait-VerifiedSavedWorker 55 -Maximize
+if($restored.recovery_status -cne 'restored' -or $script:maximizedHandles.Count -ne 1 -or
+   $script:maximizedHandles[0] -ne 55 -or $script:readsAtMaximize -ne 0 -or $script:documentReads -ne 3){
+ throw 'A newly recovered view was not maximized before stable identity reads'
 }
 $script:targetWindows=@($window,@{Current=@{NativeWindowHandle=56}; Profile='Chrome.Nominated'})
 $duplicateHeld=$false

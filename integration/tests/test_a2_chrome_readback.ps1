@@ -9,7 +9,7 @@ $script = Join-Path $PSScriptRoot '..\uia_adapter.ps1'
 $tree = [Management.Automation.Language.Parser]::ParseFile($script,[ref]$tokens,[ref]$parserErrors)
 if($parserErrors.Count){throw 'Windows adapter did not parse'}
 foreach($name in @('Check-Project','Chat-FromUrl','Read-ChromeTurnSnapshot','Get-ChromeResponseId','Read-CurrentTurn',
-                   'Find-PostedMessage','Compare-OwnerTurn','Get-VerifiedSuccessorSource')){
+                   'Find-PostedMessage','Compare-OwnerTurn','Get-VerifiedSuccessorSource','Maximize-ChromeWorkerWindow')){
  $nodes=@($tree.FindAll({
   param($node)
   $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name
@@ -93,7 +93,12 @@ Check (Find-PostedMessage $target.window $snapshot.user $first.response_id $targ
 Check (-not (Find-PostedMessage $target.window $snapshot.user $repeat.response_id $target.url)) 'identical text with a different reply anchor does not acknowledge'
 Check (-not (Find-PostedMessage $target.window 'Exact submitted' $first.response_id $target.url)) 'matching fragment does not acknowledge'
 Check (-not (Find-PostedMessage $target.window $snapshot.user $first.response_id "https://chatgpt.com/g/$ProjectId/c/local-chatgpt%3Afixture")) 'provisional URL does not acknowledge'
-Check (Find-PostedMessage $target.window $snapshot.user '' $target.url) 'exact initial post has a saved destination'
+$snapshot.phase='unqualified'
+$element.Payload=$snapshot | ConvertTo-Json -Depth 4 -Compress
+Check (-not (Find-PostedMessage $target.window $snapshot.user '' $target.url)) 'unqualified rendered post cannot acknowledge on a saved URL'
+$snapshot.phase='observed'
+$element.Payload=$snapshot | ConvertTo-Json -Depth 4 -Compress
+Check (Find-PostedMessage $target.window $snapshot.user '' $target.url) 'same exact initial post acknowledges after the rendered IDs qualify'
 $snapshot.previous=$null
 $element.Payload=$snapshot | ConvertTo-Json -Compress
 Check (-not (Find-PostedMessage $target.window $snapshot.user $first.response_id $target.url)) 'a missing preceding turn does not acknowledge a continuation'
@@ -170,3 +175,43 @@ function Desc($window){throw 'Unexpected Reload lookup during owner re-entry'}
 $freshResult=Invoke-AdapterMode $Mode | ConvertFrom-Json
 Check ($freshResult.disposition -ceq 'advanced' -and $fresh.Closed) 'fresh advancement closes only its comparison view'
 Check ($element.Payload -ceq 'Owner draft entered during the fresh read') 'advanced re-entry leaves the original draft intact'
+
+$visualState=[System.Windows.Automation.WindowVisualState]
+$pattern=[pscustomobject]@{Current=@{CanMaximize=$true;IsModal=$false;WindowVisualState=$visualState::Normal};Requests=0}
+$pattern | Add-Member ScriptMethod SetWindowVisualState {
+ param($state)
+ $this.Current.WindowVisualState=$state
+ $this.Requests++
+}
+$workerWindow=[pscustomobject]@{Current=@{NativeWindowHandle=124};Pattern=$pattern}
+$workerWindow | Add-Member ScriptMethod TryGetCurrentPattern {
+ param($kind,$result)
+ $result.Value=$this.Pattern
+ return ($kind -eq [System.Windows.Automation.WindowPattern]::Pattern -and $null -ne $this.Pattern)
+}
+$script:opens=0
+function Open-ChromeWindow($url){$script:opens++;return $workerWindow}
+function Get-Address($window){return $ProjectUrl}
+function Get-TargetWindow($expectedChat,$handle){return @{window=$workerWindow;chat=$null;url=$ProjectUrl}}
+function Get-ComposerDocument($editor){return $editor}
+function Get-DocumentIdentity($document){return 'worker-composer'}
+
+$Mode='Prepare'
+$ChatId=''
+$SourceResponse=''
+$WindowHandle=0
+$ProjectName='Shoko fixture'
+$element.Payload=''
+$created=Invoke-AdapterMode $Mode | ConvertFrom-Json
+Check ($created.private_window_handle -eq 124 -and $script:opens -eq 1 -and
+       $pattern.Current.WindowVisualState -eq $visualState::Maximized -and $pattern.Requests -eq 1) 'fresh worker window is maximized once'
+$pattern.Current.WindowVisualState=$visualState::Normal
+$ChatId=$chat
+$WindowHandle=124
+$reused=Invoke-AdapterMode $Mode | ConvertFrom-Json
+Check ($reused.private_window_handle -eq 124 -and $script:opens -eq 1 -and $pattern.Requests -eq 1) 'resuming a prepared window leaves its size alone'
+$ChatId=''
+$WindowHandle=0
+$workerWindow.Pattern=$null
+$unsupported=Invoke-AdapterMode $Mode | ConvertFrom-Json
+Check ($unsupported.private_window_handle -eq 124 -and $script:opens -eq 2 -and $pattern.Requests -eq 1) 'fresh composer can still verify without a window pattern'

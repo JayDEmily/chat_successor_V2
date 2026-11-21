@@ -97,6 +97,24 @@ function Open-ChromeWindow([string]$url) {
   $mutex.Dispose()
  }
 }
+function Maximize-ChromeWorkerWindow($window) {
+ $pattern=$null
+ try {
+  if(-not $window.TryGetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern,[ref]$pattern)){
+   return $false
+  }
+  $current=$pattern.Current
+  if(-not $current.CanMaximize -or $current.IsModal -or
+     $current.WindowVisualState -eq [System.Windows.Automation.WindowVisualState]::Maximized){
+   return $false
+  }
+  $pattern.SetWindowVisualState([System.Windows.Automation.WindowVisualState]::Maximized)
+  return $true
+ }catch{
+  Write-Verbose ('Could not maximize the new Chrome worker window: ' + $_.Exception.Message)
+  return $false
+ }
+}
 function Get-Address($window) {
  foreach($el in (Desc $window)) {
   try {
@@ -714,13 +732,18 @@ function Read-SavedWorkerIdentity($target) {
  return @{url=$address;document_id=$documentId;user_heading_id=$marker}
 }
 
-function Wait-VerifiedSavedWorker([long]$handle) {
+function Wait-VerifiedSavedWorker([long]$handle,[switch]$Maximize) {
  $prior=$null
  for($i=0;$i -lt 25;$i++){
   Start-Sleep -Milliseconds 400
   if(Test-ViewRecoveryPaused){return @{recovery_status='paused'}}
   try {
-   $identity=Read-SavedWorkerIdentity (Get-TargetWindow $ChatId $handle)
+   $target=Get-TargetWindow $ChatId $handle
+   if($Maximize){
+    $Maximize=$false
+    if(Maximize-ChromeWorkerWindow $target.window){continue}
+   }
+   $identity=Read-SavedWorkerIdentity $target
   }catch{
    $prior=$null
    continue
@@ -829,7 +852,7 @@ function Recover-SavedWorkerView {
  $provedCompletion=$false
  try {
   if($Recovery -eq 'missing'){
-   $result=Wait-VerifiedSavedWorker $probeHandle
+   $result=Wait-VerifiedSavedWorker $probeHandle -Maximize
    $retainProbe=$result.recovery_status -ceq 'restored'
    return $result
   }
@@ -1007,13 +1030,19 @@ if($Mode -eq 'Prepare') {
    }catch{}
   }
   # Keep the source view available for the final Send check and pause/resume.
-  if($null -eq $new){$new=Open-ChromeWindow $projectPage}
+  $maximizeNewWindow=$null -eq $new
+  if($maximizeNewWindow){$new=Open-ChromeWindow $projectPage}
   if($Preflight){$preflightWindow=$new.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)}
   $target=$null
   for($i=0;$i -lt 50;$i++){
    Start-Sleep -Milliseconds 400
    $url=Get-Address $new
    if((Check-Project $url) -and $url -cmatch '/project$'){
+    if($maximizeNewWindow){
+     if(-not (Test-WindowProfile $new)){throw 'Fresh Project window profile could not be verified'}
+     $maximizeNewWindow=$false
+     if(Maximize-ChromeWorkerWindow $new){continue}
+    }
     try {$editor=Find-Composer $new ('New chat in ' + $ProjectName)
          $target=@{window=$new;url=$url;chat=$null};break}catch{}
    }

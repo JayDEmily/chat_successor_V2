@@ -48,7 +48,7 @@
         const list = document.querySelector("#turns");
         const failures = [];
         async function verify(label, rows, predicate) {
-            list.replaceChildren(...rows);
+            if (rows) list.replaceChildren(...rows);
             await Promise.resolve();
             const sample = JSON.parse(document.querySelector(".chat-succession-readback").value);
             if (!predicate(sample)) failures.push(label);
@@ -65,10 +65,19 @@
         unknownText.querySelector("[data-user-message-bubble]").append("unexpected text");
         await verify("unknown bubble text", [unknownText], held);
         const local = turn(first, "collapsed");
-        local.querySelector("[data-chatgpt-conversation-selection-target]")
-            .setAttribute("data-chatgpt-conversation-selection-target", `local-chatgpt:${chat}`);
-        await verify("provisional conversation ID", [local], held);
-        result.textContent = failures.length ? `FAIL: ${failures.join(", ")}` : "PASS: 6 Chrome user-message checks";
+        const userConversation = "data-chatgpt-conversation-selection-target";
+        const replyConversation = "data-chatgpt-selection-conversation-id";
+        const userNode = local.querySelector(`[${userConversation}]`);
+        const replyNode = local.querySelector(`[${replyConversation}]`);
+        userNode.setAttribute(userConversation, `local-chatgpt:${chat}`);
+        replyNode.setAttribute(replyConversation, `local-chatgpt:${chat}`);
+        await verify("saved URL with provisional rendered IDs", [local], held);
+        userNode.setAttribute(userConversation, chat);
+        await verify("reply still carries a provisional ID", null, held);
+        replyNode.setAttribute(replyConversation, chat);
+        await verify("same turn becomes exact when both IDs match", null,
+            sample => exact(sample) && sample.key === first && sample.reply.id === reply && !sample.previous);
+        result.textContent = failures.length ? `FAIL: ${failures.join(", ")}` : "PASS: 8 Chrome user-message checks";
     });
 </script>
 <script defer src="/integration/chrome_reader/readback.js"></script>
