@@ -2,6 +2,11 @@
 
 The [Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) defines the current scope and acceptance order. L11 is held at the registered Cat/Dog worker.
 
+## Astra L11 external receipt review received (21 November 2026)
+
+- Received Astra's original offline review for L11. The [verbatim REVIEW.md](evidence/astra-adr-0002-20261120/implementation/G3_20261120/astra-l11-receipt-review-20261121/REVIEW.md), [test report](evidence/astra-adr-0002-20261120/implementation/G3_20261120/astra-l11-receipt-review-20261121/TEST_REPORT.md), proposed patch, and [complete original tarball](evidence/astra-adr-0002-20261120/implementation/G3_20261120/astra-l11-receipt-review-20261121/astra-l11-receipt-review.tar.gz) are recorded alongside existing L11 evidence. Tarball SHA-256: `4dd69cd3fe1fb6a09683ccaff2f79f45c305c9d24c3bf2ad44bda81d7d2fde28`; the archive's 78 per-file checks passed at intake.
+- Astra reports 126 synthetic Python integration tests and 22 headless DOM tests passing on its candidate; Windows PowerShell/UIA and live acceptance were not run by Astra. This is external advice, **not accepted implementation or a gate pass**. No proposed patch or runtime change was applied. The existing L11 hold and project acceptance requirements remain in force.
+
 ## Lean ADR 0002 L11 — Worker-window sizing and saved-ID regression (21 November 2026)
 
 - Candidate `23c66570a4bfd3c08158cf5c771b40e354c535d1` uses Windows `WindowPattern` to maximize newly opened worker windows after verifying their Project and profile. On initial candidate `808257175b235967964ad48a31fed843521623c9`, independent review found a window provider could resize and then throw, leaving preparation with the pre-resize address. The correction rereads the destination on the next ordinary poll after every resize attempt. [Microsoft window-state documentation](https://learn.microsoft.com/en-us/dotnet/api/system.windows.automation.windowpattern.setwindowvisualstate)

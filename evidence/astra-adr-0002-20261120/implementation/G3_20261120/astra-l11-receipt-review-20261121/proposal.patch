@@ -1,0 +1,1033 @@
+diff --git a/integration/chrome_reader/readback.js b/integration/chrome_reader/readback.js
+index 5073e66..35b3667 100644
+--- a/integration/chrome_reader/readback.js
++++ b/integration/chrome_reader/readback.js
+@@ -48,19 +48,23 @@
+         const states = turn.querySelectorAll("[data-talvt-turn-state]");
+         if (keys.length > 1 || users.length > 1 || states.length > 1 ||
+             userHeadings.length > 1 || assistantHeadings.length > 1) {
+-            return {phase: "unqualified"};
++            return {phase: "unqualified", reason: "turn_structure_ambiguous"};
+         }
+         const key = keys[0]?.getAttribute("data-turn-key");
+         const bubble = users[0];
+         const user = readUserMessage(bubble);
+-        if (user === null) return {phase: "unqualified"};
++        if (user === null) return {phase: "unqualified", reason: "user_text_unqualified"};
+         if (!messageId.test(key ?? "") || !user || userHeadings.length !== 1) {
+-            return {phase: "loading"};
++            return {phase: "loading", reason: "turn_loading"};
+         }
+         const owner = bubble.closest("[data-chatgpt-conversation-selection-target]");
+         const renderedChat = owner?.getAttribute("data-chatgpt-conversation-selection-target");
+-        if (renderedChat !== chat || (userRoutes.has(bubble) && userRoutes.get(bubble) !== chat)) {
+-            return {phase: "unqualified"};
++        if (renderedChat !== chat) {
++            return {phase: "unqualified", reason: renderedChat?.startsWith("local-chatgpt:") ?
++                "user_conversation_provisional" : "user_conversation_mismatch"};
++        }
++        if (userRoutes.has(bubble) && userRoutes.get(bubble) !== chat) {
++            return {phase: "unqualified", reason: "user_route_rebound"};
+         }
+         userRoutes.set(bubble, chat);
+         const complete = states[0]?.getAttribute("data-talvt-turn-state") === "complete";
+@@ -71,17 +75,19 @@
+         }
+         const bodies = turn.querySelectorAll("[data-response-body]");
+         if (bodies.length > 1) {
+-            return {phase: "unqualified"};
++            return {phase: "unqualified", reason: "assistant_body_ambiguous"};
+         }
+         const body = bodies[0];
+         const ids = body?.querySelectorAll("[data-chatgpt-selection-message-id]");
+         if (ids?.length > 1) {
+-            return {phase: "unqualified"};
++            return {phase: "unqualified", reason: "assistant_selection_ambiguous", selectionCount: ids.length};
+         }
+         const selection = ids?.[0];
+         const replyId = selection?.getAttribute("data-chatgpt-selection-message-id");
+         if (selection && selection.getAttribute("data-chatgpt-selection-conversation-id") !== chat) {
+-            return {phase: "unqualified"};
++            return {phase: "unqualified", reason:
++                selection.getAttribute("data-chatgpt-selection-conversation-id")?.startsWith("local-chatgpt:") ?
++                    "assistant_conversation_provisional" : "assistant_conversation_mismatch"};
+         }
+         const text = body?.innerText;
+         if (!messageId.test(replyId ?? "") || !text) {
+@@ -128,39 +134,41 @@
+     function readConversation(chat) {
+         const regions = document.querySelectorAll('div.thread-scroll-container[role="region"][aria-label="Conversation"]');
+         if (regions.length !== 1) {
+-            return {phase: regions.length === 0 ? "loading" : "unqualified"};
++            return {phase: regions.length === 0 ? "loading" : "unqualified",
++                reason: regions.length === 0 ? "transcript_loading" : "transcript_ambiguous"};
+         }
+         const region = regions[0];
+         if (region.clientHeight < 1) {
+-            return {phase: "loading"};
++            return {phase: "loading", reason: "transcript_loading"};
+         }
+         if (region.scrollHeight - region.clientHeight - region.scrollTop > 2) {
+-            return {phase: "offscreen"};
++            return {phase: "offscreen", reason: "transcript_offscreen"};
+         }
+         const turns = [...region.querySelectorAll("[data-virtualized-turn]")];
+         if (!turns.length) {
+-            return {phase: "loading"};
++            return {phase: "loading", reason: "transcript_loading"};
+         }
+         const list = turns[0].parentElement;
+         if (list.children.length !== turns.length || turns.some(turn => turn.parentElement !== list)) {
+-            return {phase: "unqualified"};
++            return {phase: "unqualified", reason: "turn_list_unqualified"};
+         }
+         for (let branch = list; branch !== region; branch = branch.parentElement) {
+             for (let sibling = branch.nextElementSibling; sibling; sibling = sibling.nextElementSibling) {
+                 if (!isTranscriptChrome(sibling, branch.parentElement === region)) {
+-                    return {phase: "unqualified"};
++                    return {phase: "unqualified", reason: "transcript_tail_unqualified"};
+                 }
+             }
+         }
+         const current = readTurn(turns.at(-1), chat);
+         if (current.key && turns.slice(0, -1).some(turn =>
+             [...turn.querySelectorAll("[data-turn-key]")].some(node => node.getAttribute("data-turn-key") === current.key))) {
+-            return {phase: "unqualified"};
++            return {phase: "unqualified", reason: "turn_key_duplicate"};
+         }
+         const previous = turns.length > 1 ? readTurn(turns.at(-2), chat) : null;
+         return {...current, previous: previous?.reply?.final ? {
+             key: previous.key, reply: {id: previous.reply.id}
+-        } : null};
++        } : null, previousReason: previous?.reply?.final ? null :
++            previous?.reason ?? (previous ? "reply_unverified" : "turn_missing")};
+     }
+ 
+     function refresh() {
+@@ -183,7 +191,7 @@
+         try {
+             turn = readConversation(route[2]);
+         } catch {
+-            turn = {phase: "unqualified"};
++            turn = {phase: "unqualified", reason: "reader_exception"};
+         }
+         field.value = JSON.stringify({project: route[1], chat: route[2], observedAt: Date.now(), ...turn});
+     }
+diff --git a/integration/tests/run_chrome_fixture.py b/integration/tests/run_chrome_fixture.py
+new file mode 100644
+index 0000000..6c5f0dd
+--- /dev/null
++++ b/integration/tests/run_chrome_fixture.py
+@@ -0,0 +1,129 @@
++"""Run ONLY the supplied synthetic HTML + reader, in a disposable headless browser.
++
++Normal mode uses loopback HTTP, as in README.md. --mock-route uses about:blank
++with explicit location/history doubles if browser policy disallows navigation.
++That mode exercises real layout/innerText/MutationObserver, NOT real URL routing,
++extension injection, authenticated Chrome, Windows UIA, or a Send.
++Requires an already-installed Playwright Python package and Chromium/Chrome.
++Never downloads a browser, loads a user profile, or contacts an external service.
++"""
++from contextlib import ExitStack
++import argparse
++import hashlib
++import http.server
++import json
++from pathlib import Path
++import re
++import shutil
++import sys
++import threading
++
++
++def main():
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
++    ap.add_argument("--chrome", default=shutil.which("chromium") or shutil.which("google-chrome"))
++    ap.add_argument("--reader", type=Path, help="Optional local reader copy for negative-control checks")
++    ap.add_argument("--mock-route", action="store_true")
++    ap.add_argument("--container-flags", action="store_true",
++                    help="In-process/no-sandbox renderer for a restricted disposable Linux test container")
++    ap.add_argument("--report", type=Path)
++    args = ap.parse_args()
++    if not args.chrome:
++        ap.error("--chrome must name an installed Chromium/Chrome executable")
++    try:
++        from playwright.sync_api import sync_playwright
++    except ImportError:
++        ap.error("Playwright is not installed; alternatively serve the HTML on loopback per README.md")
++
++    fixture_path = args.root / "integration/tests/test_chrome_user_message.html"
++    reader_path = args.reader or args.root / "integration/chrome_reader/readback.js"
++    fixture, reader = fixture_path.read_text(encoding="utf-8"), reader_path.read_text(encoding="utf-8")
++    fixture_url = "/integration/tests/test_chrome_user_message.html"
++    reader_url = "/integration/chrome_reader/readback.js"
++    assets = {fixture_url: ("text/html", fixture), reader_url: ("text/javascript", reader)}
++
++    class FixtureHandler(http.server.BaseHTTPRequestHandler):
++        def do_GET(self):
++            if self.path not in assets:
++                self.send_error(404)
++                return
++            mime, body = assets[self.path]
++            body = body.encode("utf-8")
++            self.send_response(200)
++            self.send_header("Content-Type", mime + "; charset=utf-8")
++            self.send_header("Content-Length", str(len(body)))
++            self.end_headers()
++            self.wfile.write(body)
++
++        def log_message(self, *_args):
++            pass
++
++    with ExitStack() as stack:
++        origin = None
++        if not args.mock_route:
++            server = stack.enter_context(http.server.ThreadingHTTPServer(("127.0.0.1", 0), FixtureHandler))
++            thread = threading.Thread(target=server.serve_forever, daemon=True)
++            thread.start()
++            stack.callback(thread.join)
++            stack.callback(server.shutdown)
++            origin = f"http://127.0.0.1:{server.server_port}"
++        playwright = stack.enter_context(sync_playwright())
++        flags = ["--disable-background-networking", "--disable-component-update",
++                 "--disable-dev-shm-usage", "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1"]
++        if args.container_flags:
++            flags += ["--no-sandbox", "--no-zygote", "--single-process", "--in-process-gpu"]
++        browser = playwright.chromium.launch(executable_path=args.chrome, headless=True, args=flags, timeout=15000)
++        stack.callback(browser.close)
++        context = browser.new_context(service_workers="block")
++        blocked = []
++
++        def route(request):
++            if origin and request.request.url in (origin + fixture_url, origin + reader_url):
++                request.continue_()
++            else:
++                blocked.append(request.request.url)
++                request.abort()
++
++        context.route("**/*", route)
++        page = context.new_page()
++        errors = []
++        page.on("pageerror", lambda error: errors.append(str(error)))
++        if args.mock_route:
++            scripts = re.findall(r"<script>(.*?)</script>", fixture, re.S)
++            if len(scripts) != 1:
++                raise ValueError("Expected the published fixture's single inline test script")
++            markup = re.sub(r"<script\b[^>]*>.*?</script>", "", fixture, flags=re.S)
++            page.set_content(markup)
++            page.evaluate("window.__fixtureRoute = {pathname: '/integration/tests/test_chrome_user_message.html'}")
++            page.add_script_tag(content="((history) => {" + scripts[0] +
++                "})({replaceState(_state, _title, path) { window.__fixtureRoute.pathname = path; }});")
++            # The production reader bytes are unchanged; only its location input is doubled.
++            page.add_script_tag(content="((location) => {" + reader + "})(window.__fixtureRoute);")
++            page.evaluate("window.dispatchEvent(new Event('DOMContentLoaded'));")
++        else:
++            page.goto(origin + fixture_url, timeout=10000)
++        page.wait_for_function("document.querySelector('#result').textContent !== 'PENDING'", timeout=10000)
++        result = page.locator("#result").inner_text()
++        checks = page.evaluate("window.receiptChecks || []")
++        passed = bool(re.fullmatch(r"PASS: [0-9]+ Chrome user-message checks", result)) and not errors
++        report = {
++            "transport": "mock_location_history_no_navigation" if args.mock_route else "loopback_http",
++            "browser": browser.version, "result": result, "passed": passed,
++            "fixture_sha256": hashlib.sha256(fixture.encode("utf-8")).hexdigest(),
++            "reader_sha256": hashlib.sha256(reader.encode("utf-8")).hexdigest(),
++            "page_errors": errors, "blocked_requests": blocked, "checks": checks,
++        }
++        if args.report:
++            args.report.parent.mkdir(parents=True, exist_ok=True)
++            args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
++        print("transport:", report["transport"])
++        print("browser:", report["browser"])
++        print(result)
++        print("page_errors:", errors)
++        print("blocked_requests:", blocked)
++        return 0 if passed else 1
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+\ No newline at end of file
+diff --git a/integration/tests/test_a2_l11_receipts.ps1 b/integration/tests/test_a2_l11_receipts.ps1
+new file mode 100644
+index 0000000..aba6ee2
+--- /dev/null
++++ b/integration/tests/test_a2_l11_receipts.ps1
+@@ -0,0 +1,216 @@
++# L11 native regression: ONLY supplied synthetic UIA/receipt patterns.
++# Extract functions/mode AST; never execute the adapter entry point or acquire Chrome.
++$ErrorActionPreference = 'Stop'
++Set-StrictMode -Version Latest
++Add-Type -AssemblyName UIAutomationTypes
++Add-Type -AssemblyName UIAutomationClient
++
++$tokens=$null
++$errors=$null
++$adapter=Join-Path $PSScriptRoot '..\uia_adapter.ps1'
++$tree=[Management.Automation.Language.Parser]::ParseFile($adapter,[ref]$tokens,[ref]$errors)
++if($errors.Count){throw 'Windows adapter did not parse'}
++foreach($name in @('Check-Project','Chat-FromUrl','Read-ChromeTurnSnapshot',
++                   'Get-ChromeResponseId','Find-PostedMessage','Assert-PrivateDispatchReceipt')){
++ $nodes=@($tree.FindAll({
++  param($node)
++  $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -ceq $name
++ },$false))
++ if($nodes.Count -ne 1){throw "Missing or ambiguous function $name"}
++ . ([scriptblock]::Create($nodes[0].Extent.Text))
++}
++$block=$tree.Find({
++ param($node)
++ $node -is [Management.Automation.Language.IfStatementAst] -and
++   $node.Clauses[0].Item1.Extent.Text -ceq '$Mode -eq ''Reconcile'''
++},$false)
++if($null -eq $block){throw 'Missing Reconcile mode'}
++$reconcile=[scriptblock]::Create($block.Extent.Text.Replace('exit 0','return'))
++
++# IDs/strings and the mock readonly Edit come from test_a2_chrome_readback.ps1.
++# Bound target receipt/AST technique comes from test_a2_l03_ps_action_gate.ps1.
++$ProjectId='g-p-11111111111111111111111111111111'
++$ChromeAppId='Chrome.UserData.Test'
++$ChatId='11111111-1111-1111-1111-111111111111'
++$SourceResponse='chrome-turn-22222222-2222-2222-2222-222222222222-33333333-3333-3333-3333-333333333333'
++$PendingResponseId=$SourceResponse
++$ProjectUrl="https://chatgpt.com/g/$ProjectId/project"
++$savedUrl="https://chatgpt.com/g/$ProjectId/c/$ChatId"
++$WindowHandle=[long]222
++$DocumentId='42.222'
++$PrepareAction='a2-action-id-1'
++$RouteReceipt=''
++$OwnerInputPath=''
++$Mode='Reconcile'
++$Kind='CONTINUE_CURRENT'
++$Message='Exact submitted text'
++$window=[pscustomobject]@{Current=@{NativeWindowHandle=$WindowHandle}}
++$element=[pscustomobject]@{
++ Current=@{Name='Chat Succession Chrome readback';ClassName='chat-succession-readback'
++           ControlType=[System.Windows.Automation.ControlType]::Edit}
++ Payload=''
++}
++$element | Add-Member ScriptMethod GetCurrentPattern {
++ param($pattern)
++ if($pattern -ne [System.Windows.Automation.ValuePattern]::Pattern){throw 'Only readonly Value access allowed'}
++ return @{Current=@{Value=$this.Payload;IsReadOnly=$true}}
++}
++function Check([bool]$condition,[string]$description){
++ if(-not $condition){throw "FAIL: $description"}
++ Write-Output "PASS: $description"
++}
++function New-Snapshot {
++ return @{
++  project=$ProjectId;chat=$ChatId;phase='observed'
++  key='44444444-4444-4444-4444-444444444444';user=$Message;userAfterAssistant=$true;reply=$null
++  previous=@{key='22222222-2222-2222-2222-222222222222'
++             reply=@{id='33333333-3333-3333-3333-333333333333'}}
++ }
++}
++function Hold-Snapshot([string]$reason,[string]$phase='unqualified'){
++ return @{project=$ProjectId;chat=$ChatId;phase=$phase;reason=$reason}
++}
++function Frame($snapshot,[long]$age=0){return @{snapshot=$snapshot;age=$age}}
++function Use-Frames([object[]]$values){
++ $script:frames=$values
++ $script:reads=0
++ $script:sleeps=0
++ $script:effects=0
++ $script:profileMatches=$true
++ $script:address=$savedUrl
++ $script:mutation=''
++}
++function Desc($item){
++ if($item -ne $window){throw 'Only the nominated synthetic window may be read'}
++ $frame=$script:frames[[Math]::Min($script:reads,$script:frames.Count-1)]
++ $script:reads++
++ $sample=$frame.snapshot.Clone()
++ $sample.observedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()-[long]$frame.age
++ $element.Payload=$sample | ConvertTo-Json -Depth 6 -Compress
++ return $element
++}
++function Get-Address($item){return $script:address}
++function Test-WindowProfile($item){return $script:profileMatches}
++function Get-TargetWindow([string]$expectedChat,[long]$handle){
++ if($expectedChat -cne $ChatId -or $handle -ne $WindowHandle){throw 'Target identity changed'}
++ return @{window=$window;chat=$ChatId;url=$script:address}
++}
++function Start-Sleep([int]$Milliseconds){
++ if($Milliseconds -ne 400){throw 'Unexpected poll duration'}
++ $script:sleeps++
++ if($script:mutation -ceq 'url'){$script:address=$savedUrl+'?changed'}
++ if($script:mutation -ceq 'action'){
++  $changed=$record.Clone()
++  $changed.action_id='stale-other-action'
++  [IO.File]::WriteAllText($PrepareTargetPath,($changed | ConvertTo-Json -Compress))
++ }
++}
++function Forbidden-Effect {$script:effects++;throw 'Read-only reconciliation attempted a browser effect'}
++function Find-Composer {Forbidden-Effect}
++function Find-EnabledSendButtons {Forbidden-Effect}
++function Open-ChromeWindow {Forbidden-Effect}
++function Recover-SavedWorkerView {Forbidden-Effect}
++function Maximize-ChromeWorkerWindow {Forbidden-Effect}
++$window | Add-Member ScriptMethod GetCurrentPattern {Forbidden-Effect}
++
++$folder=Join-Path ([IO.Path]::GetTempPath()) ('l11-native-'+[guid]::NewGuid().ToString('N'))
++$null=[IO.Directory]::CreateDirectory($folder)
++$PrepareTargetPath=Join-Path $folder 'target.json'
++$hash=[Security.Cryptography.SHA256]::Create()
++try{$digest=[BitConverter]::ToString($hash.ComputeHash([Text.Encoding]::UTF8.GetBytes($Message))).Replace('-','').ToLowerInvariant()}
++finally{$hash.Dispose()}
++$record=@{action_id=$PrepareAction;project=$ProjectId;kind=$Kind;source=$ChatId
++          handle=$WindowHandle;document_id=$DocumentId;message_sha256=$digest
++          source_response=$PendingResponseId;route_receipt=$RouteReceipt}
++[IO.File]::WriteAllText($PrepareTargetPath,($record | ConvertTo-Json -Compress))
++$before=[Convert]::ToBase64String([IO.File]::ReadAllBytes($PrepareTargetPath))
++try{
++ Use-Frames @((Frame (New-Snapshot)))
++ $positive=& $reconcile | ConvertFrom-Json
++ Check ($positive.posted_message_observed -and $positive.submitted_text -ceq $Message -and
++        $positive.chat_id -ceq $ChatId -and $positive.receipt_reason -ceq 'verified' -and
++        $positive.receipt_attempts -eq 1 -and $script:sleeps -eq 0) 'exact anchored positive receipt'
++
++ $missing=New-Snapshot
++ $missing.previous=$null
++ $missing.previousReason='turn_missing'
++ foreach($frame in @(
++   (Frame (Hold-Snapshot 'user_conversation_provisional')),
++   (Frame (Hold-Snapshot 'assistant_conversation_provisional')),
++   (Frame (Hold-Snapshot 'transcript_loading' 'loading')),
++   (Frame (New-Snapshot) 6000),
++   (Frame $missing)
++ )){
++  Use-Frames @($frame,(Frame (New-Snapshot)))
++  $later=& $reconcile | ConvertFrom-Json
++  Check ($later.posted_message_observed -and $later.receipt_reason -ceq 'verified' -and
++         $later.receipt_attempts -eq 2 -and $script:reads -eq 2 -and $script:sleeps -eq 1 -and
++         $script:effects -eq 0) 'transient becomes exact by rereading only'
++ }
++
++ foreach($case in @(
++  @{frame=(Frame $missing);reason='previous_turn_missing'},
++  @{frame=(Frame (New-Snapshot) 6000);reason='sample_expired'},
++  @{frame=(Frame (Hold-Snapshot 'user_conversation_provisional'));reason='user_conversation_provisional'}
++ )){
++  Use-Frames @($case.frame)
++  $held=& $reconcile | ConvertFrom-Json
++  Check (-not $held.posted_message_observed -and $null -eq $held.submitted_text -and
++         $held.receipt_reason -ceq $case.reason -and $held.receipt_attempts -eq 25 -and
++         $script:reads -eq 25 -and $script:sleeps -eq 24 -and $script:effects -eq 0) ('bounded hold: '+$case.reason)
++  Check ([Convert]::ToBase64String([IO.File]::ReadAllBytes($PrepareTargetPath)) -ceq $before) 'private target receipt is byte-identical after timeout'
++ }
++
++ $wrongAnchor=New-Snapshot
++ $wrongAnchor.previous.reply.id='55555555-5555-5555-5555-555555555555'
++ $wrongChat=New-Snapshot
++ $wrongChat.chat='99999999-9999-9999-9999-999999999999'
++ $wrongProject=New-Snapshot
++ $wrongProject.project='g-p-00000000000000000000000000000000'
++ $wrongText=New-Snapshot
++ $wrongText.user='Exact submitted'
++ $ambiguousPrevious=New-Snapshot
++ $ambiguousPrevious.previous=$null
++ $ambiguousPrevious.previousReason='assistant_selection_ambiguous'
++ $oldMissing=New-Snapshot
++ $oldMissing.previous=$null
++ foreach($case in @(
++  @{frame=(Frame $wrongAnchor);reason='preceding_reply_mismatch'},
++  @{frame=(Frame $wrongChat);reason='snapshot_destination_mismatch'},
++  @{frame=(Frame $wrongProject);reason='snapshot_destination_mismatch'},
++  @{frame=(Frame $wrongText);reason='text_mismatch'},
++  @{frame=(Frame $ambiguousPrevious);reason='previous_assistant_selection_ambiguous'},
++  @{frame=(Frame $oldMissing);reason='preceding_reply_unverified'},
++  @{frame=(Frame (New-Snapshot) -6000);reason='snapshot_time_invalid'},
++  @{frame=(Frame (Hold-Snapshot 'assistant_selection_ambiguous'));reason='assistant_selection_ambiguous'},
++  @{frame=(Frame (Hold-Snapshot 'transcript_offscreen' 'offscreen'));reason='transcript_offscreen'},
++  @{frame=(Frame (Hold-Snapshot 'user_route_rebound'));reason='user_route_rebound'},
++  @{frame=(Frame (Hold-Snapshot 'verified'));reason='verified'}
++ )){
++  Use-Frames @($case.frame,(Frame (New-Snapshot)))
++  $held=& $reconcile | ConvertFrom-Json
++  Check (-not $held.posted_message_observed -and $null -eq $held.submitted_text -and
++         $held.receipt_reason -ceq $case.reason -and $held.receipt_attempts -eq 1 -and
++         $script:reads -eq 1 -and $script:sleeps -eq 0 -and $script:effects -eq 0) ('no authority from a reason; immediate hold: '+$case.reason)
++ }
++
++ Use-Frames @((Frame (New-Snapshot)))
++ $script:profileMatches=$false
++ $held=& $reconcile | ConvertFrom-Json
++ Check (-not $held.posted_message_observed -and $held.receipt_reason -ceq 'destination_changed') 'late profile mismatch cannot acknowledge'
++
++ Use-Frames @((Frame $missing),(Frame (New-Snapshot)))
++ $script:mutation='url'
++ $held=& $reconcile | ConvertFrom-Json
++ Check (-not $held.posted_message_observed -and $held.receipt_reason -ceq 'destination_changed' -and
++        $held.receipt_attempts -eq 2 -and $script:reads -eq 1 -and $script:effects -eq 0) 'changed route cannot be adopted on a later poll'
++
++ Use-Frames @((Frame $missing),(Frame (New-Snapshot)))
++ $script:mutation='action'
++ $errorMessage=''
++ try{$null=& $reconcile}catch{$errorMessage=$_.Exception.Message}
++ Check ($errorMessage -like '*Prepared action identity or route changed*' -and $script:reads -eq 1 -and
++        $script:sleeps -eq 1 -and $script:effects -eq 0) 'private dispatch gate reruns before every read'
++}finally{
++ Remove-Item -LiteralPath $folder -Recurse -Force
++}
+\ No newline at end of file
+diff --git a/integration/tests/test_chrome_user_message.html b/integration/tests/test_chrome_user_message.html
+index 5295745..9f8dd3c 100644
+--- a/integration/tests/test_chrome_user_message.html
++++ b/integration/tests/test_chrome_user_message.html
+@@ -47,11 +47,14 @@
+         const result = document.querySelector("#result");
+         const list = document.querySelector("#turns");
+         const failures = [];
++        const checks = window.receiptChecks = [];
+         async function verify(label, rows, predicate) {
+             if (rows) list.replaceChildren(...rows);
+             await Promise.resolve();
+             const sample = JSON.parse(document.querySelector(".chat-succession-readback").value);
+-            if (!predicate(sample)) failures.push(label);
++            const passed = !!predicate(sample);
++            checks.push({label, passed, sample});
++            if (!passed) failures.push(label);
+         }
+ 
+         const exact = sample => sample.phase === "observed" && sample.user === prompt && sample.reply?.final;
+@@ -71,13 +74,73 @@
+         const replyNode = local.querySelector(`[${replyConversation}]`);
+         userNode.setAttribute(userConversation, `local-chatgpt:${chat}`);
+         replyNode.setAttribute(replyConversation, `local-chatgpt:${chat}`);
+-        await verify("saved URL with provisional rendered IDs", [local], held);
++        await verify("saved URL with provisional rendered IDs", [local],
++            sample => held(sample) && sample.reason === "user_conversation_provisional");
+         userNode.setAttribute(userConversation, chat);
+-        await verify("reply still carries a provisional ID", null, held);
++        await verify("reply still carries a provisional ID", null,
++            sample => held(sample) && sample.reason === "assistant_conversation_provisional");
+         replyNode.setAttribute(replyConversation, chat);
+         await verify("same turn becomes exact when both IDs match", null,
+             sample => exact(sample) && sample.key === first && sample.reply.id === reply && !sample.previous);
+-        result.textContent = failures.length ? `FAIL: ${failures.join(", ")}` : "PASS: 8 Chrome user-message checks";
++        // Mutations of the supplied turn fixture only; no live DOM is imported.
++        const four = turn(first, "short");
++        const selection = four.querySelector("[data-chatgpt-selection-message-id]");
++        for (let i = 0; i < 3; i++) selection.parentElement.append(selection.cloneNode(true));
++        await verify("four identical selection markers still hold", [four],
++            sample => held(sample) && sample.reason === "assistant_selection_ambiguous" && sample.selectionCount === 4);
++        four.querySelectorAll("[data-chatgpt-selection-message-id]")[3]
++            .setAttribute("data-chatgpt-selection-message-id", second);
++        await verify("four conflicting selection markers still hold", null,
++            sample => held(sample) && sample.reason === "assistant_selection_ambiguous" && sample.selectionCount === 4);
++        await verify("ambiguous preceding reply cannot anchor continuation", [four, turn(second, "expanded")],
++            sample => exact(sample) && !sample.previous && sample.previousReason === "assistant_selection_ambiguous");
++        await verify("virtualization omits preceding reply", [turn(second, "expanded")],
++            sample => exact(sample) && !sample.previous && sample.previousReason === "turn_missing");
++        await verify("restored preceding reply has its exact identity",
++            [turn(first, "short", "NEED_MORE_TIME"), turn(second, "expanded")],
++            sample => exact(sample) && sample.previous?.key === first && sample.previous.reply.id === reply);
++        const nonprose = turn(first, "short", "NEED_MORE_TIME");
++        nonprose.querySelector("p").removeAttribute("data-d-component");
++        await verify("preceding status text alone is not an anchor", [nonprose, turn(second, "expanded")],
++            sample => exact(sample) && !sample.previous && sample.previousReason === "reply_unverified");
++
++        const rebound = turn(first, "short");
++        await verify("route A qualifies original node", [rebound], exact);
++        history.replaceState(null, "", `/g/${project}/c/${second}`);
++        // Request a new sample without waiting for the periodic timer.
++        document.dispatchEvent(new Event("scroll"));
++        await verify("saved route B with stale route A DOM holds", null,
++            sample => held(sample) && sample.chat === second && sample.reason === "user_conversation_mismatch");
++        rebound.querySelector(`[${userConversation}]`).setAttribute(userConversation, second);
++        rebound.querySelector(`[${replyConversation}]`).setAttribute(replyConversation, second);
++        await verify("rebinding a previously qualified node still holds", null,
++            sample => held(sample) && sample.reason === "user_route_rebound");
++        const fresh = turn(first, "short");
++        fresh.querySelector(`[${userConversation}]`).setAttribute(userConversation, second);
++        fresh.querySelector(`[${replyConversation}]`).setAttribute(replyConversation, second);
++        await verify("fresh matching DOM qualifies route B", [fresh],
++            sample => exact(sample) && sample.chat === second);
++        fresh.querySelector(`[${replyConversation}]`).setAttribute(replyConversation, chat);
++        await verify("wrong saved assistant conversation holds", null,
++            sample => held(sample) && sample.reason === "assistant_conversation_mismatch");
++
++        history.replaceState(null, "", `/g/${project}/c/${chat}`);
++        const region = document.querySelector(".thread-scroll-container");
++        region.style.cssText = "height:80px;overflow:auto";
++        region.scrollTop = 0;
++        await verify("offscreen newest turn has no receipt",
++            [turn(first, "short", "NEED_MORE_TIME"), turn(second, "expanded")],
++            sample => region.scrollHeight > region.clientHeight && sample.phase === "offscreen" &&
++                sample.reason === "transcript_offscreen" && !sample.user);
++        region.scrollTop = region.scrollHeight;
++        document.dispatchEvent(new Event("scroll"));
++        await verify("fixture-only scoped scroll restores exact anchored sample", null,
++            sample => exact(sample) && sample.previous?.key === first && sample.previous.reply.id === reply);
++        region.style.cssText = "";
++        await verify("duplicate latest user key cannot qualify", [turn(first, "short"), turn(first, "expanded")],
++            sample => held(sample) && sample.reason === "turn_key_duplicate");
++        result.textContent = failures.length ? `FAIL: ${failures.join(", ")}` :
++            `PASS: ${checks.length} Chrome user-message checks`;
+     });
+ </script>
+ <script defer src="/integration/chrome_reader/readback.js"></script>
+diff --git a/integration/tests/test_l11_receipt_safety.py b/integration/tests/test_l11_receipt_safety.py
+new file mode 100644
+index 0000000..e144b00
+--- /dev/null
++++ b/integration/tests/test_l11_receipt_safety.py
+@@ -0,0 +1,259 @@
++"""L11 receipt regressions. Synthetic fixtures only; no PowerShell/Chrome/remote IO.
++
++Uses the runner/L09 lost-ack pattern, IDs from test_a2_chrome_readback.ps1,
++and the mock CHROME_DOM sampling pattern from test_worker_view.py.
++A mocked adapter receipt is not proof that the native DOM/UIA gates ran.
++"""
++from contextlib import redirect_stdout
++from dataclasses import asdict
++import hashlib
++import io
++import json
++from pathlib import Path
++import os
++import subprocess
++import sys
++import tempfile
++import unittest
++from unittest.mock import Mock, patch
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++import cli
++from runner import Destination, cycle, dispatch_prepared, initialise
++from succession.composer import ComposerObservation
++from succession.core import Action, Config, Controller, Response
++from windows_backend import BrowserObservationError, WindowsUIA
++
++PROJECT = "g-p-11111111111111111111111111111111"
++CHAT = "11111111-1111-1111-1111-111111111111"
++USER = "22222222-2222-2222-2222-222222222222"
++REPLY = "33333333-3333-3333-3333-333333333333"
++OTHER = "44444444-4444-4444-4444-444444444444"
++ANCHOR = f"chrome-turn-{USER}-{REPLY}"
++
++
++class ReceiptSafetyTests(unittest.TestCase):
++    def setUp(self):
++        tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(tmp.cleanup)
++        self.path = Path(tmp.name) / "controller.json"
++        self.cfg = Config(PROJECT, "JayDEmily/chat_successor", "trial/l01", 3)
++        self.controller = initialise(self.path, self.cfg, CHAT)
++        self.bridge = WindowsUIA(PROJECT, "Shoko fixture", Path("adapter.ps1"), self.path)
++        self.source = Response(CHAT, ANCHOR, "CHAT_STATUS: NEED_MORE_TIME", project=PROJECT)
++        self.calls = []
++        fault = patch.dict(os.environ, {"ASTRA_L09_FAULT": ""})
++        fault.start()
++        self.addCleanup(fault.stop)
++
++    def stage(self, *, uncertain=False):
++        self.decision = self.controller.consume(self.source)
++        self.controller.save(self.path)
++        self.target = Destination(PROJECT, CHAT, ComposerObservation(editable_text=""), 222, "42.222")
++        self.bridge._atomic_target_write({
++            "kind": "CONTINUE_CURRENT", "source": CHAT, "handle": 222,
++            "document_id": "42.222", "project": PROJECT,
++            "action_id": self.decision.action_id, "source_response": ANCHOR,
++            "message_sha256": hashlib.sha256(self.decision.message.encode("utf-8")).hexdigest(),
++            "route_receipt": None,
++        })
++        if uncertain:
++            self.controller.begin_send(self.decision.action_id)
++            self.controller.save(self.path)
++            self.controller.uncertain(self.decision.action_id, "Synthetic lost acknowledgement")
++            self.controller.save(self.path)
++
++    def result(self, **changes):
++        payload = {
++            "project": PROJECT, "chat_id": CHAT, "submitted_text": self.decision.message,
++            "posted_message_observed": True, "receipt_reason": "verified", "receipt_attempts": 1,
++        }
++        return {**payload, **changes}
++
++    def adapter(self, outcomes):
++        outcomes = iter(outcomes)
++
++        def run(argv, **_kwargs):
++            mode = argv[argv.index("-Mode") + 1]
++            self.calls.append(mode)
++            # Both paths remain bound to the same durable action and predecessor.
++            for flag, expected in (
++                ("-WindowHandle", "222"), ("-DocumentId", "42.222"),
++                ("-PrepareAction", self.decision.action_id), ("-SourceResponse", ANCHOR),
++                ("-PendingResponseId", ANCHOR), ("-Message", self.decision.message),
++            ):
++                self.assertEqual(argv[argv.index(flag) + 1], expected)
++            pending = json.loads(self.path.read_text(encoding="utf-8"))["state"]["pending"]
++            self.assertEqual(pending["action_id"], self.decision.action_id)
++            if mode == "Send":
++                self.assertEqual(pending["phase"], "sending")  # persisted before possible click
++            else:
++                self.assertEqual(mode, "Reconcile")
++            outcome = next(outcomes)
++            if isinstance(outcome, BaseException):
++                raise outcome
++            if isinstance(outcome, dict):
++                return Mock(returncode=0, stdout=json.dumps(outcome), stderr="")
++            return outcome
++        return run
++
++    def cli_reconcile(self):
++        config = {**asdict(self.cfg), "run_id": "l01", "project_name": "Shoko fixture"}
++        out = io.StringIO()
++        argv = ["cli.py", "reconcile", "--state", str(self.path),
++                "--config", str(self.path.with_name("fixture-config.json"))]
++        with patch.object(cli, "load_config", return_value=config), \
++             patch.object(cli, "create_dependencies", return_value=(self.bridge, Mock())), \
++             patch.object(sys, "argv", argv), redirect_stdout(out):
++            cli.main()
++        return json.loads(out.getvalue())
++
++    def assert_still_pending(self, before, target_before):
++        self.assertEqual(self.path.read_bytes(), before)
++        self.assertEqual(self.bridge.target_path.read_bytes(), target_before)
++        saved = Controller.load(self.path)
++        self.assertEqual(saved.state.pending.action_id, self.decision.action_id)
++        self.assertEqual(saved.state.pending.response_id, ANCHOR)
++        self.assertEqual(saved.state.pending.message, self.decision.message)
++        self.assertEqual(saved.state.pending.phase, "uncertain")
++        self.assertEqual(saved.unique_count, 1)
++        self.assertEqual(cycle(saved, self.bridge, Mock(), "l01", self.path), Action.HOLD)
++        self.assertEqual(dispatch_prepared(saved, self.bridge, self.path), Action.HOLD)
++        self.assertEqual(self.path.read_bytes(), before)
++
++    def test_positive_exact_receipt_confirms_one_continuation(self):
++        self.stage()
++        with patch.object(self.bridge, "prepare", return_value=self.target), \
++             patch("windows_backend.subprocess.run", side_effect=self.adapter([self.result()])):
++            self.assertEqual(dispatch_prepared(self.controller, self.bridge, self.path), Action.WAIT)
++        saved = Controller.load(self.path)
++        self.assertIsNone(saved.state.pending)
++        self.assertEqual(saved.unique_count, 1)
++        self.assertEqual(saved.consume(self.source).action, Action.IGNORE)
++        self.assertEqual(self.calls, ["Send"])
++
++    def test_lost_ack_holds_through_readonly_failures_then_confirms_without_second_send(self):
++        self.stage()
++        lost_ack = Mock(returncode=1, stdout="", stderr=(
++            "Send attempted but exact posted message + saved ID not both observed; "
++            "receipt_reason=previous_turn_missing"))
++        holds = [
++            self.result(posted_message_observed=False, submitted_text=None,
++                        receipt_reason=reason, receipt_attempts=attempts)
++            for reason, attempts in (
++                ("previous_turn_missing", 25), ("assistant_selection_ambiguous", 1),
++                ("sample_expired", 25),
++            )
++        ]
++        with patch.object(self.bridge, "prepare", return_value=self.target) as prepare, \
++             patch("windows_backend.subprocess.run",
++                   side_effect=self.adapter([lost_ack, *holds, self.result(receipt_attempts=2)])), \
++             self.assertLogs("windows_backend", level="INFO") as logs:
++            self.assertEqual(dispatch_prepared(self.controller, self.bridge, self.path), Action.HOLD)
++            before, target_before = self.path.read_bytes(), self.bridge.target_path.read_bytes()
++            for _ in holds:
++                self.assertEqual(self.cli_reconcile()["event"], "unresolved_no_resend")
++                self.assert_still_pending(before, target_before)
++            self.assertEqual(prepare.call_count, 1)
++            self.assertEqual(self.cli_reconcile()["action"], "WAIT")
++            with self.assertRaisesRegex(BrowserObservationError, "No possibly sent"):
++                self.bridge.reconcile_readonly()
++        saved = Controller.load(self.path)
++        self.assertIsNone(saved.state.pending)
++        self.assertEqual(saved.unique_count, 1)
++        self.assertEqual(self.calls, ["Send", "Reconcile", "Reconcile", "Reconcile", "Reconcile"])
++        self.assertEqual(self.bridge.target_path.read_bytes(), target_before)
++        output = "\n".join(logs.output)
++        self.assertIn("reason=previous_turn_missing attempts=25", output)
++        self.assertIn("reason=assistant_selection_ambiguous attempts=1", output)
++        self.assertNotIn(self.decision.message, output)
++
++    def test_provisional_destination_cannot_be_rescued_by_a_positive_flag(self):
++        self.stage(uncertain=True)
++        before, target_before = self.path.read_bytes(), self.bridge.target_path.read_bytes()
++        with patch("windows_backend.subprocess.run", side_effect=self.adapter([
++            self.result(chat_id="local-chatgpt:" + CHAT),
++        ])):
++            self.assertEqual(self.cli_reconcile()["event"], "unresolved_no_resend")
++        self.assert_still_pending(before, target_before)
++        self.assertEqual(self.calls, ["Reconcile"])
++
++    def test_false_flag_or_inexact_text_cannot_be_rescued_by_diagnostic_metadata(self):
++        self.stage(uncertain=True)
++        before, target_before = self.path.read_bytes(), self.bridge.target_path.read_bytes()
++        outcomes = [
++            self.result(posted_message_observed=False, receipt_reason="verified"),
++            self.result(submitted_text=self.decision.message + " unexpected text"),
++            self.result(posted_message_observed=False, receipt_reason="bad\nreason",
++                        receipt_attempts=True),
++        ]
++        with patch("windows_backend.subprocess.run", side_effect=self.adapter(outcomes)), \
++             self.assertLogs("windows_backend", level="INFO") as logs:
++            for _ in outcomes:
++                self.assertEqual(self.cli_reconcile()["event"], "unresolved_no_resend")
++                self.assert_still_pending(before, target_before)
++        self.assertIn("reason=unspecified attempts=None", "\n".join(logs.output))
++        self.assertNotIn("bad\nreason", "\n".join(logs.output))
++        self.assertEqual(self.calls, ["Reconcile"] * 3)
++
++    def test_wrong_saved_chat_or_project_preserves_the_same_pending_action(self):
++        self.stage(uncertain=True)
++        pending = asdict(Controller.load(self.path).state.pending)
++        target_before = self.bridge.target_path.read_bytes()
++        outcomes = [self.result(chat_id=OTHER), self.result(project="other-project")]
++        with patch("windows_backend.subprocess.run", side_effect=self.adapter(outcomes)):
++            for _ in outcomes:
++                self.assertEqual(self.cli_reconcile()["action"], "HOLD")
++                saved = Controller.load(self.path)
++                self.assertEqual(asdict(saved.state.pending), pending)
++                self.assertEqual(saved.unique_count, 1)
++                self.assertEqual(self.bridge.target_path.read_bytes(), target_before)
++        self.assertEqual(self.calls, ["Reconcile", "Reconcile"])
++
++    def test_reconcile_transport_failures_do_not_retry_or_rearm(self):
++        self.stage(uncertain=True)
++        before, target_before = self.path.read_bytes(), self.bridge.target_path.read_bytes()
++        failures = [
++            Mock(returncode=0, stdout="{", stderr=""),
++            Mock(returncode=1, stdout="", stderr="Chrome readback sample has expired"),
++            subprocess.TimeoutExpired("powershell.exe", 90),
++        ]
++        for failure in failures:
++            with self.subTest(failure=type(failure).__name__), \
++                 patch("windows_backend.subprocess.run", side_effect=self.adapter([failure])) as run:
++                with self.assertRaises((BrowserObservationError, subprocess.TimeoutExpired)):
++                    self.bridge.reconcile_readonly()
++                self.assertEqual(run.call_count, 1)
++                self.assert_still_pending(before, target_before)
++        self.assertEqual(self.calls, ["Reconcile"] * 3)
++
++    def test_generic_get_filehash_error_is_not_an_automatic_no_click_receipt(self):
++        self.stage()
++        error = Mock(returncode=1, stdout="", stderr="Get-FileHash is not recognized")
++        with patch.object(self.bridge, "prepare", return_value=self.target), \
++             patch("windows_backend.subprocess.run", side_effect=self.adapter([error])), \
++             patch.object(self.controller, "confirm_not_sent") as rearm:
++            self.assertEqual(dispatch_prepared(self.controller, self.bridge, self.path), Action.HOLD)
++            rearm.assert_not_called()
++        self.assert_still_pending(self.path.read_bytes(), self.bridge.target_path.read_bytes())
++        self.assertEqual(self.calls, ["Send"])
++
++    def test_stale_chrome_sample_does_not_consume_or_prepare(self):
++        # Same timestamp is not independent fresh readback. Existing fixture fields.
++        sample = {"project": PROJECT, "chat_id": CHAT, "view_status": "observed",
++                  "window_handle": 222, "method": "CHROME_DOM", "chrome_read_at": 1000,
++                  "ready": True, "stop_control": False, "role": "assistant",
++                  "response_id": ANCHOR, "text": "CHAT_STATUS: NEED_MORE_TIME"}
++        before = self.path.read_bytes()
++        with patch.object(self.bridge, "_invoke", return_value=sample) as invoke, \
++             patch("windows_backend.time.sleep"), patch.object(self.bridge, "prepare") as prepare:
++            self.assertEqual(cycle(self.controller, self.bridge, Mock(), "l01", self.path), Action.WAIT)
++            self.assertEqual([call.args[0] for call in invoke.call_args_list], ["Observe", "Observe"])
++            prepare.assert_not_called()
++        self.assertEqual(self.path.read_bytes(), before)
++        self.assertIsNone(self.controller.state.pending)
++        self.assertEqual(self.controller.state.consumed_responses, [])
++
++
++if __name__ == "__main__":
++    unittest.main()
+\ No newline at end of file
+diff --git a/integration/uia_adapter.ps1 b/integration/uia_adapter.ps1
+index 42b7aec..51269f8 100644
+--- a/integration/uia_adapter.ps1
++++ b/integration/uia_adapter.ps1
+@@ -406,24 +406,47 @@ function Get-ConversationTurns($all) {
+  }
+ }
+ 
+-function Find-PostedMessage($window,$expected,[string]$afterResponse='',[string]$url='',[string]$pendingAnchor='') {
++function Find-PostedMessage($window,$expected,[string]$afterResponse='',[string]$url='',[string]$pendingAnchor='',[hashtable]$diagnostic=@{}) {
+  # The complete latest user turn must match. For continuation, also bind
+  # the immediately preceding assistant turn to the triggering response.
++ $diagnostic.reason='read_unavailable'
+  try{
+   $all=Desc $window
+   if($url){
+    $chat=Chat-FromUrl $url
++   $diagnostic.reason='saved_destination_unverified'
+    if(-not $chat -or -not (Check-Project $url)){return $false}
+-   $snapshot=Read-ChromeTurnSnapshot $all $chat
++   $snapshot=Read-ChromeTurnSnapshot $all $chat $diagnostic
+    if($null -ne $snapshot){
++    $diagnostic.reason='reader_kind_mismatch'
+     if($pendingAnchor -and $pendingAnchor -cnotmatch '^chrome-turn-'){return $false}
+-    if($snapshot.phase -cne 'observed' -or $snapshot.user -cne $expected){return $false}
+-    if($afterResponse -and ($null -eq $snapshot.previous -or
+-       (Get-ChromeResponseId $snapshot.previous) -cne $afterResponse)){return $false}
+-    return ((Get-Address $window) -ceq $url -and (Test-WindowProfile $window))
++    if($snapshot.phase -cne 'observed'){
++     $reason=$snapshot.PSObject.Properties['reason']
++     $diagnostic.reason=if($reason -and $reason.Value -cmatch '^[a-z_]{1,64}$'){$reason.Value}else{'chrome_turn_unqualified'}
++     return $false
++    }
++    $diagnostic.reason='text_mismatch'
++    if($snapshot.user -cne $expected){return $false}
++    if($afterResponse){
++     $diagnostic.reason='preceding_reply_unverified'
++     if($null -eq $snapshot.previous){
++      $reason=$snapshot.PSObject.Properties['previousReason']
++      if($reason -and $reason.Value -cmatch '^[a-z_]{1,64}$'){$diagnostic.reason='previous_'+$reason.Value}
++      return $false
++     }
++     $preceding=Get-ChromeResponseId $snapshot.previous
++     $diagnostic.reason='preceding_reply_mismatch'
++     if($preceding -cne $afterResponse){return $false}
++    }
++    $diagnostic.reason='destination_changed'
++    $posted=(Get-Address $window) -ceq $url -and (Test-WindowProfile $window)
++    if($posted){$diagnostic.reason='verified'}
++    return $posted
+    }
+   }
++  $diagnostic.reason='chrome_reader_missing'
+   if($pendingAnchor -cmatch '^chrome-turn-'){return $false}
++  $diagnostic.reason='legacy_turn_unverified'
+   $afterOrdinal=0
+   if($afterResponse){
+    if($afterResponse -cnotmatch '^uia-turn-([1-9][0-9]*)-[a-f0-9]{20}$'){return $false}
+@@ -443,7 +466,9 @@ function Find-PostedMessage($window,$expected,[string]$afterResponse='',[string]
+      (Read-ConversationContent $turns[$lastUser-1] $afterOrdinal).response_id -cne $afterResponse)){
+    return $false
+   }
+-  return ((Read-ConversationContent $turns[$lastUser] 0).text -ceq $expected)
++  $posted=(Read-ConversationContent $turns[$lastUser] 0).text -ceq $expected
++  $diagnostic.reason=if($posted){'verified'}else{'text_mismatch'}
++  return $posted
+  }catch{return $false}
+ }
+ 
+@@ -563,7 +588,7 @@ function Read-ConversationContent($turn,[int]$ordinal) {
+           handoff_locator_verified=($locatorProse -and $finalProse)}
+ }
+ 
+-function Read-ChromeTurnSnapshot($all,[string]$expectedChat) {
++function Read-ChromeTurnSnapshot($all,[string]$expectedChat,[hashtable]$diagnostic=@{}) {
+  $readers=@($all | Where-Object {
+   $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit -and
+   $_.Current.Name -ceq 'Chat Succession Chrome readback' -and
+@@ -571,18 +596,27 @@ function Read-ChromeTurnSnapshot($all,[string]$expectedChat) {
+  })
+  if($readers.Count -eq 0){return}
+  if($readers.Count -ne 1 -or -not $ChromeAppId -or -not $expectedChat){
++  $diagnostic.reason='reader_identity_unverified'
+   throw 'Chrome readback is ambiguous or has no verified saved destination'
+  }
++ $diagnostic.reason='reader_not_ready'
+  $value=$readers[0].GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current
+  if(-not $value.IsReadOnly -or -not $value.Value){throw 'Chrome readback field is not ready'}
++ $diagnostic.reason='snapshot_invalid'
+  try{$snapshot=$value.Value | ConvertFrom-Json}
+  catch{throw 'Chrome readback field does not contain a complete observation'}
+  if($snapshot.project -cne $ProjectId -or $snapshot.chat -cne $expectedChat){
++  $diagnostic.reason='snapshot_destination_mismatch'
+   throw 'Chrome readback belongs to a different Project or saved chat'
+  }
++ $diagnostic.reason='snapshot_time_invalid'
+  if($snapshot.observedAt -isnot [long]){throw 'Chrome readback has no valid sample time'}
+  $age=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds() - $snapshot.observedAt
+- if($age -lt 0 -or $age -gt 5000){throw 'Chrome readback sample has expired'}
++ if($age -lt 0 -or $age -gt 5000){
++  if($age -gt 5000){$diagnostic.reason='sample_expired'}
++  throw 'Chrome readback sample has expired'
++ }
++ $diagnostic.reason='user_turn_unverified'
+  if($snapshot.phase -ceq 'observed' -and ($snapshot.user -isnot [string] -or -not $snapshot.user -or
+     $snapshot.key -cnotmatch '^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$')){
+   throw 'Chrome readback has no verified user turn'
+@@ -612,7 +646,9 @@ function Read-CurrentTurn($target,[switch]$IncludeUserAnchor) {
+   if($null -ne $snapshot){
+    $observed=$snapshot.phase -ceq 'observed'
+    if($snapshot.phase -cnotin @('observed','loading') -and -not $stop){
+-    throw 'Chrome readback could not establish the latest visible turn'
++     $reason=$snapshot.PSObject.Properties['reason']
++     $code=if($reason -and $reason.Value -cmatch '^[a-z_]{1,64}$'){$reason.Value}else{'chrome_turn_unqualified'}
++     throw ('Chrome readback could not establish the latest visible turn; receipt_reason='+$code)
+    }
+    $reply=if($observed){$snapshot.reply}
+    $ready=$null -ne $reply -and $reply.text -is [string] -and $reply.text -and
+@@ -1243,27 +1279,46 @@ if($Mode -eq 'Send') {
+  }
+  for($i=0;$i -lt 60;$i++){
+   Start-Sleep -Milliseconds 400
++  $diagnostic=@{reason='saved_destination_unverified'}
+   $url=Get-Address $target.window
+   $chat=Chat-FromUrl $url
+   if($chat -and (Check-Project $url) -and ($Kind -ne 'CONTINUE_CURRENT' -or $chat -ceq $ChatId) -and
+-     (Find-PostedMessage $target.window $Message $SourceResponse $url $PendingResponseId)){
++     (Find-PostedMessage $target.window $Message $SourceResponse $url $PendingResponseId $diagnostic)){
+    @{project=$ProjectId;chat_id=$chat;submitted_text=$Message;posted_message_observed=$true;window_handle=$WindowHandle} | ConvertTo-Json -Compress
+    exit 0
+   }
+  }
+- throw 'Send attempted but exact posted message + saved ID not both observed'
++ throw ('Send attempted but exact posted message + saved ID not both observed; receipt_reason='+$diagnostic.reason)
+ }
+ if($Mode -eq 'Reconcile') {
+- Assert-PrivateDispatchReceipt
+  if($Kind -eq 'CONTINUE_CURRENT' -and -not ($ChatId -and $SourceResponse)){
+   throw 'Reconcile needs the saved chat and triggering response'
+  }
+- $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
+- $url=Get-Address $target.window
+- $chat=Chat-FromUrl $url
+- $posted= $chat -and ($Kind -ne 'CONTINUE_CURRENT' -or $chat -ceq $ChatId) -and
+-          (Find-PostedMessage $target.window $Message $SourceResponse $url $PendingResponseId)
+- @{project=$ProjectId;chat_id=$chat;submitted_text=$(if($posted){$Message}else{$null});posted_message_observed=[bool]$posted} | ConvertTo-Json -Compress
++ # Read-only hydration/receipt wait. No navigation, refresh, typing or Send.
++ # Unknown structure, wrong identity, offscreen views and ambiguous markers hold.
++ $transient=@('transcript_loading','turn_loading','reader_not_ready','sample_expired',
++              'user_conversation_provisional','assistant_conversation_provisional',
++              'previous_turn_missing','previous_turn_loading','previous_reply_unverified')
++ $receiptUrl=$null
++ for($attempts=1;$attempts -le 25;$attempts++){
++  Assert-PrivateDispatchReceipt
++  $target=Get-TargetWindow $(if($Kind -eq 'CONTINUE_CURRENT'){$ChatId}else{''}) $WindowHandle
++  $url=Get-Address $target.window
++  $chat=Chat-FromUrl $url
++  $diagnostic=@{reason='saved_destination_unverified'}
++  $posted=$false
++  if($null -ne $receiptUrl -and $url -cne $receiptUrl){
++   $diagnostic.reason='destination_changed'
++   break
++  }
++  $receiptUrl=$url
++  $posted= $chat -and ($Kind -ne 'CONTINUE_CURRENT' -or $chat -ceq $ChatId) -and
++           (Find-PostedMessage $target.window $Message $SourceResponse $url $PendingResponseId $diagnostic)
++  if($posted -or $diagnostic.reason -cnotin $transient -or $attempts -eq 25){break}
++  Start-Sleep -Milliseconds 400
++ }
++ @{project=$ProjectId;chat_id=$chat;submitted_text=$(if($posted){$Message}else{$null});posted_message_observed=[bool]$posted
++   receipt_reason=$diagnostic.reason;receipt_attempts=$attempts} | ConvertTo-Json -Compress
+  exit 0
+ }
+ throw 'Unknown mode'
+diff --git a/integration/windows_backend.py b/integration/windows_backend.py
+index 2d3e962..b8ab5ea 100644
+--- a/integration/windows_backend.py
++++ b/integration/windows_backend.py
+@@ -111,6 +111,17 @@ class WindowsUIA(Browser):
+         if mode == "Observe":
+             log.info("observation chat=%s ready=%s reason=%s",
+                      chat, payload.get("ready"), payload.get("reason"))
++        if mode == "Reconcile":
++            # Diagnostic metadata never supplies receipt evidence or prompt text.
++            reason = payload.get("receipt_reason")
++            if not isinstance(reason, str) or not re.fullmatch(r"[a-z_]{1,80}", reason):
++                reason = "unspecified"
++            attempts = payload.get("receipt_attempts")
++            if type(attempts) is not int or not 1 <= attempts <= 25:
++                attempts = None
++            report = log.info if payload.get("posted_message_observed") is True else log.warning
++            report("receipt_readback action=%s chat=%s reason=%s attempts=%s",
++                   arguments.get("PrepareAction", "-"), chat, reason, attempts)
+         return payload
+ 
+     def _worker_error(self, chat_id: str, reason: str) -> BrowserObservationError:
