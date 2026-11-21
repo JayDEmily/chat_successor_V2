@@ -1,5 +1,13 @@
 # Progress
 
+## Shoko Yumi iPhone no-Send preflight — 21 November 2026
+
+- The phone's Cat/Dog request used `JayDEmily/chat-succession-cat-dog-pair@main` with a cap of three in the Shoko Yumi Qualification Project. The installed launcher returned `launch_held` at composer verification. The clean installed checkout and Shoko route both identify `5c86ad6d735b4c0626c49aedfdb93aeb95e6199b`. The preflight performed no Send.
+- A read-only check found an empty editor with no attachment or enabled Send. Chrome exposed the full placeholder and a second copy ending in an ellipsis through both Windows accessibility text patterns. The installed adapter rejected that value as unknown.
+- The independently reviewed candidate `dfbb6a144b04ed52a57ac54ec26027ae59cc0a6a` accepts that exact value only with the known empty-placeholder tree. The original empty value passes. Drafts and other placeholder shapes still hold. The Windows suites passed 118 integration and 119 reference cases, plus all six native PowerShell suites.
+- The development checkout replayed only the preflight of the saved phone request. It returned `preflight_passed` and verified the published Cat/Dog ref at `61c609a3391b1adbb0bb462beab71e4cff39a21c`. There were zero matching runs before and after. The installed launcher still uses `5c86ad6`.
+- Next, confirm activation of the staged read-only Chrome reader and finish LEAN-G1 using the existing disposable chat. Then qualify the pinned Windows preflight and open the first Cat/Dog worker on a fresh fixture branch. Phone approval and same-profile concurrency are pending.
+
 ## Lean ADR 0002 L08 — Saved identity compatibility candidate (21 November 2026)
 
 - **Base:** `e63c315`.
