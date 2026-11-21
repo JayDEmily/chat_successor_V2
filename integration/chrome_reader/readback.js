@@ -9,6 +9,7 @@
         .map(pattern => pattern.match(/^https:\/\/chatgpt\.com\/g\/(g-p-[0-9a-f]+)\*$/)?.[1]));
     const userRoutes = new WeakMap();
     let field;
+    let refreshControl;
 
     function readUserMessage(bubble) {
         // Long prompts render their full body beside a display-only toggle.
@@ -167,7 +168,19 @@
         const route = savedChat.exec(location.pathname);
         if (!route || !projects.has(route[1])) {
             field?.remove();
+            refreshControl?.remove();
             return;
+        }
+        if (!refreshControl?.isConnected) {
+            refreshControl = document.createElement("button");
+            refreshControl.type = "button";
+            refreshControl.tabIndex = -1;
+            refreshControl.className = "chat-succession-source-refresh";
+            refreshControl.setAttribute("aria-label", "Chat Succession refresh source readback");
+            refreshControl.style.cssText =
+                "position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none";
+            refreshControl.addEventListener("click", refresh);
+            document.body.append(refreshControl);
         }
         if (!field?.isConnected) {
             field = document.createElement("input");

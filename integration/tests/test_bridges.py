@@ -171,6 +171,25 @@ class WindowsBridgeTests(unittest.TestCase):
             w._invoke.return_value = {"destination_changed_before_click": True}
             with self.assertRaises(SendBlockedBeforeClick):
                 w.send_once(t, d.message)
+            w._invoke.return_value = {
+                "destination_changed_before_click": True,
+                "pre_click_reason": "source_sample_expired",
+            }
+            with self.assertRaisesRegex(SendBlockedBeforeClick, "source_sample_expired"):
+                w.send_once(t, d.message)
+            w._invoke.return_value = {
+                "destination_changed_before_click": True,
+                "pre_click_reason": "source_refresh_stalled",
+            }
+            with self.assertRaisesRegex(SendBlockedBeforeClick, "source_refresh_stalled"):
+                w.send_once(t, d.message)
+            w._invoke.return_value = {
+                "destination_changed_before_click": True,
+                "pre_click_reason": "raw secrets in arbitrary exceptions",
+            }
+            with self.assertRaisesRegex(SendBlockedBeforeClick, "pre-click verification held") as captured:
+                w.send_once(t, d.message)
+            self.assertNotIn("secrets", str(captured.exception))
             w.reconcile_readonly()
             self.assertEqual(w._invoke.call_args.kwargs["SourceResponse"], "turn1")
 

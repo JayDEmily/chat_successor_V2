@@ -405,7 +405,24 @@ class WindowsUIA(Browser):
         if result.get("paused_before_click") is True:
             raise PausedBeforeClick("Operator pause requested before Send")
         if result.get("destination_changed_before_click") is True:
-            raise SendBlockedBeforeClick("Chrome destination changed before Send. Preserve any draft.")
+            # The native adapter returns an allowlisted predicate, never an
+            # arbitrary PowerShell exception or saved-chat content.
+            allowed = {
+                "source_sample_expired", "source_sample_expired_after_target",
+                "source_refresh_stalled",
+                "source_refresh_unavailable", "source_unqualified",
+                "source_identity_changed", "source_readback_unavailable",
+                "source_verification_failed", "editor_identity_changed",
+                "draft_changed", "attachments_present", "document_changed",
+                "send_button_ambiguous", "url_or_profile_changed",
+                "live_editor", "attachment_check", "document_check",
+                "send_button_check", "source_verification",
+                "address_profile_check", "unknown_preclick",
+            }
+            reason = result.get("pre_click_reason")
+            detail = f" (check: {reason})" if reason in allowed else ""
+            raise SendBlockedBeforeClick(
+                f"Chrome pre-click verification held{detail}. Preserve any draft.")
         if result.get("worker_advanced_before_click") is True:
             raise WorkerAdvancedBeforeClick()
         return self._submission(result)
