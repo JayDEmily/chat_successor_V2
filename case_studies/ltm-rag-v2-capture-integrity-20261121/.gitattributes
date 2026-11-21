@@ -1,0 +1,7 @@
+# Preserve all case-study artifacts byte-for-byte on every platform.
+* -text
+# Raw evidentiary files intentionally retain their original formatting.
+artifacts/automation/installed-start-project.cmd whitespace=-blank-at-eol,-blank-at-eof
+artifacts/patches/* whitespace=-blank-at-eol,-blank-at-eof
+evidence/*.log whitespace=-blank-at-eol,-blank-at-eof
+tools/*.ps1.txt whitespace=-blank-at-eol,-blank-at-eof

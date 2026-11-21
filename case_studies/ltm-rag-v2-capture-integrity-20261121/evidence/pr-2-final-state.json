@@ -1,0 +1,41 @@
+{
+  "repo": "JayDEmily/LTM_RAG_V2",
+  "pr": {
+    "url": "https://github.com/JayDEmily/LTM_RAG_V2/pull/2",
+    "number": 2,
+    "state": "open",
+    "merged": false,
+    "mergeable": true,
+    "draft": false,
+    "body": "## Bounded synthetic capture/index integrity repair (G2/G5/G9)\n\n**Scope:** Fix verified source-fidelity, source identity, outbox and snapshot coherence failures in the existing synthetic-only `SyntheticCaptureLedger`. No capture route, hosted provider integration, personal-source ingestion, production service or new infrastructure.\n\n### Pinned revisions and diff\n- **Base V2 `main`:** `0aa4b8042fc60991aa8a7d9d2278314b52efa24d`\n- **Reviewed head:** `8d27bd55d4abf0c5f864b60a33f24d666920a130`\n- **Source branch:** `work/v2-capture-index-integrity-20261121`\n- GitHub compare: **3 commits ahead, 0 behind; exactly 3 changed paths**: `vnext/ltm_vnext/capture_foundation_v.py`, `vnext/tests/test_capture_foundation_v.py`, `vnext/PROGRESS.md`.\n\n### Repair\n1. Validate canonical source identity, exact Unicode text, role and outbox payload hashes in the index reservation/acknowledgement path; fail closed on corruption without leaking payload or advancing state.\n2. Verify actual stored source bytes/role/outbox consistency before `SOURCE_VERIFIED` promotion.\n3. Return one coherent transactional SQLite `snapshot` under concurrent revocation, with fail-closed `OBSERVED` coverage for missing scoped originals.\n\n### Independent engineering review\n- Two earlier independent reviewers returned **RETURN_TO_WORKER** for demonstrated flaws at `65820f3` and `d27acd1`, with bounded repairs preserved in history.\n- **Fresh independent PASS on exact final head**: [GitHub evidence](https://github.com/JayDEmily/LTM_RAG_V2/issues/1#issuecomment-7061961835).\n- The final reviewer authored an independent **35/35** adversarial fixture suite, including 12 forced SQLite WAL revocation interleavings. Five original failures reproduced on the parent **0/5**, passed on reviewed head **5/5**.\n- Independently reproduced secret-free CI-equivalent suite **285/285**, and separate review-tool tests **31/31**. `git diff --check` passed.\n\n### Integration/authority limits\n- **Actual PR GitHub Actions on this revision must still pass.** Local and independent tests are not hosted PR CI.\n- Nine private Stage T/W historical-evidence-dependent checks remain **NOT_RUN**, not passed by CI.\n- The complementary-memory technical ADR remains **PROPOSED FOR OWNER REVIEW**; this PR does not accept it.\n- **No automatic merge.** Review PASS plus hosted CI authorise consideration of a separately owner-approved merge only. This PR does not permit real conversation import, model inference, external deployment, production changes or private-history publication. Original private `JayDEmily/LTM_RAG` is unchanged.",
+    "title": "Repair synthetic capture source integrity and revocation snapshot coherence",
+    "base": "main",
+    "base_sha": "0aa4b8042fc60991aa8a7d9d2278314b52efa24d",
+    "head": "work/v2-capture-index-integrity-20261121",
+    "head_sha": "8d27bd55d4abf0c5f864b60a33f24d666920a130",
+    "head_repo_id": 1466444140,
+    "head_repo_full_name": "JayDEmily/LTM_RAG_V2",
+    "merge_commit_sha": "aa2fdf3ad5371dcb086ba4f14f3256bbaa64b017",
+    "user": {
+      "login": "JayDEmily",
+      "name": "JayDEmily",
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/117046962?v=4",
+      "id": 117046962
+    },
+    "requested_reviewers": null,
+    "requested_team_reviewers": null,
+    "diff": null,
+    "comments": null,
+    "created_at": "2026-11-21T11:32:53Z",
+    "updated_at": "2026-11-21T11:34:11Z",
+    "closed_at": null,
+    "merged_at": null,
+    "commits": 3,
+    "changed_files": 3,
+    "additions": 317,
+    "deletions": 9,
+    "display_url": "https://github.com/JayDEmily/LTM_RAG_V2/pull/2",
+    "display_title": "Repair synthetic capture source integrity and revocation snapshot coherence"
+  }
+}

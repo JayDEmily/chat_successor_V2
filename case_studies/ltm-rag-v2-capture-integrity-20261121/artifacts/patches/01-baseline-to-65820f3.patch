@@ -1,0 +1,145 @@
+diff --git a/vnext/PROGRESS.md b/vnext/PROGRESS.md
+index cf7e46d..770473c 100644
+--- a/vnext/PROGRESS.md
++++ b/vnext/PROGRESS.md
+@@ -392,3 +392,12 @@ Chrome submitted both frozen prompts from the verified ChatGPT page. The 515-wor
+ - Isolated synthetic-only source revocation now suppresses source readback, correction linkage and index reservation before remote cleanup; uncertain uploads remain marked for cleanup. A locally recorded deletion-evidence receipt remains unverified, not a provider deletion claim.
+ - 11 targeted revocation tests passed; core 285/285, Astra review-tool 31/31. See `ASTRA_REVOCATION_G9_RESULTS_20261121.md` for precise limitations and backup/restore coverage.
+ - The live passive capture adapter is still not established; the 12-turn native outage experiment is not run. No real sources, remote store or live plugin were changed.
++
++
++## V2 synthetic capture index-integrity repair - 21 November 2026 (development candidate)
++
++- Public V2 baseline: 0aa4b8042fc60991aa8a7d9d2278314b52efa24d. The original private repository and its history were not changed.
++- Demonstrated defect: directly altered SQLite original text could be emitted by reserve_index() as an upload payload without matching its stored content/outbox hashes; late corruption after reservation could also be acknowledged as searchable. The existing snapshot() reader detected the same corruption.
++- Bounded repair: verify the stored source text digest and exact index-payload digest at reservation and acknowledgement within the SQLite write transaction; reject corruption without committing transitions.
++- Development evidence: 29/29 capture/revocation baseline; seven failing test-first corruption subcases; then 31/31 targeted passes and 278/278 full CI-equivalent synthetic tests locally on Python 3.14 with the pinned MCP dependency in an isolated environment. git diff --check passed. Nine private-evidence-dependent Stage T/W checks were not executed.
++- Candidate only: distinct independent review, PR, hosted CI and owner-authorised merge remain outstanding. No native ChatGPT sends, API/model calls, provider uploads, real records, service changes or credentials were used. Passive normal-Chat capture remains CAPTURE_ROUTE_NOT_ESTABLISHED.
+diff --git a/vnext/ltm_vnext/capture_foundation_v.py b/vnext/ltm_vnext/capture_foundation_v.py
+index 6a0963d..c5743aa 100644
+--- a/vnext/ltm_vnext/capture_foundation_v.py
++++ b/vnext/ltm_vnext/capture_foundation_v.py
+@@ -292,6 +292,23 @@ class SyntheticCaptureLedger:
+                 (independent_source_ref, local_id),
+             )
+ 
++    @staticmethod
++    def _checked_index_payload(db: sqlite3.Connection, local_id: str):
++        """Fail closed on canonical or outbox corruption before index transitions."""
++        row = db.execute(
++            """SELECT o.*,r.author_role,r.exact_text,r.content_sha256
++               FROM index_outbox o JOIN originals r USING(local_id)
++               WHERE o.local_id=?""", (local_id,),
++        ).fetchone()
++        if row is None:
++            raise CaptureConflict("Index original or outbox is missing")
++        if _digest(row["exact_text"].encode("utf-8")) != row["content_sha256"]:
++            raise CaptureConflict("Stored canonical original has changed")
++        payload = _payload(row["local_id"], row["author_role"], row["exact_text"])
++        if _digest(payload) != row["payload_sha256"]:
++            raise CaptureConflict("Index outbox payload no longer matches original")
++        return row, payload
++
+     def reserve_index(self, local_id: str) -> dict:
+         """Reserve BEFORE provider call; an interrupted reservation is uncertain."""
+         with closing(self._open()) as db, db:
+@@ -304,25 +321,21 @@ class SyntheticCaptureLedger:
+             )
+             if cursor.rowcount != 1:
+                 raise CaptureBoundaryError("Not pending; remote reconciliation required")
+-            row = db.execute(
+-                """SELECT o.local_id,o.payload_sha256,r.author_role,r.exact_text
+-                   FROM index_outbox o JOIN originals r USING(local_id)
+-                   WHERE o.local_id=?""", (local_id,),
+-            ).fetchone()
++            row, payload = self._checked_index_payload(db, local_id)
+             return {"local_id": row["local_id"], "payload_sha256": row["payload_sha256"],
+-                    "payload": _payload(row["local_id"], row["author_role"], row["exact_text"])}
++                    "payload": payload}
+ 
+     def acknowledge_index(self, local_id: str, payload_sha256: str,
+                           provider_file_id: str) -> None:
+         if type(provider_file_id) is not str or not provider_file_id:
+             raise CaptureBoundaryError("Provider identity is required")
+         with closing(self._open()) as db, db:
++            db.execute("BEGIN IMMEDIATE")
+             if db.execute("SELECT 1 FROM tombstones WHERE local_id=?",
+                           (local_id,)).fetchone():
+                 raise CaptureBoundaryError("Revoked source cannot become searchable")
+-            row = db.execute("SELECT * FROM index_outbox WHERE local_id=?",
+-                             (local_id,)).fetchone()
+-            if not row or row["payload_sha256"] != payload_sha256:
++            row, _ = self._checked_index_payload(db, local_id)
++            if row["payload_sha256"] != payload_sha256:
+                 raise CaptureConflict("Index acknowledgement does not match source payload")
+             if row["state"] == "SEARCHABLE":
+                 if row["provider_file_id"] != provider_file_id:
+diff --git a/vnext/tests/test_capture_foundation_v.py b/vnext/tests/test_capture_foundation_v.py
+index 41464be..54c741e 100644
+--- a/vnext/tests/test_capture_foundation_v.py
++++ b/vnext/tests/test_capture_foundation_v.py
+@@ -220,6 +220,64 @@ class CaptureFoundationTests(unittest.TestCase):
+         with self.assertRaises(CaptureConflict):
+             self.snap()
+ 
++    def test_index_reservation_refuses_corrupted_source_or_outbox_atomically(self):
++        # The direct index writer must reject damage without requiring a
++        # separate snapshot() call to detect it.
++        for n, (table, field, value) in enumerate((
++            ("originals", "exact_text", "altered source text"),
++            ("originals", "author_role", "assistant"),
++            ("originals", "content_sha256", "0" * 64),
++            ("index_outbox", "payload_sha256", "0" * 64),
++        ), start=30):
++            with self.subTest(field=field):
++                self.ledger.ingest([self.receipt(n)])
++                with sqlite3.connect(self.path) as db:
++                    local_id = db.execute(
++                        "SELECT local_id FROM originals WHERE message_id=?",
++                        (f"cf-{n:02d}",),
++                    ).fetchone()[0]
++                with sqlite3.connect(self.path) as db:
++                    db.execute(f"UPDATE {table} SET {field}=? WHERE local_id=?",
++                               (value, local_id))
++                with self.assertRaises(CaptureConflict):
++                    self.ledger.reserve_index(local_id)
++                with sqlite3.connect(self.path) as db:
++                    state, provider_id = db.execute(
++                        "SELECT state,provider_file_id FROM index_outbox WHERE local_id=?",
++                        (local_id,),
++                    ).fetchone()
++                self.assertEqual((state, provider_id), ("PENDING", None))
++
++    def test_index_acknowledgement_refuses_late_source_corruption(self):
++        # A valid ticket cannot make a subsequently damaged original searchable.
++        for n, (table, field, value) in enumerate((
++            ("originals", "exact_text", "altered after reservation"),
++            ("originals", "author_role", "assistant"),
++            ("originals", "content_sha256", "0" * 64),
++            ("index_outbox", "payload_sha256", "0" * 64),
++        ), start=40):
++            with self.subTest(field=field):
++                self.ledger.ingest([self.receipt(n)])
++                with sqlite3.connect(self.path) as db:
++                    local_id = db.execute(
++                        "SELECT local_id FROM originals WHERE message_id=?",
++                        (f"cf-{n:02d}",),
++                    ).fetchone()[0]
++                ticket = self.ledger.reserve_index(local_id)
++                with sqlite3.connect(self.path) as db:
++                    db.execute(f"UPDATE {table} SET {field}=? WHERE local_id=?",
++                               (value, local_id))
++                with self.assertRaises(CaptureConflict):
++                    self.ledger.acknowledge_index(
++                        local_id, ticket["payload_sha256"], f"file-{n}",
++                    )
++                with sqlite3.connect(self.path) as db:
++                    state, provider_id = db.execute(
++                        "SELECT state,provider_file_id FROM index_outbox WHERE local_id=?",
++                        (local_id,),
++                    ).fetchone()
++                self.assertEqual((state, provider_id), ("IN_FLIGHT", None))
++
+     def test_cf10_non_synthetic_rejection(self):
+         for change in ({"synthetic_only": False},
+                        {"source_id": "conversation-real"},

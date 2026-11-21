@@ -1,0 +1,39 @@
+2026-11-21T11:33:00.0015097Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-21T11:33:00.3094319Z Complete job name: synthetic-unit
+2026-11-21T11:33:00.3801225Z ##[group]Run actions/checkout@v4
+2026-11-21T11:33:01.3142287Z HEAD is now at aa2fdf3 Merge 8d27bd55d4abf0c5f864b60a33f24d666920a130 into 0aa4b8042fc60991aa8a7d9d2278314b52efa24d
+2026-11-21T11:33:03.6328071Z Collecting mcp==2.3.0 (from -r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:03.7040376Z Collecting anyio>=4.10 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:03.7331060Z Collecting httpx2>=2.10.0 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:03.7738964Z Collecting jsonschema>=4.20.0 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:03.8025220Z Collecting mcp-types==2.3.0 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:03.8351297Z Collecting opentelemetry-api>=1.28.0 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:03.9312858Z Collecting pydantic>=2.12.0 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:03.9839735Z Collecting pyjwt>=2.10.1 (from pyjwt[crypto]>=2.10.1->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.0255090Z Collecting python-multipart>=0.0.9 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.0571488Z Collecting sse-starlette>=3.0.0 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.0939273Z Collecting starlette>=0.48.0 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.1248196Z Collecting typing-extensions>=4.13.0 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.1525560Z Collecting typing-inspection>=0.4.1 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.1870290Z Collecting uvicorn>=0.31.1 (from mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.2176064Z Collecting idna>=2.8 (from anyio>=4.10->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.2679662Z Collecting httpcore2==2.16.2 (from httpx2>=2.10.0->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.3000728Z Collecting truststore>=0.10 (from httpx2>=2.10.0->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.3277535Z Collecting h11>=0.16 (from httpcore2==2.16.2->httpx2>=2.10.0->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.3574721Z Collecting attrs>=22.2.0 (from jsonschema>=4.20.0->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.3866340Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema>=4.20.0->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.4187383Z Collecting referencing>=0.28.4 (from jsonschema>=4.20.0->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.5992180Z Collecting rpds-py>=0.25.0 (from jsonschema>=4.20.0->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:04.6300849Z Collecting annotated-types>=0.6.0 (from pydantic>=2.12.0->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:05.0585236Z Collecting pydantic-core==2.50.5 (from pydantic>=2.12.0->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:05.2174628Z Collecting cryptography>=3.4.0 (from pyjwt[crypto]>=2.10.1->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:05.2995053Z Collecting cffi>=2.0.0 (from cryptography>=3.4.0->pyjwt[crypto]>=2.10.1->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:05.3288314Z Collecting pycparser (from cffi>=2.0.0->cryptography>=3.4.0->pyjwt[crypto]>=2.10.1->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:05.3651293Z Collecting click>=7.0 (from uvicorn>=0.31.1->mcp==2.3.0->-r vnext/requirements-mcp.txt (line 2))
+2026-11-21T11:33:08.4716051Z [36;1mprint("Governance links, proposed ADR and G1-G10 verified")[0m
+2026-11-21T11:33:08.4992837Z Governance links, proposed ADR and G1-G10 verified
+2026-11-21T11:33:09.1094769Z Base modules: 25
+2026-11-21T11:33:09.1095446Z Additional Stage W tests: 13
+2026-11-21T11:33:12.9046971Z Ran 285 tests in 2.797s
+2026-11-21T11:33:12.9047184Z OK
+2026-11-21T11:33:13.4228497Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

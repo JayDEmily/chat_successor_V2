@@ -1,0 +1,13 @@
+{
+  "case_study_record": "02-manual-independent-rereview",
+  "record_type": "exact_send_prompt_only",
+  "source_role": "reviewer_assignment_not_account_transcript",
+  "reviewed_commit": "d27acd1ab6d06031ffc773c855907cfd8362027a",
+  "saved_chat_url": "https://chatgpt.com/g/g-p-6afcdd73d378819183078ded6b83fea4-new-helper-astra/c/6b017de0-8380-83ec-ba6b-e451c3d907fe",
+  "message_sha256_utf8": "39bd5f72f0f122fc648b5b23f51b9a8ffa2d56fabe8097f1743fc1035e875956",
+  "message_utf8_characters": 1145,
+  "delivery_method_and_limitations": "Direct Windows Chrome UIA, saved local Send intent before click; single Send; exact message and saved URL positively read back",
+  "automated_controller_registered": false,
+  "observed_delivery_state": "POSTED_EXACT_MATCH",
+  "privacy_note": "Engineering assignment content intentionally omitted from Git; SHA256 and character count refer to the unchanged original local send intent."
+}

@@ -1,0 +1,184 @@
+diff --git a/vnext/PROGRESS.md b/vnext/PROGRESS.md
+index 6506022..8d00d41 100644
+--- a/vnext/PROGRESS.md
++++ b/vnext/PROGRESS.md
+@@ -408,3 +408,10 @@ Chrome submitted both frozen prompts from the verified ChatGPT page. The 515-wor
+ - Repair scope: recompute the original stable identity from stored source_id, message_id and version_id. Fail closed on a mismatch before returning index bytes, acknowledging SEARCHABLE, promoting source to SOURCE_VERIFIED or releasing a snapshot. No schema migration, provider change or additional infrastructure.
+ - Test-first: four new unittest methods with eight expected failures across the mutated source/message/version tuples, snapshot and verification before the fix. After the fix: capture/revocation tests 35/35, CI-equivalent synthetic tests 282/282, and Astra review-tool tests 31/31 using Python 3.14 and the existing pinned MCP dependency. The nine historically private-evidence-dependent T/W tests were not executed and remain excluded, not passing.
+ - This is a development repair only. Fresh independent commit-pinned review, PR, actual hosted CI and separately authorised merge remain required. The general passive native ChatGPT capture route remains CAPTURE_ROUTE_NOT_ESTABLISHED. No real-source access, ChatGPT native send, external paid inference, live provider change, credential operation or private-repository mutation was performed.
++
++## V2 G2/G5/G9 source certification, coverage and snapshot follow-up - 21 November 2026 (development repair)
++
++- Fresh independent reviewer published RETURN_TO_WORKER on d27acd1ab6d06031ffc773c855907cfd8362027a at https://github.com/JayDEmily/LTM_RAG_V2/issues/1#issuecomment-7061870012. In an independently authored 17-case fault suite, 12 passed and five failed: three false SOURCE_VERIFIED promotions after synthetic original/outbox corruption, one mixed pre/post revocation snapshot and one orphaned OBSERVED coverage scope. Reviewer reproduced all five on parent and candidate, not as regressions from the previous identity fix.
++- Test-first Ubuntu reproduction on unchanged d27: those five subcases failed. Repair keeps the existing source identity checks and uses the shared original-text/role/outbox integrity validation inside verify_synthetic's write transaction before promotion; a snapshot now reads all tables within a consistent SQLite transaction; OBSERVED slots without matching scoped originals fail closed. No new provider, schema, adapter, infrastructure or authority.
++- Local repaired tests: capture/revocation 38/38, CI-equivalent secret-free synthetic tests 285/285, Astra review-tool tests 31/31 on Python 3.14 with pinned MCP. A deterministic SQLite WAL revocation interleaving (writer must commit while snapshot is paused) passed 30 repeated runs. Nine private Stage T/W historical-evidence cases remain NOT_RUN, not passed. git diff --check passed.
++- Status: development candidate only; independent review of this new commit, PR hosted CI and separate owner merge authorisation still outstanding. Original private history, V2 main, live services, credentials, production data and native ChatGPT were untouched. General passive ChatGPT source capture remains CAPTURE_ROUTE_NOT_ESTABLISHED.
+diff --git a/vnext/ltm_vnext/capture_foundation_v.py b/vnext/ltm_vnext/capture_foundation_v.py
+index 8e18942..7506d8d 100644
+--- a/vnext/ltm_vnext/capture_foundation_v.py
++++ b/vnext/ltm_vnext/capture_foundation_v.py
+@@ -277,6 +277,7 @@ class SyntheticCaptureLedger:
+             type(independent_source_ref) is not str or not independent_source_ref):
+             raise CaptureBoundaryError("Independent synthetic source evidence required")
+         with closing(self._open()) as db, db:
++            db.execute("BEGIN IMMEDIATE")
+             if db.execute("SELECT 1 FROM tombstones WHERE local_id=?",
+                           (local_id,)).fetchone():
+                 raise CaptureBoundaryError("Revoked source cannot be verified")
+@@ -284,7 +285,7 @@ class SyntheticCaptureLedger:
+                              (local_id,)).fetchone()
+             if row is None or _digest(independent_bytes) != row["content_sha256"]:
+                 raise CaptureConflict("Independent source bytes do not match observed original")
+-            self._check_source_identity(row)
++            self._checked_index_payload(db, local_id)
+             if row["verification_ref"] not in (None, independent_source_ref):
+                 raise CaptureConflict("Verification provenance changed")
+             db.execute(
+@@ -478,6 +479,9 @@ class SyntheticCaptureLedger:
+ 
+     def snapshot(self, source: str, conversation: str, branch: str) -> dict:
+         with closing(self._open()) as db, db:
++            # Multiple SELECTs must observe one committed source/revocation
++            # state; otherwise this view can mix pre/post-revocation records.
++            db.execute("BEGIN")
+             rows = [dict(r) for r in db.execute(
+                 """SELECT * FROM originals WHERE source_id=? AND conversation_id=?
+                    AND branch_id=? AND NOT EXISTS(
+@@ -495,6 +499,18 @@ class SyntheticCaptureLedger:
+                    ORDER BY position""",
+                 (source, conversation, branch),
+             )]
++            # An OBSERVED slot cannot be claimed without an original at the
++            # same source/conversation/branch/position, even when that original
++            # is tombstoned. An identity mutation may otherwise hide the
++            # corrupted row from the scoped read without hiding its coverage.
++            positions = {r["position"] for r in db.execute(
++                """SELECT position FROM originals WHERE source_id=?
++                   AND conversation_id=? AND branch_id=?""",
++                (source, conversation, branch),
++            )}
++            for slot in coverage:
++                if slot["state"] == "OBSERVED" and slot["position"] not in positions:
++                    raise CaptureConflict("Observed coverage has no scoped original")
+             # The original position may have multiple edited versions. Mask
+             # coverage only when *all* versions at that position are revoked.
+             visible_positions = {r["position"] for r in rows}
+diff --git a/vnext/tests/test_capture_foundation_v.py b/vnext/tests/test_capture_foundation_v.py
+index 9cfe985..7d51971 100644
+--- a/vnext/tests/test_capture_foundation_v.py
++++ b/vnext/tests/test_capture_foundation_v.py
+@@ -357,6 +357,114 @@ class CaptureFoundationTests(unittest.TestCase):
+             ).fetchone()[0]
+         self.assertEqual(status, "SOURCE_OBSERVED")
+ 
++    def test_g2_verification_rejects_mutated_evidence_and_outbox(self):
++        for n, (table, field, altered) in enumerate((
++            ("originals", "exact_text", "changed from the original"),
++            ("originals", "author_role", "assistant"),
++            ("originals", "content_sha256", "0" * 64),
++            ("index_outbox", "payload_sha256", "0" * 64),
++        ), start=90):
++            with self.subTest(field=field):
++                source = self.receipt(n, text="Original exact synthetic wording")
++                self.ledger.ingest([source])
++                with sqlite3.connect(self.path) as db:
++                    local_id = db.execute(
++                        "SELECT local_id FROM originals WHERE message_id=?",
++                        (f"cf-{n:02d}",),
++                    ).fetchone()[0]
++                    db.execute(f"UPDATE {table} SET {field}=? WHERE local_id=?",
++                               (altered, local_id))
++                with self.assertRaises(CaptureConflict):
++                    self.ledger.verify_synthetic(
++                        local_id, source["exact_text"].encode("utf-8"),
++                        "separate-synthetic-readback",
++                    )
++                with sqlite3.connect(self.path) as db:
++                    status, ref = db.execute(
++                        "SELECT source_status,verification_ref FROM originals WHERE local_id=?",
++                        (local_id,),
++                    ).fetchone()
++                self.assertEqual((status, ref), ("SOURCE_OBSERVED", None))
++
++    def test_g5_snapshot_refuses_observed_slot_without_original(self):
++        original = self.receipt(100)
++        self.ledger.ingest([original])
++        with sqlite3.connect(self.path) as db:
++            db.execute(
++                "UPDATE originals SET source_id='synthetic-capture-other' WHERE message_id=?",
++                (original["message_id"],),
++            )
++        with self.assertRaises(CaptureConflict):
++            self.snap()
++
++    def test_g9_snapshot_reads_one_consistent_revocation_state(self):
++        import threading
++        from unittest.mock import patch
++
++        source = self.receipt(101)
++        self.ledger.ingest([source])
++        local_id = self.snap()["originals"][0]["local_id"]
++        with sqlite3.connect(self.path) as db:
++            db.execute("PRAGMA journal_mode=WAL")
++        entered = threading.Event()
++        release = threading.Event()
++        revoked = threading.Event()
++        snap_result = {}
++        revoke_result = {}
++        original_check = SyntheticCaptureLedger._check_source_identity
++
++        def pause_after_first_read(row):
++            entered.set()
++            if not release.wait(5):
++                raise AssertionError("Timed out before completing snapshot")
++            return original_check(row)
++
++        def read_snapshot():
++            try:
++                snap_result["value"] = self.snap()
++            except BaseException as exc:
++                snap_result["error"] = exc
++
++        def revoke_while_snapshot_paused():
++            try:
++                self.ledger.revoke(local_id, "synthetic concurrent revoke")
++                revoke_result["committed"] = True
++                revoked.set()
++            except BaseException as exc:
++                revoke_result["error"] = exc
++
++        with patch.object(SyntheticCaptureLedger, "_check_source_identity",
++                          staticmethod(pause_after_first_read)):
++            reader = threading.Thread(target=read_snapshot, daemon=True)
++            reader.start()
++            self.assertTrue(entered.wait(3), "Snapshot did not reach first source read")
++            writer = threading.Thread(target=revoke_while_snapshot_paused, daemon=True)
++            writer.start()
++            try:
++                # Force the exact reviewer race: in WAL mode the revocation
++                # commits after the first source SELECT but before later
++                # coverage/count queries in the paused snapshot.
++                self.assertTrue(revoked.wait(3), "Writer did not commit in WAL")
++            finally:
++                release.set()
++            reader.join(5)
++            writer.join(5)
++        self.assertFalse(reader.is_alive())
++        self.assertFalse(writer.is_alive())
++        self.assertNotIn("error", snap_result)
++        self.assertNotIn("error", revoke_result)
++        observed = snap_result["value"]
++        # Snapshot may represent a moment before the revoke commits; it must
++        # not combine that version with a subsequent tombstone/count.
++        if observed["originals"]:
++            self.assertEqual(observed["revoked_count"], 0)
++            self.assertEqual(observed["coverage"][0]["state"], "OBSERVED")
++        else:
++            self.assertEqual(observed["revoked_count"], 1)
++            self.assertEqual(observed["coverage"][0]["state"], "REVOKED")
++        self.assertTrue(revoke_result["committed"])
++        self.assertEqual(self.snap()["revoked_count"], 1)
++
+     def test_cf10_non_synthetic_rejection(self):
+         for change in ({"synthetic_only": False},
+                        {"source_id": "conversation-real"},

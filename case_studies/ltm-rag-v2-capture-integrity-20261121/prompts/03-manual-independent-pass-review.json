@@ -1,0 +1,13 @@
+{
+  "case_study_record": "03-manual-independent-pass-review",
+  "record_type": "exact_send_prompt_only",
+  "source_role": "reviewer_assignment_not_account_transcript",
+  "reviewed_commit": "8d27bd55d4abf0c5f864b60a33f24d666920a130",
+  "saved_chat_url": "https://chatgpt.com/g/g-p-6afcdd73d378819183078ded6b83fea4-new-helper-astra/c/6b018018-3188-83ec-b0dd-99b282e32dd5",
+  "message_sha256_utf8": "2cfd58b68c1dd9484d89404fb9a538b7ac48d00be37fc86f2e31b2200c751577",
+  "message_utf8_characters": 1380,
+  "delivery_method_and_limitations": "Direct Windows Chrome UIA, saved local Send intent before click; single Send; exact message and saved URL positively read back",
+  "automated_controller_registered": false,
+  "observed_delivery_state": "POSTED_EXACT_MATCH",
+  "privacy_note": "Engineering assignment content intentionally omitted from Git; SHA256 and character count refer to the unchanged original local send intent."
+}

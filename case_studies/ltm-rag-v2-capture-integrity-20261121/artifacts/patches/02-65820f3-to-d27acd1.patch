@@ -1,0 +1,152 @@
+diff --git a/vnext/PROGRESS.md b/vnext/PROGRESS.md
+index 770473c..6506022 100644
+--- a/vnext/PROGRESS.md
++++ b/vnext/PROGRESS.md
+@@ -401,3 +401,10 @@ Chrome submitted both frozen prompts from the verified ChatGPT page. The 515-wor
+ - Bounded repair: verify the stored source text digest and exact index-payload digest at reservation and acknowledgement within the SQLite write transaction; reject corruption without committing transitions.
+ - Development evidence: 29/29 capture/revocation baseline; seven failing test-first corruption subcases; then 31/31 targeted passes and 278/278 full CI-equivalent synthetic tests locally on Python 3.14 with the pinned MCP dependency in an isolated environment. git diff --check passed. Nine private-evidence-dependent Stage T/W checks were not executed.
+ - Candidate only: distinct independent review, PR, hosted CI and owner-authorised merge remain outstanding. No native ChatGPT sends, API/model calls, provider uploads, real records, service changes or credentials were used. Passive normal-Chat capture remains CAPTURE_ROUTE_NOT_ESTABLISHED.
++
++## V2 G2 source identity follow-up - 21 November 2026 (repair candidate)
++
++- First independent review, published at https://github.com/JayDEmily/LTM_RAG_V2/issues/1, returned RETURN_TO_WORKER against candidate 65820f3c36d59d5636cc03e260e1666e6ca5836e. The reviewer independently reproduced 278/278 synthetic tests and eleven passing checks of twelve new fault expectations, then demonstrated a pre-existing G2 defect: changing only originals.version_id was accepted for reservation and snapshot despite conflicting with immutable local_id.
++- Repair scope: recompute the original stable identity from stored source_id, message_id and version_id. Fail closed on a mismatch before returning index bytes, acknowledging SEARCHABLE, promoting source to SOURCE_VERIFIED or releasing a snapshot. No schema migration, provider change or additional infrastructure.
++- Test-first: four new unittest methods with eight expected failures across the mutated source/message/version tuples, snapshot and verification before the fix. After the fix: capture/revocation tests 35/35, CI-equivalent synthetic tests 282/282, and Astra review-tool tests 31/31 using Python 3.14 and the existing pinned MCP dependency. The nine historically private-evidence-dependent T/W tests were not executed and remain excluded, not passing.
++- This is a development repair only. Fresh independent commit-pinned review, PR, actual hosted CI and separately authorised merge remain required. The general passive native ChatGPT capture route remains CAPTURE_ROUTE_NOT_ESTABLISHED. No real-source access, ChatGPT native send, external paid inference, live provider change, credential operation or private-repository mutation was performed.
+diff --git a/vnext/ltm_vnext/capture_foundation_v.py b/vnext/ltm_vnext/capture_foundation_v.py
+index c5743aa..8e18942 100644
+--- a/vnext/ltm_vnext/capture_foundation_v.py
++++ b/vnext/ltm_vnext/capture_foundation_v.py
+@@ -284,6 +284,7 @@ class SyntheticCaptureLedger:
+                              (local_id,)).fetchone()
+             if row is None or _digest(independent_bytes) != row["content_sha256"]:
+                 raise CaptureConflict("Independent source bytes do not match observed original")
++            self._check_source_identity(row)
+             if row["verification_ref"] not in (None, independent_source_ref):
+                 raise CaptureConflict("Verification provenance changed")
+             db.execute(
+@@ -292,16 +293,25 @@ class SyntheticCaptureLedger:
+                 (independent_source_ref, local_id),
+             )
+ 
++    @staticmethod
++    def _check_source_identity(record) -> None:
++        """Stored source/message/version must still identify the original row."""
++        if _local_id(record["source_id"], record["message_id"],
++                     record["version_id"]) != record["local_id"]:
++            raise CaptureConflict("Stored source identity no longer matches canonical local ID")
++
+     @staticmethod
+     def _checked_index_payload(db: sqlite3.Connection, local_id: str):
+         """Fail closed on canonical or outbox corruption before index transitions."""
+         row = db.execute(
+-            """SELECT o.*,r.author_role,r.exact_text,r.content_sha256
++            """SELECT o.*,r.source_id,r.message_id,r.version_id,
++                      r.author_role,r.exact_text,r.content_sha256
+                FROM index_outbox o JOIN originals r USING(local_id)
+                WHERE o.local_id=?""", (local_id,),
+         ).fetchone()
+         if row is None:
+             raise CaptureConflict("Index original or outbox is missing")
++        SyntheticCaptureLedger._check_source_identity(row)
+         if _digest(row["exact_text"].encode("utf-8")) != row["content_sha256"]:
+             raise CaptureConflict("Stored canonical original has changed")
+         payload = _payload(row["local_id"], row["author_role"], row["exact_text"])
+@@ -476,6 +486,7 @@ class SyntheticCaptureLedger:
+                 (source, conversation, branch),
+             )]
+             for record in rows:
++                self._check_source_identity(record)
+                 if _digest(record["exact_text"].encode("utf-8")) != record["content_sha256"]:
+                     raise CaptureConflict("Stored canonical original has changed")
+             coverage = [dict(r) for r in db.execute(
+diff --git a/vnext/tests/test_capture_foundation_v.py b/vnext/tests/test_capture_foundation_v.py
+index 54c741e..9cfe985 100644
+--- a/vnext/tests/test_capture_foundation_v.py
++++ b/vnext/tests/test_capture_foundation_v.py
+@@ -278,6 +278,85 @@ class CaptureFoundationTests(unittest.TestCase):
+                     ).fetchone()
+                 self.assertEqual((state, provider_id), ("IN_FLIGHT", None))
+ 
++    def test_g2_corrupt_identity_rejected_before_reservation(self):
++        # Original local_id is determined by source/message/version, and must
++        # agree with the still-stored identity at the upload boundary.
++        for n, (field, forged) in enumerate((
++            ("source_id", "synthetic-capture-other"),
++            ("message_id", "forged-message"),
++            ("version_id", "forged-v99"),
++        ), start=60):
++            with self.subTest(identity=field):
++                self.ledger.ingest([self.receipt(n)])
++                with sqlite3.connect(self.path) as db:
++                    local_id = db.execute(
++                        "SELECT local_id FROM originals WHERE message_id=?",
++                        (f"cf-{n:02d}",),
++                    ).fetchone()[0]
++                    db.execute(f"UPDATE originals SET {field}=? WHERE local_id=?",
++                               (forged, local_id))
++                with self.assertRaises(CaptureConflict):
++                    self.ledger.reserve_index(local_id)
++                with sqlite3.connect(self.path) as db:
++                    state, provider = db.execute(
++                        "SELECT state,provider_file_id FROM index_outbox WHERE local_id=?",
++                        (local_id,),
++                    ).fetchone()
++                self.assertEqual((state, provider), ("PENDING", None))
++
++    def test_g2_late_corrupt_identity_rejected_before_acknowledgement(self):
++        for n, (field, forged) in enumerate((
++            ("source_id", "synthetic-capture-other-late"),
++            ("message_id", "forged-late-message"),
++            ("version_id", "forged-late-v99"),
++        ), start=70):
++            with self.subTest(identity=field):
++                self.ledger.ingest([self.receipt(n)])
++                with sqlite3.connect(self.path) as db:
++                    local_id = db.execute(
++                        "SELECT local_id FROM originals WHERE message_id=?",
++                        (f"cf-{n:02d}",),
++                    ).fetchone()[0]
++                ticket = self.ledger.reserve_index(local_id)
++                with sqlite3.connect(self.path) as db:
++                    db.execute(f"UPDATE originals SET {field}=? WHERE local_id=?",
++                               (forged, local_id))
++                with self.assertRaises(CaptureConflict):
++                    self.ledger.acknowledge_index(
++                        local_id, ticket["payload_sha256"], f"file-{n}",
++                    )
++                with sqlite3.connect(self.path) as db:
++                    state, provider = db.execute(
++                        "SELECT state,provider_file_id FROM index_outbox WHERE local_id=?",
++                        (local_id,),
++                    ).fetchone()
++                self.assertEqual((state, provider), ("IN_FLIGHT", None))
++
++    def test_g2_snapshot_rejects_corrupted_source_version(self):
++        self.ledger.ingest([self.receipt(80, version="v1")])
++        local_id = self.snap()["originals"][0]["local_id"]
++        with sqlite3.connect(self.path) as db:
++            db.execute("UPDATE originals SET version_id='forged-v99' WHERE local_id=?",
++                       (local_id,))
++        with self.assertRaises(CaptureConflict):
++            self.snap()
++
++    def test_g2_verification_refuses_corrupt_source_version(self):
++        original = self.receipt(81, version="v1", text="Fictional immutable text")
++        self.ledger.ingest([original])
++        local_id = self.snap()["originals"][0]["local_id"]
++        with sqlite3.connect(self.path) as db:
++            db.execute("UPDATE originals SET version_id='forged-v99' WHERE local_id=?",
++                       (local_id,))
++        with self.assertRaises(CaptureConflict):
++            self.ledger.verify_synthetic(local_id, original["exact_text"].encode("utf-8"),
++                                         "independent-synthetic-readback")
++        with sqlite3.connect(self.path) as db:
++            status = db.execute(
++                "SELECT source_status FROM originals WHERE local_id=?", (local_id,),
++            ).fetchone()[0]
++        self.assertEqual(status, "SOURCE_OBSERVED")
++
+     def test_cf10_non_synthetic_rejection(self):
+         for change in ({"synthetic_only": False},
+                        {"source_id": "conversation-real"},

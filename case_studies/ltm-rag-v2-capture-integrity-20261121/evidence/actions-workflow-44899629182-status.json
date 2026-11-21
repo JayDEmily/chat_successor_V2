@@ -1,0 +1,16 @@
+{
+  "repo": "JayDEmily/LTM_RAG_V2",
+  "head": "8d27bd55d4abf0c5f864b60a33f24d666920a130",
+  "runs": [
+    {
+      "id": 44899629182,
+      "name": "vnext-synthetic",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 2,
+      "jobs_url": "https://api.github.com/repos/JayDEmily/LTM_RAG_V2/actions/runs/44899629182/jobs",
+      "logs_url": "https://api.github.com/repos/JayDEmily/LTM_RAG_V2/actions/runs/44899629182/logs",
+      "workflow_id": 425888578
+    }
+  ]
+}

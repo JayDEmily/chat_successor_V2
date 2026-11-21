@@ -1,0 +1,13 @@
+{
+  "case_study_record": "01-original-controller-bootstrap",
+  "record_type": "exact_send_prompt_only",
+  "source_role": "reviewer_assignment_not_account_transcript",
+  "reviewed_commit": "65820f3c36d59d5636cc03e260e1666e6ca5836e",
+  "saved_chat_url": "https://chatgpt.com/g/g-p-6afcdd73d378819183078ded6b83fea4-new-helper-astra/c/6b017bb8-4dec-83ec-af20-c757c6cdb15f",
+  "message_sha256_utf8": "65b18af0b052214bdc54efdcaef89e6e4604e855e1aaad4820f33a9e025aacc1",
+  "message_utf8_characters": 1887,
+  "delivery_method_and_limitations": "Chat Succession initial launch; UI posted, but controller exact-post verification held and no controller.json was registered",
+  "automated_controller_registered": false,
+  "observed_delivery_state": "UIA_observed_outside_controller",
+  "privacy_note": "Engineering assignment content intentionally omitted from Git; SHA256 and character count refer to the unchanged original local send intent."
+}

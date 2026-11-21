@@ -1,0 +1,46 @@
+{
+  "repository_full_name": "JayDEmily/LTM_RAG_V2",
+  "base": "0aa4b8042fc60991aa8a7d9d2278314b52efa24d",
+  "head": "8d27bd55d4abf0c5f864b60a33f24d666920a130",
+  "status": "ahead",
+  "ahead_by": 3,
+  "behind_by": 0,
+  "total_commits": 3,
+  "too_large": null,
+  "base_commit": {
+    "sha": "0aa4b8042fc60991aa8a7d9d2278314b52efa24d",
+    "url": "https://api.github.com/repos/JayDEmily/LTM_RAG_V2/commits/0aa4b8042fc60991aa8a7d9d2278314b52efa24d",
+    "html_url": "https://github.com/JayDEmily/LTM_RAG_V2/commit/0aa4b8042fc60991aa8a7d9d2278314b52efa24d"
+  },
+  "merge_base_commit": {
+    "sha": "0aa4b8042fc60991aa8a7d9d2278314b52efa24d",
+    "url": "https://api.github.com/repos/JayDEmily/LTM_RAG_V2/commits/0aa4b8042fc60991aa8a7d9d2278314b52efa24d",
+    "html_url": "https://github.com/JayDEmily/LTM_RAG_V2/commit/0aa4b8042fc60991aa8a7d9d2278314b52efa24d"
+  },
+  "files": [
+    {
+      "filename": "vnext/PROGRESS.md",
+      "status": "modified",
+      "additions": 23,
+      "deletions": 0,
+      "changes": 23,
+      "previous_filename": null
+    },
+    {
+      "filename": "vnext/ltm_vnext/capture_foundation_v.py",
+      "status": "modified",
+      "additions": 49,
+      "deletions": 9,
+      "changes": 58,
+      "previous_filename": null
+    },
+    {
+      "filename": "vnext/tests/test_capture_foundation_v.py",
+      "status": "modified",
+      "additions": 245,
+      "deletions": 0,
+      "changes": 245,
+      "previous_filename": null
+    }
+  ]
+}
