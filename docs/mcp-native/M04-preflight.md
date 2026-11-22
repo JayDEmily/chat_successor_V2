@@ -41,3 +41,6 @@ Reviewed current official documentation on 22 November 2026. No live service, cr
 ## 22 November — transport-only execution clarification
 
 Owner directed using the established LTM-RAG architecture, rather than waiting on a new OAuth provider for synthetic transport. [Actual implementation and resource evidence](M04-transport-results.md). Permit only isolated fictional registrations/reports with no real owner/worker admission or action; never use mock principal or client metadata as auth for M02 real admission. This is a transport subphase, not a waiver of authentication requirements. Actual native call quota remains 0/8. No further credential creation or automatic secret capture; owner must securely save already-created dedicated restricted key. Existing authorisation and teardown boundaries remain.
+
+
+Owner explicitly superseded the new-credential handoff with existing generic project credential reuse, restricted operationally to the dedicated transport runtime. The LTM-specific and admin keys remain excluded. Actual readiness and private plugin readback established; see [transport evidence](M04-transport-results.md). Native invocation count 0/8, actual connection/selection and native handler evidence pending.
