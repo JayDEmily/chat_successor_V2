@@ -6,7 +6,7 @@ Demonstrate autonomous succession between distinct saved ChatGPT conversations i
 
 ## Architecture and constraints
 
-Use the native ChatGPT Project, ChatGPT worker, GitHub, native scheduled task, Remote Desktop Commander and Chrome Windows UI Automation. No other orchestration. Workers read the three governing files and live remote state. The timer only launches the next distinct chat. The successful route is the dedicated browser Project page opened via a verified Project breadcrumb/direct Project URL, not global sidebar discovery. Private route/identity evidence and assigned payload travel only in private chat/task context; never in Git. Do not rely on uploaded Project files in a scheduled task. The owner requires completion-relative single-shot scheduling: exactly one non-recurring successor task five minutes after verified completion of each non-final leaf, not a fixed five-minute recurrence. Retire only the preceding trial timer before creating its successor. Individual one-shot acceptance has been observed; permission for the complete sequence remains unestablished. This distinction does not override platform frequency limits or approval requirements, and successive tasks must not be used to circumvent them. Exact fire time is measured, not guaranteed. If the platform rejects the delay or the sequence is not permitted, stop and report; no silent rescheduling or substitutes. Current official guidance: [scheduled tasks](https://help.openai.com/en/articles/10291617-scheduled-tasks-in-chatgpt) and [Projects](https://help.openai.com/en/articles/10169521-projects-in-chatgpt).
+Use the native ChatGPT Project, ChatGPT worker, GitHub, native scheduled task, Remote Desktop Commander and Chrome Windows UI Automation. No other orchestration. Workers read the three governing files and live remote state. The timer only launches the next distinct chat. The required destination is the dedicated browser Project landing page, opened directly by its verified private URL in a newly opened window. The earlier breadcrumb-based path was demonstrated but depended on the previous page; direct cold navigation requires successful named composer readback before sending. Private route/identity evidence and assigned payload travel only in private chat/task context; never in Git. Do not rely on uploaded Project files in a scheduled task. The owner requires completion-relative single-shot scheduling: exactly one non-recurring successor task five minutes after verified completion of each non-final leaf, not a fixed five-minute recurrence. Retire only the preceding trial timer before creating its successor. Individual one-shot acceptance has been observed; permission for the complete sequence remains unestablished. This distinction does not override platform frequency limits or approval requirements, and successive tasks must not be used to circumvent them. Exact fire time is measured, not guaranteed. If the platform rejects the delay or the sequence is not permitted, stop and report; no silent rescheduling or substitutes. Current official guidance: [scheduled tasks](https://help.openai.com/en/articles/10291617-scheduled-tasks-in-chatgpt) and [Projects](https://help.openai.com/en/articles/10169521-projects-in-chatgpt).
 
 ## Gates (in order)
 
@@ -31,59 +31,38 @@ Leaves 1 and 2 are complete. Resume at leaf 3 against the live governance tip, a
 
 After verified publication, post the leaf receipt in the worker's saved Project chat (leaf, predecessor, published SHA, exact line, readback, completion time, next action). Inspect scheduled tasks without changing unrelated tasks. Retire only the preceding trial timer: delete it if the supported interface permits; otherwise its completed, disabled state is sufficient to prevent further execution. There must be no other active trial timer; if uncertain, stop. Leaf 4 ends with no successor. For each non-final leaf, call the Automations plugin directly to request exactly one permitted one-shot successor task, targeting five minutes after verified completion with no recurrence rule. The five-minute delay is a dependency-relative target, not a periodic interval. The plugin's maximum-frequency restriction must still be respected; do not chain tasks to circumvent it. If the sequence is unsupported, stop at the last verified leaf. Changing the five-minute target requires owner authorisation. Confirm its returned enabled/schedule status; report it in the same worker chat and stop. Do not wait or keep a worker running for the timer. The successor timer acts only as launcher: read the repository plan using the short reference prompt below, create the next chat and stop. It must not itself write Git or schedule a successor.
 
-## Frozen launcher procedure (G2/G3 demonstrated)
+## Approved Project launcher
 
-Use Remote Desktop Commander in the existing signed-in Chrome session and the designated tab. The private payload supplies the observed Project URL and current designated chat route/window; do not guess or scan for a globally unique sidebar button. Verify designated tab's current route, Project breadcrumb and no draft or active generation. Navigate through the exact Project breadcrumb to the verified Project landing page; verify the route and unique visible project-specific composer labelled New chat in Automatic Timer Trial V1. Treat the actual UI placeholder as empty only when it matches the verified label; do not overwrite a draft. Set the exact assigned text through UIA ValuePattern, read back, find the unique enabled Send within the composer's scope, and InvokePattern once. Verify new distinct saved conversation route in the named Project and the exact submitted text (plus acknowledgement for diagnostic gates). Use the self-contained launcher template below. Do not retrieve a previous chat, task definition or historical timer. Only substitute the verified private inputs and the exact assigned prompt. Read process output by PID if still available; reconcile the visible browser on output loss or ambiguous return, without another Send. No sidebar lookup, new identity protocol or persistent controller.
+The sole destination is the named Project Automatic Timer Trial V1, resolved using its verified private landing URL. No previous conversation, starting page or persistent window handle is required. Use Remote Desktop Commander and the existing signed-in Chrome profile. Open the exact Project landing URL directly in a new Chrome window (ordinary browser navigation via `chrome.exe --new-window <VERIFIED_PROJECT_LANDING_URL>`). Do not navigate or close existing windows. Record the existing top-level Chrome window handles before opening, then identify the single newly opened window by the exact Project landing route. The window handle is discovered during this invocation only; never pass it to a successor. Accept a canonical redirect only if its Project ID and exact named Project composer match the supplied destination. If necessary allow the page to load; do not submit to a loading screen, ambiguous destination, nonempty draft or login/approval screen. If the composer does not establish within a bounded 60-second observation, stop and report. Do not bypass any approval or safety prompt.
 
-Private launcher payload includes only the repository, branch, assigned leaf, exact expected parent SHA, governing file references and verified private destination inputs. The repository defines the append, commit, readback and successor instructions. The new worker receives the assignment, not permission to modify this plan. Record task scheduled/start/finish timestamps, launcher outcome, verified destination/posted prompt, and fresh chat evidence privately.
+## Reference-only handoff
 
-## Self-contained launcher template
+The timer is a reference, not a script. After verified leaf publication, the worker calls the Automations plugin's supported create action directly with a permitted one-shot schedule and this short plain-text assignment:
 
-The timer is a reference, not a script. After verified leaf publication, the worker calls the Automations plugin's supported create action directly with this short plain-text assignment and a permitted one-shot schedule:
+> Automatic Timer Trial V1. Read AGENTS.md, PLANS.md and PROGRESS.md in JayDEmily/chat_successor_V2, branch automatic-timer. Create a new conversation in Automatic Timer Trial V1 for leaf <NEXT_LEAF>, expected parent <PUBLISHED_SHA>, using the approved Project launcher. Private destination: <DEVICE>, <VERIFIED_PROJECT_LANDING_URL>. Launch only.
 
-> Automatic Timer Trial V1. Read AGENTS.md, PLANS.md and PROGRESS.md in JayDEmily/chat_successor_V2, branch automatic-timer. Execute the approved launcher for leaf <NEXT_LEAF>, expected parent <PUBLISHED_SHA>. Private destination: <DEVICE>, <WINDOW_HANDLE>, <VERIFIED_START_CHAT_URL>, <VERIFIED_PROJECT_LANDING_URL>. Launch only.
+No executable code, copied plan, historical task ID, prior conversation URL or window handle belongs in the timer. The scheduled launcher reads the three files and README, checks expected parent, and runs the approved procedure. The new worker receives:
 
-No executable code, copied plan, historical task ID or previous task lookup belongs in the timer. The scheduled launcher reads the three files and README at the live tip, checks the expected parent and executes the procedure in this section. The fresh worker receives:
+> Automatic Timer Trial V1. Execute leaf <NEXT_LEAF> only in JayDEmily/chat_successor_V2, branch automatic-timer, expected parent <PUBLISHED_SHA>. Read AGENTS.md, PLANS.md, PROGRESS.md and README.md and follow them. Private destination: <DEVICE>, <VERIFIED_PROJECT_LANDING_URL>.
 
-> Automatic Timer Trial V1. Execute leaf <NEXT_LEAF> only in JayDEmily/chat_successor_V2, branch automatic-timer, expected parent <PUBLISHED_SHA>. Read AGENTS.md, PLANS.md, PROGRESS.md and README.md and follow them. Private destination: <DEVICE>, <WINDOW_HANDLE>, <VERIFIED_PROJECT_LANDING_URL>.
+The plan defines the append, commit, evidence and successor rules. Substitute private values only within the handoff. Respect service limits and approval requirements.
 
-The plan determines the append, commit, verification, successor and final stop rules. The worker obtains the current designated chat route by inspecting its own browser tab, not by looking up previous tasks. Substitute all placeholders with actual verified values privately; never publish private identifiers. Respect service limits and approval prompts; do not attempt to evade a safety warning.
-
-Use Remote Desktop Commander start_process on the supplied authorised device to execute the following existing UIA procedure with the private inputs and exact next-worker prompt substituted. Escape single quotes inside substituted PowerShell string inputs by doubling them.
+After the Project has loaded in the newly opened window, use the existing single-Send procedure below. Substitute the observed new window handle, exact observed verified Project landing URL and exact short worker assignment. Escape single quotes in substituted strings by doubling them.
 
 ```powershell
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
-$w=[System.Windows.Automation.AutomationElement]::FromHandle([IntPtr]<WINDOW_HANDLE>)
-$start='<VERIFIED_START_CHAT_URL>'
+$w=[System.Windows.Automation.AutomationElement]::FromHandle([IntPtr]<OBSERVED_NEW_WINDOW_HANDLE>)
 $project='<VERIFIED_PROJECT_LANDING_URL>'
 $q='<EXACT_NEXT_WORKER_ASSIGNMENT>'
 function Elements { @($w.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)) }
-function Address {
-    $a=@(Elements | Where-Object {$_.Current.Name -eq 'Address and search bar' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit'})
-    if($a.Count -ne 1){throw 'Address ambiguous'}
-    $a[0].GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
-}
 function Normalise([string]$u) { ($u -replace '^https://','').TrimEnd('/') }
-function Composer([string]$name) { @(Elements | Where-Object {$_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and !$_.Current.IsOffscreen}) }
-if((Normalise (Address)) -ne (Normalise $start)){throw 'Starting route mismatch'}
-$ed=@(Composer 'Ask ChatGPT')
-if($ed.Count -ne 1){throw 'Composer ambiguous'}
-$v=$ed[0].GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
-if(![string]::IsNullOrWhiteSpace($v) -and $v.Trim() -ne 'Ask ChatGPT'){throw 'Existing draft'}
-if(@(Elements | Where-Object {$_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $_.Current.Name -match '^Stop( generating)?$' -and !$_.Current.IsOffscreen}).Count -ne 0){throw 'Active generation'}
-$h=@(Elements | Where-Object {$_.Current.Name -eq 'Automatic Timer Trial V1' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Hyperlink' -and !$_.Current.IsOffscreen})
-if($h.Count -ne 1){throw 'Project breadcrumb ambiguous'}
-$h[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-$ed=@()
-for($i=0;$i -lt 30;$i++){
-    Start-Sleep -Milliseconds 300
-    if((Normalise (Address)) -eq (Normalise $project)){
-        $ed=@(Composer 'New chat in Automatic Timer Trial V1')
-        if($ed.Count -eq 1){break}
-    }
-}
+$a=@(Elements | Where-Object {$_.Current.Name -eq 'Address and search bar' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit'})
+if($a.Count -ne 1){throw 'Address ambiguous'}
+$url=$a[0].GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+if((Normalise $url) -ne (Normalise $project)){throw 'Project route mismatch'}
+$ed=@(Elements | Where-Object {$_.Current.Name -eq 'New chat in Automatic Timer Trial V1' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and !$_.Current.IsOffscreen})
 if($ed.Count -ne 1){throw 'Project composer not established'}
 $vp=$ed[0].GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
 $v=$vp.Current.Value
@@ -105,7 +84,7 @@ $buttons[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern
 Write-Output 'SEND_INVOKED_ONCE'
 ```
 
-After Send, inspect the designated browser read-only. Verify a distinct saved conversation in the same Project and the exact posted assignment; do not wait for worker completion. On process-output loss, reconcile the browser without resending. No new mechanism and no historical dependency.
+After Send, verify a distinct saved conversation route in the same Project and the exact posted assignment. On lost process output reconcile browser read-only without resending. Record time, launch result and private saved conversation evidence. Do not wait for worker completion. 
 
 ## Acceptance, recovery and handoff
 
