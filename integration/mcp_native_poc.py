@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import stat
 import sys
 import tempfile
 import threading
@@ -78,22 +79,54 @@ def saved_id(value):
         r"[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}", value))
 
 
-def atomic_write(path: Path, data: str):
-    fd, name = tempfile.mkstemp(prefix=".ledger-", dir=path.parent)
+def read_file(directory, name):
+    fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory)
     try:
-        with os.fdopen(fd, "w", encoding="utf-8") as out:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise ValueError("Journal member is not a regular file")
+        with os.fdopen(fd, "rb", closefd=False) as f:
+            return f.read()
+    finally:
+        os.close(fd)
+
+
+def identity(st):
+    return (st.st_dev, st.st_ino)
+
+
+def atomic_write(directory, name, data):
+    """Publish immutable bytes, never replace an existing journal member.
+
+    Both names are relative to the already locked directory descriptor, not
+    a potentially replaced path. Hard link is atomic and fails if name exists.
+    A partial intent/record pair is a recovery hold, never a prior-state reset.
+    """
+    staging = ".stage-" + secrets.token_hex(16)
+    fd = os.open(staging, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                 0o600, dir_fd=directory)
+    try:
+        with os.fdopen(fd, "wb") as out:
             out.write(data)
             out.flush()
             os.fsync(out.fileno())
-        os.replace(name, path)
-        dfd = os.open(path.parent, os.O_RDONLY)
-        try:
-            os.fsync(dfd)
-        finally:
-            os.close(dfd)
+        os.link(staging, name, src_dir_fd=directory, dst_dir_fd=directory,
+                follow_symlinks=False)
+        os.fsync(directory)
     finally:
-        if os.path.exists(name):
-            os.unlink(name)
+        os.unlink(staging, dir_fd=directory)
+        os.fsync(directory)
+
+
+def member_names(generation):
+    return (f"intent-{generation:08d}.json",
+            "ledger.json" if generation == 0 else f"ledger-{generation:08d}.json")
+
+
+def journal_names(directory):
+    # Staging files are not publication; a crash before the first link can
+    # leave them behind. Never interpret them as committed snapshots.
+    return {n for n in os.listdir(directory)
+            if n.startswith("ledger") or n.startswith("intent")}
 
 
 @dataclass(frozen=True)
@@ -190,17 +223,19 @@ def serialized(method):
     """Serialize all mutation through the single owning controller instance."""
     @wraps(method)
     def guarded(self, *args, **kwargs):
+        if self._pid != os.getpid():
+            raise RuntimeError("Inherited controller is not a writer")
         with self._mutex:
             return method(self, *args, **kwargs)
     return guarded
 
 
 class Proof:
-    """Single writer over a checksummed atomic envelope with the original core.
+    """Single directory-inode writer over immutable atomic snapshot pairs.
 
-    Private local directory is the trust boundary. Checksum detects accidental
-    corruption, not an attacker with filesystem write access. No auto rearm,
-    no actual sender, and no credentials or private account data.
+    Private local POSIX directory; no hostile filesystem administrator or
+    coordinated deletion/rollback of multiple independent journal members.
+    No path replacement of existing evidence, no auto rearm or actual sender.
     """
     def __init__(self, path: Path, route: Route | None = None, *, clock=time.time):
         self.path = Path(path)
@@ -208,16 +243,39 @@ class Proof:
         self.closed = False
         self.poisoned = False
         self.core = None
-        self._lock = None
-        self._committed = None  # exact verified durable envelope; None only on creation
+        self._directory = None
+        self._marker = None
+        self._owner = None
+        self._pid = os.getpid()
+        self._committed = {}  # exact immutable intent/record bytes
+        self._generation = 0
+        self._previous = None
         self._mutex = threading.RLock()
         creating = route is not None
         if creating:
             self.path.mkdir(mode=0o700, parents=False, exist_ok=False)
         try:
-            mode = "x+b" if creating else "r+b"
-            self._lock = (self.path / "writer.lock").open(mode)
-            fcntl.flock(self._lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            self._directory = os.open(self.path, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            # A removable marker is not a lock: lock the stable directory inode.
+            fcntl.flock(self._directory, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
+            if creating:
+                flags = os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW
+            self._marker = os.open("writer.lock", flags, 0o600, dir_fd=self._directory)
+            if creating:
+                # Persistent random witness prevents inode-number reuse from
+                # making an empty replacement marker appear authentic.
+                with os.fdopen(os.dup(self._marker), "wb") as marker:
+                    marker.write(secrets.token_hex(32).encode("ascii"))
+                    marker.flush()
+                    os.fsync(marker.fileno())
+                os.fsync(self._directory)
+            witness = read_file(self._directory, "writer.lock")
+            if not re.fullmatch(b"[0-9a-f]{64}", witness):
+                raise ValueError("Invalid writer witness")
+            self._owner = list(identity(os.fstat(self._directory))
+                               + identity(os.fstat(self._marker))) + [
+                                   hashlib.sha256(witness).hexdigest()]
             if creating:
                 self.route = route
                 self.data = {"version": 1, "route": asdict(route), "active": None,
@@ -240,25 +298,41 @@ class Proof:
     @serialized
     def close(self):
         self.closed = True
-        if self._lock is not None:
-            self._lock.close()
-            self._lock = None
+        if self._marker is not None:
+            os.close(self._marker)
+            self._marker = None
+        if self._directory is not None:
+            os.close(self._directory)
+            self._directory = None
+
+    def _verify_owner(self):
+        if self.closed or self.poisoned or self._pid != os.getpid():
+            raise RuntimeError("Ledger unavailable or inherited; reopen and reconcile")
+        directory = self._directory
+        if (identity(os.stat(self.path, follow_symlinks=False)) !=
+                identity(os.fstat(directory))):
+            raise ValueError("Run directory replaced")
+        mark = os.stat("writer.lock", dir_fd=directory, follow_symlinks=False)
+        if (not stat.S_ISREG(mark.st_mode)
+                or identity(mark) != identity(os.fstat(self._marker))):
+            raise ValueError("Writer marker missing or replaced")
+        witness = read_file(directory, "writer.lock")
+        if (list(identity(os.fstat(directory)) + identity(mark)) +
+                [hashlib.sha256(witness).hexdigest()]) != self._owner:
+            raise ValueError("Writer identity mismatch")
+
+    def _verify_journal(self, expected):
+        self._verify_owner()
+        if journal_names(self._directory) != set(expected):
+            raise ValueError("Journal inventory changed")
+        for name, raw in expected.items():
+            if read_file(self._directory, name) != raw:
+                raise ValueError("Immutable journal member changed")
+        self._verify_owner()
 
     def _usable(self):
-        if self.closed or self.poisoned:
-            raise RuntimeError("Ledger unavailable; reopen and reconcile")
         try:
-            # Losing/replacing the lock path must not permit two live writers.
-            locked = os.fstat(self._lock.fileno())
-            current = (self.path / "writer.lock").stat()
-            if (locked.st_dev, locked.st_ino) != (current.st_dev, current.st_ino):
-                raise ValueError("Writer lock replaced")
-            path = self.path / "ledger.json"
-            if self._committed is None:
-                if path.exists() or path.is_symlink():
-                    raise ValueError("Unexpected ledger during creation")
-            elif path.read_bytes() != self._committed:
-                raise ValueError("Persisted ledger changed")
+            self._verify_journal(self._committed)
         except (OSError, ValueError) as exc:
             self.poisoned = True
             raise RuntimeError("Ledger unavailable or changed; reconcile without overwriting") from exc
@@ -297,22 +371,75 @@ class Proof:
         self._usable()
         try:
             self.data["core"] = self._serialize_core()
-            body = canonical(self.data)
-            envelope = canonical({"payload": self.data, "sha256": digest(body)}) + "\n"
-            atomic_write(self.path / "ledger.json", envelope)
-            self._committed = envelope.encode("utf-8")
-            self._usable()  # do not return an effect permit without durable readback
+            generation = self._generation
+            intent_name, record_name = member_names(generation)
+            envelope = canonical({
+                "payload": self.data, "sha256": digest(canonical(self.data)),
+                "generation": generation, "previous": self._previous,
+                "owner": self._owner,
+            }).encode("utf-8") + b"\n"
+            record_digest = hashlib.sha256(envelope).hexdigest()
+            intent = canonical({"generation": generation, "record_sha256": record_digest,
+                                "previous": self._previous,
+                                "owner": self._owner}).encode("utf-8") + b"\n"
+            # Durable intent is a separate witness against deletion of the
+            # newest record. Never overwrite, even on a competing publication.
+            atomic_write(self._directory, intent_name, intent)
+            expected = self._committed | {intent_name: intent}
+            try:
+                self._verify_journal(expected)
+            except (OSError, ValueError) as exc:
+                raise RuntimeError("Journal changed during intent publication") from exc
+            atomic_write(self._directory, record_name, envelope)
+            expected[record_name] = envelope
+            # Faults during either publication preserve old evidence. A missing,
+            # damaged or incomplete pair prevents any later restart/admission.
+            try:
+                self._verify_journal(expected)
+            except (OSError, ValueError) as exc:
+                raise RuntimeError("Journal changed during snapshot publication") from exc
+            self._committed = expected
+            self._generation += 1
+            self._previous = record_digest
         except BaseException:
             self.poisoned = True
             raise
 
     def _restore(self):
-        raw = (self.path / "ledger.json").read_bytes()
-        env = json.loads(raw)
-        if (type(env) is not dict or set(env) != {"payload", "sha256"}
-                or digest(canonical(env["payload"])) != env["sha256"]):
-            raise ValueError("Ledger integrity failure")
-        d = env["payload"]
+        self._verify_owner()
+        names = journal_names(self._directory)
+        if "ledger.json" not in names:
+            raise FileNotFoundError("Missing genesis ledger")
+        if not names or len(names) % 2:
+            raise ValueError("Incomplete journal pair")
+        expected = {}
+        previous = None
+        d = None
+        for generation in range(len(names) // 2):
+            intent_name, record_name = member_names(generation)
+            if intent_name not in names or record_name not in names:
+                raise ValueError("Missing or unexpected journal generation")
+            raw = read_file(self._directory, record_name)
+            iraw = read_file(self._directory, intent_name)
+            env = json.loads(raw)
+            intent = json.loads(iraw)
+            record_digest = hashlib.sha256(raw).hexdigest()
+            if (type(env) is not dict or set(env) != {"payload", "sha256",
+                                                    "generation", "previous", "owner"}
+                    or type(env["generation"]) is not int or env["generation"] != generation
+                    or env["previous"] != previous or env["owner"] != self._owner
+                    or digest(canonical(env["payload"])) != env["sha256"]
+                    or type(intent) is not dict or type(intent.get("generation")) is not int
+                    or intent != {"generation": generation, "record_sha256": record_digest,
+                                  "previous": previous, "owner": self._owner}):
+                raise ValueError("Journal integrity or ownership failure")
+            d = env["payload"]
+            expected[intent_name], expected[record_name] = iraw, raw
+            previous = record_digest
+        self._verify_journal(expected)
+        self._committed = expected
+        self._generation = len(names) // 2
+        self._previous = previous
         if (type(d) is not dict or set(d) != {"version", "route", "active", "history",
                       "bindings", "prior_sha", "hold", "paused", "core"}
                 or type(d["version"]) is not int or d["version"] != 1
@@ -323,7 +450,6 @@ class Proof:
         if "response_timeout_seconds" not in d["route"]:
             raise ValueError("Missing durable response policy")
         self.route = Route(**d["route"])
-        self._committed = raw
         self.data = d
         if d["core"] is not None:
             # Reuse original load validation; scratch file is not authoritative.

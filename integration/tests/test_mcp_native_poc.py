@@ -13,7 +13,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mcp_native_poc import (Action, Auth, Delivery, Preflight, Proof, Quiet,
-                            Rejected, Remote, RepoView, Route, branch_name, digest)
+                            Rejected, Remote, RepoView, Route, branch_name, digest, member_names)
 
 
 C1 = "11111111-1111-1111-1111-111111111111"
@@ -660,6 +660,257 @@ class Contract(unittest.TestCase):
         for value in (0, -1, True, 86401, 1.5, "10", None):
             with self.assertRaises(ValueError):
                 replace(ROUTE, response_timeout_seconds=value)
+
+
+
+    def test_S13_immutable_commit_boundary_damage(self):
+        # Inject at the actual publication syscall (not an entry-point check).
+        # Every previously committed file must retain its bytes unless that
+        # exact file was damaged by the fault, which must remain observable.
+        for phase in ("intent", "record"):
+            for victim in ("genesis", "tip", "witness"):
+                for damage in ("missing", "corrupt"):
+                    with self.subTest(phase=phase, victim=victim, damage=damage):
+                        path = Path(self.temp.name) / f"{phase}-{victim}-{damage}"
+                        p = Proof(path, ROUTE, clock=lambda: self.now)
+                        d = p.reserve()
+                        old = dict(p._committed)
+                        intent, tip = member_names(p._generation - 1)
+                        victim_name = {"genesis": "ledger.json", "tip": tip,
+                                       "witness": intent}[victim]
+                        victim_path = path / victim_name
+                        target = member_names(p._generation)[phase == "record"]
+                        link = os.link
+                        fired = []
+                        def fault(src, dst, **kwargs):
+                            if dst == target:
+                                fired.append(dst)
+                                if damage == "missing":
+                                    victim_path.unlink()
+                                else:
+                                    victim_path.write_bytes(b"boundary-corruption")
+                            return link(src, dst, **kwargs)
+                        try:
+                            with patch("mcp_native_poc.os.link", side_effect=fault):
+                                with self.assertRaises(RuntimeError):
+                                    p.begin_attempt(d, self.target())
+                            self.assertEqual(fired, [target])
+                            self.assertTrue(p.poisoned)
+                            for name, raw in old.items():
+                                f = path / name
+                                if name != victim_name:
+                                    self.assertEqual(f.read_bytes(), raw)
+                                elif damage == "missing":
+                                    self.assertFalse(f.exists())
+                                else:
+                                    self.assertEqual(f.read_bytes(), b"boundary-corruption")
+                            with self.assertRaises(RuntimeError):
+                                p.begin_attempt(d, self.target())
+                            with self.assertRaises(BlockingIOError):
+                                Proof(path)
+                        finally:
+                            p.close()
+                        with self.assertRaises((ValueError, FileNotFoundError)):
+                            Proof(path)
+
+    def test_S13_lock_replacement_at_publication_cannot_admit_second_writer(self):
+        for phase in ("intent", "record"):
+            with self.subTest(phase=phase):
+                path = Path(self.temp.name) / ("lock-" + phase)
+                p = Proof(path, ROUTE, clock=lambda: self.now)
+                d = p.reserve()
+                old = dict(p._committed)
+                original = os.link
+                target = member_names(p._generation)[phase == "record"]
+                attempted = []
+                def fault(src, dst, **kwargs):
+                    if dst == target:
+                        (path / "writer.lock").unlink()
+                        (path / "writer.lock").touch()
+                        # Actual independent open and acquisition, not mock auth.
+                        with self.assertRaises(BlockingIOError):
+                            Proof(path)
+                        attempted.append(True)
+                    return original(src, dst, **kwargs)
+                try:
+                    with patch("mcp_native_poc.os.link", side_effect=fault):
+                        with self.assertRaises(RuntimeError):
+                            p.begin_attempt(d, self.target())
+                    self.assertEqual(attempted, [True])
+                    self.assertTrue(p.poisoned)
+                    for name, raw in old.items():
+                        self.assertEqual((path / name).read_bytes(), raw)
+                finally:
+                    p.close()
+                with self.assertRaises(ValueError):
+                    Proof(path)
+
+    def test_S13_competing_destination_cannot_be_overwritten(self):
+        for phase in ("intent", "record"):
+            with self.subTest(phase=phase):
+                path = Path(self.temp.name) / ("collision-" + phase)
+                with Proof(path, ROUTE, clock=lambda: self.now) as p:
+                    d = p.reserve()
+                    target = member_names(p._generation)[phase == "record"]
+                    link = os.link
+                    original = dict(p._committed)
+                    def collide(src, dst, **kwargs):
+                        if dst == target:
+                            # Simulate a pre-existing competing publication.
+                            # Exact content is deliberately invalid, to ensure
+                            # it is not silently overwritten or adopted.
+                            (path / target).write_bytes(b"competing evidence")
+                        return link(src, dst, **kwargs)
+                    with patch("mcp_native_poc.os.link", side_effect=collide):
+                        with self.assertRaises(FileExistsError):
+                            p.begin_attempt(d, self.target())
+                    self.assertTrue(p.poisoned)
+                    self.assertEqual((path / target).read_bytes(), b"competing evidence")
+                    for name, raw in original.items():
+                        self.assertEqual((path / name).read_bytes(), raw)
+                with self.assertRaises(ValueError):
+                    Proof(path)
+
+    def test_S13_directory_replacement_cannot_redirect_commit(self):
+        path = Path(self.temp.name) / "dir-swap"
+        old_path = Path(self.temp.name) / "displaced"
+        with Proof(path, ROUTE, clock=lambda: self.now) as p:
+            d = p.reserve()
+            records = dict(p._committed)
+            target = member_names(p._generation)[0]
+            link = os.link
+            fired = []
+            def swap(src, dst, **kwargs):
+                if dst == target:
+                    path.rename(old_path)
+                    path.mkdir()
+                    (path / "writer.lock").touch()
+                    fired.append(True)
+                    with self.assertRaises((FileNotFoundError, ValueError)):
+                        Proof(path)
+                return link(src, dst, **kwargs)
+            with patch("mcp_native_poc.os.link", side_effect=swap):
+                with self.assertRaises(RuntimeError):
+                    p.begin_attempt(d, self.target())
+            self.assertEqual(fired, [True])
+            self.assertTrue(p.poisoned)
+            self.assertEqual({f.name for f in path.iterdir()}, {"writer.lock"})
+            for name, raw in records.items():
+                self.assertEqual((old_path / name).read_bytes(), raw)
+            self.assertTrue((old_path / target).is_file())
+
+    def test_S13_tail_loss_after_close_and_marker_replacement(self):
+        for which in ("record", "intent", "marker", "older-record"):
+            with self.subTest(which=which):
+                path = Path(self.temp.name) / ("tail-" + which)
+                with Proof(path, ROUTE, clock=lambda: self.now) as p:
+                    d = p.reserve()
+                    p.begin_attempt(d, self.target())
+                    p.pause()
+                    tail_intent, tail_record = member_names(p._generation - 1)
+                    older = member_names(p._generation - 2)[1]
+                    if which == "marker":
+                        # Replace while the old marker fd is held, preventing
+                        # inode reuse from making the test nondeterministic.
+                        (path / "writer.lock").unlink()
+                        (path / "writer.lock").touch()
+                    else:
+                        victim = {"record": tail_record, "intent": tail_intent,
+                                  "older-record": older}[which]
+                        (path / victim).unlink()
+                with self.assertRaises(ValueError):
+                    Proof(path)
+
+    def test_S13_crash_between_intent_and_record_or_after_record_link(self):
+        for boundary in ("before_intent", "after_intent", "after_record"):
+            with self.subTest(boundary=boundary):
+                path = Path(self.temp.name) / ("append-crash-" + boundary)
+                with Proof(path, ROUTE, clock=lambda: self.now) as p:
+                    d = p.reserve()
+                    names = member_names(p._generation)
+                pid = os.fork()
+                if pid == 0:
+                    try:
+                        p = Proof(path, clock=lambda: self.now)
+                        original = os.link
+                        def crash(src, dst, **kwargs):
+                            if dst == names[0] and boundary == "before_intent":
+                                os._exit(0)
+                            result = original(src, dst, **kwargs)
+                            if ((dst == names[0] and boundary == "after_intent")
+                                    or (dst == names[1] and boundary == "after_record")):
+                                os.fsync(kwargs["dst_dir_fd"])
+                                os._exit(0)
+                            return result
+                        with patch("mcp_native_poc.os.link", side_effect=crash):
+                            p.begin_attempt(d, self.target())
+                        os._exit(2)
+                    except BaseException:
+                        os._exit(3)
+                _, status = os.waitpid(pid, 0)
+                self.assertEqual(os.waitstatus_to_exitcode(status), 0)
+                if boundary == "after_intent":
+                    with self.assertRaises(ValueError):
+                        Proof(path)
+                else:
+                    with Proof(path, clock=lambda: self.now) as p:
+                        if boundary == "before_intent":
+                            self.assertEqual(p.active["phase"], "prepared")
+                            self.assertEqual(p.begin_attempt(d, self.target()), Action.WAIT)
+                        else:
+                            self.assertEqual(p.active["phase"], "uncertain")
+                            with self.assertRaises(Rejected):
+                                p.begin_attempt(d, self.target())
+                            p.register_worker(self.reg(d), AUTH)
+                            self.assertEqual(p.admit_delivery(self.receipt(d)), Action.WAIT)
+
+    def test_S13_no_replace_used_and_latest_snapshot_is_retained(self):
+        with patch("mcp_native_poc.os.replace", side_effect=AssertionError("unsafe overwrite")):
+            p, d = self.bootstrap()
+            original = dict(p._committed)
+            p.pause()
+            self.assertGreater(len(p._committed), len(original))
+            for name, raw in original.items():
+                self.assertEqual((self.path / name).read_bytes(), raw)
+        p = self.reopen()
+        self.assertTrue(p.data["paused"])
+        self.assertEqual(p.count, 1)
+        self.assertEqual(p.active["phase"], "bound")
+        self.assertNotIn(d.challenge, "".join(v.decode() for v in p._committed.values()))
+
+
+
+    def test_S13_inherited_controller_and_marker_content(self):
+        p, d = self.bootstrap()
+        original = dict(p._committed)
+        pid = os.fork()
+        if pid == 0:
+            try:
+                try:
+                    p.pause()
+                except RuntimeError:
+                    pass
+                else:
+                    os._exit(2)
+                try:
+                    Proof(p.path)
+                except BlockingIOError:
+                    os._exit(0)
+                os._exit(3)
+            except BaseException:
+                os._exit(4)
+        _, status = os.waitpid(pid, 0)
+        self.assertEqual(os.waitstatus_to_exitcode(status), 0)
+        self.assertEqual(p._committed, original)
+        for name, raw in original.items():
+            self.assertEqual((self.path / name).read_bytes(), raw)
+        marker = self.path / "writer.lock"
+        marker.write_bytes(b"0" * 64)
+        with self.assertRaises(RuntimeError):
+            p.pause()
+        p.close()
+        with self.assertRaises(ValueError):
+            Proof(self.path)
 
 
 if __name__ == "__main__":
