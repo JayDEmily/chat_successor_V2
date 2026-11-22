@@ -44,3 +44,8 @@ Owner directed using the established LTM-RAG architecture, rather than waiting o
 
 
 Owner explicitly superseded the new-credential handoff with existing generic project credential reuse, restricted operationally to the dedicated transport runtime. The LTM-specific and admin keys remain excluded. Actual readiness and private plugin readback established; see [transport evidence](M04-transport-results.md). Native invocation count 0/8, actual connection/selection and native handler evidence pending.
+
+
+## 22 November — owner expands native chat count
+
+Owner requested three or four chats and delegated browser operation. Freeze four separate disposable chats within the existing eight native handler invocation maximum, original manifest unchanged, expanded schedule and coverage limitation in [transport evidence](M04-transport-results.md). No new live tunnel, real admission, extra native calls or consent bypass. Exact native app-backed connector form prepared for owner risk acknowledgement; prior cloud package not usable from inspected web composer surfaces. Native NOT_RUN.
