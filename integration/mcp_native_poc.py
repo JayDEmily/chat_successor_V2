@@ -11,6 +11,7 @@ from functools import wraps
 import fcntl
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -54,6 +55,20 @@ def token(value):
         re.fullmatch(r"[A-Za-z0-9_.:/@-]+", value))
 
 
+def branch_name(value):
+    """Conservative exact short Git branch grammar; never invoke Git on a request."""
+    return (type(value) is str
+            and bool(re.fullmatch(r"[A-Za-z0-9_][A-Za-z0-9_./-]*", value))
+            and value != "HEAD" and not value.startswith("refs/")
+            and ".." not in value and not value.endswith(".")
+            and all(c and not c.startswith(".") and not c.endswith(".lock")
+                    for c in value.split("/")))
+
+
+def valid_time(value):
+    return type(value) in (int, float) and math.isfinite(value)
+
+
 def sha(value):
     return type(value) is str and bool(re.fullmatch(r"(?:[a-f0-9]{40}|[a-f0-9]{64})", value))
 
@@ -92,6 +107,7 @@ class Route:
     base_sha: str
     cap: int
     action_cap: int = 32  # finite total synthetic reservation budget
+    response_timeout_seconds: int = 300  # finite per-attempt response policy
 
     def __post_init__(self):
         if not all(token(x) for x in (self.run_id, self.principal, self.account_key,
@@ -99,13 +115,14 @@ class Route:
             raise ValueError("Invalid synthetic route")
         if not re.fullmatch(r"[A-Za-z0-9-]+/[A-Za-z0-9_.-]+", self.repo):
             raise ValueError("Invalid repo")
-        if (not re.fullmatch(r"[A-Za-z0-9_][A-Za-z0-9_./-]*", self.branch)
-                or ".." in self.branch or "//" in self.branch or self.branch.startswith("refs/")
-                or self.branch.endswith(("/", ".", ".lock"))):
+        if not branch_name(self.branch):
             raise ValueError("Invalid branch")
         if (not sha(self.base_sha) or type(self.cap) is not int or self.cap < 1
                 or type(self.action_cap) is not int or self.action_cap < 1):
             raise ValueError("Invalid base or cap")
+        if (type(self.response_timeout_seconds) is not int
+                or not 1 <= self.response_timeout_seconds <= 86400):
+            raise ValueError("Invalid finite response timeout")
 
 
 @dataclass(frozen=True)
@@ -192,6 +209,7 @@ class Proof:
         self.poisoned = False
         self.core = None
         self._lock = None
+        self._committed = None  # exact verified durable envelope; None only on creation
         self._mutex = threading.RLock()
         creating = route is not None
         if creating:
@@ -229,6 +247,33 @@ class Proof:
     def _usable(self):
         if self.closed or self.poisoned:
             raise RuntimeError("Ledger unavailable; reopen and reconcile")
+        try:
+            # Losing/replacing the lock path must not permit two live writers.
+            locked = os.fstat(self._lock.fileno())
+            current = (self.path / "writer.lock").stat()
+            if (locked.st_dev, locked.st_ino) != (current.st_dev, current.st_ino):
+                raise ValueError("Writer lock replaced")
+            path = self.path / "ledger.json"
+            if self._committed is None:
+                if path.exists() or path.is_symlink():
+                    raise ValueError("Unexpected ledger during creation")
+            elif path.read_bytes() != self._committed:
+                raise ValueError("Persisted ledger changed")
+        except (OSError, ValueError) as exc:
+            self.poisoned = True
+            raise RuntimeError("Ledger unavailable or changed; reconcile without overwriting") from exc
+
+    def _now(self):
+        now = self.clock()
+        if not valid_time(now):
+            self.poisoned = True
+            raise RuntimeError("Invalid clock; reconcile")
+        return now
+
+    def _response_expired(self, r):
+        return (r is not None and not r["consumed"]
+                and r["response_deadline"] is not None
+                and self._now() >= r["response_deadline"])
 
     @property
     def active(self):
@@ -253,14 +298,17 @@ class Proof:
         try:
             self.data["core"] = self._serialize_core()
             body = canonical(self.data)
-            atomic_write(self.path / "ledger.json", canonical(
-                {"payload": self.data, "sha256": digest(body)}) + "\n")
+            envelope = canonical({"payload": self.data, "sha256": digest(body)}) + "\n"
+            atomic_write(self.path / "ledger.json", envelope)
+            self._committed = envelope.encode("utf-8")
+            self._usable()  # do not return an effect permit without durable readback
         except BaseException:
             self.poisoned = True
             raise
 
     def _restore(self):
-        env = json.loads((self.path / "ledger.json").read_text(encoding="utf-8"))
+        raw = (self.path / "ledger.json").read_bytes()
+        env = json.loads(raw)
         if (type(env) is not dict or set(env) != {"payload", "sha256"}
                 or digest(canonical(env["payload"])) != env["sha256"]):
             raise ValueError("Ledger integrity failure")
@@ -271,7 +319,11 @@ class Proof:
                 or not sha(d["prior_sha"]) or type(d["paused"]) is not bool
                 or type(d["history"]) is not list or type(d["bindings"]) is not dict):
             raise ValueError("Invalid ledger")
+        # Old disposable proof ledgers without a deadline policy are not migrated.
+        if "response_timeout_seconds" not in d["route"]:
+            raise ValueError("Missing durable response policy")
         self.route = Route(**d["route"])
+        self._committed = raw
         self.data = d
         if d["core"] is not None:
             # Reuse original load validation; scratch file is not authoritative.
@@ -299,7 +351,11 @@ class Proof:
             if (type(r) is not dict or r["action_id"] in seen
                     or r["phase"] not in {"prepared", "sending", "uncertain", "bound"}
                     or not sha(r["challenge_digest"]) or not sha(r["prompt_digest"])
-                    or r["kind"] not in {"bootstrap", "CONTINUE_CURRENT", "LAUNCH_SUCCESSOR"}):
+                    or r["kind"] not in {"bootstrap", "CONTINUE_CURRENT", "LAUNCH_SUCCESSOR"}
+                    or not valid_time(r.get("expiry"))
+                    or "response_deadline" not in r
+                    or (r["response_deadline"] is not None if r["phase"] == "prepared"
+                        else not valid_time(r["response_deadline"]))):
                 raise ValueError("Invalid reservation")
             seen.add(r["action_id"])
         if any(not r["consumed"] or r["phase"] != "bound" for r in d["history"]):
@@ -322,10 +378,12 @@ class Proof:
                 r["phase"] = "uncertain"
                 if self.core:
                     self.core.uncertain(r["action_id"], "Restart: possibly submitted")
-                self.data["hold"] = "uncertain"
+                if self.data["hold"] not in ("conflict", "response_deadline", "expired"):
+                    self.data["hold"] = "uncertain"
                 self._commit()
         elif self.core or d["history"]:
             raise ValueError("Missing active reservation")
+        self._usable()
 
     def _config(self):
         route = self.route
@@ -333,7 +391,8 @@ class Proof:
 
     def _hold(self, reason):
         if not self.terminal:
-            if self.data["hold"] != "conflict":
+            if (self.data["hold"] != "conflict"
+                    and (self.data["hold"] != "response_deadline" or reason == "conflict")):
                 self.data["hold"] = reason
             self._commit()
         return Action.HOLD
@@ -348,7 +407,10 @@ class Proof:
     @serialized
     def resume(self):
         self._usable()
-        if (self.terminal or self.data["hold"] in ("conflict", "uncertain", "delivery", "expired", "action_budget")
+        if self._response_expired(self.active):
+            self._hold("response_deadline")
+        if (self.terminal or self.data["hold"] in ("conflict", "uncertain", "delivery", "expired",
+                                                  "action_budget", "response_deadline")
                 or (self.active and self.active["phase"] in ("sending", "uncertain"))):
             raise Rejected("Explicit positive reconciliation required")
         self.data["paused"] = False
@@ -389,8 +451,8 @@ class Proof:
                   + "\nRegistration challenge: " + challenge)
         r = {"action_id": action_id, "kind": kind, "ordinal": ordinal, "source": source,
              "anchor": anchor, "challenge_digest": digest(challenge),
-             "prompt_digest": digest(prompt), "expiry": self.clock() + ttl, "phase": "prepared",
-             "registration": None, "saved_chat": None, "report": None, "consumed": False}
+             "prompt_digest": digest(prompt), "expiry": self._now() + ttl, "phase": "prepared",
+             "response_deadline": None, "registration": None, "saved_chat": None, "report": None, "consumed": False}
         if previous:
             self.data["history"].append(previous)
         self.data["active"] = r
@@ -413,7 +475,8 @@ class Proof:
         if (dispatch.action_id != r["action_id"] or digest(dispatch.prompt) != r["prompt_digest"]
                 or digest(dispatch.challenge) != r["challenge_digest"]):
             raise Rejected("Reservation mismatch")
-        if self.clock() >= r["expiry"]:
+        now = self._now()
+        if now >= r["expiry"]:
             return self._hold("expired")
         desired = r["source"] if r["kind"] == Action.CONTINUE_CURRENT.value else None
         if (type(target) is not Preflight or target.account_key != self.route.account_key
@@ -425,6 +488,7 @@ class Proof:
         if self.core is not None:
             self.core.begin_send(r["action_id"])
         r["phase"] = "sending"
+        r["response_deadline"] = now + self.route.response_timeout_seconds
         self._commit()
         return Action.WAIT
 
@@ -463,7 +527,7 @@ class Proof:
             return {"receipt": r["action_id"], "bound": r["phase"] == "bound"}
         if r["phase"] not in ("sending", "uncertain"):
             raise Rejected("No attempted reservation")
-        if self.clock() >= r["expiry"]:
+        if self._now() >= r["expiry"]:
             self._hold("expired")
             raise Rejected("Expired challenge")
         prior = self.data["bindings"]
@@ -513,6 +577,12 @@ class Proof:
         self.data["bindings"][cid] = binding
         r["saved_chat"] = cid
         r["phase"] = "bound"
+        # Positive late receipt can reconcile the known delivery/count, never
+        # rearm an expired response window or erase an existing deadline hold.
+        if self.data["hold"] == "response_deadline" or self._response_expired(r):
+            self.data["hold"] = "response_deadline"
+            self._commit()
+            return Action.HOLD
         self.data["hold"] = None
         self._commit()
         return Action.WAIT
@@ -527,7 +597,7 @@ class Proof:
             raise Rejected("Invalid status")
         status, commit, branch = body["status"], body["publication_sha"], body["publication_branch"]
         if status == Status.TASK_COMPLETE.value:
-            if not sha(commit) or branch != self.route.branch:
+            if not sha(commit) or not branch_name(branch) or branch != self.route.branch:
                 raise Rejected("Unauthorized or malformed publication")
         elif commit is not None or branch is not None:
             raise Rejected("Unexpected publication")
@@ -540,6 +610,9 @@ class Proof:
         if self.terminal or self.data["hold"] == "conflict":
             raise Rejected("Terminal or conflicting run")
         r["report"] = report
+        if self.data["hold"] == "response_deadline" or self._response_expired(r):
+            self._hold("response_deadline")
+            return "hold"
         self._commit()
         return "received"
 
@@ -555,14 +628,20 @@ class Proof:
                 and type(v.programme_complete) is bool
                 and ((v.programme_complete and v.next_task is None)
                      or (not v.programme_complete and type(v.next_task) is str
-                         and bool(v.next_task.strip()) and v.next_task.upper() != "HOLD")))
+                         and bool(v.next_task.strip())
+                         and v.next_task.strip().upper() != "HOLD"
+                         and v.next_task.strip() != "FINISHED")))
 
     @serialized
     def evaluate(self, quiet: Quiet | None, read_remote: Callable | None = None):
         """Only this controller-side method can turn a report into a core event."""
         self._usable()
         r = self.active
-        if self.terminal or self.data["paused"] or self.data["hold"]:
+        if self.terminal:
+            return Action.HOLD
+        if self._response_expired(r):
+            return self._hold("response_deadline")
+        if self.data["paused"] or self.data["hold"]:
             return Action.HOLD
         if not r or r["phase"] != "bound" or not r["report"]:
             return Action.WAIT
@@ -586,6 +665,10 @@ class Proof:
         if (self.data["paused"] or self.data["hold"] or self.active is not r
                 or r["consumed"] or (evidence and self.data["prior_sha"] != args[2])):
             return Action.HOLD
+        # Independent reads may have taken time or exposed persisted-state loss.
+        self._usable()
+        if self._response_expired(r):
+            return self._hold("response_deadline")
         # Action-scoped synthetic report anchor, never a claimed host message ID.
         outcome = self.core.consume(Response(cid, "mcp-report:" + digest(r["action_id"]),
                                              "CHAT_STATUS: " + report["status"],

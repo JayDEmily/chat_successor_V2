@@ -4,6 +4,7 @@ from pathlib import Path
 import json
 import os
 import sys
+import subprocess
 import tempfile
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -12,7 +13,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mcp_native_poc import (Action, Auth, Delivery, Preflight, Proof, Quiet,
-                            Rejected, Remote, RepoView, Route, digest)
+                            Rejected, Remote, RepoView, Route, branch_name, digest)
 
 
 C1 = "11111111-1111-1111-1111-111111111111"
@@ -37,8 +38,9 @@ class Contract(unittest.TestCase):
         if self.proof:
             self.proof.close()
 
-    def open(self, cap=2, action_cap=32):
-        self.proof = Proof(self.path, replace(ROUTE, cap=cap, action_cap=action_cap), clock=lambda: self.now)
+    def open(self, cap=2, action_cap=32, response_timeout_seconds=300):
+        self.proof = Proof(self.path, replace(ROUTE, cap=cap, action_cap=action_cap,
+                                              response_timeout_seconds=response_timeout_seconds), clock=lambda: self.now)
         return self.proof
 
     def reopen(self):
@@ -80,8 +82,8 @@ class Contract(unittest.TestCase):
             return evidence
         return reader
 
-    def bootstrap(self, cap=2, bind=True, action_cap=32):
-        p = self.open(cap, action_cap)
+    def bootstrap(self, cap=2, bind=True, action_cap=32, response_timeout_seconds=300):
+        p = self.open(cap, action_cap, response_timeout_seconds)
         d = p.reserve()
         self.assertEqual(p.count, 0)
         self.assertEqual(p.begin_attempt(d, self.target()), Action.WAIT)
@@ -243,6 +245,9 @@ class Contract(unittest.TestCase):
         p, d = self.bootstrap()
         for body in [self.report(d, commit=None),
                      self.report(d, publication_branch="wrong"),
+                     self.report(d, publication_branch="work/.hidden"),
+                     self.report(d, publication_branch="work/component.lock/next"),
+                     self.report(d, publication_branch=["work/fixture"]),
                      self.report(d, commit="bad"),
                      self.report(d, status="NEED_MORE_TIME"),
                      self.report(d, status="bad"),
@@ -258,6 +263,9 @@ class Contract(unittest.TestCase):
             self.remote(branch="other"), self.remote(cid=C2),
             self.remote(next_task="contradictory"), self.remote(complete=False, next_task=None),
             self.remote(complete=False, next_task="HOLD"), self.remote(programme_complete=1),
+            self.remote(complete=False, next_task="FINISHED"),
+            self.remote(complete=False, next_task=" HOLD "),
+            self.remote(complete=False, next_task=" FINISHED "),
         ]
         for evidence in entries:
             self.assertEqual(p.evaluate(self.quiet(d), self.read(evidence)), Action.HOLD)
@@ -481,6 +489,177 @@ class Contract(unittest.TestCase):
         self.assertEqual(p.count, 1)
         with self.assertRaises(Rejected):
             p.report_worker(self.report(d, schema_version="1"), AUTH)
+
+
+
+    def test_S13_open_writer_integrity(self):
+        # Each supported operation must refuse live loss/corruption or valid
+        # but different bytes. A new path or altered envelope is not a reset.
+        for damage in ("missing", "corrupt", "different", "lock"):
+            for stage in ("attempt", "register", "delivery", "report", "evaluate",
+                          "pause", "resume", "reserve", "reader"):
+                with self.subTest(damage=damage, stage=stage):
+                    path = Path(self.temp.name) / f"{damage}-{stage}"
+                    with Proof(path, ROUTE, clock=lambda: self.now) as p:
+                        d = p.reserve()
+                        if stage != "attempt":
+                            p.begin_attempt(d, self.target())
+                        if stage not in ("attempt", "register"):
+                            p.register_worker(self.reg(d), AUTH)
+                        if stage not in ("attempt", "register", "delivery"):
+                            p.admit_delivery(self.receipt(d))
+                        if stage in ("evaluate", "reader"):
+                            p.report_worker(self.report(d), AUTH)
+                        ledger = path / "ledger.json"
+                        original = ledger.read_bytes()
+                        def break_state():
+                            if damage == "missing":
+                                ledger.unlink()
+                            elif damage == "corrupt":
+                                ledger.write_bytes(b"broken")
+                            elif damage == "different":
+                                # Checksummed, semantically plausible different state.
+                                env = json.loads(original)
+                                env["payload"]["paused"] = not env["payload"]["paused"]
+                                from mcp_native_poc import canonical
+                                env["sha256"] = digest(canonical(env["payload"]))
+                                ledger.write_text(canonical(env))
+                            else:
+                                (path / "writer.lock").unlink()
+                        def reader(*_):
+                            if ledger.exists() and ledger.read_bytes() == original and (path / "writer.lock").exists():
+                                break_state()
+                            return self.remote()
+                        calls = {
+                            "attempt": lambda: p.begin_attempt(d, self.target()),
+                            "register": lambda: p.register_worker(self.reg(d), AUTH),
+                            "delivery": lambda: p.admit_delivery(self.receipt(d)),
+                            "report": lambda: p.report_worker(self.report(d), AUTH),
+                            "evaluate": lambda: p.evaluate(self.quiet(d), lambda *_: self.remote()),
+                            "pause": p.pause, "resume": p.resume, "reserve": p.reserve,
+                            "reader": lambda: p.evaluate(self.quiet(d), reader),
+                        }
+                        if stage != "reader":
+                            break_state()
+                        with self.assertRaises(RuntimeError):
+                            calls[stage]()
+                        self.assertTrue(p.poisoned)
+                        self.assertFalse(p.active["consumed"])
+                        if damage == "missing":
+                            self.assertFalse(ledger.exists())
+                        elif damage == "corrupt":
+                            self.assertEqual(ledger.read_bytes(), b"broken")
+                        elif damage == "different":
+                            self.assertNotEqual(ledger.read_bytes(), original)
+                            self.assertEqual(json.loads(ledger.read_bytes())["payload"]["paused"], True)
+                        else:
+                            self.assertEqual(ledger.read_bytes(), original)
+                            self.assertFalse((path / "writer.lock").exists())
+                        with self.assertRaises(RuntimeError):
+                            p.evaluate(self.quiet(d))
+        # Restore is a separate recovery operation; a poisoned writer never
+        # becomes usable just because someone puts the bytes back.
+
+    def test_deadline_no_report_late_report_restart(self):
+        p, d = self.bootstrap(response_timeout_seconds=10)
+        self.assertEqual(p.active["response_deadline"], 110.0)
+        self.now = 109.999
+        self.assertEqual(p.evaluate(None), Action.WAIT)
+        p = self.reopen()
+        self.assertEqual(p.active["response_deadline"], 110.0)
+        self.now = 110
+        self.assertEqual(p.evaluate(None), Action.HOLD)
+        self.assertEqual(p.data["hold"], "response_deadline")
+        body = self.report(d, "NEED_MORE_TIME", None)
+        # A recorded expiry remains held even if the wall clock is adjusted.
+        self.now = 109
+        self.assertEqual(p.report_worker(body, AUTH), "hold")
+        self.assertEqual(p.report_worker(body, AUTH), "duplicate")
+        self.assertFalse(p.active["consumed"])
+        self.assertIsNone(p.core.state.pending)
+        p = self.reopen()
+        self.assertEqual(p.evaluate(self.quiet(d)), Action.HOLD)
+        with self.assertRaises(Rejected):
+            p.resume()
+        with self.assertRaises(Rejected):
+            p.reserve()
+
+    def test_deadline_late_report_first(self):
+        p, d = self.bootstrap(response_timeout_seconds=10)
+        self.now = 1000100
+        self.assertEqual(p.report_worker(self.report(d, "NEED_MORE_TIME", None), AUTH), "hold")
+        self.assertEqual(p.evaluate(self.quiet(d)), Action.HOLD)
+        self.assertEqual(p.data["hold"], "response_deadline")
+        self.assertFalse(p.active["consumed"])
+
+    def test_deadline_waiting_quiescence_and_reader(self):
+        for during_read in (False, True):
+            with self.subTest(during_read=during_read):
+                self.path = Path(self.temp.name) / f"deadline-{during_read}"
+                self.now = 100
+                p, d = self.bootstrap(response_timeout_seconds=10)
+                p.report_worker(self.report(d), AUTH)
+                self.assertEqual(p.evaluate(self.quiet(d, idle=False)), Action.WAIT)
+                def reader(*_):
+                    self.now = 110
+                    return self.remote()
+                if not during_read:
+                    self.now = 110
+                    reader = self.read(self.remote())
+                self.assertEqual(p.evaluate(self.quiet(d), reader), Action.HOLD)
+                self.assertFalse(p.active["consumed"])
+                self.assertEqual(p.data["prior_sha"], BASE)
+                self.assertIsNone(p.core.state.pending)
+                self.close()
+
+    def test_deadline_late_delivery_and_crash(self):
+        p, d = self.bootstrap(bind=False, response_timeout_seconds=10)
+        self.now = 110
+        self.assertEqual(p.evaluate(None), Action.HOLD)
+        p = self.reopen()
+        self.assertEqual(p.active["phase"], "uncertain")
+        self.assertEqual(p.active["response_deadline"], 110)
+        self.assertEqual(p.admit_delivery(self.receipt(d)), Action.HOLD)
+        self.assertEqual(p.count, 1)
+        self.assertEqual(p.data["hold"], "response_deadline")
+        self.assertEqual(p.evaluate(self.quiet(d)), Action.HOLD)
+        with self.assertRaises(Rejected):
+            p.resume()
+
+    def test_deadline_new_attempt_has_new_window(self):
+        p, d = self.bootstrap(response_timeout_seconds=10)
+        self.now = 109
+        self.assertEqual(self.accept_report(p, d, "NEED_MORE_TIME", commit=None),
+                         Action.CONTINUE_CURRENT)
+        self.now = 120
+        n = p.reserve()
+        self.assertIsNone(p.active["response_deadline"])
+        self.assertEqual(p.begin_attempt(n, self.target(C1, self.quiet(d))), Action.WAIT)
+        self.assertEqual(p.active["response_deadline"], 130)
+        self.assertEqual(p.data["history"][0]["response_deadline"], 110)
+        p.register_worker(self.reg(n), AUTH)
+        p.admit_delivery(self.receipt(n))
+        self.now = 129
+        self.assertEqual(self.accept_report(p, n), Action.STOP_FINISHED)
+
+    def test_strict_branch_and_policy(self):
+        bad = ["work/.hidden", "work/component.lock/next", "HEAD",
+               "work/.lock", "work//next", "work/next.lock", "work/next.",
+               "work/../next", "work/foo bar", "work/@{oops", "work/foo~bar", "-branch"]
+        for branch in bad:
+            with self.subTest(branch=branch):
+                self.assertNotEqual(subprocess.run(["git", "check-ref-format", "--branch", branch],
+                                                   capture_output=True).returncode, 0)
+                self.assertFalse(branch_name(branch))
+                with self.assertRaises(ValueError):
+                    replace(ROUTE, branch=branch)
+        for branch in ("main", "work/fixture-20261122", "release/v1.2", "work/-child"):
+            self.assertEqual(subprocess.run(["git", "check-ref-format", "--branch", branch],
+                                            capture_output=True).returncode, 0)
+            self.assertTrue(branch_name(branch))
+        for value in (0, -1, True, 86401, 1.5, "10", None):
+            with self.assertRaises(ValueError):
+                replace(ROUTE, response_timeout_seconds=value)
 
 
 if __name__ == "__main__":
