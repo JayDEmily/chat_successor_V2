@@ -29,6 +29,8 @@ Checkpoint: 22 November 2026, Melbourne (AEDT, UTC+11). This is the reviewed gov
 
 - 22 November 2026 / owner: the timer carries a short repository reference and private assignment, not executable code. Corrected erroneous duplicate prose inside the launcher template; no mechanism or gate change. Owner reported a suspicious-activity prompt on prior automation; respect all platform approval and safety controls. No timer created in this correction.
 
+- 22 November 2026 / owner: clarified the fundamental timing contract: completion-relative, non-recurring one-shot timer five minutes after each non-final leaf; retire the preceding trial task before creating its sole successor. No fixed periodic interval and no timer after leaf 4. Do not conflate individual one-shot acceptance with permission for the complete sequence. No architecture, gate or timing change; platform limits still apply. No task created by this clarification.
+
 ## Outcomes & Retrospective
 
 Four functional gate objectives verified (G0–G3); two leaves published. The remaining autonomous chain and completion-relative timing remain unproven. Native task records, remote desktop readbacks and exact Git evidence are required for final acceptance. At G4 close record all leaf SHAs, distinct chat placement evidence (private references only), timestamp comparisons, outstanding anomalies and zero active trial timers. Current README is unchanged by governance. Historical records in private trial chats are the source of operational observations, not public identifiers.
