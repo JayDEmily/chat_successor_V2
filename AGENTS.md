@@ -15,6 +15,10 @@ Every worker and launcher must explicitly read AGENTS.md, PLANS.md and PROGRESS.
 - Never retry an uncertain Send or publication. Reconcile via read-only evidence first. Report exact failed action, error, known state and next permissible check. A scheduler's completed status, a tool receipt, or Git history alone is insufficient evidence of successful fresh-chat delivery.
 - Keep account identifiers, private Project/chat URLs, device identifiers and task identifiers out of repository content. Do not bypass scheduling, approval or platform restrictions. Preserve drafts and ongoing work.
 
+## Anti-drift lock
+
+Before acting, identify the assigned leaf and its one next permitted action from PLANS.md. Execute that action using the frozen mechanism. Do not add a prerequisite, dependency, tool, architectural component or gate unless the existing plan requires it or the owner approves a specific change. Handoffs must contain the complete next assignment and launcher template inputs; never require a previous chat or historical timer lookup. Verify the actual result, not gratuitous intermediate state. On failure isolate only that component, preserve completed work and stop where the existing plan requires. Do not interpret instruction adherence as authority to bypass platform limits.
+
 ## Methodology
 
 Adapted from OpenAI's [AGENTS.md guide](https://developers.openai.com/codex/guides/agents-md) and [execution plan guidance](https://developers.openai.com/cookbook/articles/codex_exec_plans). These are repository conventions for this experiment, not a guarantee of automatic instruction enforcement in ChatGPT. The current owner-approved scope governs any generic skill or example.
