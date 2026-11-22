@@ -3,7 +3,8 @@
 ## Active branch — MCP-native governance (22 November 2026)
 
 - Owner selected extension-free MCP registration/completion direction and isolated public branch. Active authority: [AGENTS.md](AGENTS.md), [ADR 0003](docs/adr/0003-mcp-native-succession.md), [PLANS.md](PLANS.md). Governance-only checkpoint; no runtime, live tests or installation changes. See [governance review](docs/governance-review-20261122.md).
-- **Next: M01 read-only feasibility.** Inspect official MCP/tunnel documentation, existing reference implementation and native desktop control/identity capability. No new service, Send or legacy-run migration.
+- **M01 discovery completed:** [feasibility / direct observations](docs/mcp-native/M01-feasibility.md). Private tunnel/reference pattern reviewed and native Windows UIA New chat/Projects/Edit patterns observed. Exact account/Project identity and saved route not established; no Send, resource creation or legacy migration.
+- **Next: M02** minimum registration/completion contract, threat model, synthetic case freeze. Preserve mandatory positive delivery, remote Git readback, separate quiescence and authority predicates. No live qualification claimed.
 - Public legacy PR #1 passed four hosted offline jobs on `915fa802a1522e9a48eb57558b11db6e9be69c6e`; it remains unmerged. Existing held L12 action and other projects are untouched.
 
 ## Historical ledger (legacy branch; not active assignments)
