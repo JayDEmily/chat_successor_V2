@@ -49,3 +49,6 @@ Owner explicitly superseded the new-credential handoff with existing generic pro
 ## 22 November — owner expands native chat count
 
 Owner requested three or four chats and delegated browser operation. Freeze four separate disposable chats within the existing eight native handler invocation maximum, original manifest unchanged, expanded schedule and coverage limitation in [transport evidence](M04-transport-results.md). No new live tunnel, real admission, extra native calls or consent bypass. Exact native app-backed connector form prepared for owner risk acknowledgement; prior cloud package not usable from inspected web composer surfaces. Native NOT_RUN.
+
+
+Native app connection consent obtained; actual connector connected and N01 native registration verified. Work-mode diagnostic returned NOT_RUN before any native handler. Three-session Chat-mode manifest frozen, preserving original four-chat manifest and total four saved-chat limit. N02 awaits a distinct host risk confirmation; no approval bypass or subsequent calls. [Evidence](M04-transport-results.md).
