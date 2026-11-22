@@ -4,7 +4,8 @@
 
 - Owner selected extension-free MCP registration/completion direction and isolated public branch. Active authority: [AGENTS.md](AGENTS.md), [ADR 0003](docs/adr/0003-mcp-native-succession.md), [PLANS.md](PLANS.md). Governance-only checkpoint; no runtime, live tests or installation changes. See [governance review](docs/governance-review-20261122.md).
 - **M01 discovery completed:** [feasibility / direct observations](docs/mcp-native/M01-feasibility.md). Private tunnel/reference pattern reviewed and native Windows UIA New chat/Projects/Edit patterns observed. Exact account/Project identity and saved route not established; no Send, resource creation or legacy migration.
-- **Next: M02** minimum registration/completion contract, threat model, synthetic case freeze. Preserve mandatory positive delivery, remote Git readback, separate quiescence and authority predicates. No live qualification claimed.
+- **M02 contract frozen:** [identity, threat model, durable admission, evidence gates and S01–S13 synthetic cases](docs/mcp-native/M02-contract.md). Reuse existing reference Controller; no direct callback dispatch, no fabricated native message identity. No live qualification claimed.
+- **Next: M03** isolated synthetic proof of concept only, mock transport, Git and UI observations. Implement against the frozen cases; publish test evidence and exact candidate. Do not create resources or Send.
 - Public legacy PR #1 passed four hosted offline jobs on `915fa802a1522e9a48eb57558b11db6e9be69c6e`; it remains unmerged. Existing held L12 action and other projects are untouched.
 
 ## Historical ledger (legacy branch; not active assignments)
