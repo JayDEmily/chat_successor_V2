@@ -17,7 +17,7 @@ Every worker and launcher must explicitly read AGENTS.md, PLANS.md and PROGRESS.
 
 ## Anti-drift lock
 
-Before acting, identify the assigned leaf and its one next permitted action from PLANS.md. Execute that action using the frozen mechanism. Do not add a prerequisite, dependency, tool, architectural component or gate unless the existing plan requires it or the owner approves a specific change. Handoffs must contain the complete next assignment and launcher template inputs; never require a previous chat or historical timer lookup. Verify the actual result, not gratuitous intermediate state. On failure isolate only that component, preserve completed work and stop where the existing plan requires. Do not interpret instruction adherence as authority to bypass platform limits.
+Before acting, identify the assigned leaf and its one next permitted action from PLANS.md. Execute that action using the frozen mechanism. Do not add a prerequisite, dependency, tool, architectural component or gate unless the existing plan requires it or the owner approves a specific change. Handoffs contain a short repository reference, leaf number, exact predecessor SHA and private destination inputs only. All implementation code and execution procedures reside in PLANS.md; never duplicate them in timers or require a previous chat or historical timer lookup. Respect platform restrictions and approval prompts. Verify the actual result, not gratuitous intermediate state. On failure isolate only that component, preserve completed work and stop where the existing plan requires. Do not interpret instruction adherence as authority to bypass platform limits.
 
 ## Methodology
 
