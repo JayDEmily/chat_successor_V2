@@ -1,6 +1,6 @@
 # M04 — authorised scope and preflight specification
 
-**Status:** owner resource authority granted on 22 November 2026 AEDT; M03 independent PASS verified on `064013839ad71f97aa4bfddb770497340ab28f46` ([verdict](https://github.com/JayDEmily/chat_successor_V2/issues/2#issuecomment-7072268126)); resource/authentication preflight now active. This is preparation, not native qualification.
+**Status:** owner resource authority granted on 22 November 2026 AEDT; M03 independent PASS verified on `064013839ad71f97aa4bfddb770497340ab28f46` ([verdict](https://github.com/JayDEmily/chat_successor_V2/issues/2#issuecomment-7072268126)); resource/authentication preflight performed; [offline rehearsal and live blocker](M04-offline-results.md). This is preparation, not native qualification.
 
 ## Authority
 
@@ -35,4 +35,4 @@ No more than eight handler invocations, including rejected and duplicate calls. 
 
 For each cell record actual handler invocation order, redacted auth decision, private correlation check, receipt classification, quota count, independently read synthetic Git SHA and unchanged no-dispatch state. Report verified transport/identity facts vs mock delivery and Git fixture; preserve failed tests and missing evidence. Verify separate resource and plugin status, then stop the dedicated test listener/client and securely disable or revoke only disposable credentials and test access as applicable; preserve private redacted audit and Git records. Do not touch original installations. Native result remains NOT_RUN until actual calls observed. All setup and trial code/tests must be source-pinned and available for review under AGENTS.md. M05 remains separate.
 
-Reviewed current official documentation on 22 November 2026. No service, credential, user account or plugin has been modified by this preflight specification.
+Reviewed current official documentation on 22 November 2026. No live service, credential, user account or plugin has been modified. Offline fixture keys are ephemeral and synthetic. Native invocation count 0/8.
