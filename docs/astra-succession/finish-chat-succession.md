@@ -1,6 +1,6 @@
 # Earlier finish plan for Chat Succession
 
-This page records the earlier 0.4.3 rollout plan. Follow the [Shoko Yumi execution plan](adr-0002/PROJECT_MANAGEMENT.md) for current scope and order.
+This page records the earlier 0.4.3 rollout plan. The historical sequence is recorded in the [Shoko Yumi execution plan](https://github.com/JayDEmily/chat_successor_V2/blob/820aa20c6643c0ed30177459a685a4a6ee56de79/docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md); for active MCP-native work see the root [PLANS.md](../../PLANS.md).
 
 ## Release goal
 

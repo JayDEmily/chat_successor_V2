@@ -1,10 +1,12 @@
 # ADR 0002 — Account-bound, resumable Chat Succession
 
+> Historical accepted decision. On the MCP-native branch, [ADR 0003](0003-mcp-native-succession.md) supersedes conflicting implementation direction and execution sequencing; compatible safety and functional requirements remain applicable.
+
 - **Decision:** ACCEPTED FOR BOUNDED IMPLEMENTATION on 20 November 2026.
 - **Authority:** Owner directed the developer/project-manager thread to work through all ten Astra leaves, with standing authorisation to make ordinary in-scope decisions, implement, test, independently verify, publish checkpoints and deploy validated candidate updates without repeated routine permission requests.
 - **Source:** [Astra's original, unchanged proposed ADR](../../evidence/astra-adr-0002-20261120/package/docs/adr/0002-account-bound-resumable-runs.md).
 - **Evidence baseline:** [G0 verified ledger](../../evidence/astra-adr-0002-20261120/implementation/G0_20261120/BASELINE.md).
-- **Current programme:** [Shoko Yumi execution plan](../astra-succession/adr-0002/PROJECT_MANAGEMENT.md). Use its order and exit criteria for the owner’s limited release. The original ten-leaf scope below documents the broader ADR decision.
+- **Historical programme:** [Shoko Yumi execution plan](https://github.com/JayDEmily/chat_successor_V2/blob/820aa20c6643c0ed30177459a685a4a6ee56de79/docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md). Its order and exit criteria governed the earlier limited release programme. The original ten-leaf scope below documents the broader ADR decision.
 - **Supersession:** Extends accepted [ADR 0001](0001-generic-entry-and-re-entry.md); no alteration to its established protocol.
 
 ## Accepted scope

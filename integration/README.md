@@ -1,3 +1,5 @@
+> Legacy Chrome/Windows operating reference, not an active MCP-native assignment. See [AGENTS.md](../AGENTS.md) and [PLANS.md](../PLANS.md). Do not run or repin this installed workflow to advance this branch.
+
 # Chat Succession integration
 
 ## Repo-neutral launcher

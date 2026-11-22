@@ -1,5 +1,7 @@
 # Proposed Chat Succession Project instructions
 
+> Historical draft for the original private repository; not active on this public MCP-native branch and not installed. Follow [AGENTS.md](../AGENTS.md) and [PLANS.md](../PLANS.md) instead.
+
 Draft for the owner's Project settings. Not installed by this publication. Repository: the owner-created private JayDEmily/chat_successor.
 
 ---

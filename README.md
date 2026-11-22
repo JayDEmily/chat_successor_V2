@@ -1,4 +1,10 @@
-# Chat Succession
+# Chat Succession V2 — MCP-native development
+
+The owner has selected an extension-free MCP worker-registration/completion direction. This development branch is a feasibility programme, not an installed release. Start with [AGENTS.md](AGENTS.md), [ADR 0003](docs/adr/0003-mcp-native-succession.md), [PLANS.md](PLANS.md) and [PROGRESS.md](PROGRESS.md). Do not invoke the legacy launcher or advance a held legacy run from this branch.
+
+## Legacy usage and historical evidence
+
+The following retained material describes the previous implementation, not instructions to execute this programme.
 
 Chat Succession carries a GitHub-backed job through successive ChatGPT conversations in one Project. Each worker reads the current assignment from GitHub, publishes its work there, and leaves the next worker a short repo and branch pointer.
 
@@ -61,8 +67,8 @@ generic desktop trials verified hidden Project lookup, overlapping runs, and
 terminal stops. See the [live evidence](evidence/astra-generic-entry-20261119/live-acceptance.md)
 for current approval and branch-rotation results.
 
-- [Current Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md)
-- [Current leaf, validation results and handoff](PROGRESS.md)
+- [Historical Shoko Yumi execution plan](https://github.com/JayDEmily/chat_successor_V2/blob/820aa20c6643c0ed30177459a685a4a6ee56de79/docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md)
+- [Progress ledger, including historical results](PROGRESS.md)
 - [Historical Astra ADR 0002 independent review](evidence/astra-adr-0002-20261120/INTAKE.md)
 - [Earlier Astra gates and leaves](docs/astra-succession/README.md)
 - [Controller operations](integration/README.md)

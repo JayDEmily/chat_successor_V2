@@ -1,6 +1,14 @@
 # Progress
 
-The [Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) defines the scope and acceptance order. L11 Cat/Dog finished with assisted read-only receipt recovery; L12 Bird/Pig is next.
+## Active branch — MCP-native governance (22 November 2026)
+
+- Owner selected extension-free MCP registration/completion direction and isolated public branch. Active authority: [AGENTS.md](AGENTS.md), [ADR 0003](docs/adr/0003-mcp-native-succession.md), [PLANS.md](PLANS.md). Governance-only checkpoint; no runtime, live tests or installation changes. See [governance review](docs/governance-review-20261122.md).
+- **Next: M01 read-only feasibility.** Inspect official MCP/tunnel documentation, existing reference implementation and native desktop control/identity capability. No new service, Send or legacy-run migration.
+- Public legacy PR #1 passed four hosted offline jobs on `915fa802a1522e9a48eb57558b11db6e9be69c6e`; it remains unmerged. Existing held L12 action and other projects are untouched.
+
+## Historical ledger (legacy branch; not active assignments)
+
+The [Shoko Yumi execution plan](https://github.com/JayDEmily/chat_successor_V2/blob/820aa20c6643c0ed30177459a685a4a6ee56de79/docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) defines the scope and acceptance order. L11 Cat/Dog finished with assisted read-only receipt recovery; L12 Bird/Pig is next.
 
 ## Lean ADR 0002 L11 — assisted Cat/Dog completion verified (21 November 2026)
 
@@ -142,7 +150,7 @@ The [Shoko Yumi execution plan](docs/astra-succession/adr-0002/PROJECT_MANAGEMEN
 ## Lean ADR 0002 L01 — Windows regression baseline (21 November 2026)
 
 - **Base and candidate:** published `beacfae4790c2ec4f390e90ad0bd214fe6a1ef05` and a byte-identical copy of the interrupted adapter, SHA-256 `dfed13f20650162de74500eb4806dc884ea3effef868dbccc4c3b02193e9b769`.
-- **Behavior:** added Astra's native regression with an actual older identical continuation. Adopted the [Shoko Yumi execution scope](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md).
+- **Behavior:** added Astra's native regression with an actual older identical continuation. Adopted the [Shoko Yumi execution scope](https://github.com/JayDEmily/chat_successor_V2/blob/820aa20c6643c0ed30177459a685a4a6ee56de79/docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md).
 - **Windows PowerShell 5.1:** `test_a2_transcript_boundary.ps1 -RepoRoot <snapshot>` exited 1 on the published reader (12/27 pass) and the interrupted copy (18/27 pass). All controls passed. The published reader failed status/user-anchor, anchored acknowledgement, and unanchored acknowledgement for each of five shapes. The interrupted copy passed the opaque group and changed-heading cases and failed all three assertions for each of pane, custom, and list. Raw outputs and the interrupted patch are saved privately.
 - **Limit:** synthetic observations only. The working adapter still matches the interrupted snapshot at this checkpoint. LEAN-G1 remains open.
 - **Next:** L02, close the mixed-transcript gap in `Get-ConversationTurns`.
@@ -295,7 +303,7 @@ The owner expressly replaced Rowing and SolidWorks as live-test workloads with d
 
 ## ADR 0002 programme — 20 November 2026
 
-Owner accepted the bounded ten-leaf implementation with standing authority (no repeat routine approvals). [Operative ADR](docs/adr/0002-account-bound-resumable-runs.md) · [Management and gates](docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) · [G0 baseline](evidence/astra-adr-0002-20261120/implementation/G0_20261120/BASELINE.md). A2-G0 PASS via fresh Ubuntu 295/295 manifest, 63+119 suites, six Git histories and 13 fixtures. The paused Rowing and SolidWorks runs remain untouched. Next eligible leaf: A2-L02.
+Owner accepted the bounded ten-leaf implementation with standing authority (no repeat routine approvals). [Operative ADR](docs/adr/0002-account-bound-resumable-runs.md) · [Management and gates](https://github.com/JayDEmily/chat_successor_V2/blob/820aa20c6643c0ed30177459a685a4a6ee56de79/docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) · [G0 baseline](evidence/astra-adr-0002-20261120/implementation/G0_20261120/BASELINE.md). A2-G0 PASS via fresh Ubuntu 295/295 manifest, 63+119 suites, six Git histories and 13 fixtures. The paused Rowing and SolidWorks runs remain untouched. Next eligible leaf: A2-L02.
 
 ## Astra ADR 0002 review intake — 20 November 2026
 

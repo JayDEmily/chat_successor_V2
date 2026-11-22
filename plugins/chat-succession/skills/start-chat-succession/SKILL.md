@@ -5,6 +5,8 @@ description: Use when the owner invokes Chat Succession from iPhone or desktop t
 
 # Start Chat Succession
 
+> Applicability: this is the legacy launcher skill. For the public MCP-native development branch, read the repository AGENTS.md and PLANS.md and do not invoke this legacy launcher as a way to advance the new architecture. This source note does not update any installed plugin.
+
 ## Enter or re-enter from iPhone or desktop
 
 Interpret the owner's current instruction using the conversation and the project's published work record. Invoking the plugin may mean starting, resuming or inspecting existing work. Discovery, planning, review and implementation are all possible assignments. Preserve explicit holds and independent review requirements. Carry an unambiguous approval only for its identified scope. Ask one focused question when the authority, target, or active executor remains ambiguous.

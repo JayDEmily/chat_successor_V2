@@ -1,6 +1,6 @@
 # Earlier Astra chat succession execution plan
 
-This page records the earlier bounded trial. For current work, use the [Shoko Yumi execution plan](adr-0002/PROJECT_MANAGEMENT.md) and the current leaf in [PROGRESS.md](../../PROGRESS.md). The [19 November implementation plan](generic-entry-plan-20261119.md) and [ADR 0001](../adr/0001-generic-entry-and-re-entry.md) document the earlier generic-entry increment.
+This page records the earlier bounded trial. For the historical Chrome programme, consult the [Shoko Yumi execution plan](https://github.com/JayDEmily/chat_successor_V2/blob/820aa20c6643c0ed30177459a685a4a6ee56de79/docs/astra-succession/adr-0002/PROJECT_MANAGEMENT.md) and its historical ledger in [PROGRESS.md](../../PROGRESS.md). The [19 November implementation plan](generic-entry-plan-20261119.md) and [ADR 0001](../adr/0001-generic-entry-and-re-entry.md) document the earlier generic-entry increment.
 
 The earlier bounded trial followed the [source plan](../../astra/2026-11-17/artifacts/cfile_6afc507495a08191817cbc9fc1e77b63-chat_succession_test_plan_20261117.md), [adapter contract](../../astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/PROTOCOL_AND_ADAPTER.md) and [owner runbook](../../astra/2026-11-17/unpacked/chat_succession_test_kit_20261117/docs/OWNER_RUNBOOK.md) imported at `44c0d5948318e305c42fb0ac4f463e77f90531bc`. The [three-chat exploration](../superpowers/plans/2026-11-17-chat-succession.md) documents that trial.
 
